@@ -1,0 +1,1 @@
+javascript:!function(){try{obgClientEnvironmentConfig}catch{return void alert("You are not on a Betsson site")}var t=document.createElement("script");t.id="obgToolScript",t.type="text/javascript",t.src="https://gegl01.github.io/obgTool.min.js",document.head.appendChild(t)}();
