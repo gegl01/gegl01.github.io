@@ -109,7 +109,6 @@
             btMinimizeAll.classList.add("hide");
             btZoomInOut.classList.add("hide");
         }
-        // if (ENVIRONMENT === "ALPHA" || ENVIRONMENT === "PROD" || IS_B2B) {
         if (ENVIRONMENT === "ALPHA" || ENVIRONMENT === "PROD" || !IS_OBGSTATE_EXPOSED) {
             btMinimizeClosed.classList.add("hide");
             btMinimizeAll.classList.add("hide");
@@ -463,11 +462,12 @@
             if (eventLabel === null) {
                 detectionResultText = NOT_FOUND;
                 displayInRed(labelRow);
-                eventPhaseButtons.classList.add("inactivated");
+                inactivate(eventPhaseButtons);
             } else {
                 detectionResultText = eventLabel;
                 displayInGreen(labelRow);
-                eventPhaseButtons.classList.remove("inactivated");
+                activate(eventPhaseButtons);
+
             }
             labelRow.innerText = detectionResultText;
         }
@@ -481,11 +481,11 @@
 
         function listenerForSetMarketState() {
             if (Object.values(getBetSlipByObgState().selections) == "") {
-                marketStateButtons.classList.add("inactivated");
+                inactivate(marketStateButtons);
                 detectionResultText = NOT_FOUND;
                 displayInRed(labelRow);
             } else {
-                marketStateButtons.classList.remove("inactivated");
+                activate(marketStateButtons);
                 detectionResultText = getEventLabel(getLastEventIdFromBetslip()) + " /<br><b>" + getMarketLabel(getLastMarketIdFromBetslip()) + "</b>";
                 displayInGreen(labelRow);
             }
@@ -536,7 +536,10 @@
                 if (getCategoryId(eventId) !== "11") {
                     tennisFastMarketMessage.innerText = "Not a tennis event"
                     inactivate(fastMarketSection);
-                } else activate(fastMarketSection);
+                } else {
+                    activate(fastMarketSection);
+                    tennisFastMarketMessage.innerText = null;
+                }
 
                 if (getEventWidgetActiveTabId(eventId) === "all") {
                     activate(playerPropsSection);
@@ -547,14 +550,14 @@
             }
             labelRow.innerText = detectionResultText;
         }
+    }
 
-        function activate(element) {
-            element.classList.remove("inactivated");
-        }
+    function activate(element) {
+        element.classList.remove("inactivated");
+    }
 
-        function inactivate(element) {
-            element.classList.add("inactivated");
-        }
+    function inactivate(element) {
+        element.classList.add("inactivated");
     }
 
     window.initChangeOdds = () => {
@@ -576,13 +579,13 @@
                 displayInRed(labelRow);
                 detectionResultText = NOT_FOUND;
                 if (lockedSelectionId === undefined) {
-                    lockSelectionSection.classList.add("inactivated");
-                    newOddsRow.classList.add("inactivated");
+                    inactivate(lockSelectionSection);
+                    inactivate(newOddsRow);
                 }
             } else {
                 displayInGreen(labelRow);
-                lockSelectionSection.classList.remove("inactivated");
-                newOddsRow.classList.remove("inactivated");
+                activate(lockSelectionSection);
+                activate(newOddsRow);
                 detectionResultText = eventLabel + " / <br>" + marketLabel + " : <br><b>" + selectionLabel + "</b> (init. odds: " + odds.toFixed(2) + ")</b>";
             }
             labelRow.innerHTML = detectionResultText;
@@ -687,14 +690,14 @@
             if (detectionResultText === null) {
                 labelRow.innerText = NOT_FOUND;
                 displayInRed(labelRow);
-                addToCarouselButton.classList.add("inactivated");
+                inactivate(addToCarouselButton);
             } else {
                 if (currentPage === "sportsbook") {
                     displayInGreen(labelRow);
-                    addToCarouselButton.classList.remove("inactivated");
+                    activate(addToCarouselButton);
                 } else {
                     displayInRed(labelRow);
-                    addToCarouselButton.classList.add("inactivated");
+                    inactivate(addToCarouselButton);
                     detectionResultText += "\nCurrent page is not Sportsbook Home.";
                 }
                 labelRow.innerText = detectionResultText;
@@ -717,7 +720,7 @@
             itHasScoreBoard = false;
             if (detectionResultText === null) {
                 detectionResultText = NOT_FOUND;
-                inactivate();
+                inactivateScoreBoard();
             } else {
                 for (i = 0; i < scoreBoardObjects.length; i++) {
                     if (eventId == scoreBoardObjects[i].eventId) {
@@ -726,25 +729,25 @@
                     }
                 }
                 if (itHasScoreBoard) {
-                    activate();
+                    activateScoreBoard();
                 } else {
                     detectionResultText += "\nNot having scoreboard.";
-                    inactivate();
+                    inactivateScoreBoard();
                 }
             }
             labelRow.innerText = detectionResultText;
         }
 
-        function activate() {
+        function activateScoreBoard() {
             displayInGreen(labelRow);
-            scoreBoardScores.classList.remove("inactivated");
-            scoreBoardDetails.classList.remove("inactivated");
+            activate(scoreBoardScores);
+            activate(scoreBoardDetails);
         }
 
-        function inactivate() {
+        function inactivateScoreBoard() {
             displayInRed(labelRow);
-            scoreBoardScores.classList.add("inactivated");
-            scoreBoardDetails.classList.add("inactivated");
+            inactivate(scoreBoardScores);
+            inactivate(scoreBoardDetails);
         }
     }
 
