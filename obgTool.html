@@ -80,14 +80,21 @@
     <div class="accordion closed">
         <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Market</button>
         <div class="accContent">
-            This works on open event panel's "All" tab.
-            <hr class="hRule"> Detected event:
+            Detected event:
             <div class="labelRow" id="eventLabelForCreateMarket"></div>
-            <div class="createMarketLayout">
-                <button class="btSimple" id="btCreatePlayerPropsMarket" onclick="createMarket('playerProps')">Player Props</button> (4 selections)
-                <button class="btSimple" id="btCreatePlayerPropsDummyMarket" onclick="createMarket('playerPropsDummy')">Player Props</button> (10 dummy selections)
-                <button class="btSimple" id="btCreateFastMarket" onclick="createMarket('fast')">Fast Market</button>
+            <hr class="hRule">Player Props
+            <div class="createMarketLayout" id="playerPropsSection">
+                <button class="btSimple playerProps" id="btCreatePlayerPropsMarket" onclick="createMarket('playerProps')">4 selections</button>
+                <div class="buttonLabelToRight" id="playerPropsMessage"></div>
+                <button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket" onclick="createMarket('playerPropsDummy')">10 selections</button>
+                <div></div>
             </div>
+            <hr class="hRule">Fast Markets
+            <div class="createMarketLayout" id="fastMarketSection">
+                <button class="btSimple" id="btCreateFastMarket" onclick="createMarket('fast')">Tennis</button>
+                <div class="buttonLabelToRight" id="tennisFastMarketMessage"></div>
+            </div>
+
         </div>
     </div>
 
@@ -170,6 +177,10 @@
         text-align: right
     }
     
+    .buttonLabelToRight {
+        margin-left: 8px;
+    }
+    
     .scoreLayout {
         margin-bottom: 10px;
         display: grid;
@@ -213,7 +224,7 @@
         padding-top: 10px;
         display: grid;
         grid-template-columns: 35% auto;
-        grid-template-rows: 1fr 1fr 1fr;
+        /* grid-template-rows: 1fr 1fr 1fr; */
         align-items: center;
     }
     
