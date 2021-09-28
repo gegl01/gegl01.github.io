@@ -1,16 +1,16 @@
-<div id="obgToolHeader">
-    <div id="obgToolHeaderTitle">
-        <div id="obgToolName">OBG Tool v<span id="obgToolVersion"></span></div>
-        <div id="obgToolAuthorName">by gegl01@betssongroup.com</div>
+<div id="sportsbookToolHeader">
+    <div id="sportsbookToolHeaderTitle">
+        <div id="sportsbookToolName">Sportsbook Tool v<span id="sportsbookToolVersion"></span></div>
+        <div id="sportsbookToolAuthorName">by gegl01@betssongroup.com</div>
     </div>
-    <div id="obgToolHeaderButtonRow">
-        <button id="btZoomInOut" class="obgToolHeaderButtons" onclick="zoomInOut()">&#128475;</button>
-        <button id="btMinimizeAll" class="obgToolHeaderButtons" onclick="toggleAllAccordionsVisibility()">&#128469;</button>
-        <button id="btMinimizeClosed" class="obgToolHeaderButtons" onclick="toggleClosedAccordionsVisibility()">&#128469;</button>
-        <button id="btClose" class="obgToolHeaderButtons" onclick="closePopup()">&#10006;</button>
+    <div id="sportsbookToolHeaderButtonRow" class="floatRight">
+        <button id="btZoomInOut" class="sportsbookToolHeaderButtons" onclick="zoomInOut()">&#128475;</button>
+        <button id="btMinimizeAll" class="sportsbookToolHeaderButtons" onclick="toggleAllAccordionsVisibility()">&#128469;</button>
+        <button id="btMinimizeClosed" class="sportsbookToolHeaderButtons" onclick="toggleClosedAccordionsVisibility()">&#128469;</button>
+        <button id="btClose" class="sportsbookToolHeaderButtons" onclick="closePopup()">&#10006;</button>
     </div>
 </div>
-<div id="obgToolContent">
+<div id="sportsbookToolContent">
     <div class="accordion open">
         <button class="accHeading">Context<span id="limitedFunctionsMessage"></span></button>
         <div class="accContent">
@@ -51,7 +51,7 @@
     <div class="accordion closed">
         <button id="setEventPhaseAccordion" class="accHeading" onclick="initSetEventPhase()">Set Event Phase</button>
         <div class="accContent">
-            To let the app identify the event open an event page and/or put a selection on the slip.
+            Target event is from the open event widget, or last selection from the slip
             <hr class="hRule"> Detected event:
             <div class="labelRow" id="eventLabelForSetEventPhase"></div>
             <div class="setEventPhaseLayout">
@@ -80,9 +80,10 @@
     <div class="accordion closed">
         <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Market</button>
         <div class="accContent">
-            Detected event:
+            Target event is from the open event widget.
+            <hr class="hRule"> Detected event:
             <div class="labelRow" id="eventLabelForCreateMarket"></div>
-            <hr class="hRule">Player Props
+            <hr class="hRule"> Player Props
             <div class="createMarketLayout" id="playerPropsSection">
                 <button class="btSimple playerProps" id="btCreatePlayerPropsMarket" onclick="createMarket('playerProps')">4 selections</button>
                 <div class="buttonLabelToRight" id="playerPropsMessage"></div>
@@ -104,7 +105,7 @@
             <hr class="hRule">
             <div>
                 <span id="detectedOrLockedRowForChangeOdds">Detected selection:</span>
-                <span id="lockSelectionSection">
+                <span id="lockSelectionSection" class="floatRight">
                     <label id="lblLockSelection" for="chkLockSelection">Lock</label>
                     <input type="checkbox" id="chkLockSelection" onclick="lockSelection()">
                 </span>
@@ -113,7 +114,7 @@
             <div id="newOddsRow" class="newOddsLayout">
                 <label for="newOdds">New Odds:</label>
                 <input class="fdNumeric" type="number" id="newOdds">
-                <button class="btSimple" class="btSubmit" onclick="changeOdds()">Submit</button>
+                <button class="btSimple btSubmit" class="btSubmit" onclick="changeOdds()">Submit</button>
             </div>
         </div>
     </div>
@@ -123,10 +124,10 @@
         <div class="accContent">
             <ol class="carouselList">
                 <li id="deviceDependentCarouselMessage"></li>
+                <li>Go to Sportsbook Home</li>
                 <hr class="hRule">Detected event:
                 <div class="labelRow" id="eventLabelForAddToCarousel"></div>
                 <hr class="hRule">
-                <li>Go to Sportsbook Home</li>
                 <li>Click: <button class="btSimple" id="btAddToCarousel" onclick="addToCarousel()">Add to Carousel</button>
                     <span id="addToCarouselMessage"></span>
                 </li>
@@ -143,10 +144,10 @@
             <hr class="hRule">
             <div id="scoreBoardScores" class="scoreLayout">
                 <div id="homeScoreLabel">Home Score</div>
-                <input class="fdNumeric" type="number" id="homeScoreInputField">
+                <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeScoreInputField">
                 <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore('home')">Submit</button>
                 <div id="awayScoreLabel">Away Score</div>
-                <input class="fdNumeric" type="number" id="awayScoreInputField">
+                <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayScoreInputField">
                 <button id="btSubmitAwayScore" class="btSubmit btSimple" onclick="submitScore('away')">Submit</button>
             </div>
             <div id="scoreBoardDetails">
@@ -156,23 +157,58 @@
                     <div id="yellowCards" class="vertical">Yellow Cards</div>
                     <div id="redCards" class="vertical">Red Cards</div>
                     <div id="penalties" class="vertical">Penalties</div>
-                    <input class="fdNumeric" type="number" id="homeCorners">
-                    <input class="fdNumeric" type="number" id="homeSubstitutions">
-                    <input class="fdNumeric" type="number" id="homeYellowCards">
-                    <input class="fdNumeric" type="number" id="homeRedCards">
-                    <input class="fdNumeric" type="number" id="homePenalties">
-                    <input class="fdNumeric" type="number" id="awayCorners">
-                    <input class="fdNumeric" type="number" id="awaySubstitutions">
-                    <input class="fdNumeric" type="number" id="awayYellowCards">
-                    <input class="fdNumeric" type="number" id="awayRedCards">
-                    <input class="fdNumeric" type="number" id="awayPenalties">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeCorners">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeSubstitutions">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeYellowCards">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeRedCards">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homePenalties">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayCorners">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awaySubstitutions">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayYellowCards">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayRedCards">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayPenalties">
                 </div>
                 <button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Submit</button>
             </div>
         </div>
     </div>
+    <div class="accordion closed">
+        <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">Stream mapping IDs</button>
+        <div class="accContent">
+            <div class="labelRow">Detected event:
+                <span id="eventLabelForStreamMappingHelper"></span>
+            </div>
+            <div id="eventIdRowForStreamMappingHelper" class="labelRow">EventId:
+                <span id="eventIdForStreamMappingHelper"></span>
+                <span>
+                    <button class="btSimple floatRight" id="btCopyEventId" onclick="copyToClipboard('eventId')">Copy</button>
+                </span>
+            </div>
+            <hr class="hRule"> Get Provider Event Ids to use in Trading Tools:
+            <div class="streamIdsLayout">
+                <button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button>
+                <button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button>
+                <div id="performResults" class="extraCondensed"></div>
+                <div id="twitchResults" class="extraCondensed"></div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <style>
+    #twitchResults,
+    #performResults {
+        margin-left: 5px;
+        margin-top: 5px;
+    }
+    
+    .streamIdsLayout {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+    }
+    
     .align-right {
         text-align: right
     }
@@ -184,7 +220,7 @@
     .scoreLayout {
         margin-bottom: 10px;
         display: grid;
-        grid-template-columns: 30% 15% 15%;
+        grid-template-columns: 30% 18% 15%;
         grid-template-rows: 1fr 1fr;
         align-items: center;
     }
@@ -221,7 +257,6 @@
     }
     
     .createMarketLayout {
-        padding-top: 10px;
         display: grid;
         grid-template-columns: 50% auto;
         align-items: center;
@@ -230,6 +265,8 @@
     .newOddsLayout {
         padding-top: 10px;
         align-items: center;
+        display: grid;
+        grid-template-columns: 30% 20% auto;
     }
     
     .btSubmit {
@@ -248,11 +285,14 @@
     }
     
     .fdNumeric {
-        width: 40px;
         border: 1px solid #444
     }
     
-    #obgTool {
+    .fdScoreBoardNumeric {
+        width: 45px;
+    }
+    
+    #sportsbookTool {
         background-color: white;
         color: #444;
         font-family: 'Arial';
@@ -268,7 +308,7 @@
         overflow: auto
     }
     
-    #obgToolHeader {
+    #sportsbookToolHeader {
         font-weight: bold;
         padding: 3px;
         padding-bottom: 5px;
@@ -277,22 +317,22 @@
         background-color: #2196F3;
         color: #fff;
     }
-    
-    #obgToolHeaderButtonRow {
+    /* #sportsbookToolHeaderButtonRow {
         float: right;
     }
+     */
     
-    #obgToolHeaderTitle {
+    #sportsbookToolHeaderTitle {
         display: inline-block;
         padding-top: 3px;
         padding-left: 4px;
     }
     
-    #obgToolName {
+    #sportsbookToolName {
         font-size: 14px;
     }
     
-    #obgToolAuthorName {
+    #sportsbookToolAuthorName {
         font-size: 8px;
         line-height: 30%;
         font-weight: normal;
@@ -320,7 +360,7 @@
         transform: translateY(1px);
     }
     
-    .obgToolHeaderButtons {
+    .sportsbookToolHeaderButtons {
         color: #fff;
         width: 25px;
         height: 20px;
@@ -421,7 +461,7 @@
         vertical-align: middle;
     }
     
-    #lockSelectionSection {
+    .floatRight {
         float: right;
     }
     
