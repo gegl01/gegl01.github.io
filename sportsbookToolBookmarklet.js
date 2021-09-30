@@ -1,5 +1,5 @@
 javascript: (function() {
-    var obgToolUrl = "https://gegl01.github.io/obgTool.min.js";
+    var obgToolUrl = "http://localhost:8080/sportsbookTool.min.js";
     var request = new XMLHttpRequest();
     request.open("GET", obgToolUrl, true);
     request.send(null);

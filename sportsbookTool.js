@@ -1,10 +1,18 @@
 (function() {
 
     try {
-        obgClientEnvironmentConfig;
+        obgNavigationSupported;
     } catch {
-        alert("You are not on a Betsson website.\nIf you think you are, please contact: gergely.glosz@betssongroup.com")
-        return;
+        try {
+            obgClientEnvironmentConfig;
+        } catch {
+            try {
+                obgGlobalAppContext;
+            } catch {
+                alert("You are not on a Betsson website.\nIf you think you are, please contact: gergely.glosz@betssongroup.com")
+                return;
+            }
+        }
     }
 
     var sportsbookTool = document.getElementById("sportsbookTool");
@@ -22,12 +30,12 @@
     var detectionResultText;
 
     const OBG_TOOL_VERSION = "1.0.0"
-    const DEVICE_TYPE = obgClientEnvironmentConfig.startupContext.device.deviceType;
-    const ENVIRONMENT = obgClientEnvironmentConfig.startupContext.appContext.environment.toUpperCase();
-    const IS_B2B = obgClientEnvironmentConfig.startupContext.contextId !== undefined;
+    const DEVICE_TYPE = getDeviceType();
+    const ENVIRONMENT = getEnvironment();
+    const IS_B2B = isB2B();
     const BRAND_NAME = getBrandName();
     const BROWSER_VERSION = getBrowserVersion();
-    const OBG_VERSION = "OBGA-" + obgClientEnvironmentConfig.startupContext.appContext.version;
+    const OBG_VERSION = getObgVersion();
     const NOT_FOUND = "Not found.";
     const IS_OBGSTATE_EXPOSED = isObgRtExposed();
 
@@ -44,6 +52,16 @@
         sportsbookTool.innerHTML = htmlContent;
     }
 
+    function isB2B() {
+        try {
+            return obgClientEnvironmentConfig.startupContext.contextId !== undefined;
+        } catch {
+            try {
+                return obgState.b2b !== undefined;
+            } catch { return false; }
+        }
+    }
+
     function isObgRtExposed() {
         try {
             obgRt;
@@ -51,10 +69,48 @@
         return true;
     }
 
+    function getObgVersion() {
+        var obgVersion;
+        try {
+            obgVersion = obgClientEnvironmentConfig.startupContext.appContext.version;
+        } catch {
+            obgVersion = obgState.appContext.version;
+        }
+        return "OBGA-" + obgVersion;
+    }
+
+    function getDeviceType() {
+        try {
+            return obgClientEnvironmentConfig.startupContext.device.deviceType;
+        } catch {
+            try {
+                return obgGlobalAppContext.deviceType;
+            } catch {
+                return obgState.appContext.device.deviceType;
+            }
+        }
+    }
+
+    function getEnvironment() {
+        try {
+            return obgClientEnvironmentConfig.startupContext.appContext.environment.toUpperCase();
+        } catch {
+            try {
+                return obgGlobalAppContext.environment.toUpperCase() + " (Local)";
+            } catch {
+                return obgState.appContext.environment.toUpperCase() + " (Local)";
+            }
+        }
+    }
+
     function getBrandName() {
         var brandName;
         if (IS_B2B) {
-            brandName = obgClientEnvironmentConfig.startupContext.brandName;
+            try {
+                brandName = obgClientEnvironmentConfig.startupContext.brandName;
+            } catch {
+                return "some B2B...";
+            }
         } else {
             var hostName = window.location.hostname;
             brandName = hostName.substring(hostName.lastIndexOf(".", hostName.lastIndexOf(".") - 1) + 1);
@@ -148,7 +204,7 @@
             }
         }
 
-        if (IS_B2B) {
+        if (IS_B2B || ENVIRONMENT === "TEST (Local)") {
             var noB2Belements = document.getElementsByClassName("noB2B");
             for (elem of noB2Belements) {
                 elem.classList.add("visibilityHidden");
@@ -192,6 +248,9 @@
                 break;
             case "TEST":
                 newEnv = "QA";
+                break;
+            case "TEST (Local)":
+                newEnv = "TEST";
                 break;
         }
         return newEnv;
@@ -355,18 +414,18 @@
 
     function getJiraTemplate() {
         var template =
-            "h2. " + DEVICE_TYPE + "\n" +
-            "|Test| |" + "\n" +
-            "|Env|" + ENVIRONMENT + "|\n" +
-            "|Brand(s)|" + BRAND_NAME + "|\n" +
-            "|Browser(s)|" + BROWSER_VERSION + "|\n" +
-            "|Version|" + OBG_VERSION + "|";
+            "h2. Test Results\n" +
+            "|| ||Desktop||Mobile||\n" +
+            "|Test|*{color:#00875a}Passed{color}*|*{color:#00875a}Passed{color}*|" + "\n" +
+            "|Env|" + ENVIRONMENT + "|" + ENVIRONMENT + "|\n" +
+            "|Brand(s)|" + BRAND_NAME + "|" + BRAND_NAME + "|\n" +
+            "|Browser(s)|" + BROWSER_VERSION + "|" + BROWSER_VERSION + "|\n" +
+            "|Version|" + OBG_VERSION + "|" + OBG_VERSION + "|";
         return (template);
     }
 
     function getDeepLink() {
-        var loc = window.location;
-        var deepLink = new URL(loc.protocol + "//" + loc.hostname + loc.pathname);
+        var deepLink = new URL(window.location.origin + window.location.pathname);
         var paramsFromAddressBar = Object.entries(Object.fromEntries(new URLSearchParams(window.location.search).entries()));
         var name;
         var value;
@@ -388,7 +447,9 @@
 
         var selections = Object.values(betSlipReducer.selections);
         if (selections === null || selections.length === 0) {
+            console.log("DL: " + deepLink);
             return deepLink;
+
         }
 
         var numberOfSelections = selections.length;
@@ -411,6 +472,7 @@
         function appendParam(name, value) {
             if (value !== undefined) {
                 deepLink.searchParams.append(name, String(value));
+                console.log(deepLink);
             }
         }
     }
@@ -1088,11 +1150,11 @@
             }
         };
         var numberOfResults = 8;
-        var data = `{
+        var data = {
             "operationName": "FeaturedContentCarouselStreams",
             "variables": {
                 "language": "en",
-                "first": ` + numberOfResults + `,
+                "first": numberOfResults,
                 "acceptedMature": true
             },
             "extensions": {
@@ -1101,9 +1163,9 @@
                     "sha256Hash": "ab19fb72d5e43c8edc59d41300a129548cb1a67feca04f921bf705a74bb70a24"
                 }
             }
-        }`;
+        };
 
-        xhr.send(data);
+        xhr.send(JSON.stringify(data));
 
         var obj = JSON.parse(response);
         for (i = 0; i < numberOfResults; i++) {
@@ -1125,6 +1187,7 @@
         var response;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, false);
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "https://secure.betsson.performgroup.com")
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 response = xhr.responseXML;
