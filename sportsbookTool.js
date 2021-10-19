@@ -1,35 +1,23 @@
 (function() {
 
-    try {
-        obgNavigationSupported;
-    } catch {
-        try {
-            obgClientEnvironmentConfig;
-        } catch {
-            try {
-                obgGlobalAppContext;
-            } catch {
-                alert("You are not on a Betsson website.\nIf you think you are, please contact: gergely.glosz@betssongroup.com")
-                return;
-            }
-        }
-    }
+    if (!isItBetssonSite()) return;
 
-    var sportsbookTool = document.getElementById("sportsbookTool");
+
+    // removeExistingSportsbookTool();
     // var sportsbookTool = document.createElement("div");
     // sportsbookTool.id = "sportsbookTool";
     // createWindow();
+    var sportsbookTool = document.getElementById("sportsbookTool");
 
     var accCollection = document.getElementsByClassName("accordion");
     var accHeadCollection = document.getElementsByClassName("accHeading");
-    var eventId;
-    var eventLabel;
-    var marketId;
-    var marketLabel;
-    var selectionId;
+    var eventId, lockedEventId, eventLabel;
+    var marketId, lockedMarketId, marketLabel;
+    var selectionId, lockedSelectionId;
     var detectionResultText;
+    var initialOdds, lockedInitialOdds;
 
-    const OBG_TOOL_VERSION = "1.0.0"
+    const SB_TOOL_VERSION = "1.0.2"
     const DEVICE_TYPE = getDeviceType();
     const ENVIRONMENT = getEnvironment();
     const IS_B2B = isB2B();
@@ -43,13 +31,50 @@
     initAccordions();
     initContext();
     initWindowMover();
+    checkEnabledfeatures();
 
     function createWindow() {
         document.body.appendChild(sportsbookTool);
         var htmlContent =
-            '<div id="sportsbookToolHeader"><div id="sportsbookToolHeaderTitle"><div id="sportsbookToolName">Sportsbook Tool v<span id="sportsbookToolVersion"></span></div><div id="sportsbookToolAuthorName">by gegl01@betssongroup.com</div></div><div id="sportsbookToolHeaderButtonRow" class="floatRight"> <button id="btZoomInOut" class="sportsbookToolHeaderButtons" onclick="zoomInOut()">&#128475;</button> <button id="btMinimizeAll" class="sportsbookToolHeaderButtons" onclick="toggleAllAccordionsVisibility()">&#128469;</button> <button id="btMinimizeClosed" class="sportsbookToolHeaderButtons" onclick="toggleClosedAccordionsVisibility()">&#128469;</button> <button id="btClose" class="sportsbookToolHeaderButtons" onclick="closePopup()">&#10006;</button></div></div><div id="sportsbookToolContent"><div class="accordion open"> <button class="accHeading">Context<span id="limitedFunctionsMessage"></span></button><div class="accContent"><div class="contextLayout"><div>Device Type:</div><div class="contextValue" id="deviceType"></div><div></div><div>Environment:</div><div class="contextValue" id="environment"></div> <button class="btSimple extraCondensed noB2B" id="btSwitchToEnv" onclick="switchToEnv()"></button><div>Brand:</div><div class="contextValue" id="brandName"></div><div></div><div>Browser:</div><div class="contextValue" id="browserVersion"></div> <button class="btSimple" id="btBrowserVersion" onclick="copyToClipboard(\'browserVersion\')">Copy</button><div>App Version:</div><div class="contextValue" id="obgVersion"></div> <button class="btSimple" id="btObgVersion" onclick="copyToClipboard(\'obgVersion\')">Copy</button><div><hr class="hRule"></div><div><hr class="hRule"></div><div><hr class="hRule"></div><div>Jira QA Table</div><div class="displayInLightGrey contextValue">from the above data</div> <button class="btSimple" id="btCreateJiraTable" onclick="copyToClipboard(\'jiraTemplate\')">Copy</button><div class="noB2B">Deep Link</div><div class="displayInLightGrey contextValue noB2B">of the actual page & slip</div> <button class="btSimple noB2B" id="btCreateDeepLink" onclick="copyToClipboard(\'deepLink\')">Copy</button></div></div></div><div class="accordion closed"> <button id="setEventPhaseAccordion" class="accHeading" onclick="initSetEventPhase()">Set Event Phase</button><div class="accContent"> Target event is from the open event widget, or last selection from the slip<hr class="hRule"> Detected event:<div class="labelRow" id="eventLabelForSetEventPhase"></div><div class="setEventPhaseLayout"> <button id="btSetsetEventPhaseLive" class="btSimple" onclick="setEventPhase(\'live\')">Live</button> <button id="btSetsetEventPhasePrematch" class="btSimple" onclick="setEventPhase(\'prematch\')">Prematch</button> <button id="btSetsetEventPhaseOver" class="btSimple" onclick="setEventPhase(\'over\')">Over</button></div></div></div><div class="accordion closed"> <button id="setMarketStateAccordion" class="accHeading" onclick="initSetMarketState()">Set Market State</button><div class="accContent"> Target market is the last from the betslip.<hr class="hRule">Detected Market:<div id="marketLabelForSetMarketState" class="labelRow"></div><div class="setMarketStateLayout"> <button class="btSimple" id="btSetMarketStateSuspended" onclick="setMarketState(\'suspended\')">Suspd.</button> <button class="btSimple" id="btSetMarketStateOpen" onclick="setMarketState(\'open\')">Open</button> <button class="btSimple" id="btSetMarketStateVoid" onclick="setMarketState(\'void\')">Void</button> <button class="btSimple" id="btSetMarketStateSettled" onclick="setMarketState(\'settled\')">Settled</button> <button class="btSimple" id="btSetMarketStateHold" onclick="setMarketState(\'hold\')">Hold</button></div><div id="marketStateMessage"></div></div></div><div class="accordion closed"> <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Market</button><div class="accContent"> Target event is from the open event widget.<hr class="hRule"> Detected event:<div class="labelRow" id="eventLabelForCreateMarket"></div><hr class="hRule"> Player Props<div class="createMarketLayout" id="playerPropsSection"> <button class="btSimple playerProps" id="btCreatePlayerPropsMarket" onclick="createMarket(\'playerProps\')">4 selections</button><div class="buttonLabelToRight" id="playerPropsMessage"></div> <button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket" onclick="createMarket(\'playerPropsDummy\')">15 dummy selections</button><div></div></div><hr class="hRule">Fast Markets<div class="createMarketLayout" id="fastMarketSection"> <button class="btSimple" id="btCreateFastMarket" onclick="createMarket(\'fast\')">Tennis</button><div class="buttonLabelToRight" id="tennisFastMarketMessage"></div></div></div></div><div class="accordion closed"> <button id="changeOddsAccordion" class="accHeading" onclick="initChangeOdds()">Change Odds</button><div class="accContent"> The new odds applied either to:<br> - the last selection on the slip<br> - a locked selection (to test unselected odds change)<hr class="hRule"><div> <span id="detectedOrLockedRowForChangeOdds">Detected selection:</span> <span id="lockSelectionSection" class="floatRight"> <label id="lblLockSelection" for="chkLockSelection">Lock</label> <input type="checkbox" id="chkLockSelection" onclick="lockSelection()"> </span></div><div class="labelRow" id="selectionLabelForChangeOdds"></div><div id="newOddsRow" class="newOddsLayout"> <label for="newOdds">New Odds:</label> <input class="fdNumeric" type="number" id="newOdds"> <button class="btSimple btSubmit" class="btSubmit" onclick="changeOdds()">Submit</button></div></div></div><div class="accordion closed"> <button id="addToCarouselAccordion" class="accHeading" onclick="initAddToCarousel()">Add Event to the Carousel</button><div class="accContent"><ol class="carouselList"><li id="deviceDependentCarouselMessage"></li><li>Go to Sportsbook Home</li><hr class="hRule">Detected event:<div class="labelRow" id="eventLabelForAddToCarousel"></div><hr class="hRule"><li>Click: <button class="btSimple" id="btAddToCarousel" onclick="addToCarousel()">Add to Carousel</button> <span id="addToCarouselMessage"></span></li><li>Find the event on the Carousel using its arrow buttons</li></ol></div></div><div class="accordion closed"> <button id="scoreBoardAccordion" class="accHeading" onclick="initScoreBoard()">Football Scoreboard</button><div class="accContent"> Open an event panel with scoreboard or put it\'s selection to the slip.<hr class="hRule"> Detected event:<div class="labelRow" id="eventLabelForScoreBoard"></div><hr class="hRule"><div id="scoreBoardScores" class="scoreLayout"><div id="homeScoreLabel">Home Score</div> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeScoreInputField"> <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore(\'home\')">Submit</button><div id="awayScoreLabel">Away Score</div> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayScoreInputField"> <button id="btSubmitAwayScore" class="btSubmit btSimple" onclick="submitScore(\'away\')">Submit</button></div><div id="scoreBoardDetails"><div class="scoreBoardLayout"><div id="corners" class="vertical">Corners</div><div id="substitutions" class="vertical">Substitutions</div><div id="yellowCards" class="vertical">Yellow Cards</div><div id="redCards" class="vertical">Red Cards</div><div id="penalties" class="vertical">Penalties</div> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeCorners"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeSubstitutions"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeYellowCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeRedCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homePenalties"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayCorners"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awaySubstitutions"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayYellowCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayRedCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayPenalties"></div> <button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Submit</button></div></div></div><div class="accordion closed"> <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">Stream mapping IDs</button><div class="accContent"><div class="labelRow">Detected event: <span id="eventLabelForStreamMappingHelper"></span></div><div id="eventIdRowForStreamMappingHelper" class="labelRow">EventId: <span id="eventIdForStreamMappingHelper"></span> <span> <button class="btSimple floatRight" id="btCopyEventId" onclick="copyToClipboard(\'eventId\')">Copy</button> </span></div><hr class="hRule"> Get Provider Event Ids to use in Trading Tools:<div class="streamIdsLayout"> <button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button> <button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button><div id="performResults" class="extraCondensed"></div><div id="twitchResults" class="extraCondensed"></div></div></div></div></div></div><style>#twitchResults,#performResults{margin-left:5px;margin-top:5px}.streamIdsLayout{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto}.align-right{text-align:right}.buttonLabelToRight{margin-left:8px}.scoreLayout{margin-bottom:10px;display:grid;grid-template-columns:30% 18% 15%;grid-template-rows:1fr 1fr;align-items:center}#scoreBoardDetails{border:1px solid #ccc}.scoreBoardLayout{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;grid-template-rows:auto auto auto;padding:10px;justify-items:center}.contextLayout{display:grid;grid-template-columns:auto auto 65px;grid-template-rows:1fr 1fr 1fr 1fr 1fr .8fr 1fr 1fr;align-items:center}.setEventPhaseLayout{padding-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr}.setMarketStateLayout{padding-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr}.createMarketLayout{display:grid;grid-template-columns:50% auto;align-items:center}.newOddsLayout{padding-top:10px;align-items:center;display:grid;grid-template-columns:30% 20% auto}.btSubmit{margin-left:3px;width:60px}.vertical{writing-mode:tb-rl;transform:rotate(-180deg);margin-bottom:5px}#submitScoreBoard{margin:10px}.fdNumeric{border:1px solid #444}.fdScoreBoardNumeric{width:45px}#sportsbookTool{background-color:white;color:#444;font-family:\'Arial\';width:300px;height:auto;position:absolute;border:2px solid #d3d3d3;top:0px;left:0px;z-index:5000;filter:drop-shadow(0 0 1.5rem black);font-size:12px;overflow:auto}#sportsbookToolHeader{font-weight:bold;padding:3px;padding-bottom:5px;cursor:move;z-index:5000;background-color:#2196F3;color:#fff}#sportsbookToolHeaderTitle{display:inline-block;padding-top:3px;padding-left:4px}#sportsbookToolName{font-size:14px}#sportsbookToolAuthorName{font-size:8px;line-height:30%;font-weight:normal}.btSimple{border:1px solid #444;border-radius:3px;box-shadow:0 1px #666;padding-inline:5px;margin:2px}.extraCondensed{font-stretch:extra-condensed;padding-inline:1px}.btSimple:hover{background-color:#fff}.btSimple:active{box-shadow:0 0px #666;transform:translateY(1px)}.sportsbookToolHeaderButtons{color:#fff;width:25px;height:20px}#btZoomInOut,#btMinimizeAll{background:rgb(100,100,100)}#btZoomInOut:hover,#btMinimizeAll:hover{background:rgb(30,30,30)}#btMinimizeClosed{background:rgb(100,100,200)}#btMinimizeClosed:hover{background:rgb(0,0,160)}#btClose{background:rgb(200,100,100)}#btClose:hover{background:rgb(160,0,0)}.displayInRed{color:rgb(160,0,0)}.displayInGreen{color:rgb(0,160,0)}.displayInLightGrey{color:#ccc}.hide{display:none}.show{display:block}.accHeading{border-radius:none;background-color:#eee;color:#444;cursor:pointer;padding:8px;width:100%;text-align:left;border:none;outline:none;transition:0.4s}.open .accHeading,.accHeading:hover{background-color:#ccc}.accContent{padding:10px;background-color:white;overflow:hidden}.closed .accContent{display:none}.open .accContent{display:block}.inactivated{pointer-events:none;opacity:0.4}.hRule{border-top:#ccc}.zoomOut{transform:scale(0.7)}#chkLockSelection{vertical-align:middle}.floatRight{float:right}.carouselList{padding-left:15px}.visibilityHidden{visibility:hidden}.displayInGreenGlow{text-shadow:0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #00A000, 0 0 82px #00A000, 0 0 92px #00A000, 0 0 102px #00A000, 0 0 151px #00A000}#limitedFunctionsMessage{color:rgb(160, 0, 0);font-weight:bold;float:right;font-stretch:extra-condensed}</style>';
+            '<div id="sportsbookToolHeader"> <div id="sportsbookToolHeaderTitle"> <div id="sportsbookToolName">Sportsbook Tool v<span id="sportsbookToolVersion"></span></div><div id="sportsbookToolAuthorName">by gegl01@betssongroup.com</div></div><div id="sportsbookToolHeaderButtonRow" class="floatRight"> <button id="btZoomInOut" class="sportsbookToolHeaderButtons" onclick="zoomInOut()">&#128475;</button> <button id="btMinimizeAll" class="sportsbookToolHeaderButtons" onclick="toggleAllAccordionsVisibility()">&#128469;</button> <button id="btMinimizeClosed" class="sportsbookToolHeaderButtons" onclick="toggleClosedAccordionsVisibility()">&#128469;</button> <button id="btClose" class="sportsbookToolHeaderButtons" onclick="closePopup()">&#10006;</button> </div></div><div id="sportsbookToolContent"> <div class="accordion open"> <button class="accHeading">Context<span id="limitedFunctionsMessage"></span></button> <div class="accContent"> <div class="contextLayout"> <div>Device Type:</div><div class="contextValue" id="deviceType"></div><div></div><div>Environment:</div><div class="contextValue" id="environment"></div><button class="btSimple extraCondensed noB2B" id="btSwitchToEnv" onclick="switchToEnv()"></button> <div>Brand:</div><div class="contextValue" id="brandName"></div><div></div><div>Browser:</div><div class="contextValue" id="browserVersion"></div><button class="btSimple" id="btBrowserVersion" onclick="copyToClipboard(\'browserVersion\')">Copy</button> <div>App Version:</div><div class="contextValue" id="obgVersion"></div><button class="btSimple" id="btObgVersion" onclick="copyToClipboard(\'obgVersion\')">Copy</button> <div> <hr class="hRule"> </div><div> <hr class="hRule"> </div><div> <hr class="hRule"> </div><div>Jira QA Table</div><div class="displayInLightGrey contextValue">from the above data</div><button class="btSimple" id="btCreateJiraTable" onclick="copyToClipboard(\'jiraTemplate\')">Copy</button> <div class="noB2B">Deep Link</div><div class="displayInLightGrey contextValue noB2B">of the actual page & slip</div><button class="btSimple noB2B" id="btCreateDeepLink" onclick="copyToClipboard(\'deepLink\')">Copy</button> </div></div></div><div class="accordion closed"> <button id="setEventPhaseAccordion" class="accHeading" onclick="initSetEventPhase()">Set Event Phase</button> <div class="accContent"> <div class="detectedEntitySection"> <span id="detectedOrLockedRowForSetEventPhase">Detected event:</span> <button class="infoButton" onclick="toggleInfo(\'setEventPhaseInfo\')">&#128712;</button> <span class="labelRow" id="eventLabelForSetEventPhase"></span> <span id="lockEventSectionForSetEventPhase" class="lockSection"> <label class="verticalAlignMiddle" for="chkLockEventForSetEventPhase">Lock</label> <input type="checkbox" id="chkLockEventForSetEventPhase" class="verticalAlignMiddle" onclick="lockEvent(\'SetEventPhase\')"> </span> </div><div id="setEventPhaseLayout"> <button id="btSetsetEventPhaseLive" class="btSimple" onclick="setEventPhase(\'live\')">Live</button> <button id="btSetsetEventPhasePrematch" class="btSimple" onclick="setEventPhase(\'prematch\')">Prematch</button> <button id="btSetsetEventPhaseOver" class="btSimple" onclick="setEventPhase(\'over\')">Over</button> </div><div id="setEventPhaseInfo" class="hide"> <hr class="hRule"> <span class="infoSymbol">&#128712;</span>Event detection order: <ol class="infoList"> <li>Open event panel</li><li>Last selection from betslip</li></ol> </div></div></div><div class="accordion closed"> <button id="setMarketStateAccordion" class="accHeading" onclick="initSetMarketState()">Set Market State</button> <div class="accContent"> <div class="detectedEntitySection"> <span id="detectedOrLockedRowForSetMarketState">Detected market:</span> <button class="infoButton" onclick="toggleInfo(\'setMarketStateInfo\')">&#128712;</button> <span class="labelRow" id="marketLabelForSetMarketState"></span> <span id="lockMarketSection" class="lockSection"> <label class="verticalAlignMiddle" for="chkLockMarket">Lock</label> <input type="checkbox" id="chkLockMarket" class="verticalAlignMiddle" onclick="lockMarket()"> </span> </div><div class="setMarketStateLayout"> <button class="btSimple" id="btSetMarketStateSuspended" onclick="setMarketState(\'suspended\')">Suspd.</button> <button class="btSimple" id="btSetMarketStateOpen" onclick="setMarketState(\'open\')">Open</button> <button class="btSimple" id="btSetMarketStateVoid" onclick="setMarketState(\'void\')">Void</button> <button class="btSimple" id="btSetMarketStateSettled" onclick="setMarketState(\'settled\')">Settled</button> <button class="btSimple" id="btSetMarketStateHold" onclick="setMarketState(\'hold\')">Hold</button> </div><div id="setMarketStateInfo" class="hide"> <hr class="hRule"> <span class="infoSymbol">&#128712;</span>Market detection: parent market of the last selection from betslip. </div></div></div><div class="accordion closed"> <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Market</button> <div class="accContent"> <div class="detectedEntitySection"> <span id="detectedOrLockedRowForCreateMarket">Detected event:</span> <button class="infoButton" onclick="toggleInfo(\'createMarketInfo\')">&#128712;</button> <span class="labelRow" id="eventLabelForCreateMarket"></span> <span></span> </div><hr class="hRule"> Player Props <div class="createMarketLayout"> <button class="btSimple playerProps" id="btCreatePlayerPropsMarket" onclick="createMarket(\'playerProps\')">4 selections</button> <div class="buttonLabelToRight" id="playerPropsMessage"></div><button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket" onclick="createMarket(\'playerPropsDummy\')">15 dummy selections</button> <div></div></div><hr class="hRule">Fast Markets <div class="createMarketLayout"> <button class="btSimple" id="btCreateFastMarket" onclick="createMarket(\'fast\')">Tennis</button> <div class="buttonLabelToRight" id="tennisFastMarketMessage"></div></div><div id="createMarketInfo" class="hide"> <hr class="hRule"> <span class="infoSymbol">&#128712;</span>Event detection: Open event panel </div></div></div><div class="accordion closed"> <button id="changeOddsAccordion" class="accHeading" onclick="initChangeOdds()">Change Odds</button> <div class="accContent"> <div class="detectedEntitySection"> <span id="detectedOrLockedRowForChangeOdds">Detected selection:</span> <button class="infoButton" onclick="toggleInfo(\'changeOddsInfo\')">&#128712;</button> <span class="labelRow" id="selectionLabelForChangeOdds"></span> <span id="lockSelectionSection" class="lockSection"> <label class="verticalAlignMiddle" for="chkLockSelection">Lock</label> <input type="checkbox" id="chkLockSelection" class="verticalAlignMiddle" onclick="lockSelection()"> </span> </div><div id="newOddsRow" class="newOddsLayout"> <label for="newOdds">New Odds:</label> <input class="fdNumeric" type="number" id="newOdds"> <button class="btSimple btSubmit" onclick="changeOdds()">Submit</button> </div><div id="changeOddsInfo" class="hide"> <hr class="hRule"> <span class="infoSymbol">&#128712;</span>Selection detection: Last selection from betslip<!-- <ol class="infoList"> <li>Locked selection (to test unselected odds change)</li><li>Last selection from betslip</li></ol> --> </div></div></div><div class="accordion closed"> <button id="addToCarouselAccordion" class="accHeading" onclick="initAddToCarousel()">Add Event to the Carousel</button> <div class="accContent"> <div class="detectedEntitySection"> <span id="detectedOrLockedRowForAddToCarousel">Detected event:</span> <button class="infoButton" onclick="toggleInfo(\'addToCarouselInfo\')">&#128712;</button> <span class="labelRow" id="eventLabelForAddToCarousel"></span> <span id="lockEventSectionForAddToCarousel" class="lockSection"> <label class="verticalAlignMiddle" for="chkLockEventForAddToCarousel">Lock</label> <input type="checkbox" id="chkLockEventForAddToCarousel" class="verticalAlignMiddle" onclick="lockEvent(\'AddToCarousel\')"> </span> </div><div id="notSportsbookHomePageMessage" class="displayInRed hide"> <hr class="hRule">Current page is not Sportsbook Home </div><button class="btSimple" id="btAddToCarousel" onclick="addToCarousel()">Add to Carousel</button> <span id="addToCarouselMessage"></span> <div id="addToCarouselInfo" class="hide"> <hr class="hRule"> <span class="infoSymbol">&#128712;</span>Event detection order: <ol class="infoList"> <li>Open event panel</li><li>Last selection from betslip</li></ol> <hr class="hRule"> <span class="infoSymbol">&#128712;</span>Steps to add event to carousel: <ol class="infoList"> <li>Be on Sportsbook Home page</li><li>Click on the above "Add to Carousel" button</li><li>If not instantly visible on the Carousel, find the event by swiping the pages</li></ol> </div></div></div><div class="accordion closed"> <button id="scoreBoardAccordion" class="accHeading" onclick="initScoreBoard()">Football Scoreboard</button> <div class="accContent"><!-- <div>Detected event:<button class="infoButton" onclick="toggleInfo(\'scoreBoardInfo\')">&#128712;</button></div><div class="labelRow" id="eventLabelForScoreBoard"></div>--> <div class="detectedEntitySection"> <span id="detectedOrLockedRowForScoreBoard">Detected event:</span> <button class="infoButton" onclick="toggleInfo(\'scoreBoardInfo\')">&#128712;</button> <span class="labelRow" id="eventLabelForScoreBoard"></span> <span id="lockEventSectionForScoreBoard" class="lockSection"> <label class="verticalAlignMiddle" for="chkLockEventForScoreBoard">Lock</label> <input type="checkbox" id="chkLockEventForScoreBoard" class="verticalAlignMiddle" onclick="lockEvent(\'ScoreBoard\')"> </span> </div><div id="notFootballScoreBoardMessage" class="hide displayInRed"> <hr class="hRule">Not having Football Scoreboard </div><hr class="hRule"> <div id="scoreBoardScores" class="scoreLayout"> <div id="homeScoreLabel">Home Score</div><input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeScoreInputField"> <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore(\'home\')">Submit</button> <div id="awayScoreLabel">Away Score</div><input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayScoreInputField"> <button id="btSubmitAwayScore" class="btSubmit btSimple" onclick="submitScore(\'away\')">Submit</button> </div><div id="scoreBoardDetails"> <div class="scoreBoardLayout"> <div id="corners" class="vertical">Corners</div><div id="substitutions" class="vertical">Substitutions</div><div id="yellowCards" class="vertical">Yellow Cards</div><div id="redCards" class="vertical">Red Cards</div><div id="penalties" class="vertical">Penalties</div><input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeCorners"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeSubstitutions"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeYellowCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeRedCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homePenalties"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayCorners"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awaySubstitutions"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayYellowCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayRedCards"> <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayPenalties"> </div><button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Submit</button> </div><div id="scoreBoardInfo" class="hide"> <span class="infoSymbol">&#128712;</span>Event detection order (with Football Scoreboard): <ol class="infoList"> <li>Open event panel</li><li>Last selection from betslip</li></ol> </div></div></div><div id="streamMappingHelper" class="accordion closed"> <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">IDs for stream mapping (probably YAGNI)</button> <div class="accContent"> <div class="labelRow">Detected event: <span id="eventLabelForStreamMappingHelper"></span> </div><div id="eventIdRowForStreamMappingHelper" class="labelRow">EventId: <span id="eventIdForStreamMappingHelper"></span> <span> <button class="btSimple floatRight" id="btCopyEventId" onclick="copyToClipboard(\'eventId\')">Copy</button> </span> </div><hr class="hRule"> Get LIVE Provider Event Ids for mapping: <div class="streamIdsLayout"> <button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button> <button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button> <div id="twitchResults" class="extraCondensed"></div><div id="performResults" class="extraCondensed"></div></div></div></div></div><style>#twitchResults, #performResults{margin-left: 5px; margin-top: 5px;}.infoButton{font-size: 20px; float: right; padding: 0; border: none; background: none; cursor: pointer; justify-self: end;}.infoSymbol{font-size: 16px; margin-right: 5px;}.lockSection{justify-self: end; align-self: end; margin-right: 2px;}.infoList{margin: 3px; padding-inline-start: 25px;}.detectedEntitySection{display: grid; grid-template-columns: auto 60px; grid-template-rows: auto auto;}.streamIdsLayout{margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto;}.align-right{text-align: right}.buttonLabelToRight{margin-left: 8px;}.scoreLayout{margin-bottom: 10px; display: grid; grid-template-columns: 30% 18% 15%; grid-template-rows: 1fr 1fr; align-items: center;}#scoreBoardDetails{border: 1px solid #ccc; margin-bottom: 15px;}.scoreBoardLayout{display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; grid-template-rows: auto auto auto; padding: 10px; justify-items: center}.contextLayout{display: grid; grid-template-columns: auto auto 65px; grid-template-rows: 1fr 1fr 1fr 1fr 1fr .8fr 1fr 1fr; align-items: center;}#setEventPhaseLayout{padding-top: 10px; display: grid; grid-template-columns: 1fr 1fr 1fr;}.setMarketStateLayout{padding-top: 10px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr;}.createMarketLayout{display: grid; grid-template-columns: 50% auto; align-items: center;}.newOddsLayout{padding-top: 10px; align-items: center; display: grid; grid-template-columns: 30% 20% auto;}.btSubmit{margin-left: 3px; width: 60px}.vertical{writing-mode: tb-rl; transform: rotate(-180deg); margin-bottom: 5px}#submitScoreBoard{margin: 10px}.fdNumeric{border: 1px solid #444}.fdScoreBoardNumeric{width: 45px;}#sportsbookTool{background-color: white; color: #444; font-family: \'Arial\'; width: 300px; height: auto; position: absolute; border: 2px solid #d3d3d3; top: 0px; left: 0px; z-index: 5000; filter: drop-shadow(0 0 1.5rem black); font-size: 12px; overflow: auto}#sportsbookToolHeader{font-weight: bold; padding: 3px; padding-bottom: 5px; cursor: move; z-index: 5000; background-color: #2196F3; color: #fff;}#sportsbookToolHeaderTitle{display: inline-block; padding-top: 3px; padding-left: 4px;}#sportsbookToolName{font-size: 14px;}#sportsbookToolAuthorName{font-size: 8px; line-height: 30%; font-weight: normal;}.btSimple{border: 1px solid #444; border-radius: 3px; box-shadow: 0 1px #666; padding-inline: 5px; margin: 2px;}.extraCondensed{font-stretch: extra-condensed; padding-inline: 1px;}.btSimple:hover{background-color: #fff}.btSimple:active{box-shadow: 0 0px #666; transform: translateY(1px);}.sportsbookToolHeaderButtons{color: #fff; width: 25px; height: 20px;}#btAddToCarousel{margin-top: 10px; margin-bottom: 10px; margin-left: 0px;}#btZoomInOut, #btMinimizeAll{background: rgb(100, 100, 100)}#btZoomInOut:hover, #btMinimizeAll:hover{background: rgb(30, 30, 30)}#btMinimizeClosed{background: rgb(100, 100, 200)}#btMinimizeClosed:hover{background: rgb(0, 0, 160)}#btClose{background: rgb(200, 100, 100)}#btClose:hover{background: rgb(160, 0, 0)}.displayInRed{color: rgb(160, 0, 0)}.displayInGreen{color: rgb(0, 160, 0)}.displayInLightGrey{color: #ccc;}.hide{display: none}.show{display: block}.accHeading{border-radius: none; background-color: #eee; color: #444; cursor: pointer; padding: 8px; width: 100%; text-align: left; border: none; outline: none; transition: 0.4s}.open .accHeading, .accHeading:hover{background-color: #ccc}.accContent{padding: 10px; background-color: white; overflow: hidden}.closed .accContent{display: none}.open .accContent{display: block}.inactivated{pointer-events: none; opacity: 0.4;}.hRule{border-top: #ccc;}.zoomOut{transform: scale(0.7);}.verticalAlignMiddle{vertical-align: middle;}.floatRight{float: right;}.carouselList{padding-left: 15px;}.visibilityHidden{visibility: hidden;}.displayInGreenGlow{text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #00A000, 0 0 82px #00A000, 0 0 92px #00A000, 0 0 102px #00A000, 0 0 151px #00A000;}#limitedFunctionsMessage{color: rgb(160, 0, 0); font-weight: bold; float: right; font-stretch: extra-condensed;}</style>';
 
         sportsbookTool.innerHTML = htmlContent;
+    }
+
+    function isItBetssonSite() {
+        try {
+            obgNavigationSupported;
+        } catch {
+            try {
+                obgClientEnvironmentConfig;
+            } catch {
+                try {
+                    obgGlobalAppContext;
+                } catch {
+                    alert("You are not on a Betsson website.\nIf you think you are, please contact: gergely.glosz@betssongroup.com")
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function removeExistingSportsbookTool() {
+        var sbt = document.getElementById("sportsbookTool");
+        if (sbt !== null) {
+            sbt.remove();
+        }
+    }
+
+    function checkEnabledfeatures() {
+        var sportsbookToolScript = document.getElementById("sportsbookToolScript");
+        if (sportsbookToolScript == undefined) {
+            return;
+        }
+        var sportsbookToolFeatures = sportsbookToolScript.getAttribute("data-features");
+        if (sportsbookToolFeatures === null) {
+            document.getElementById("streamMappingHelper").remove();
+        }
     }
 
     function isB2B() {
@@ -160,25 +185,22 @@
     function initHeader() {
         var btMinimizeClosed = document.getElementById("btMinimizeClosed");
         var btMinimizeAll = document.getElementById("btMinimizeAll");
-        var btZoomInOut = document.getElementById("btZoomInOut");
 
         if (DEVICE_TYPE === "Desktop") {
-            btMinimizeAll.classList.add("hide");
-            btZoomInOut.classList.add("hide");
+            hide(btMinimizeAll);
         }
         if (ENVIRONMENT === "ALPHA" || ENVIRONMENT === "PROD" || !IS_OBGSTATE_EXPOSED) {
-            btMinimizeClosed.classList.add("hide");
-            btMinimizeAll.classList.add("hide");
+            hide(btMinimizeClosed, btMinimizeAll);
         }
 
-        document.getElementById("sportsbookToolVersion").innerText = OBG_TOOL_VERSION;
+        document.getElementById("sportsbookToolVersion").innerText = SB_TOOL_VERSION;
 
     }
 
     function initAccordions() {
 
-        for (i = 0; i < accHeadCollection.length; i++) {
-            accHeadCollection[i].addEventListener("click", toggleAccordion, false);
+        for (var accHead of accHeadCollection) {
+            accHead.addEventListener("click", toggleAccordion, false);
         }
 
         var limitationCause;
@@ -198,9 +220,7 @@
 
             var accContents = document.getElementsByClassName("accContent");
             for (var i = 1; i < accContents.length; i++) {
-                accHead = accHeadCollection[i];
-                accHeadClassList = accHead.classList;
-                accHeadClassList.add("hide");
+                hide(accHeadCollection[i]);
             }
         }
 
@@ -256,6 +276,15 @@
         return newEnv;
     }
 
+    window.toggleInfo = (infoDiv) => {
+        var info = document.getElementById(infoDiv);
+        if (info.classList.contains("hide")) {
+            show(info);
+        } else {
+            hide(info);
+        };
+    }
+
     window.switchToEnv = () => {
         var deepLink = new URL(getDeepLink());
         switch (getNewEnvToSwitchTo()) {
@@ -295,8 +324,9 @@
 
         for (i = 0; i < accHeadCollection.length; i++) {
             accHead = accHeadCollection[i];
-            accHeadClassList = accHead.classList;
-            (accHead.parentNode.classList.contains("closed") && !accHeadClassList.contains("hide")) ? accHeadClassList.add("hide"): accHeadClassList.remove("hide");
+            accHead.parentNode.classList.contains("closed") && !accHead.classList.contains("hide") ?
+                hide(accHead) :
+                show(accHead);
         }
     }
 
@@ -310,8 +340,10 @@
             allAccordionsVisible = true;
             bt.innerHTML = "&#128469;";
         }
-        var sportsbookToolContentClasslist = document.getElementById("sportsbookToolContent").classList;
-        sportsbookToolContentClasslist.contains("hide") ? sportsbookToolContentClasslist.remove("hide") : sportsbookToolContentClasslist.add("hide");
+        var sportsbookToolContent = document.getElementById("sportsbookToolContent");
+        sportsbookToolContent.classList.contains("hide") ?
+            show(sportsbookToolContent) :
+            hide(sportsbookToolContent);
     }
 
     window.closePopup = () => {
@@ -353,6 +385,8 @@
             box.addEventListener("touchmove", function(e) {
                 // grab the location of touch
                 var touchLocation = e.targetTouches[0];
+                e.stopPropagation();
+                e.preventDefault();
 
                 // assign box new coordinates based on the touch.
                 box.style.left = touchLocation.pageX - diffX + 'px';
@@ -447,9 +481,7 @@
 
         var selections = Object.values(betSlipReducer.selections);
         if (selections === null || selections.length === 0) {
-            console.log("DL: " + deepLink);
             return deepLink;
-
         }
 
         var numberOfSelections = selections.length;
@@ -472,7 +504,6 @@
         function appendParam(name, value) {
             if (value !== undefined) {
                 deepLink.searchParams.append(name, String(value));
-                console.log(deepLink);
             }
         }
     }
@@ -509,48 +540,166 @@
         if (newListener === null) return;
         document.body.addEventListener("click", newListener);
         BodyEventListeners.push(newListener);
-
     }
 
-    window.initSetEventPhase = () => {
+    window.initSetEventPhase = (scope) => {
         var labelRow = document.getElementById("eventLabelForSetEventPhase");
-        var eventPhaseButtons = document.getElementsByClassName("setEventPhaseLayout")[0];
+        var eventPhaseButtons = document.getElementsByClassName("btSetEventPhase");
+        var lockEventSection = document.getElementById("lockEventSectionForSetEventPhase");
 
-        replaceBodyEventListenersWith(listenerForSetEventPhase);
+        scope === "buttonsOnly" ?
+            replaceBodyEventListenersWith(listenerForSetEventPhaseButtonsOnly) :
+            replaceBodyEventListenersWith(listenerForSetEventPhase);
+        // replaceBodyEventListenersWith(listenerForSetEventPhase);
 
         function listenerForSetEventPhase() {
             eventLabel = getDetectedEventLabel();
             if (eventLabel === null) {
                 detectionResultText = NOT_FOUND;
+                if (lockedEventId === undefined) {
+                    hide(lockEventSection);
+                }
                 displayInRed(labelRow);
-                inactivate(eventPhaseButtons);
+                for (var button of eventPhaseButtons) {
+                    inactivate(button);
+                }
             } else {
                 detectionResultText = eventLabel;
                 displayInGreen(labelRow);
-                activate(eventPhaseButtons);
-
+                show(lockEventSection);
+                listenerForSetEventPhaseButtonsOnly();
+                // var eventPhase = obgState.sportsbook.event.events[eventId].phase;
+                // for (var button of eventPhaseButtons) {
+                //     if (eventPhase === button.id.replace("btSetEventPhase", "")) {
+                //         inactivate(button);
+                //     } else {
+                //         activate(button);
+                //     }
+                // }
             }
             labelRow.innerText = detectionResultText;
         }
+
+        function listenerForSetEventPhaseButtonsOnly() {
+            var eventPhase = obgState.sportsbook.event.events[eventId].phase;
+            for (var button of eventPhaseButtons) {
+                if (eventPhase === button.id.replace("btSetEventPhase", "")) {
+                    inactivate(button);
+                } else {
+                    activate(button);
+                }
+            }
+        }
     }
 
-    window.initSetMarketState = () => {
-        var marketStateButtons = document.getElementsByClassName("setMarketStateLayout")[0];
-        var labelRow = document.getElementById("marketLabelForSetMarketState");
+    function inactivateAllAccordions() {
+        for (var accHead of accHeadCollection) {
+            inactivate(accHead);
+        }
+    }
 
-        replaceBodyEventListenersWith(listenerForSetMarketState);
+    function activateAllAccordions() {
+        for (var accHead of accHeadCollection) {
+            activate(accHead);
+        }
+    }
+
+    window.lockEvent = (parentAccordion) => {
+        var checkBox = document.getElementById("chkLockEventFor" + parentAccordion);
+        var detectedOrLockedRow = document.getElementById("detectedOrLockedRowFor" + parentAccordion);
+        var labelRow = document.getElementById("eventLabelFor" + parentAccordion);
+
+        if (checkBox.checked) {
+            lockedEventId = eventId;
+            detectedOrLockedRow.innerHTML = "&#128274; Locked event:";
+            labelRow.classList.add("displayInGreenGlow");
+            replaceBodyEventListenersWith(null);
+            switch (parentAccordion) {
+                case "AddToCarousel":
+                    initAddToCarousel("currentPageCheckOnly");
+                    break;
+                case "SetEventPhase":
+                    initSetEventPhase("buttonsOnly");
+                    break;
+            }
+            inactivateAllAccordions();
+        } else {
+            lockedEventId = undefined;
+            detectedOrLockedRow.innerText = "Detected event:";
+            labelRow.classList.remove("displayInGreenGlow");
+            switch (parentAccordion) {
+                case "SetEventPhase":
+                    window.initSetEventPhase();
+                    break;
+                case "AddToCarousel":
+                    window.initAddToCarousel();
+                    break;
+                case "ScoreBoard":
+                    window.initScoreBoard();
+                    break;
+            }
+            activateAllAccordions();
+        }
+    }
+
+
+    window.initSetMarketState = (scope) => {
+        var marketStateButtons = document.getElementsByClassName("btSetMarketState");
+        var labelRow = document.getElementById("marketLabelForSetMarketState");
+        var lockMarketSection = document.getElementById("lockMarketSection");
+
+        scope === "buttonsOnly" ?
+            replaceBodyEventListenersWith(listenerForSetMarketStateButtonsOnly) :
+            replaceBodyEventListenersWith(listenerForSetMarketState);
 
         function listenerForSetMarketState() {
             if (Object.values(getBetSlipByObgState().selections) == "") {
-                inactivate(marketStateButtons);
+                for (var button of marketStateButtons) {
+                    inactivate(button);
+                }
                 detectionResultText = NOT_FOUND;
+                if (lockedMarketId === undefined) {
+                    hide(lockMarketSection);
+                }
                 displayInRed(labelRow);
             } else {
-                activate(marketStateButtons);
                 detectionResultText = getEventLabel(getLastEventIdFromBetslip()) + " /<br><b>" + getMarketLabel(getLastMarketIdFromBetslip()) + "</b>";
                 displayInGreen(labelRow);
+                show(lockMarketSection);
+                listenerForSetMarketStateButtonsOnly();
             }
             labelRow.innerHTML = detectionResultText;
+        }
+
+        function listenerForSetMarketStateButtonsOnly() {
+            var marketStatus = obgState.sportsbook.eventMarket.markets[marketId].status;
+            for (var button of marketStateButtons) {
+                if (marketStatus === button.id.replace("btSetMarketState", "")) {
+                    inactivate(button);
+                } else {
+                    activate(button);
+                }
+            }
+        }
+    }
+
+    window.lockMarket = () => {
+        var checkBox = document.getElementById("chkLockMarket");
+        var detectedOrLockedRow = document.getElementById("detectedOrLockedRowForSetMarketState");
+        var labelRow = document.getElementById("marketLabelForSetMarketState");
+        if (checkBox.checked) {
+            lockedMarketId = marketId;
+            detectedOrLockedRow.innerHTML = "&#128274; Locked market:";
+            labelRow.classList.add("displayInGreenGlow");
+            replaceBodyEventListenersWith(null);
+            initSetMarketState("buttonsOnly");
+            inactivateAllAccordions();
+        } else {
+            lockedMarketId = undefined;
+            detectedOrLockedRow.innerText = "Detected market:";
+            labelRow.classList.remove("displayInGreenGlow");
+            activateAllAccordions();
+            initSetMarketState();
         }
     }
 
@@ -572,40 +721,46 @@
     }
 
     window.initCreateMarket = () => {
-        var playerPropsSection = document.getElementById("playerPropsSection");
-        var fastMarketSection = document.getElementById("fastMarketSection");
         var labelRow = document.getElementById("eventLabelForCreateMarket");
         var playerPropsMessage = document.getElementById("playerPropsMessage");
         var tennisFastMarketMessage = document.getElementById("tennisFastMarketMessage");
+        var btCreateFastMarket = document.getElementById("btCreateFastMarket");
+        var btCreatePlayerPropsMarket = document.getElementById("btCreatePlayerPropsMarket");
+        var btCreatePlayerPropsDummyMarket = document.getElementById("btCreatePlayerPropsDummyMarket");
 
         replaceBodyEventListenersWith(listenerForCreateMarket);
 
         function listenerForCreateMarket() {
+
             eventId = getUrlParam("eventId");
             if (eventId === undefined) {
-                inactivate(playerPropsSection, fastMarketSection);
+                inactivate(btCreatePlayerPropsMarket, btCreatePlayerPropsDummyMarket, btCreateFastMarket);
                 displayInRed(labelRow);
                 detectionResultText = NOT_FOUND;
                 playerPropsMessage.innerText = null;
                 tennisFastMarketMessage.innerText = null;
+
             } else {
                 detectionResultText = getEventLabel(eventId);
                 displayInGreen(labelRow);
                 playerPropsMessage.innerText = null;
 
+
                 if (getCategoryId(eventId) !== "11") {
+                    displayInRed(tennisFastMarketMessage);
                     tennisFastMarketMessage.innerText = "Not a tennis event"
-                    inactivate(fastMarketSection);
+                    inactivate(btCreateFastMarket);
                 } else {
-                    activate(fastMarketSection);
+                    activate(btCreateFastMarket);
                     tennisFastMarketMessage.innerText = null;
                 }
 
                 if (getEventWidgetActiveTabId(eventId) === "all") {
-                    activate(playerPropsSection);
+                    activate(btCreatePlayerPropsMarket, btCreatePlayerPropsDummyMarket);
                 } else {
+                    displayInRed(playerPropsMessage);
                     playerPropsMessage.innerText = "\"All\" tab not selected";
-                    inactivate(playerPropsSection);
+                    inactivate(btCreatePlayerPropsMarket, btCreatePlayerPropsDummyMarket);
                 }
             }
             labelRow.innerText = detectionResultText;
@@ -643,28 +798,34 @@
                 displayInRed(labelRow);
                 detectionResultText = NOT_FOUND;
                 if (lockedSelectionId === undefined) {
-                    inactivate(lockSelectionSection, newOddsRow);
+                    hide(lockSelectionSection);
+                    inactivate(newOddsRow);
                 }
             } else {
                 displayInGreen(labelRow);
-                activate(lockSelectionSection, newOddsRow);
+                activate(newOddsRow);
+                show(lockSelectionSection);
                 detectionResultText = eventLabel + " / <br>" + marketLabel + " : <br><b>" + selectionLabel + "</b> (init. odds: " + odds.toFixed(2) + ")</b>";
             }
             labelRow.innerHTML = detectionResultText;
         }
     }
 
-    var lockedSelectionId;
-    var savedInitialOdds;
-    var initialOdds;
     window.changeOdds = () => {
         var newOdds = document.getElementById("newOdds").value;
-        if (lockedSelectionId === undefined || savedInitialOdds === undefined) {
-            selectionId = getLastSelectionIdFromBetslip();
-            initialOdds = getLastInitialOddsFromBetslip();
-        } else {
+        // if (lockedSelectionId === undefined || savedInitialOdds === undefined) {
+        //     selectionId = getLastSelectionIdFromBetslip();
+        //     initialOdds = getLastInitialOddsFromBetslip();
+        // } else {
+        //     selectionId = lockedSelectionId;
+        //     initialOdds = savedInitialOdds;
+        // }
+
+        if (lockedSelectionId !== undefined) {
             selectionId = lockedSelectionId;
-            initialOdds = savedInitialOdds;
+        }
+        if (lockedInitialOdds !== undefined) {
+            initialOdds = lockedInitialOdds;
         }
         if (newOdds === "" || newOdds === null) {
             newOdds = initialOdds;
@@ -682,17 +843,18 @@
 
         if (checkBox.checked) {
             lockedSelectionId = getLastSelectionIdFromBetslip();
-            savedInitialOdds = getLastInitialOddsFromBetslip();
+            lockedInitialOdds = getLastInitialOddsFromBetslip();
             detectedOrLockedRow.innerHTML = "&#128274; Locked selection:";
             labelRow.classList.add("displayInGreenGlow");
             replaceBodyEventListenersWith(null);
-
+            inactivateAllAccordions();
         } else {
             lockedSelectionId = undefined;
-            savedInitialOdds = undefined;
+            lockedInitialOdds = undefined;
             detectedOrLockedRow.innerText = "Detected selection:";
             labelRow.classList.remove("displayInGreenGlow");
             window.initChangeOdds();
+            activateAllAccordions();
         }
     }
 
@@ -725,40 +887,50 @@
         } else return obgState.sportsbook.selection.selections[selectionId].label;
     }
 
-    window.initAddToCarousel = () => {
+    window.initAddToCarousel = (scope) => {
         var labelRow = document.getElementById("eventLabelForAddToCarousel");
         var addToCarouselButton = document.getElementById("btAddToCarousel");
-        var deviceDependentCarouselMessage = document.getElementById("deviceDependentCarouselMessage");
+        var notSportsbookHomePageMessage = document.getElementById("notSportsbookHomePageMessage");
+        var lockEventSection = document.getElementById("lockEventSectionForAddToCarousel");
 
-        replaceBodyEventListenersWith(listenerForAddToCarousel);
+        scope === "currentPageCheckOnly" ?
+            replaceBodyEventListenersWith(listenerForAddToCarouselCurrentPageCheckOnly) : replaceBodyEventListenersWith(listenerForAddToCarousel);
+
         var currentPage;
 
         function listenerForAddToCarousel() {
-            if (DEVICE_TYPE === "Mobile") {
-                deviceDependentCarouselMessage.innerText = "MOBILE: Add a selection to the betslip"
-                detectionResultText = getEventLabel(getLastEventIdFromBetslip());
-            } else {
-                deviceDependentCarouselMessage.innerText = "DESKOP: Open an event panel or add a selection to the betslip"
-                detectionResultText = getDetectedEventLabel();
-            }
+            detectionResultText = getDetectedEventLabel();
             if (detectionResultText === null) {
                 labelRow.innerText = NOT_FOUND;
+                if (lockedEventId === undefined) {
+                    hide(lockEventSection);
+                }
                 displayInRed(labelRow);
                 inactivate(addToCarouselButton);
+                hide(notSportsbookHomePageMessage);
             } else {
-                if (IS_B2B) {
-                    obgState.sportsbook.carousel.isBusy ? currentPage = undefined : currentPage = "sportsbook";
-                } else currentPage = obgState.page.current.documentKey;
-                if (currentPage === "sportsbook") {
-                    displayInGreen(labelRow);
-                    activate(addToCarouselButton);
-                } else {
-                    displayInRed(labelRow);
-                    inactivate(addToCarouselButton);
-                    detectionResultText += "\nCurrent page is not Sportsbook Home.";
-                }
-                labelRow.innerText = detectionResultText;
+                listenerForAddToCarouselCurrentPageCheckOnly();
             }
+        }
+
+        function listenerForAddToCarouselCurrentPageCheckOnly() {
+            show(lockEventSection);
+            displayInGreen(labelRow);
+            if (IS_B2B) {
+                obgState.sportsbook.carousel.isBusy ?
+                    currentPage = undefined :
+                    currentPage = "sportsbook";
+            } else {
+                currentPage = obgState.page.current.documentKey;
+            }
+            if (currentPage === "sportsbook") {
+                activate(addToCarouselButton);
+                hide(notSportsbookHomePageMessage);
+            } else {
+                inactivate(addToCarouselButton);
+                show(notSportsbookHomePageMessage);
+            }
+            labelRow.innerText = detectionResultText;
         }
     }
 
@@ -766,29 +938,37 @@
         var labelRow = document.getElementById("eventLabelForScoreBoard");
         var scoreBoardScores = document.getElementById("scoreBoardScores");
         var scoreBoardDetails = document.getElementById("scoreBoardDetails");
-        var scoreBoardObjects = Object.values(obgState.sportsbook.scoreboard);
-        var itHasScoreBoard;
+        var notFootballScoreBoardMessage = document.getElementById("notFootballScoreBoardMessage");
+        var lockEventSection = document.getElementById("lockEventSectionForScoreBoard");
+        var scoreBoardObjects;
+        var itHasFootballScoreBoard;
 
         replaceBodyEventListenersWith(listenerForScoreBoard);
 
         function listenerForScoreBoard() {
+            hide(lockEventSection);
+            scoreBoardObjects = Object.values(obgState.sportsbook.scoreboard);
             eventId = getDetectedEventId();
             detectionResultText = getDetectedEventLabel();
-            itHasScoreBoard = false;
+            itHasFootballScoreBoard = false;
             if (detectionResultText === null) {
                 detectionResultText = NOT_FOUND;
+                hide(notFootballScoreBoardMessage);
                 inactivateScoreBoard();
             } else {
-                for (i = 0; i < scoreBoardObjects.length; i++) {
-                    if (eventId == scoreBoardObjects[i].eventId) {
-                        itHasScoreBoard = true;
+                for (object of scoreBoardObjects) {
+                    if (eventId == object.eventId && getCategoryId(eventId) === "1") {
+                        itHasFootballScoreBoard = true;
+                        hide(notFootballScoreBoardMessage);
                         break;
                     }
                 }
-                if (itHasScoreBoard) {
+                if (itHasFootballScoreBoard) {
+                    hide(notFootballScoreBoardMessage);
                     activateScoreBoard();
+                    show(lockEventSection);
                 } else {
-                    detectionResultText += "\nNot having scoreboard.";
+                    show(notFootballScoreBoardMessage);
                     inactivateScoreBoard();
                 }
             }
@@ -851,7 +1031,9 @@
 
     function getDetectedEventLabel() {
         eventId = getDetectedEventId();
-        return ((eventId === undefined || eventId === null) ? null : getEventLabel(eventId));
+        return (eventId === undefined || eventId === null) ?
+            null :
+            getEventLabel(eventId);
     }
 
     function getEventLabel(eventId) {
@@ -862,18 +1044,22 @@
     }
 
     window.setEventPhase = (phase) => {
-        eventId = getDetectedEventId();
+        if (lockedEventId !== undefined) {
+            eventId = lockedEventId;
+        }
+
         switch (phase) {
-            case "prematch":
+            case "Prematch":
                 obgRt.setEventPhasePrematch(eventId);
                 break;
-            case "live":
+            case "Live":
                 obgRt.setEventPhaseLive(eventId);
                 break;
-            case "over":
+            case "Over":
                 obgRt.setEventPhaseOver(eventId);
                 break;
         }
+        obgState.sportsbook.event.events[eventId].phase = phase;
     }
 
     function displayInGreen(...elements) {
@@ -889,6 +1075,22 @@
             element.classList.remove("displayInGreen");
         }
 
+    }
+
+    function hide(...elements) {
+        for (var element of elements) {
+            if (!element.classList.contains("hide")) {
+                element.classList.add("hide");
+            }
+        }
+    }
+
+    function show(...elements) {
+        for (var element of elements) {
+            if (element.classList.contains("hide")) {
+                element.classList.remove("hide");
+            }
+        }
     }
 
     function getMarketLabel(marketId) {
@@ -914,24 +1116,27 @@
     }
 
     window.setMarketState = (state) => {
-        marketId = getLastMarketIdFromBetslip();
+        if (lockedMarketId !== undefined) {
+            marketId = lockedMarketId;
+        }
         switch (state) {
-            case "suspended":
+            case "Suspended":
                 obgRt.setMarketStateSuspended(marketId);
                 break;
-            case "open":
+            case "Open":
                 obgRt.setMarketStateOpen(marketId);
                 break;
-            case "void":
+            case "Void":
                 obgRt.setMarketStateVoid(marketId);
                 break;
-            case "settled":
+            case "Settled":
                 obgRt.setMarketStateSettled(marketId);
                 break;
-            case "hold":
+            case "Hold":
                 obgRt.setMarketStateHold(marketId);
                 break;
         }
+        obgState.sportsbook.eventMarket.markets[marketId].status = state;
     }
 
     window.createMarket = (marketType) => {
@@ -1041,7 +1246,7 @@
         if (participant === "home") {
             participantId = scoreBoard.participants[0].id;
             score = document.getElementById("homeScoreInputField").value;
-            setValues(participantId, score);
+            setValues(participantId, Number(score));
         } else {
             participantId = scoreBoard.participants[1].id;
             score = document.getElementById("awayScoreInputField").value;
@@ -1050,13 +1255,15 @@
 
         function setValues(participantId, score) {
             if (score !== "") {
-                obgRt.setFootballParticipantScore(eventId, participantId, score);
+                obgRt.setFootballParticipantScore(eventId, participantId, Number(score));
             }
         }
     }
 
     window.addToCarousel = () => {
-        eventId = getDetectedEventId();
+        if (lockedEventId !== undefined) {
+            eventId = lockedEventId;
+        }
         var item = obgState.sportsbook.carousel.item;
         var addToCarouselMessage = document.getElementById("addToCarouselMessage");
 
@@ -1091,7 +1298,9 @@
     }
 
     window.submitScoreBoard = () => {
-
+        if (lockedEventId !== undefined) {
+            eventId = lockedEventId;
+        }
         var scoreBoard = obgState.sportsbook.scoreboard[eventId];
         var homeId = scoreBoard.participants[0].id;
         var awayId = scoreBoard.participants[1].id;
@@ -1108,25 +1317,24 @@
         setValues("penalties", awayId, document.getElementById("awayPenalties").value);
 
         function setValues(scoreBoardItem, participantId, value) {
-            if (value === "") {
-                return;
-            }
-            switch (scoreBoardItem) {
-                case "corners":
-                    obgRt.setFootballParticipantCorners(eventId, participantId, value);
-                    break;
-                case "substitutions":
-                    obgRt.setFootballParticipantSubstitutions(eventId, participantId, value);
-                    break;
-                case "yellowCards":
-                    obgRt.setFootballParticipantYellowCards(eventId, participantId, value);
-                    break;
-                case "redCards":
-                    obgRt.setFootballParticipantRedCards(eventId, participantId, value);
-                    break;
-                case "penalties":
-                    obgRt.setFootballParticipantPenalties(eventId, participantId, value);
-                    break;
+            if (value !== "") {
+                switch (scoreBoardItem) {
+                    case "corners":
+                        obgRt.setFootballParticipantCorners(eventId, participantId, Number(value));
+                        break;
+                    case "substitutions":
+                        obgRt.setFootballParticipantSubstitutions(eventId, participantId, Number(value));
+                        break;
+                    case "yellowCards":
+                        obgRt.setFootballParticipantYellowCards(eventId, participantId, Number(value));
+                        break;
+                    case "redCards":
+                        obgRt.setFootballParticipantRedCards(eventId, participantId, Number(value));
+                        break;
+                    case "penalties":
+                        obgRt.setFootballParticipantPenalties(eventId, participantId, Number(value));
+                        break;
+                }
             }
         }
     }
@@ -1137,16 +1345,15 @@
         displayInGreen(twitchResultSection);
 
         var url = "https://gql.twitch.tv/gql";
-        var response;
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", url, false);
+        xhr.open("POST", url, true);
 
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Client-Id", "kimne78kx3ncx6brgo4mv6wki5h1ko");
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                response = xhr.responseText;
+                processResponse(xhr.responseText);
             }
         };
         var numberOfResults = 8;
@@ -1164,19 +1371,18 @@
                 }
             }
         };
-
         xhr.send(JSON.stringify(data));
 
-        var obj = JSON.parse(response);
-        for (i = 0; i < numberOfResults; i++) {
-            var twitchId = obj.data.featuredStreams[i].stream.broadcaster.login;
-            twitchResultSection.innerHTML += twitchId + ", ";
+        function processResponse(response) {
+            var obj = JSON.parse(response);
+            var twitchId;
+            for (i = 0; i < numberOfResults; i++) {
+                twitchId = obj.data.featuredStreams[i].stream.broadcaster.login;
+                twitchResultSection.innerHTML += twitchId + ", ";
+            }
+            twitchResultSection.innerHTML = (twitchResultSection.innerHTML.slice(0, -2));
         }
-        twitchResultSection.innerHTML = (twitchResultSection.innerHTML.slice(0, -2));
     }
-
-
-
 
     window.getPerformProviderIds = () => {
         var performResultSection = document.getElementById("performResults");
@@ -1184,42 +1390,53 @@
         displayInGreen(performResultSection);
 
         var url = "https://secure.betsson.performgroup.com/streaming/eventList";
-        var response;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, false);
-        xhr.setRequestHeader("Access-Control-Allow-Origin", "https://secure.betsson.performgroup.com")
+        xhr.open("GET", url, true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                response = xhr.responseXML;
+                processResponse(xhr.responseXML);
             }
         }
+
+        xhr.onerror = function() {
+            displayInRed(performResultSection);
+            performResultSection.innerHTML = "Sorry, this requires a browser extension, such as<br><a href='https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en-US') target='_blank' rel='noopener noreferrer'><b><u>Allow CORS</u></b></a>.<br>(Maybe you can live without this feature, otherwise turn the extension off after used.)";
+        };
 
         xhr.send();
-        var events = response.getElementsByTagName("event");
-        var currentDate = new Date();
-        var currentDateInBST = currentDate.setHours(currentDate.getHours() - 1);
-        var inputDate, day, month, year;
-        var time, hour, minutes;
-        var startDate, endDate;
 
-        for (i = 0; i < events.length; i++) {
-            startDate = createDateObject("startDate", "startTime")
-            endDate = createDateObject("endDate", "endTime")
-            if (startDate < currentDateInBST && endDate > currentDateInBST) {
-                performResultSection.innerHTML += events[i].getAttribute("id") + ", ";
+        function processResponse(response) {
+            try {
+                var events = response.getElementsByTagName("event");
+            } catch {
+                displayInRed(performResultSection);
+                performResultSection.innerHTML = "Provider XML error.<br>Check if it returns an XML: <a href='https://secure.betsson.performgroup.com/streaming/eventList') target='_blank' rel='noopener noreferrer'><u>Perform Provider XML</u></a>";
             }
-        }
-        performResultSection.innerHTML = (performResultSection.innerHTML.slice(0, -2));
+            var currentDate = new Date();
+            var currentDateInBST = currentDate.setHours(currentDate.getHours() - 1);
+            var inputDate, day, month, year;
+            var time, hour, minutes;
+            var startDate, endDate;
 
-        function createDateObject(dateAttribName, timeAttribName) {
-            inputDate = events[i].getAttribute(dateAttribName);
-            day = inputDate.slice(0, 2);
-            month = inputDate.slice(3, 5) - 1; // js stores month 0-11
-            year = inputDate.slice(6, 10);
-            time = events[i].getAttribute(timeAttribName);
-            hour = time.slice(0, 2);
-            minutes = time.slice(3, 5);
-            return new Date(year, month, day, hour, minutes);
+            for (i = 0; i < events.length; i++) {
+                startDate = createDateObject("startDate", "startTime")
+                endDate = createDateObject("endDate", "endTime")
+                if (startDate < currentDateInBST && endDate > currentDateInBST) {
+                    performResultSection.innerHTML += events[i].getAttribute("id") + ", ";
+                }
+            }
+            performResultSection.innerHTML = (performResultSection.innerHTML.slice(0, -2));
+
+            function createDateObject(dateAttribName, timeAttribName) {
+                inputDate = events[i].getAttribute(dateAttribName);
+                day = inputDate.slice(0, 2);
+                month = inputDate.slice(3, 5) - 1; // js stores month 0-11
+                year = inputDate.slice(6, 10);
+                time = events[i].getAttribute(timeAttribName);
+                hour = time.slice(0, 2);
+                minutes = time.slice(3, 5);
+                return new Date(year, month, day, hour, minutes);
+            }
         }
     }
 })();

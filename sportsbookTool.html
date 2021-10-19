@@ -48,73 +48,116 @@
             </div>
         </div>
     </div>
+
+    
     <div class="accordion closed">
         <button id="setEventPhaseAccordion" class="accHeading" onclick="initSetEventPhase()">Set Event Phase</button>
         <div class="accContent">
-            Target event is from the open event widget, or last selection from the slip
-            <hr class="hRule"> Detected event:
-            <div class="labelRow" id="eventLabelForSetEventPhase"></div>
-            <div class="setEventPhaseLayout">
-                <button id="btSetsetEventPhaseLive" class="btSimple" onclick="setEventPhase('live')">Live</button>
-                <button id="btSetsetEventPhasePrematch" class="btSimple" onclick="setEventPhase('prematch')">Prematch</button>
-                <button id="btSetsetEventPhaseOver" class="btSimple" onclick="setEventPhase('over')">Over</button>
+            <div class="detectedEntitySection">
+                <span id="detectedOrLockedRowForSetEventPhase">Detected event:</span>
+                <button class="infoButton" onclick="toggleInfo('setEventPhaseInfo')">&#128712;</button>
+                <span class="labelRow" id="eventLabelForSetEventPhase"></span>
+                <span id="lockEventSectionForSetEventPhase" class="lockSection">
+                    <label class="verticalAlignMiddle" for="chkLockEventForSetEventPhase">Lock</label>
+                    <input type="checkbox" id="chkLockEventForSetEventPhase" class="verticalAlignMiddle" onclick="lockEvent('SetEventPhase')">
+                </span>
+            </div>
+            <div id="setEventPhaseLayout">
+                <button id="btSetEventPhaseLive" class="btSimple btSetEventPhase" onclick="setEventPhase('Live')">Live</button>
+                <button id="btSetEventPhasePrematch" class="btSimple btSetEventPhase" onclick="setEventPhase('Prematch')">Prematch</button>
+                <button id="btSetEventPhaseOver" class="btSimple btSetEventPhase" onclick="setEventPhase('Over')">Over</button>
+            </div>
+            <div id="setEventPhaseInfo" class="hide">
+                <hr class="hRule">
+                <span class="infoSymbol">&#128712;</span>Event detection order:
+                <ol class="infoList">
+                    <li>Open event panel</li>
+                    <li>Last selection from betslip</li>
+                </ol>
             </div>
         </div>
     </div>
+
+
     <div class="accordion closed">
         <button id="setMarketStateAccordion" class="accHeading" onclick="initSetMarketState()">Set Market State</button>
         <div class="accContent">
-            Target market is the last from the betslip.
-            <hr class="hRule">Detected Market:
-            <div id="marketLabelForSetMarketState" class="labelRow"></div>
-            <div class="setMarketStateLayout">
-                <button class="btSimple" id="btSetMarketStateSuspended" onclick="setMarketState('suspended')">Suspd.</button>
-                <button class="btSimple" id="btSetMarketStateOpen" onclick="setMarketState('open')">Open</button>
-                <button class="btSimple" id="btSetMarketStateVoid" onclick="setMarketState('void')">Void</button>
-                <button class="btSimple" id="btSetMarketStateSettled" onclick="setMarketState('settled')">Settled</button>
-                <button class="btSimple" id="btSetMarketStateHold" onclick="setMarketState('hold')">Hold</button>
+            <div class="detectedEntitySection">
+                <span id="detectedOrLockedRowForSetMarketState">Detected market:</span>
+                <button class="infoButton" onclick="toggleInfo('setMarketStateInfo')">&#128712;</button>
+                <span class="labelRow" id="marketLabelForSetMarketState"></span>
+                <span id="lockMarketSection" class="lockSection">
+                    <label class="verticalAlignMiddle" for="chkLockMarket">Lock</label>
+                    <input type="checkbox" id="chkLockMarket" class="verticalAlignMiddle" onclick="lockMarket()">
+                </span>
             </div>
-            <div id="marketStateMessage"></div>
+            <div class="setMarketStateLayout">
+                <button class="btSimple btSetMarketState" id="btSetMarketStateSuspended" onclick="setMarketState('Suspended')">Suspd.</button>
+                <button class="btSimple btSetMarketState" id="btSetMarketStateOpen" onclick="setMarketState('Open')">Open</button>
+                <button class="btSimple btSetMarketState" id="btSetMarketStateVoid" onclick="setMarketState('Void')">Void</button>
+                <button class="btSimple btSetMarketState" id="btSetMarketStateSettled" onclick="setMarketState('Settled')">Settled</button>
+                <button class="btSimple btSetMarketState" id="btSetMarketStateHold" onclick="setMarketState('Hold')">Hold</button>
+            </div>
+            <div id="setMarketStateInfo" class="hide">
+                <hr class="hRule">
+                <span class="infoSymbol">&#128712;</span>Market detection: parent market of the last selection from betslip.
+            </div>
         </div>
     </div>
+
+
     <div class="accordion closed">
         <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Market</button>
-        <div class="accContent">
-            Target event is from the open event widget.
-            <hr class="hRule"> Detected event:
-            <div class="labelRow" id="eventLabelForCreateMarket"></div>
+        <div class="accContent">            
+            <div class="detectedEntitySection">
+                <span id="detectedOrLockedRowForCreateMarket">Detected event:</span>
+                <button class="infoButton" onclick="toggleInfo('createMarketInfo')">&#128712;</button>
+                <span class="labelRow" id="eventLabelForCreateMarket"></span>
+                <span></span>
+            </div>
             <hr class="hRule"> Player Props
-            <div class="createMarketLayout" id="playerPropsSection">
+            <div class="createMarketLayout">
                 <button class="btSimple playerProps" id="btCreatePlayerPropsMarket" onclick="createMarket('playerProps')">4 selections</button>
                 <div class="buttonLabelToRight" id="playerPropsMessage"></div>
                 <button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket" onclick="createMarket('playerPropsDummy')">15 dummy selections</button>
                 <div></div>
             </div>
             <hr class="hRule">Fast Markets
-            <div class="createMarketLayout" id="fastMarketSection">
+            <div class="createMarketLayout">
                 <button class="btSimple" id="btCreateFastMarket" onclick="createMarket('fast')">Tennis</button>
                 <div class="buttonLabelToRight" id="tennisFastMarketMessage"></div>
             </div>
-
+            <div id="createMarketInfo" class="hide">
+                <hr class="hRule">
+                <span class="infoSymbol">&#128712;</span>Event detection: Open event panel
+            </div>
         </div>
     </div>
 
     <div class="accordion closed">
         <button id="changeOddsAccordion" class="accHeading" onclick="initChangeOdds()">Change Odds</button>
-        <div class="accContent"> The new odds applied either to:<br> - the last selection on the slip<br> - a locked selection (to test unselected odds change)
-            <hr class="hRule">
-            <div>
+        <div class="accContent">
+            <div class="detectedEntitySection">
                 <span id="detectedOrLockedRowForChangeOdds">Detected selection:</span>
-                <span id="lockSelectionSection" class="floatRight">
-                    <label id="lblLockSelection" for="chkLockSelection">Lock</label>
-                    <input type="checkbox" id="chkLockSelection" onclick="lockSelection()">
+                <button class="infoButton" onclick="toggleInfo('changeOddsInfo')">&#128712;</button>
+                <span class="labelRow" id="selectionLabelForChangeOdds"></span>
+                <span id="lockSelectionSection" class="lockSection">
+                    <label class="verticalAlignMiddle" for="chkLockSelection">Lock</label>
+                    <input type="checkbox" id="chkLockSelection" class="verticalAlignMiddle" onclick="lockSelection()">
                 </span>
             </div>
-            <div class="labelRow" id="selectionLabelForChangeOdds"></div>
             <div id="newOddsRow" class="newOddsLayout">
                 <label for="newOdds">New Odds:</label>
                 <input class="fdNumeric" type="number" id="newOdds">
-                <button class="btSimple btSubmit" class="btSubmit" onclick="changeOdds()">Submit</button>
+                <button class="btSimple btSubmit" onclick="changeOdds()">Submit</button>
+            </div>
+            <div id="changeOddsInfo" class="hide">
+                <hr class="hRule">
+                <span class="infoSymbol">&#128712;</span>Selection detection: Last selection from betslip
+                <!-- <ol class="infoList">
+                    <li>Locked selection (to test unselected odds change)</li>
+                    <li>Last selection from betslip</li>
+                </ol> -->
             </div>
         </div>
     </div>
@@ -122,25 +165,64 @@
     <div class="accordion closed">
         <button id="addToCarouselAccordion" class="accHeading" onclick="initAddToCarousel()">Add Event to the Carousel</button>
         <div class="accContent">
-            <ol class="carouselList">
-                <li id="deviceDependentCarouselMessage"></li>
-                <li>Go to Sportsbook Home</li>
-                <hr class="hRule">Detected event:
-                <div class="labelRow" id="eventLabelForAddToCarousel"></div>
+            
+            <!-- <div>Detected event:<button class="infoButton" onclick="toggleInfo('addToCarouselInfo')">&#128712;</button></div> -->
+            <div class="detectedEntitySection">
+                <span id="detectedOrLockedRowForAddToCarousel">Detected event:</span>
+                <button class="infoButton" onclick="toggleInfo('addToCarouselInfo')">&#128712;</button>
+                <span class="labelRow" id="eventLabelForAddToCarousel"></span>
+                <span id="lockEventSectionForAddToCarousel" class="lockSection">
+                    <label class="verticalAlignMiddle" for="chkLockEventForAddToCarousel">Lock</label>
+                    <input type="checkbox" id="chkLockEventForAddToCarousel" class="verticalAlignMiddle" onclick="lockEvent('AddToCarousel')">
+                </span>
+            </div>
+
+
+            <!-- <div class="labelRow" id="eventLabelForAddToCarousel"></div> -->
+            <div id="notSportsbookHomePageMessage" class="displayInRed hide">
+                <hr class="hRule">Current page is not Sportsbook Home
+            </div>
+            <button class="btSimple" id="btAddToCarousel" onclick="addToCarousel()">Add to Carousel</button>
+            <span id="addToCarouselMessage"></span>
+            <div id="addToCarouselInfo" class="hide">
                 <hr class="hRule">
-                <li>Click: <button class="btSimple" id="btAddToCarousel" onclick="addToCarousel()">Add to Carousel</button>
-                    <span id="addToCarouselMessage"></span>
-                </li>
-                <li>Find the event on the Carousel using its arrow buttons</li>
-            </ol>
+                <span class="infoSymbol">&#128712;</span>Event detection order:
+                <ol class="infoList">
+                    <li>Open event panel</li>
+                    <li>Last selection from betslip</li>
+                </ol>
+                <hr class="hRule">
+                <span class="infoSymbol">&#128712;</span>Steps to add event to carousel:
+                <ol class="infoList">
+                    <li>Be on Sportsbook Home page</li>
+                    <li>Click on the above "Add to Carousel" button</li>
+                    <li>If not instantly visible on the Carousel, find the event by swiping the pages</li>
+                </ol>
+            </div>
         </div>
     </div>
+    
+    
     <div class="accordion closed">
         <button id="scoreBoardAccordion" class="accHeading" onclick="initScoreBoard()">Football Scoreboard</button>
         <div class="accContent">
-            Open an event panel with scoreboard or put it's selection to the slip.
-            <hr class="hRule"> Detected event:
-            <div class="labelRow" id="eventLabelForScoreBoard"></div>
+            <!-- <div>Detected event:<button class="infoButton" onclick="toggleInfo('scoreBoardInfo')">&#128712;</button></div>
+            <div class="labelRow" id="eventLabelForScoreBoard"></div> -->
+
+
+            <div class="detectedEntitySection">
+                <span id="detectedOrLockedRowForScoreBoard">Detected event:</span>
+                <button class="infoButton" onclick="toggleInfo('scoreBoardInfo')">&#128712;</button>
+                <span class="labelRow" id="eventLabelForScoreBoard"></span>
+                <span id="lockEventSectionForScoreBoard" class="lockSection">
+                    <label class="verticalAlignMiddle" for="chkLockEventForScoreBoard">Lock</label>
+                    <input type="checkbox" id="chkLockEventForScoreBoard" class="verticalAlignMiddle" onclick="lockEvent('ScoreBoard')">
+                </span>
+            </div>
+
+            <div id="notFootballScoreBoardMessage" class="hide displayInRed">
+                <hr class="hRule">Not having Football Scoreboard
+            </div>
             <hr class="hRule">
             <div id="scoreBoardScores" class="scoreLayout">
                 <div id="homeScoreLabel">Home Score</div>
@@ -170,10 +252,17 @@
                 </div>
                 <button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Submit</button>
             </div>
+            <div id="scoreBoardInfo" class="hide">
+                <span class="infoSymbol">&#128712;</span>Event detection order (with Football Scoreboard):
+                <ol class="infoList">
+                    <li>Open event panel</li>
+                    <li>Last selection from betslip</li>
+                </ol>
+            </div>
         </div>
     </div>
-    <div class="accordion closed">
-        <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">Stream mapping IDs</button>
+    <div id="streamMappingHelper" class="accordion closed">
+        <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">IDs for stream mapping (probably YAGNI)</button>
         <div class="accContent">
             <div class="labelRow">Detected event:
                 <span id="eventLabelForStreamMappingHelper"></span>
@@ -184,22 +273,54 @@
                     <button class="btSimple floatRight" id="btCopyEventId" onclick="copyToClipboard('eventId')">Copy</button>
                 </span>
             </div>
-            <hr class="hRule"> Get Provider Event Ids to use in Trading Tools:
+            <hr class="hRule"> Get LIVE Provider Event Ids for mapping:
             <div class="streamIdsLayout">
-                <button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button>
                 <button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button>
-                <div id="performResults" class="extraCondensed"></div>
+                <button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button>
                 <div id="twitchResults" class="extraCondensed"></div>
+                <div id="performResults" class="extraCondensed"></div>
             </div>
         </div>
     </div>
 </div>
-</div>
+
 <style>
     #twitchResults,
     #performResults {
         margin-left: 5px;
         margin-top: 5px;
+    }
+    
+    .infoButton {
+        font-size: 20px;
+        float: right;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+        justify-self: end;
+    }
+    
+    .infoSymbol {
+        font-size: 16px;
+        margin-right: 5px;
+    }
+    
+    .lockSection {
+        justify-self: end;
+        align-self: end;
+        margin-right: 2px;
+    }
+    
+    .infoList {
+        margin: 3px;
+        padding-inline-start: 25px;
+    }
+    
+    .detectedEntitySection {
+        display: grid;
+        grid-template-columns: auto 60px;
+        grid-template-rows: auto auto;
     }
     
     .streamIdsLayout {
@@ -227,6 +348,7 @@
     
     #scoreBoardDetails {
         border: 1px solid #ccc;
+        margin-bottom: 15px;
     }
     
     .scoreBoardLayout {
@@ -244,7 +366,7 @@
         align-items: center;
     }
     
-    .setEventPhaseLayout {
+    #setEventPhaseLayout {
         padding-top: 10px;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
@@ -317,10 +439,6 @@
         background-color: #2196F3;
         color: #fff;
     }
-    /* #sportsbookToolHeaderButtonRow {
-        float: right;
-    }
-     */
     
     #sportsbookToolHeaderTitle {
         display: inline-block;
@@ -364,6 +482,12 @@
         color: #fff;
         width: 25px;
         height: 20px;
+    }
+    
+    #btAddToCarousel {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 0px;
     }
     
     #btZoomInOut,
@@ -457,7 +581,7 @@
         transform: scale(0.7);
     }
     
-    #chkLockSelection {
+    .verticalAlignMiddle {
         vertical-align: middle;
     }
     
