@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    
+
     <div class="accordion closed">
         <button id="setEventPhaseAccordion" class="accHeading" onclick="initSetEventPhase()">Set Event Phase</button>
         <div class="accContent">
@@ -108,7 +108,7 @@
 
     <div class="accordion closed">
         <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Market</button>
-        <div class="accContent">            
+        <div class="accContent">
             <div class="detectedEntitySection">
                 <span id="detectedOrLockedRowForCreateMarket">Detected event:</span>
                 <button class="infoButton" onclick="toggleInfo('createMarketInfo')">&#128712;</button>
@@ -148,16 +148,12 @@
             </div>
             <div id="newOddsRow" class="newOddsLayout">
                 <label for="newOdds">New Odds:</label>
-                <input class="fdNumeric" type="number" id="newOdds">
+                <input class="fdNumeric" type="number" id="newOdds" min=1 step=0.01 oninput="validity.valid||(value='');">
                 <button class="btSimple btSubmit" onclick="changeOdds()">Submit</button>
             </div>
             <div id="changeOddsInfo" class="hide">
                 <hr class="hRule">
                 <span class="infoSymbol">&#128712;</span>Selection detection: Last selection from betslip
-                <!-- <ol class="infoList">
-                    <li>Locked selection (to test unselected odds change)</li>
-                    <li>Last selection from betslip</li>
-                </ol> -->
             </div>
         </div>
     </div>
@@ -165,8 +161,6 @@
     <div class="accordion closed">
         <button id="addToCarouselAccordion" class="accHeading" onclick="initAddToCarousel()">Add Event to the Carousel</button>
         <div class="accContent">
-            
-            <!-- <div>Detected event:<button class="infoButton" onclick="toggleInfo('addToCarouselInfo')">&#128712;</button></div> -->
             <div class="detectedEntitySection">
                 <span id="detectedOrLockedRowForAddToCarousel">Detected event:</span>
                 <button class="infoButton" onclick="toggleInfo('addToCarouselInfo')">&#128712;</button>
@@ -177,8 +171,6 @@
                 </span>
             </div>
 
-
-            <!-- <div class="labelRow" id="eventLabelForAddToCarousel"></div> -->
             <div id="notSportsbookHomePageMessage" class="displayInRed hide">
                 <hr class="hRule">Current page is not Sportsbook Home
             </div>
@@ -201,14 +193,11 @@
             </div>
         </div>
     </div>
-    
-    
+
+
     <div class="accordion closed">
         <button id="scoreBoardAccordion" class="accHeading" onclick="initScoreBoard()">Football Scoreboard</button>
         <div class="accContent">
-            <!-- <div>Detected event:<button class="infoButton" onclick="toggleInfo('scoreBoardInfo')">&#128712;</button></div>
-            <div class="labelRow" id="eventLabelForScoreBoard"></div> -->
-
 
             <div class="detectedEntitySection">
                 <span id="detectedOrLockedRowForScoreBoard">Detected event:</span>
@@ -226,10 +215,10 @@
             <hr class="hRule">
             <div id="scoreBoardScores" class="scoreLayout">
                 <div id="homeScoreLabel">Home Score</div>
-                <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeScoreInputField">
+                <input class="fdNumeric fdScoreBoardNumeric" type="number" min=0 oninput="validity.valid||(value='');" id="homeScoreInputField">
                 <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore('home')">Submit</button>
                 <div id="awayScoreLabel">Away Score</div>
-                <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayScoreInputField">
+                <input class="fdNumeric fdScoreBoardNumeric" type="number" min=0 oninput="validity.valid||(value='');" id="awayScoreInputField">
                 <button id="btSubmitAwayScore" class="btSubmit btSimple" onclick="submitScore('away')">Submit</button>
             </div>
             <div id="scoreBoardDetails">
@@ -239,16 +228,16 @@
                     <div id="yellowCards" class="vertical">Yellow Cards</div>
                     <div id="redCards" class="vertical">Red Cards</div>
                     <div id="penalties" class="vertical">Penalties</div>
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeCorners">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeSubstitutions">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeYellowCards">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeRedCards">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homePenalties">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayCorners">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awaySubstitutions">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayYellowCards">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayRedCards">
-                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayPenalties">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeCorners" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeSubstitutions" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeYellowCards" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homeRedCards" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="homePenalties" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayCorners" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awaySubstitutions" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayYellowCards" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayRedCards" min=0 oninput="validity.valid||(value='');">
+                    <input class="fdNumeric fdScoreBoardNumeric" type="number" id="awayPenalties" min=0 oninput="validity.valid||(value='');">
                 </div>
                 <button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Submit</button>
             </div>
@@ -380,7 +369,7 @@
     
     .createMarketLayout {
         display: grid;
-        grid-template-columns: 50% auto;
+        grid-template-columns: 55% auto;
         align-items: center;
     }
     
