@@ -1,7 +1,11 @@
 javascript: (function() {
 
     insertTag("div", "sportsbookTool", "http://localhost:8080/sportsbookTool.html");
-    insertTag("script", "sportsbookToolScript", "http://localhost:8080/sportsbookTool.js");
+    setTimeout(function () {
+        insertTag("script", "sportsbookToolScript", "http://localhost:8080/sportsbookTool.js");
+    }, 500);
+    
+    // insertTag("script", "sportsbookToolScript", "http://localhost:8080/sportsbookTool.js");
 
     function insertTag(tag, id, sourceUrl) {
         var req = new XMLHttpRequest;
