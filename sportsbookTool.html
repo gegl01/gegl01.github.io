@@ -29,7 +29,10 @@
             <div id="obgStateAndRtSection" class="hide">
                 <div id="obgStateAndRtRow" class="resolveLimitationRow">
                     Enable obgState and obgRt<button class="btSimple btGreen"
-                        onclick="reloadPageWithFeature('exposeObgStateAndRt')">Enable</button>
+                        onclick="reloadPageWithFeature('exposeObgStateAndRt')">
+                        <!-- <span class="ico-check-mark-circle-o fontSizeSmaller"></span> -->
+                        <span>Enable</span>
+                    </button>
                 </div>
                 <hr class="hRule">
             </div>
@@ -61,7 +64,7 @@
                 <div class="displayFlex">
                     <span class="keyForContext">Brand:</span>
                     <span class="valueForContext twoItemsJustified">
-                        <span id="brandName" class="valueWithButton"></span>
+                        <span id="brandName"></span>
                         <span>
                             <button class="btCopy btIcon" onclick="copyToClipboard('brand')">
                                 <img class="iconCopy">
@@ -73,7 +76,7 @@
                 <div class="displayFlex">
                     <span class="keyForContext">Browser:</span>
                     <span class="valueForContext twoItemsJustified">
-                        <span id="browserVersion" class="valueWithButton"></span>
+                        <span id="browserVersion"></span>
                         <span>
                             <button class="btCopy btIcon" onclick="copyToClipboard('browserVersion')">
                                 <img class="iconCopy">
@@ -85,7 +88,7 @@
                 <div class="displayFlex">
                     <span class="keyForContext">App Version:</span>
                     <span class="valueForContext twoItemsJustified">
-                        <span id="obgVersion" class="valueWithButton"></span>
+                        <span id="obgVersion"></span>
                         <span>
                             <button class="btCopy btIcon" onclick="copyToClipboard('obgVersion')">
                                 <img class="iconCopy">
@@ -115,6 +118,17 @@
                             <img class="iconCopy">
                         </button>
                     </div>
+
+                    <div id="postMessageRow" class="twoItemsJustified hide">
+                        <span class="width95Percent">
+                            <span class="keyColumnForExtras">PostMessage</span>
+                            <span class="displayInLightGrey">routeChangeIn in native</span>
+                        </span>
+                        <button class="btCopy btIcon" id="btCreatePostMessage" onclick="copyToClipboard('postMessage')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
+
                     <div id="disableCacheRow" class="twoItemsJustified">
                         <span class="width95Percent">
                             <span class="keyColumnForExtras">Disable Cache</span>
@@ -122,7 +136,7 @@
                         </span>
                         <button class="btDisable btIcon" onclick="reloadPageWithFeature('disableCache')">
                             <img class="iconDisable">
-                            </span>
+                        </button>
                     </div>
                     <div id="disableSSRRow" class="twoItemsJustified">
                         <span class="width95Percent">
@@ -142,6 +156,7 @@
                             <img class="iconDisable">
                         </button>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -224,7 +239,7 @@
                         <div class="displayFlex">
                             <span class="keyForEventDetails">Event ID:</span>
                             <span class="valueForEventDetails twoItemsJustified">
-                                <span id="eventIdForEventDetails" class="valueWithButton"></span>
+                                <span id="eventIdForEventDetails" class="displayInGreen"></span>
                                 <span>
                                     <button class="btCopy btIcon" id="btCopyEventId"
                                         onclick="copyToClipboard('eventId')">
@@ -235,19 +250,37 @@
                         </div>
                         <div class="displayFlex">
                             <span class="keyForEventDetails">Start Date:</span>
-                            <span id="startDateForEventDetails" class="valueForEventDetails"></span>
+                            <span id="startDateForEventDetails" class="valueForEventDetails displayInGreen"></span>
                         </div>
-                        <div class="displayFlex">
+                        <!-- <div class="displayFlex">
                             <span class="keyForEventDetails">Category:</span>
                             <span id="categoryForEventDetails" class="valueForEventDetails"></span>
                         </div>
                         <div class="displayFlex">
                             <span class="keyForEventDetails">Region:</span>
                             <span id="regionForEventDetails" class="valueForEventDetails"></span>
+                        </div> -->
+
+                        <div class="displayFlex">
+                            <span class="keyForEventDetails">Category:</span>
+                            <span class="valueForEventDetails twoItemsJustified displayInGreen">
+                                <span id="categoryForEventDetails"></span>
+                                <span id="categoryIdForEventDetails"></span>
+                            </span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForEventDetails">Region:</span>
+                            <span class="valueForEventDetails twoItemsJustified displayInGreen">
+                                <span id="regionForEventDetails"></span>
+                                <span id="regionIdForEventDetails"></span>
+                            </span>
                         </div>
                         <div class="displayFlex">
                             <span class="keyForEventDetails">Competition:</span>
-                            <span id="competitionForEventDetails" class="valueForEventDetails"></span>
+                            <span class="valueForEventDetails twoItemsJustified displayInGreen">
+                                <span id="competitionForEventDetails"></span>
+                                <span id="competitionIdForEventDetails"></span>
+                            </span>
                         </div>
                         <hr class="hRule">
                         <div id="sbEventIdForOddsManagerSection" class="twoItemsJustified">
@@ -266,176 +299,184 @@
                                 <img class="iconOpenInNewWindow">
                             </button>
                         </div>
+                        <!-- <div id="sbManagerWarningForEvent" class="warningMessage">I know that I'm working on PROD data
+                            and what I am doing</div>
+
+                    </div> -->
                     </div>
-                </div>
 
-                <div>
-                    <button onclick="toggleSection('renameEventSection')" class="moreLess">Rename
-                        Event/Participants</button>
-                    <div id="renameEventSection" class="marginTopBottom10px hide">
-                        <div id="renameParticipantLabelSection">
-                            <div>Participant:
-                                <span class="accordionHint">displayed for normal Matches</span>
+                    <div>
+                        <button onclick="toggleSection('renameEventSection')" class="moreLess">Rename
+                            Event/Participants</button>
+                        <div id="renameEventSection" class="marginTopBottom10px hide">
+                            <div id="renameParticipantLabelSection">
+                                <div>Participant:
+                                    <span class="accordionHint">displayed for normal Matches</span>
+                                </div>
+                                <select id="participantSelector" onchange="selectParticipant(value)"
+                                    class="comboSbTools width100percent height20px">
+                                </select>
+
+                                <div class="twoItemsJustified marginTop5px">
+                                    <span contenteditable="true" id="fdRenameParticipantLabel"
+                                        class="fdSbTools width92percent">
+                                    </span>
+                                    <button class="btIcon" onclick="setParticipantLabel()">
+                                        <img class="width16px iconSubmit">
+                                    </button>
+                                </div>
                             </div>
-                            <select id="participantSelector" onchange="selectParticipant(value)"
-                                class="comboSbTools width100percent height20px">
-                            </select>
 
-                            <div class="twoItemsJustified marginTop5px">
-                                <span contenteditable="true" id="fdRenameParticipantLabel"
-                                    class="fdSbTools width92percent">
+                            <div class="marginTop10px">Label:
+                                <span class="accordionHint">displayed for Outrights, Boosts Page</span>
+                            </div>
+                            <div class="twoItemsJustified">
+                                <span contenteditable="true" id="fdRenameEventLabel" class="fdSbTools width92percent">
                                 </span>
-                                <button class="btIcon" onclick="setParticipantLabel()">
+                                <button class="btIcon" onclick="setEventLabel()">
                                     <img class="width16px iconSubmit">
                                 </button>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="marginTop10px">Label:
-                            <span class="accordionHint">displayed for Outrights, Boosts Page</span>
-                        </div>
-                        <div class="twoItemsJustified">
-                            <span contenteditable="true" id="fdRenameEventLabel" class="fdSbTools width92percent">
-                            </span>
-                            <button class="btIcon" onclick="setEventLabel()">
-                                <img class="width16px iconSubmit">
-                            </button>
+                    <div>
+                        <button onclick="toggleSection('setEventPhaseSection')" class="moreLess">Set Event
+                            Phase</button>
+                        <div id="setEventPhaseSection" class="marginTopBottom10px hide">
+                            <div id="setEventPhaseButtonsLayout">
+                                <button id="btSetEventPhaseLive" class="btSimple btSetEventPhase"
+                                    onclick="setEventPhase('Live')">
+                                    <span class="ico-live-betting fontSizeSmaller"></span>
+                                    <span>Live</span>
+                                </button>
+                                <button id="btSetEventPhasePrematch" class="btSimple btSetEventPhase"
+                                    onclick="setEventPhase('Prematch')">
+                                    <span class="ico-starting-soon fontSizeSmaller"></span>
+                                    <span>Prematch</span>
+                                </button>
+                                <button id="btSetEventPhaseOver" class="btSimple btSetEventPhase"
+                                    onclick="setEventPhase('Over')">
+                                    <span class="ico-event-ended fontSizeSmaller"></span>
+                                    <span>Over</span>
+                                </button>
+                            </div>
+                            <div class="checkBoxRowToRight">
+                                <span>'Over' suspends all markets</span>
+                                <input type="checkbox" class="chkInline" id="chkSuspendAllMarkets">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div>
-                    <button onclick="toggleSection('setEventPhaseSection')" class="moreLess">Set Event Phase</button>
-                    <div id="setEventPhaseSection" class="marginTopBottom10px hide">
-                        <div id="setEventPhaseButtonsLayout">
-                            <button id="btSetEventPhaseLive" class="btSimple btSetEventPhase"
-                                onclick="setEventPhase('Live')">Live</button>
-                            <button id="btSetEventPhasePrematch" class="btSimple btSetEventPhase"
-                                onclick="setEventPhase('Prematch')">Prematch</button>
-                            <button id="btSetEventPhaseOver" class="btSimple btSetEventPhase"
-                                onclick="setEventPhase('Over')">Over</button>
-                        </div>
-                        <div class="checkBoxRowToRight">
-                            <span>'Over' suspends all markets</span>
-                            <input type="checkbox" class="chkInline" id="chkSuspendAllMarkets">
+                    <div>
+                        <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
+                            Carousel/Cards</button>
+                        <div id="addToCarouselSection" class="hide marginTopBottom10px">
+                            <div id="carouselButtonsDiv">
+                                <div class="twoItemsJustified">
+                                    <span>Add event to Carousel or Cards</span>
+                                    <span id="appendToCarouselSpan">
+                                        <span>Append</span>
+                                        <input type="checkbox" id="chkAppendToCarousel" class="chkInline chkSbTools">
+                                    </span>
+                                </div>
+                                <div class="marginTop5px">
+                                    <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()">
+                                        <span class="ico-expand fontSizeSmaller"></span>
+                                        <span>Add</span>
+                                    </button>
+                                    <span id="addToCarouselMessage"></span>
+                                </div>
+                                <div id="addToCarouselErrorMessage" class="displayInRed infoMessage hide">
+                                    Could not get data for 3-column layout.<br>If the slide/card is 3-column layout,
+                                    please remove the detected event from the slip/event panel, then add again.
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div>
-                    <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
-                        Carousel/Cards</button>
-                    <div id="addToCarouselSection" class="hide marginTopBottom10px">
-                        <div id="carouselButtonsDiv">
-                            <div class="twoItemsJustified">
-                                <span>Add event to Carousel or Cards</span>
-                                <span>
-                                    <span>Append</span>
-                                    <input type="checkbox" id="chkAppendToCarousel" class="chkInline chkSbTools">
+                    <div>
+                        <button onclick="toggleSection('eventPropertiesSection')" class="moreLess">Override Event
+                            Properties</button>
+                        <div id="eventPropertiesSection" class="marginTopBottom10px hide">
+                            <div class="marginBottom5px">Has effect on icons and event panel tabs</div>
+
+                            <div id="hasBetBuilderLinkSection" class="iconMocksRow">
+                                <span class="width95Percent">
+                                    <span class="ico-bet-builder iconMockIconColumn vertMiddle"></span>
+                                    <span class="iconMockLabelColumn">Bet Builder Link</span>
                                 </span>
+                                <input type="checkbox" onclick="toggleEventProperty('betBuilderLink')"
+                                    id="chkHasBetBuilderLink" class="chkSbTools">
                             </div>
-                            <div class="marginTop5px">
-                                <button class="btSimple btCarousel" id="btAddToCarousel"
-                                    onclick="addToCarousel()">Add</button>
-                                <span id="addToCarouselMessage"></span>
+
+                            <div id="hasPriceBoostSection" class="iconMocksRow">
+                                <span class="width95Percent">
+                                    <span class="ico-price-boost iconMockIconColumn vertMiddle"></span>
+                                    <span class="iconMockLabelColumn">Price Boost (not for US 3-Column)</span>
+                                </span>
+                                <input type="checkbox" onclick="toggleEventProperty('priceBoost')" id="chkHasPriceBoost"
+                                    class="chkSbTools">
                             </div>
-                            <!-- <div id="stopCarouselAutoPlayDiv">
-                                <button class="btSimple btCarousel extraCondensed" id="btStopCarouselAutoPlay"
-                                    onclick="stopCarouselAutoPlay()">Stop Carousel</button>
-                                <span id="lblStopCarouselAutoPlay"></span>
-                            </div> -->
-                            <div id="addToCarouselErrorMessage" class="displayInRed infoMessage hide">
-                                Could not get data for 3-column layout.<br>If the slide/card is 3-column layout,
-                                please remove the detected event from the slip/event panel, then add again.
+
+                            <div id="hasFastMarketsSection" class="iconMocksRow">
+                                <span class="width95Percent">
+                                    <span class="ico-action-betting iconMockIconColumn vertMiddle"></span>
+                                    <span class="iconMockLabelColumn">Fast Markets</span>
+                                </span>
+                                <input type="checkbox" onclick="toggleEventProperty('fastMarkets')"
+                                    id="chkHasFastMarkets" class="chkSbTools">
                             </div>
+
+                            <div id="hasLiveVisualSection" class="iconMocksRow">
+                                <span class="width95Percent">
+                                    <span class="ico-visual iconMockIconColumn vertMiddle"></span>
+                                    <span class="iconMockLabelColumn">Live Visual</span>
+                                </span>
+                                <input type="checkbox" onclick="toggleEventProperty('liveVisual')" id="chkHasLiveVisual"
+                                    class="chkSbTools">
+                            </div>
+
+                            <div id="hasLiveStreamingSection" class="iconMocksRow">
+                                <span class="width95Percent">
+                                    <span class="ico-live-streaming iconMockIconColumn vertMiddle"></span>
+                                    <span class="iconMockLabelColumn">Live Streaming</span>
+                                </span>
+                                <input type="checkbox" onclick="toggleEventProperty('liveStreaming')"
+                                    id="chkHasLiveStreaming" class="chkSbTools">
+                            </div>
+
+                            <div id="hasPrematchStatisticsSection" class="iconMocksRow">
+                                <span class="width95Percent">
+                                    <span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span>
+                                    <span class="iconMockLabelColumn">Prematch Statistics</span>
+                                </span>
+                                <input type="checkbox" onclick="toggleEventProperty('prematchStatistics')"
+                                    id="chkHasPrematchStatistics" class="chkSbTools">
+                            </div>
+
+                            <div id="hasLiveStatisticsSection" class="iconMocksRow">
+                                <span class="width95Percent">
+                                    <span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span>
+                                    <span class="iconMockLabelColumn">Live Statistics</span>
+                                </span>
+                                <input type="checkbox" onclick="toggleEventProperty('liveStatistics')"
+                                    id="chkHasLiveStatistics" class="chkSbTools">
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <button onclick="toggleSection('eventPropertiesSection')" class="moreLess">Override Event
-                        Properties</button>
-                    <div id="eventPropertiesSection" class="marginTopBottom10px hide">
-                        <div class="marginBottom5px">Has effect on icons and event panel tabs</div>
-
-                        <div id="hasBetBuilderLinkSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span class="ico-bet-builder iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Bet Builder Link</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('betBuilderLink')"
-                                id="chkHasBetBuilderLink" class="chkSbTools">
-                        </div>
-
-                        <div id="hasPriceBoostSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span class="ico-price-boost iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Price Boost (TBD for US 3-Column)</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('priceBoost')" id="chkHasPriceBoost"
-                                class="chkSbTools">
-                        </div>
-
-                        <div id="hasFastMarketsSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span class="ico-action-betting iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Fast Markets</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('fastMarkets')" id="chkHasFastMarkets"
-                                class="chkSbTools">
-                        </div>
-
-                        <div id="hasLiveVisualSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span class="ico-visual iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Live Visual</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('liveVisual')" id="chkHasLiveVisual"
-                                class="chkSbTools">
-                        </div>
-
-                        <div id="hasLiveStreamingSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span class="ico-live-streaming iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Live Streaming</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('liveStreaming')"
-                                id="chkHasLiveStreaming" class="chkSbTools">
-                        </div>
-
-                        <div id="hasPrematchStatisticsSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Prematch Statistics</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('prematchStatistics')"
-                                id="chkHasPrematchStatistics" class="chkSbTools">
-                        </div>
-
-                        <div id="hasLiveStatisticsSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Live Statistics</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('liveStatistics')"
-                                id="chkHasLiveStatistics" class="chkSbTools">
-                        </div>
-
-
-                    </div>
+                <div id="sbToolsEventInfo" class="hide">
+                    <hr class="hRule">
+                    <img class="iconInfoSymbol">Event detection order:
+                    <ol class="infoList">
+                        <li>Open event panel</li>
+                        <li>Last selection from betslip</li>
+                    </ol>
                 </div>
-            </div>
-
-            <div id="sbToolsEventInfo" class="hide">
-                <hr class="hRule">
-                <img class="iconInfoSymbol">Event detection order:
-                <ol class="infoList">
-                    <li>Open event panel</li>
-                    <li>Last selection from betslip</li>
-                </ol>
-                <hr class="hRule">
-                <img class="iconInfoSymbol">"Stop Carousel" prevents the carousel from auto-rotating. Has to be
-                initiated before adding event to the carousel.
             </div>
         </div>
     </div>
@@ -522,7 +563,7 @@
                         <span class="width95Percent">
                             <!-- <span class="ico-cashout-available iconMockIconColumn vertMiddle"></span> -->
                             <span class="ico-cash-stack iconMockIconColumn vertMiddle"></span>
-                            <span class="iconMockLabelColumn">Cash Out Available</span>
+                            <span class="iconMockLabelColumn">Cash Out Available (not for US 3-Column)</span>
                         </span>
                         <input type="checkbox" onclick="toggleMarketProperty('cashoutAvailable')"
                             id="chkIsCashoutAvailable" class="chkSbTools">
@@ -604,16 +645,16 @@
                         <div></div>
                     </div>
                 </div>
-                <button onclick="toggleSection('createFastMarketSection')" class="moreLess">
-                    <span>Create Fast Market&nbsp;</span>
-                    <span class="ico-action-betting vertMiddle color444"></span>
+                <button onclick="toggleSection('createFastMarketSection')" class="moreLess">                    
+                    <span class="ico-action-betting vertMiddle"></span>
+                    <span>Create Fast Market</span>
                 </button>
                 <div id="createFastMarketSection" class="marginTopBottom10px hide">
                     <div class="infoMessage">Football, Tennis, Table Tennis, Ice Hockey</div>
                     <div class="createMarketLayout">
                         <button class="btSimple" id="btCreateFastMarket"
                             onclick="createMarket('fast')">Create&nbsp;<span
-                                class="ico-action-betting vertMiddle color444"></span></button>
+                                class="ico-action-betting vertMiddle"></span></button>
                         <div class="buttonLabelToRight" id="fastMarketMessage"></div>
                     </div>
                 </div>
@@ -738,7 +779,7 @@
                     </span>
                     <button class="btCopy btIcon" id="btCopyAccaId" onclick="copyToClipboard('accaId')">
                         <img class="iconCopy">
-                        </span>
+                    </button>
                 </div>
                 <div class="marginTopBottom10px twoItemsJustified">
                     <span class="width95Percent">Open in
@@ -823,6 +864,129 @@
         </div>
     </div>
 
+    <div id="sbToolsNative" class="accordion closed">
+        <button id="nativeAccordion" class="accHeading" onclick="initNativeApp()">
+            <span class="accordionTitle">Native App</span>
+            <span class="accordionHint">Navigate by postMessages</span>
+        </button>
+        <div class="accContent">
+
+            <div class="marginBottom5px nativeDetectedEventLayout">
+                <div>
+                    <div>Detected event from the slip:</div>
+                    <div class="labelRow" id="eventLabelForNative"></div>
+                </div>
+
+                <button id="btOpenEventOnNative" class="btSimple btGreen" onclick="openEventOnNative()">
+                    <div class="ico-maximize-event iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Open</div>
+                </button>
+            </div>
+
+            <div id="noRoutesError" class="displayinRed extraCondensed hide">
+                <hr class="hRule">
+                'obgClientEnvironmentConfig.startupContext.routes' is not defined. Please refresh the page.
+                <hr class="hRule">
+
+            </div>
+
+
+            <div class="marginTopBottom10px nativeBottomBarButtons">
+                <button class="btSimple btNativeToggleable" onclick="nativeNavigate('home')">
+                    <div class="ico-home-bottom-bar iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Home</div>
+                </button>
+                <button id="nativeButtonAz" class="btSimple btNativeToggleable" onclick="nativeToggle('az')">
+                    <div class="ico-all-sports-search iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">A-Z</div>
+                </button>
+                <button id="nativeButtonOther" class="btSimple" onclick="nativeToggle('other')">
+                    <div class="ico-all-games iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Other</div>
+                </button>
+                <button class="btSimple" onclick="nativeNavigate('betSlip')">
+                    <div class="ico-betslip-bottom iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Betslip</div>
+                </button>
+                <button class="btSimple loggedInOnly btNativeToggleable" onclick="nativeNavigate('myBets')">
+                    <div class="ico-my-bets iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">My Bets</div>
+                </button>
+                <button class="btSimple btNativeToggleable" onclick="nativeNavigate('live')">
+                    <div class="ico-live-bottom-bar iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Live</div>
+                </button>
+            </div>
+
+            <div id="nativeAzSection" class="hide marginTopBottom10px">
+                <div class="displayFlex">
+                    <span class="width25percent">Category</span>
+                    <select id="categorySelector" onchange="selectCategory(value)"
+                        class="comboSbTools height20px marginBottom10px width75percent">
+                    </select>
+                </div>
+                <div class="displayFlex">
+                    <span class="width25percent">Region</span>
+                    <select id="regionSelector" onchange="selectRegion(value)"
+                        class="comboSbTools height20px marginBottom10px width75percent inactivated">
+                    </select>
+                </div>
+                <div class="displayFlex">
+                    <span class="width25percent">Competition</span>
+                    <select id="competitionSelector" onchange="selectCompetition(value)"
+                        class="comboSbTools height20px width75percent inactivated">
+                    </select>
+                </div>
+            </div>
+
+
+            <div id="nativeOtherSection" class="hide marginTopBottom10px">
+                <!-- <hr class="hRule"> -->
+                <div class="marginBottom5px nativeOtherButtons">
+                    <button id="nativeButtonBetBuilder" class="btNativeOther btNativeToggleable"
+                        onclick="nativeNavigate('betBuilder')">
+                        <div class="ico-bet-builder iconNativeOtherButton"></div>
+                        <div class="labelNativeOtherButton">B.Builder</div>
+                    </button>
+                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('search')">
+                        <div class="ico-search iconNativeOtherButton"></div>
+                        <div class="labelNativeOtherButton">Search</div>
+                    </button>
+                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('boost')">
+                        <div class="ico-price-boost iconNativeOtherButton"></div>
+                        <div class="labelNativeOtherButton">Boost</div>
+                    </button>
+                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('lsc')">
+                        <div class="ico-live-streaming iconNativeOtherButton"></div>
+                        <div class="labelNativeOtherButton">LS.Calen</div>
+                    </button>
+                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('startingSoon')">
+                        <div class="ico-starting-soon iconNativeOtherButton"></div>
+                        <div class="labelNativeOtherButton">St.Soon</div>
+                    </button>
+                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('settings')">
+                        <div class="ico-settings iconNativeOtherButton"></div>
+                        <div class="labelNativeOtherButton">Settings</div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="nativeBetBuilderSection" class="marginTopBottom10px hide">
+                <div class="displayFlex">
+                    <span class="width20percent">BB Event</span>
+                    <select id="nativeBetBuilderEventSelector" onchange="selectBetuilderEvent(value)"
+                        class="comboSbTools height20px marginBottom10px width80percent">
+                    </select>
+                </div>
+                <div id="nativeBetBuilderEventsError" class="displayInRed hide">
+                    Open a Bet Builder accordion.
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
 
 
     <div id="sbToolsStreamMappingHelper" class="accordion closed">
@@ -887,6 +1051,18 @@
         width: 100%;
     }
 
+    .width75percent {
+        width: 75%;
+    }
+
+    .width80percent {
+        width: 80%;
+    }
+
+    .width20percent {
+        width: 20%;
+    }
+
     .width92percent {
         width: 92%;
     }
@@ -900,9 +1076,9 @@
         vertical-align: middle;
     }
 
-    .color444 {
+    /* .color444 {
         color: #444;
-    }
+    } */
 
     .outlinedText {
         -webkit-text-stroke: 1px #444;
@@ -927,18 +1103,28 @@
         border: 1px solid #444;
         border-radius: 3px;
         box-shadow: 0 1px #666;
-        padding-inline: 5px;
+        padding-inline: 2px;
         margin: 2px;
         cursor: pointer;
-        line-height: 1.1em;
+        /* line-height: 1.1em; */
+        font-size: inherit;
+        color: #444;
     }
 
-    .btSimple:hover {
-        background-color: #fff
+    @media (hover: hover) {
+        .btSimple:hover {
+            background-color: #fff
+        }
     }
+
+
+    /* .btSimple:hover {
+        background-color: #fff
+    } */
 
     .btSimple:active {
         box-shadow: 0 0px #666;
+        background-color: #fff;
         transform: translateY(1px);
     }
 
@@ -946,7 +1132,9 @@
         width: 27%;
     }
 
-    .keyForEventDetails {
+
+    .keyForEventDetails,
+    .width25percent {
         width: 25%;
     }
 
@@ -982,6 +1170,28 @@
         margin-bottom: 10px;
     }
 
+    .marginTopBottom10px {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .marginTopBottom5px {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .marginTop10px {
+        margin-top: 10px;
+    }
+
+    .marginRight2px {
+        margin-right: 2px;
+    }
+
+    .marginRight5px {
+        margin-right: 5px;
+    }
+
     .height20px {
         height: 20px;
     }
@@ -993,6 +1203,7 @@
 
     .labelRow {
         padding-right: 3px;
+        word-break: break-word;
     }
 
     .lockSection {
@@ -1021,10 +1232,7 @@
         grid-template-rows: auto auto;
     }
 
-    .marginTopBottom10px {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
+
 
     .align-right {
         text-align: right
@@ -1070,14 +1278,35 @@
         justify-content: space-between;
     }
 
-    /* .fontSizeLarge {
-        font-size: large;
-    } */
+    .fontSizeSmaller {
+        font-size: smaller;
+    }
 
     .iconMockIconColumn {
         display: inline-block;
         text-align: center;
         width: 25px;
+    }
+
+    .iconNativeBottomBarButton {
+        font-size: large;
+    }
+
+    .iconNativeOtherButton {
+        color: #444;
+    }
+
+    .labelNativeOtherButton {
+        font-size: x-small;
+        font-stretch: condensed;
+    }
+
+    .labelNativeBottomBarButton {
+        font-stretch: condensed;
+    }
+
+    #btOpenEventOnNative {
+        height: 38px;
     }
 
     .iconMockLabelColumn {
@@ -1114,6 +1343,17 @@
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     }
 
+    .nativeBottomBarButtons,
+    .nativeOtherButtons {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+
+    .nativeDetectedEventLayout {
+        display: grid;
+        grid-template-columns: 5fr 1fr;
+    }
+
     .createMarketLayout {
         display: grid;
         grid-template-columns: 55% auto;
@@ -1147,11 +1387,12 @@
         border: 1px solid #444;
         padding-left: 3px;
         color: rgb(0, 0, 160)
-
     }
 
     .comboSbTools {
         border: 1px solid #444;
+        font-size: inherit;
+        color: #444;
     }
 
     .fdScoreBoardNumeric {
@@ -1246,29 +1487,50 @@
         background: rgb(100, 100, 100)
     }
 
-    #btZoomInOut:hover,
-    #btMinimizeAll:hover {
+
+    @media (hover: hover) {
+
+        #btZoomInOut:hover,
+        #btMinimizeAll:hover {
+            background: rgb(30, 30, 30)
+        }
+    }
+
+    #btZoomInOut:active,
+    #btMinimizeAll:active {
         background: rgb(30, 30, 30)
     }
 
+
     #btMinimizeClosed {
-        /* background: rgb(100, 100, 200) */
         background-color: #00b9bd;
     }
 
-    #btMinimizeClosed:hover {
-        /* background: rgb(0, 0, 160) */
+    @media (hover: hover) {
+        #btMinimizeClosed:hover {
+            background: #008d90;
+        }
+    }
+
+    #btMinimizeClosed:active {
         background: #008d90;
     }
+
+
 
     #btClose {
         background: rgb(200, 100, 100);
         /* background: #f9a133; */
     }
 
-    #btClose:hover {
+    @media (hover: hover) {
+        #btClose:hover {
+            background: rgb(160, 0, 0);
+        }
+    }
+
+    #btClose:active {
         background: rgb(160, 0, 0);
-        /* background: #cc8936; */
     }
 
     .infoMessage {
@@ -1310,9 +1572,22 @@
         transition: 0.4s
     }
 
-    .open .accHeading,
-    .moreLess:hover,
-    .accHeading:hover {
+    @media (hover: hover) {
+
+        .moreLess:hover,
+        .btNativeOther:hover,
+        .accHeading:hover {
+            background-color: #ccc
+        }
+    }
+
+    .moreLess:active,
+    .btNativeOther:active,
+    .accHeading:active {
+        background-color: #ccc
+    }
+
+    .open .accHeading {
         background-color: #ccc
     }
 
@@ -1362,6 +1637,12 @@
         font-stretch: extra-condensed;
     }
 
+    /* .warningMessage {
+        color: rgb(160, 0, 0);
+        font-weight: bold;
+        font-stretch: extra-condensed;
+    } */
+
     .chkLock {
         margin-left: 5px;
         align-self: center;
@@ -1372,13 +1653,11 @@
         align-self: center;
     }
 
-    .marginTop10px {
-        margin-top: 10px;
-    }
+
 
     .btCopy {
         width: 18px;
-        max-height: 22px;
+        height: 20px;
     }
 
     .btDisable {
@@ -1395,8 +1674,10 @@
         padding: 0;
     }
 
-    .btIcon:hover {
-        opacity: 100%;
+    @media (hover: hover) {
+        .btIcon:hover {
+            opacity: 100%;
+        }
     }
 
     .btIcon:active {
@@ -1411,13 +1692,7 @@
         width: 12px;
     }
 
-    .marginRight2px {
-        margin-right: 2px;
-    }
 
-    .marginRight5px {
-        margin-right: 5px;
-    }
 
     .segmentKeyColumn {
         width: 35px;
@@ -1507,7 +1782,13 @@
         color: #fff;
     }
 
-    .btGreen:hover {
+    @media (hover: hover) {
+        .btGreen:hover {
+            background-color: #00b9bd;
+        }
+    }
+
+    .btGreen:active {
         background-color: #00b9bd;
     }
 
@@ -1522,6 +1803,14 @@
         padding: 4px;
         margin-top: 2px;
         margin-bottom: 2px;
+        color: #444;
+    }
+
+    .btNativeOther {
+        border: none;
+        cursor: pointer;
+        padding: 6px 2px 6px 2px;
+        margin: 2px;
     }
 
     .width95Percent {
