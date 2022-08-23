@@ -30,7 +30,6 @@
                 <div id="obgStateAndRtRow" class="resolveLimitationRow">
                     Enable obgState and obgRt<button class="btSimple btGreen"
                         onclick="reloadPageWithFeature('exposeObgStateAndRt')">
-                        <!-- <span class="ico-check-mark-circle-o fontSizeSmaller"></span> -->
                         <span>Enable</span>
                     </button>
                 </div>
@@ -201,7 +200,7 @@
                 <div>Enter Segment Guid manually</div>
                 <div class="twoItemsJustified">
                     <input id="fdSegmentGuid" class="fdSbTools width100percent height20px">
-                    <button class="btSimple btSubmit" onclick="changeSegmentGuid()">Submit</button>
+                    <button class="btSimple btSubmit" onclick="changeSegmentGuid()">Set</button>
                 </div>
 
                 <div class="checkBoxRowToRight marginTop5px">
@@ -347,18 +346,18 @@
                             <div id="setEventPhaseButtonsLayout">
                                 <button id="btSetEventPhaseLive" class="btSimple btSetEventPhase"
                                     onclick="setEventPhase('Live')">
-                                    <span class="ico-live-betting fontSizeSmaller"></span>
-                                    <span>Live</span>
+                                    <span class="ico-live-betting iconOnBtSimple"></span>
+                                    <span class="labelOnBtSimple">Live</span>
                                 </button>
                                 <button id="btSetEventPhasePrematch" class="btSimple btSetEventPhase"
                                     onclick="setEventPhase('Prematch')">
-                                    <span class="ico-starting-soon fontSizeSmaller"></span>
-                                    <span>Prematch</span>
+                                    <span class="ico-starting-soon iconOnBtSimple"></span>
+                                    <span class="labelOnBtSimple">Prematch</span>
                                 </button>
                                 <button id="btSetEventPhaseOver" class="btSimple btSetEventPhase"
                                     onclick="setEventPhase('Over')">
-                                    <span class="ico-event-ended fontSizeSmaller"></span>
-                                    <span>Over</span>
+                                    <span class="ico-event-ended iconOnBtSimple"></span>
+                                    <span class="labelOnBtSimple">Over</span>
                                 </button>
                             </div>
                             <div class="checkBoxRowToRight">
@@ -382,8 +381,7 @@
                                 </div>
                                 <div class="marginTop5px">
                                     <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()">
-                                        <span class="ico-expand fontSizeSmaller"></span>
-                                        <span>Add</span>
+                                        <span class="labelOnBtSimple">Add</span>
                                     </button>
                                     <span id="addToCarouselMessage"></span>
                                 </div>
@@ -611,7 +609,7 @@
                     <label for="newOdds">New Odds:</label>
                     <input class="fdSbTools" type="number" id="newOdds" min=1 step=0.01
                         oninput="validity.valid||(value='');">
-                    <button class="btSimple btSubmit" onclick="changeOdds()">Submit</button>
+                    <button class="btSimple btSubmit" onclick="changeOdds()">Set</button>
                 </div>
             </div>
             <div id="sbToolsSelectionInfo" class="hide">
@@ -645,17 +643,22 @@
                         <div></div>
                     </div>
                 </div>
-                <button onclick="toggleSection('createFastMarketSection')" class="moreLess">                    
-                    <span class="ico-action-betting vertMiddle"></span>
+                <button onclick="toggleSection('createFastMarketSection')" class="moreLess">
+                    <span class="ico-action-betting iconOnBtSimple"></span>
                     <span>Create Fast Market</span>
                 </button>
                 <div id="createFastMarketSection" class="marginTopBottom10px hide">
                     <div class="infoMessage">Football, Tennis, Table Tennis, Ice Hockey</div>
                     <div class="createMarketLayout">
-                        <button class="btSimple" id="btCreateFastMarket"
-                            onclick="createMarket('fast')">Create&nbsp;<span
+                        <button class="btSimple" id="btCreateFastMarket" onclick="createMarket('fast')">
+                            <span class="ico-action-betting iconOnBtSimple"></span>
+                            <span class="labelOnBtSimple">Create</span>
+
+
+
+                            <!-- Create&nbsp;<span
                                 class="ico-action-betting vertMiddle"></span></button>
-                        <div class="buttonLabelToRight" id="fastMarketMessage"></div>
+                        <div class="buttonLabelToRight" id="fastMarketMessage"></div> -->
                     </div>
                 </div>
             </div>
@@ -690,15 +693,16 @@
                     </div>
                     <input class="fdSbTools fdScoreBoardNumeric" type="number" min=0
                         oninput="validity.valid||(value='');" id="homeScoreInputField">
-                    <button id="btSubmitHomeScore" class="btSubmit btSimple"
-                        onclick="submitScore('home')">Submit</button>
+                    <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore('home')">Set</button>
                     <div id="awayScoreLabel">
                         <span class="ico-score vertMiddle marginRight2px"></span>Away Score
                     </div>
                     <input class="fdSbTools fdScoreBoardNumeric" type="number" min=0
                         oninput="validity.valid||(value='');" id="awayScoreInputField">
-                    <button id="btSubmitAwayScore" class="btSubmit btSimple"
-                        onclick="submitScore('away')">Submit</button>
+                    <!-- <button class="btIcon" onclick="submitScore('away')">
+                        <img class="width16px iconSubmit"> -->
+                    <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore('away')">Set</button>
+                    </button>
                 </div>
                 <div id="scoreBoardDetails">
                     <div class="scoreBoardLayout">
@@ -734,7 +738,7 @@
 
 
                     </div>
-                    <button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Submit</button>
+                    <button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Set</button>
                 </div>
             </div>
             <div id="scoreBoardInfo" class="hide">
@@ -871,17 +875,19 @@
         </button>
         <div class="accContent">
 
-            <div class="marginBottom5px nativeDetectedEventLayout">
+            <div class="nativeDetectedEventLayout">                
                 <div>
                     <div>Detected event from the slip:</div>
                     <div class="labelRow" id="eventLabelForNative"></div>
                 </div>
 
-                <button id="btOpenEventOnNative" class="btSimple btGreen" onclick="openEventOnNative()">
+                <button id="btOpenEventOnNative" class="btSimple" onclick="openEventOnNative()">
                     <div class="ico-maximize-event iconNativeBottomBarButton"></div>
-                    <div class="labelNativeBottomBarButton">Open</div>
+                    <div class="labelNativeBottomBarButton">OPEN</div>
                 </button>
             </div>
+
+            <hr class="hRule">
 
             <div id="noRoutesError" class="displayinRed extraCondensed hide">
                 <hr class="hRule">
@@ -900,11 +906,11 @@
                     <div class="ico-all-sports-search iconNativeBottomBarButton"></div>
                     <div class="labelNativeBottomBarButton">A-Z</div>
                 </button>
-                <button id="nativeButtonOther" class="btSimple" onclick="nativeToggle('other')">
+                <button id="nativeButtonOther" class="btSimple btNativeToggleable" onclick="nativeToggle('other')">
                     <div class="ico-all-games iconNativeBottomBarButton"></div>
                     <div class="labelNativeBottomBarButton">Other</div>
                 </button>
-                <button class="btSimple" onclick="nativeNavigate('betSlip')">
+                <button id="nativeButtonBetslip" class="btSimple" onclick="nativeNavigate('betSlip')">
                     <div class="ico-betslip-bottom iconNativeBottomBarButton"></div>
                     <div class="labelNativeBottomBarButton">Betslip</div>
                 </button>
@@ -940,35 +946,35 @@
             </div>
 
 
-            <div id="nativeOtherSection" class="hide marginTopBottom10px">
-                <!-- <hr class="hRule"> -->
-                <div class="marginBottom5px nativeOtherButtons">
-                    <button id="nativeButtonBetBuilder" class="btNativeOther btNativeToggleable"
-                        onclick="nativeNavigate('betBuilder')">
-                        <div class="ico-bet-builder iconNativeOtherButton"></div>
-                        <div class="labelNativeOtherButton">B.Builder</div>
-                    </button>
-                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('search')">
-                        <div class="ico-search iconNativeOtherButton"></div>
-                        <div class="labelNativeOtherButton">Search</div>
-                    </button>
-                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('boost')">
-                        <div class="ico-price-boost iconNativeOtherButton"></div>
-                        <div class="labelNativeOtherButton">Boost</div>
-                    </button>
-                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('lsc')">
-                        <div class="ico-live-streaming iconNativeOtherButton"></div>
-                        <div class="labelNativeOtherButton">LS.Calen</div>
-                    </button>
-                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('startingSoon')">
-                        <div class="ico-starting-soon iconNativeOtherButton"></div>
-                        <div class="labelNativeOtherButton">St.Soon</div>
-                    </button>
-                    <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('settings')">
-                        <div class="ico-settings iconNativeOtherButton"></div>
-                        <div class="labelNativeOtherButton">Settings</div>
-                    </button>
-                </div>
+            <!-- <div id="nativeOtherSection" class="hide marginTopBottom10px"> -->
+            <div id="nativeOtherSection" class="hide marginTopBottom10px nativeOtherButtons">
+                <!-- <div class="marginBottom5px nativeOtherButtons"> -->
+                <button id="nativeButtonBetBuilder" class="btNativeOther btNativeToggleable"
+                    onclick="nativeNavigate('betBuilder')">
+                    <div class="ico-bet-builder iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">B.Builder</div>
+                </button>
+                <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('search')">
+                    <div class="ico-search iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">Search</div>
+                </button>
+                <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('boost')">
+                    <div class="ico-price-boost iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">Boost</div>
+                </button>
+                <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('lsc')">
+                    <div class="ico-live-streaming iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">LS.Calend</div>
+                </button>
+                <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('startingSoon')">
+                    <div class="ico-starting-soon iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">Start Soon</div>
+                </button>
+                <button class="btNativeOther btNativeToggleable" onclick="nativeNavigate('settings')">
+                    <div class="ico-settings iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">Settings</div>
+                </button>
+                <!-- </div> -->
             </div>
 
             <div id="nativeBetBuilderSection" class="marginTopBottom10px hide">
@@ -1103,11 +1109,11 @@
         border: 1px solid #444;
         border-radius: 3px;
         box-shadow: 0 1px #666;
-        padding-inline: 2px;
         margin: 2px;
         cursor: pointer;
-        /* line-height: 1.1em; */
+        line-height: 1em;
         font-size: inherit;
+        padding: 2px;
         color: #444;
     }
 
@@ -1116,11 +1122,6 @@
             background-color: #fff
         }
     }
-
-
-    /* .btSimple:hover {
-        background-color: #fff
-    } */
 
     .btSimple:active {
         box-shadow: 0 0px #666;
@@ -1232,8 +1233,6 @@
         grid-template-rows: auto auto;
     }
 
-
-
     .align-right {
         text-align: right
     }
@@ -1278,8 +1277,14 @@
         justify-content: space-between;
     }
 
-    .fontSizeSmaller {
-        font-size: smaller;
+    .iconOnBtSimple {
+        margin-right: 3px;
+        vertical-align: middle;
+        /* font-size: smaller; */
+    }
+
+    .labelOnBtSimple {
+        vertical-align: middle;
     }
 
     .iconMockIconColumn {
@@ -1369,7 +1374,7 @@
 
     .btSubmit {
         margin-left: 5px;
-        width: 60px
+        width: 45px
     }
 
     .vertical {
@@ -1606,7 +1611,7 @@
     }
 
     .hRule {
-        border-top: #ccc;
+        border-top: 1px solid #eee;
     }
 
     .scaledTo70percent {
