@@ -16,23 +16,23 @@
     };
 
     // // ************** REMOTE ****************
-    if (isSportsbookInIframeWithoutObgTools) {
-        if (confirm("Sportsbook is in iframe so Sportsbook Tool does not work from here.\nDo you want to open the iframe itself?")) {
-            url = new URL(iframeURL);
-            reloadPageWithSearchParams([ENABLE_OBGSTATE, ENABLE_OBGRT]);
-            return;
-        } else {
-            return;
-        }
-    }
-    removeExistingSportsbookTool();
-    var sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // if (isSportsbookInIframeWithoutObgTools) {
+    //     if (confirm("Sportsbook is in iframe so Sportsbook Tool does not work from here.\nDo you want to open the iframe itself?")) {
+    //         url = new URL(iframeURL);
+    //         reloadPageWithSearchParams([ENABLE_OBGSTATE, ENABLE_OBGRT]);
+    //         return;
+    //     } else {
+    //         return;
+    //     }
+    // }
+    // removeExistingSportsbookTool();
+    // var sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // var sportsbookTool = document.getElementById("sportsbookTool");
+    var sportsbookTool = document.getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     var accCollection = document.getElementsByClassName("accordion");
@@ -59,7 +59,7 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.4.22";
+    const SB_TOOL_VERSION = "v1.4.24";
     const IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED = isExposed("obgClientEnvironmentConfig");
     const DEVICE_TYPE = getDeviceType();
     const IS_TOUCH_BROWSER = isTouchBrowser();
@@ -351,7 +351,7 @@
         // In Chrome, the true version is after "Chrome" 
         if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
             browserName = "Chrome";
-            fullVersion = nAgt.substring(verOffset + 7);
+            fullVersion = nAgt.substring(verOffset + 7).replace(".0.0.0", "");
         }
         // In Safari, the true version is after "Safari" or after "Version" 
         else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
