@@ -59,7 +59,7 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.4.24";
+    const SB_TOOL_VERSION = "v1.4.24f";
     const IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED = isExposed("obgClientEnvironmentConfig");
     const DEVICE_TYPE = getDeviceType();
     const IS_TOUCH_BROWSER = isTouchBrowser();
