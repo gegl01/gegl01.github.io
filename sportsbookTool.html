@@ -376,7 +376,7 @@
                         </div>
                     </div>
 
-                    <div>
+                    <!-- <div>
                         <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
                             Carousel/Cards</button>
                         <div id="addToCarouselSection" class="hide marginTopBottom10px">
@@ -386,13 +386,12 @@
                                     <div class="twoItemsJustified">
                                         <span class="width95Percent">
                                             Stop Carousel Autoplay
-                                            <!-- <span class="displayInLightGrey">with page reload</span> -->
                                         </span>
                                         <button class="btDisable btIcon"
                                             onclick="reloadPageWithFeature('stopCarouselAutoplay')">
                                             <img class="iconDisable">
                                         </button>
-                                    </div>                                    
+                                    </div>
                                 </div>
 
                                 <div class="twoItemsJustified">
@@ -410,7 +409,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div>
                         <button onclick="toggleSection('eventPropertiesSection')" class="moreLess">Override Event
@@ -516,96 +515,140 @@
                 </div>
             </div>
             <div id="marketFeatures" class="hide">
-                <button onclick="toggleSection('marketDetailsSection')" class="moreLess">Market Details</button>
-                <div id="marketDetailsSection" class="marginTopBottom10px hide">
 
-                    <div class="twoItemsJustified">
-                        <span class="width95Percent displayFlex">
-                            <span class="marginRight5px">ID:</span>
-                            <span id="marketIdForSbToolsMarket" class="labelRow displayInGreen"></span>
-                        </span>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('marketId')">
-                            <img class="iconCopy">
-                        </button>
-                    </div>
-                    <hr class="hRule">
-                    <div class="twoItemsJustified">
-                        <span class="width95Percent displayFlex">
-                            <span class="marginRight5px width45percent">Template ID:</span>
-                            <span id="marketTemplateIdForSbToolsMarket"
-                                class="labelRow width100percent displayInGreen"></span>
-                        </span>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('marketTemplateId')">
-                            <img class="iconCopy">
-                        </button>
-                    </div>
+                <div>
+                    <button onclick="toggleSection('marketDetailsSection')" class="moreLess">Market Details</button>
+                    <div id="marketDetailsSection" class="marginTopBottom10px hide">
 
-                    <div class="twoItemsJustified">
-                        <span class="width95Percent displayFlex">
-                            <span class="marginRight5px width45percent noWrap">Template Tags:</span>
-                            <span id="marketTemplateTagsForSbToolsMarket"
-                                class="labelRow width100percent displayInGreen"></span>
-                        </span>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('marketTemplateTags')">
-                            <img class="iconCopy">
-                        </button>
-                    </div>
+                        <div class="twoItemsJustified">
+                            <span class="width95Percent displayFlex">
+                                <span class="marginRight5px">ID:</span>
+                                <span id="marketIdForSbToolsMarket" class="labelRow displayInGreen"></span>
+                            </span>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('marketId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+                        <hr class="hRule">
+                        <div class="twoItemsJustified">
+                            <span class="width95Percent displayFlex">
+                                <span class="marginRight5px width45percent">Template ID:</span>
+                                <span id="marketTemplateIdForSbToolsMarket"
+                                    class="labelRow width100percent displayInGreen"></span>
+                            </span>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('marketTemplateId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
 
-                    <hr class="hRule">
-                    <div id="openMappingForTemplateTagSection" class="twoItemsJustified">
-                        <span class="width95Percent">Open Mapping for the Template Tags</span>
-                        <button class="btIcon btOpenInNewWindow" onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <div id="sbMarketIdForOddsManagerSection" class="twoItemsJustified">
-                        <span id="sbIdForOddsManager" class="width95Percent">Get Market ID for Odds Manager</span>
-                        <button class="btIcon btOpenInNewWindow" onclick="getSbIdForOddsManager('market')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <div class="twoItemsJustified">
-                        <span class="width95Percent">Open in
-                            <span class="sbManagerSb">sb</span>
-                            <span class="sbManagerManager">manager</span>
-                            <span>(ex-Trading Tools)</span>
-                        </span>
-                        <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('market')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
+                        <div class="twoItemsJustified">
+                            <span class="width95Percent displayFlex">
+                                <span class="marginRight5px width45percent noWrap">Template Tags:</span>
+                                <span id="marketTemplateTagsForSbToolsMarket"
+                                    class="labelRow width100percent displayInGreen"></span>
+                            </span>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('marketTemplateTags')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+
+                        <hr class="hRule">
+                        <div id="openMappingForTemplateTagSection" class="twoItemsJustified">
+                            <span class="width95Percent">Open Mapping for the Template Tags</span>
+                            <button class="btIcon btOpenInNewWindow"
+                                onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
+                                <img class="iconOpenInNewWindow">
+                            </button>
+                        </div>
+                        <div id="sbMarketIdForOddsManagerSection" class="twoItemsJustified">
+                            <span id="sbIdForOddsManager" class="width95Percent">Get Market ID for Odds Manager</span>
+                            <button class="btIcon btOpenInNewWindow" onclick="getSbIdForOddsManager('market')">
+                                <img class="iconOpenInNewWindow">
+                            </button>
+                        </div>
+                        <div class="twoItemsJustified">
+                            <span class="width95Percent">Open in
+                                <span class="sbManagerSb">sb</span>
+                                <span class="sbManagerManager">manager</span>
+                                <span>(ex-Trading Tools)</span>
+                            </span>
+                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('market')">
+                                <img class="iconOpenInNewWindow">
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketStatusSection')" class="moreLess">Market Status</button>
-                <div id="marketStatusSection" class="hide">
-                    <div id="setMarketStateButtonsSection" class="setMarketStateLayout marginTopBottom10px">
-                        <button class="btSimple btSetMarketState" id="btSetMarketStateSuspended"
-                            onclick="setMarketState('Suspended')">Suspd.</button>
-                        <button class="btSimple btSetMarketState" id="btSetMarketStateOpen"
-                            onclick="setMarketState('Open')">Open</button>
-                        <button class="btSimple btSetMarketState" id="btSetMarketStateVoid"
-                            onclick="setMarketState('Void')">Void</button>
-                        <button class="btSimple btSetMarketState" id="btSetMarketStateSettled"
-                            onclick="setMarketState('Settled')">Settled</button>
-                        <button class="btSimple btSetMarketState" id="btSetMarketStateHold"
-                            onclick="setMarketState('Hold')">Hold</button>
+                <div>
+                    <button onclick="toggleSection('marketStatusSection')" class="moreLess">Market Status</button>
+                    <div id="marketStatusSection" class="hide">
+                        <div id="setMarketStateButtonsSection" class="setMarketStateLayout marginTopBottom10px">
+                            <button class="btSimple btSetMarketState" id="btSetMarketStateSuspended"
+                                onclick="setMarketState('Suspended')">Suspd.</button>
+                            <button class="btSimple btSetMarketState" id="btSetMarketStateOpen"
+                                onclick="setMarketState('Open')">Open</button>
+                            <button class="btSimple btSetMarketState" id="btSetMarketStateVoid"
+                                onclick="setMarketState('Void')">Void</button>
+                            <button class="btSimple btSetMarketState" id="btSetMarketStateSettled"
+                                onclick="setMarketState('Settled')">Settled</button>
+                            <button class="btSimple btSetMarketState" id="btSetMarketStateHold"
+                                onclick="setMarketState('Hold')">Hold</button>
+                        </div>
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Override Market Properties</button>
-                <div id="marketPropertiesSection" class="marginTopBottom10px hide">
+                <div>
+                    <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
+                        Carousel/Cards</button>
+                    <div id="addToCarouselSection" class="hide marginTopBottom10px">
+                        <div id="carouselButtonsDiv">
 
-                    <div id="isCashoutAvailableSection" class="iconMocksRow">
-                        <span class="width95Percent">
-                            <span class="ico-cash-stack iconMockIconColumn vertMiddle"></span>
-                            <span class="iconMockLabelColumn">Cash Out</span>
-                        </span>
-                        <input type="checkbox" onclick="toggleMarketProperty('cashoutAvailable')"
-                            id="chkIsCashoutAvailable" class="chkSbTools">
+                            <div id="stopCarouselAutoplayRow" class="marginTopBottom10px">
+                                <div class="twoItemsJustified">
+                                    <span class="width95Percent">
+                                        Stop Carousel Autoplay
+                                    </span>
+                                    <button class="btDisable btIcon"
+                                        onclick="reloadPageWithFeature('stopCarouselAutoplay')">
+                                        <img class="iconDisable">
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="twoItemsJustified">
+                                <span>Add market to Carousel or Cards</span>
+                                <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()">
+                                    <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
+                                </button>
+                            </div>
+                            <div class="marginTop5px">
+                                <span id="addToCarouselMessage"></span>
+                            </div>
+                            <div id="addToCarouselErrorMessage" class="displayInRed infoMessage hide">
+                                Could not get data for 3-column layout.<br>If the slide/card is 3-column layout,
+                                please remove the detected event from the betslip/event panel, then add again.
+                            </div>
+                        </div>
                     </div>
-
                 </div>
-               
+
+                <div>
+                    <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Override Market
+                        Properties</button>
+                    <div id="marketPropertiesSection" class="marginTopBottom10px hide">
+
+                        <div id="isCashoutAvailableSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="ico-cash-stack iconMockIconColumn vertMiddle"></span>
+                                <span class="iconMockLabelColumn">Cash Out</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleMarketProperty('cashoutAvailable')"
+                                id="chkIsCashoutAvailable" class="chkSbTools">
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
 
             <div id="sbToolsMarketInfo" class="hide">
