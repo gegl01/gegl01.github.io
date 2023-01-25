@@ -100,57 +100,57 @@
                 <div id="contextUtilities" class="marginTop10px hide">
 
                     <div class="twoItemsJustified">
-                        <span class="width95Percent">
+                        <div class="width95Percent">
                             <span class="keyColumnForExtras">Jira QA Table</span>
                             <span class="displayInLightGrey">from the above data</span>
-                        </span>
+                        </div>
                         <button class="btCopy btIcon" id="btCreateJiraTable" onclick="copyToClipboard('jiraTemplate')">
                             <img class="iconCopy">
                         </button>
                     </div>
                     <div class="twoItemsJustified">
-                        <span class="width95Percent">
+                        <div class="width95Percent">
                             <span class="keyColumnForExtras">Deep Link</span>
                             <span class="displayInLightGrey">of the actual page & slip</span>
-                        </span>
+                        </div>
                         <button class="btCopy btIcon" id="btCreateDeepLink" onclick="copyToClipboard('deepLink')">
                             <img class="iconCopy">
                         </button>
                     </div>
 
                     <div id="postMessageRow" class="twoItemsJustified hide">
-                        <span class="width95Percent">
+                        <div class="width95Percent">
                             <span class="keyColumnForExtras">PostMessage</span>
                             <span class="displayInLightGrey">routeChangeIn in native</span>
-                        </span>
+                        </div>
                         <button class="btCopy btIcon" id="btCreatePostMessage" onclick="copyToClipboard('postMessage')">
                             <img class="iconCopy">
                         </button>
                     </div>
 
                     <div id="disableCacheRow" class="twoItemsJustified">
-                        <span class="width95Percent">
+                        <div class="width95Percent">
                             <span class="keyColumnForExtras">Off Cache</span>
                             <span class="displayInLightGrey">with page reload</span>
-                        </span>
+                        </div>
                         <button class="btDisable btIcon" onclick="reloadPageWithFeature('disableCache')">
                             <img class="iconDisable">
                         </button>
                     </div>
                     <div id="disableSSRRow" class="twoItemsJustified">
-                        <span class="width95Percent">
+                        <div class="width95Percent">
                             <span class="keyColumnForExtras">Off SSR</span>
                             <span class="displayInLightGrey">with page reload</span>
-                        </span>
+                        </div>
                         <button class="btDisable btIcon" onclick="reloadPageWithFeature('disableSSR')">
                             <img class="iconDisable">
                         </button>
                     </div>
                     <div id="disableGeoFencingRow" class="twoItemsJustified">
-                        <span class="width95Percent">
+                        <div class="width95Percent">
                             <span class="keyColumnForExtras">Off GeoFencing</span>
                             <span class="displayInLightGrey">for Betsson ArBa login</span>
-                        </span>
+                        </div>
                         <button class="btDisable btIcon" onclick="reloadPageWithFeature('disableGeoFencing')">
                             <img class="iconDisable">
                         </button>
@@ -179,8 +179,8 @@
             <div class="marginBottom10px">
                 <div class="twoItemsJustified">
                     <span class="width95Percent displayFlex">
-                        <span class="marginRight5px">Name:</span>
-                        <span id="segmentNameSpan" class="displayInGreen"></span>
+                        <span class="width17percent">Name:</span>
+                        <span id="segmentNameSpan" class="width100percent displayInGreen"></span>
                     </span>
                     <button class="btCopy btIcon" onclick="copyToClipboard('segmentName')">
                         <img class="iconCopy">
@@ -188,12 +188,18 @@
                 </div>
                 <div class="twoItemsJustified">
                     <span class="width95Percent displayFlex">
-                        <span class="marginRight5px">Guid:</span>
-                        <span id="segmentGuidSpan" class="displayInGreen"></span>
+                        <span class="width17percent">Guid:</span>
+                        <span id="segmentGuidSpan" class="width100percent displayInGreen"></span>
                     </span>
                     <button class="btCopy btIcon" onclick="copyToClipboard('segmentGuid')">
                         <img class="iconCopy">
                     </button>
+                </div>
+                <div>
+                    <span class="width95Percent displayFlex">
+                        <span class="width17percent">ID:</span>
+                        <span id="segmentLegacyIdSpan" class="width100percent displayInGreen"></span>
+                    </span>
                 </div>
             </div>
 
@@ -260,14 +266,6 @@
                             <span class="keyForEventDetails">Start Date:</span>
                             <span id="startDateForEventDetails" class="valueForEventDetails displayInGreen"></span>
                         </div>
-                        <!-- <div class="displayFlex">
-                            <span class="keyForEventDetails">Category:</span>
-                            <span id="categoryForEventDetails" class="valueForEventDetails"></span>
-                        </div>
-                        <div class="displayFlex">
-                            <span class="keyForEventDetails">Region:</span>
-                            <span id="regionForEventDetails" class="valueForEventDetails"></span>
-                        </div> -->
 
                         <div class="displayFlex">
                             <span class="keyForEventDetails">Category:</span>
@@ -298,11 +296,11 @@
                             </button>
                         </div>
                         <div class="twoItemsJustified">
-                            <span class="width95Percent">Open in
+                            <div class="width95Percent">Open in
                                 <span class="sbManagerSb">sb</span>
                                 <span class="sbManagerManager">manager</span>
                                 <span>(ex-Trading Tools)</span>
-                            </span>
+                            </div>
                             <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('event')">
                                 <img class="iconOpenInNewWindow">
                             </button>
@@ -314,11 +312,15 @@
                     </div>
 
                     <div>
-                        <button onclick="toggleSection('renameEventSection')" class="moreLess">Rename
-                            Event/Participants</button>
+                        <button onclick="toggleSection('renameEventSection')" class="moreLess">Participants &
+                            Label</button>
                         <div id="renameEventSection" class="marginTopBottom10px hide">
                             <div id="renameParticipantLabelSection">
-                                <div>Participant:
+                                <div>Participant
+                                    <span id="selectedParticipantIdSpan" class="displayInGreen marginLeft5px"></span>
+                                    <button class="btCopy btIcon" onclick="copyToClipboard('participantId')">
+                                        <img class="iconCopy">
+                                    </button>
                                     <span class="accordionHint">displayed for normal Matches</span>
                                 </div>
                                 <select id="participantSelector" onchange="selectParticipant(value)"
@@ -378,7 +380,7 @@
 
                     <div>
                         <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
-                            Carousel/Cards</button>
+                            Carousel or Cards</button>
                         <div id="addToCarouselSection" class="hide marginTopBottom10px">
                             <div id="carouselButtonsDiv">
 
@@ -392,7 +394,7 @@
                                             onclick="reloadPageWithFeature('stopCarouselAutoplay')">
                                             <img class="iconDisable">
                                         </button>
-                                    </div>                                    
+                                    </div>
                                 </div>
 
                                 <div class="twoItemsJustified">
@@ -509,7 +511,13 @@
                 <div id="detectedOrLockedRowForSbToolsMarket">Detected market:</div>
                 <button class="btInfo btIcon" onclick="toggleInfo('sbToolsMarketInfo')"><img
                         class="iconInfoCircle"></button>
-                <div class="labelRow" id="marketLabelForSbToolsMarket"></div>
+                <div class="labelRow" id="labelRowForSbToolsMarket">
+                    <div class="hide" id="messageForSbToolsMarket"></div>
+                    <div id="labelsForDetectedMarketAndEvent">
+                        <div id="eventLabelForDetectedMarket"></div>
+                        <div class="marginLeft5px fontBold" id="marketLabelForDetectedMarket"></div>
+                    </div>
+                </div>
                 <div id="lockMarketSection" class="lockSection hide">
                     Lock
                     <input type="checkbox" id="chkLockMarket" class="chkLock chkSbTools" onclick="lockMarket()">
@@ -531,7 +539,7 @@
                     <hr class="hRule">
                     <div class="twoItemsJustified">
                         <span class="width95Percent displayFlex">
-                            <span class="marginRight5px width45percent">Template ID:</span>
+                            <span class="width48percent">Template ID:</span>
                             <span id="marketTemplateIdForSbToolsMarket"
                                 class="labelRow width100percent displayInGreen"></span>
                         </span>
@@ -542,7 +550,7 @@
 
                     <div class="twoItemsJustified">
                         <span class="width95Percent displayFlex">
-                            <span class="marginRight5px width45percent noWrap">Template Tags:</span>
+                            <span class="width48percent noWrap">Template Tags:</span>
                             <span id="marketTemplateTagsForSbToolsMarket"
                                 class="labelRow width100percent displayInGreen"></span>
                         </span>
@@ -554,7 +562,8 @@
                     <hr class="hRule">
                     <div id="openMappingForTemplateTagSection" class="twoItemsJustified">
                         <span class="width95Percent">Open Mapping for the Template Tags</span>
-                        <button class="btIcon btOpenInNewWindow" onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
+                        <button class="btIcon btOpenInNewWindow"
+                            onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
@@ -565,11 +574,11 @@
                         </button>
                     </div>
                     <div class="twoItemsJustified">
-                        <span class="width95Percent">Open in
+                        <div class="width95Percent">Open in
                             <span class="sbManagerSb">sb</span>
                             <span class="sbManagerManager">manager</span>
                             <span>(ex-Trading Tools)</span>
-                        </span>
+                        </div>
                         <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('market')">
                             <img class="iconOpenInNewWindow">
                         </button>
@@ -592,7 +601,8 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Override Market Properties</button>
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Override Market
+                    Properties</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
                     <div id="isCashoutAvailableSection" class="iconMocksRow">
@@ -605,7 +615,7 @@
                     </div>
 
                 </div>
-               
+
             </div>
 
             <div id="sbToolsMarketInfo" class="hide">
@@ -625,7 +635,15 @@
                 <div id="detectedOrLockedRowForSbToolsSelection">Detected selection:</div>
                 <button class="btInfo btIcon" onclick="toggleInfo('sbToolsSelectionInfo')"><img
                         class="iconInfoCircle"></button>
-                <div class="labelRow" id="selectionLabelForSbToolsSelection"></div>
+                <!-- <div class="labelRow" id="selectionLabelForSbToolsSelection"></div> -->
+                <div class="labelRow" id="labelForSbToolsSelection">
+                    <div class="hide" id="messageForSbToolsSelection"></div>
+                    <div id="labelsForDetectedSelectionMarketAndEvent">
+                        <div id="eventLabelForDetectedSelection"></div>
+                        <div id="marketLabelForDetectedSelection" class="marginLeft5px"></div>
+                        <div class="marginLeft30px fontBold" id="selectionLabelForDetectedSelection"></div>
+                    </div>
+                </div>
                 <div id="lockSelectionSection" class="hide lockSection">
                     Lock <input type="checkbox" id="chkLockSelection" class="chkLock chkSbTools verticalAlignMiddle"
                         onclick="lockSelection()">
@@ -638,16 +656,22 @@
                     <div>Selection ID:</div>
                     <div class="twoItemsJustified">
                         <span id="selectionIdForSbToolsSelection" class="labelRow displayInGreen width95Percent"></span>
-
                         <button class="btCopy btIcon" onclick="copyToClipboard('selectionId')"><img
                                 class="iconCopy"></button>
                     </div>
                 </div>
-                <div id="newOddsRow" class="newOddsLayout">
-                    <label for="newOdds">New Odds:</label>
+                <div class="newOddsLayout">
+                    <!-- <div> -->
+                    <span>Initial Odds:</span>
+                    <span id="initialOddsSpan" class="displayInGreen"></span>
+                    <span></span>
+                    <!-- </div> -->
+                    <!-- <div id="newOddsRow"> -->
+                    <span>New Odds:</span>
                     <input class="fdSbTools" type="number" id="newOdds" min=1 step=0.01
                         oninput="validity.valid||(value='');">
                     <button class="btSimple btSubmit" onclick="changeOdds()">Set</button>
+                    <!-- </div> -->
                 </div>
             </div>
             <div id="sbToolsSelectionInfo" class="hide">
@@ -658,7 +682,7 @@
     </div>
 
     <div id="sbToolsCreateMarket" class="accordion closed">
-        <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Fast/PlayerProps
+        <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Fast/Player Props
             Market</button>
         <div class="accContent">
             <div class="detectedEntitySection">
@@ -672,6 +696,8 @@
                 <button onclick="toggleSection('createPlayerPropsSection')" class="moreLess">Create Player
                     Props</button>
                 <div id="createPlayerPropsSection" class="marginTopBottom10px hide">
+                    <div class="infoMessage">Football, Basketball, Baseball, Ice Hockey, American Football, Handball
+                    </div>
                     <div class="createMarketLayout">
                         <button class="btSimple playerProps" id="btCreatePlayerPropsMarket"
                             onclick="createMarket('playerProps')">4 selections</button>
@@ -734,8 +760,6 @@
                     </div>
                     <input class="fdSbTools fdScoreBoardNumeric" type="number" min=0
                         oninput="validity.valid||(value='');" id="awayScoreInputField">
-                    <!-- <button class="btIcon" onclick="submitScore('away')">
-                        <img class="width16px iconSubmit"> -->
                     <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore('away')">Set</button>
                     </button>
                 </div>
@@ -787,78 +811,174 @@
     </div>
 
     <div id="sbToolsAccaDetails" class="accordion closed">
-        <button id="accaDetailsAccordion" class="accHeading" onclick="initAccaDetails()">
-            ACCA Insurance Details
+        <button id="accaDetailsAccordion" class="accHeading" onclick="initBonuses()">
+            ACCA Insurance & Price Boost
         </button>
         <div class="accContent">
-            <div id="accaMessage" class="displayInRed">
-                <div id="loginToSeeAcca">Login to see ACCA
-                </div>
-                <div id="noAccaFound">No active ACCA insurance found</div>
-            </div>
-            <div id="accaDetailsLayout" class="hide">
-
-
-                <div class="twoItemsJustified">
-                    <span class="width95Percent displayFlex">
-                        <span class="marginRight5px">Name:</span>
-                        <span id=accaNameField class="accaValueColumn displayInGreen"></span>
-                    </span>
-
-                    <button class="btCopy btIcon" id="btAccaName" onclick="copyToClipboard('accaName')">
-                        <img class="iconCopy">
-                    </button>
-                </div>
-
-
-                <div class="twoItemsJustified">
-                    <span class="width95Percent displayFlex">
-                        <span class="marginRight5px">ID:</span>
-                        <span id=accaId class="accaValueColumn displayInGreen"></span>
-                    </span>
-                    <button class="btCopy btIcon" id="btCopyAccaId" onclick="copyToClipboard('accaId')">
-                        <img class="iconCopy">
-                    </button>
-                </div>
-                <div class="marginTopBottom10px twoItemsJustified">
-                    <span class="width95Percent">Open in
-                        <span class="sbManagerSb">sb</span>
-                        <span class="sbManagerManager">manager</span>
-                        <span>(ex-Trading Tools)</span>
-                    </span>
-                    <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('acca')">
-                        <img class="iconOpenInNewWindow">
-                    </button>
-                </div>
-                <hr class="hRule">
-                <div id="accaCategoriesSection">
-                    <div id="accaCategoriesRow" class="displayFlex">
-                        <span class="marginRight5px">Categories:</span>
-                        <span id=accaCategories class="displayInGreen"></span>
+            <button onclick="toggleSection('accaSection')" class="moreLess">ACCA Insurance Details
+            </button>
+            <div id="accaSection" class="hide marginTopBottom10px">
+                <div id="accaMessage" class="displayInRed">
+                    <div id="loginToSeeAcca">Login to see ACCA
                     </div>
-                    <div id="accaCompetitionsRow">
-                        <span class="marginRight5px">Competitions:</span>
-                        <span id="accaCompetitions" class="displayInLightGrey"></span>
+                    <div id="noAccaFound">No active ACCA insurance found</div>
+                </div>
+                <div id="accaDetailsLayout" class="hide">
+
+                    <div class="twoItemsJustified">
+                        <div class="width95Percent displayFlex">
+                            <span class="marginRight5px">Name:</span>
+                            <span id=accaNameField class="accaValueColumn displayInGreen"></span>
+                        </div>
+
+                        <button class="btCopy btIcon" id="btAccaName" onclick="copyToClipboard('accaName')">
+                            <img class="iconCopy">
+                        </button>
                     </div>
-                    <div id="accaMarketTemplatesRow">
-                        <span class="marginRight5px">Market Templates:</span>
-                        <span id="accaMarketTemplates" class="displayInLightGrey"></span>
+
+
+                    <div class="twoItemsJustified">
+                        <div class="width95Percent displayFlex">
+                            <span class="marginRight5px">ID:</span>
+                            <span id=accaId class="accaValueColumn displayInGreen"></span>
+                        </div>
+                        <button class="btCopy btIcon" id="btCopyAccaId" onclick="copyToClipboard('accaId')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
+                    <div class="marginTopBottom10px twoItemsJustified">
+                        <div class="width95Percent">Open in
+                            <span class="sbManagerSb">sb</span>
+                            <span class="sbManagerManager">manager</span>
+                            <span>(ex-Trading Tools)</span>
+                        </div>
+                        <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('acca')">
+                            <img class="iconOpenInNewWindow">
+                        </button>
                     </div>
                     <hr class="hRule">
+                    <div id="accaCategoriesSection">
+                        <div id="accaCategoriesRow" class="displayFlex">
+                            <span class="marginRight5px">Categories:</span>
+                            <span id="accaCategoriesSpan" class="displayInGreen"></span>
+                        </div>
+                        <div id="accaCompetitionsRow">
+                            <span class="marginRight5px">Competitions:</span>
+                            <span id="accaCompetitionsSpan" class="displayInLightGrey"></span>
+                        </div>
+                        <div id="accaMarketTemplatesRow">
+                            <span class="marginRight5px">Market Templates:</span>
+                            <span id="accaMarketTemplatesSpan" class="displayInLightGrey"></span>
+                        </div>
+                        <hr class="hRule">
+                    </div>
+                    <div id="accaEventPhaseRow">
+                        <span class="marginRight5px">Event Phase:</span>
+                        <span id="accaEventPhaseSpan" class="displayInGreen"></span>
+                    </div>
+                    <div>
+                        <span class="marginRight5px">Min Number of Selections:</span>
+                        <span id="accaMinimumNumberOfSelectionsSpan" class="displayInGreen"></span>
+                    </div>
+                    <div>
+                        <span class="marginRight5px">Min Selection Odds:</span>
+                        <span id="accaSelectionOddsLimitMinSpan" class="displayInGreen"></span>
+                    </div>
+                    <div id="accaTotalOddsLimitMinRow">
+                        <span class="marginRight5px">Min Total Odds:</span>
+                        <span id="accaTotalOddsLimitMinSpan" class="displayInGreen"></span>
+                    </div>
+                    <hr class="hRule">
+                    <div id="accaMinMaxStakeRow">
+                        <span class="marginRight5px">Stake Range:</span>
+                        <span id="accaMinMaxStakeSpan" class="displayInGreen"></span>
+                    </div>
                 </div>
-                <div id="accaEventPhaseRow"><span class="marginRight5px">Event Phase:</span><span id=accaEventPhase
-                        class="displayInGreen"></span></div>
-                <div><span class="marginRight5px">Min Number of Selections:</span><span id=accaMinimumNumberOfSelections
-                        class="displayInGreen"></span></div>
-                <div><span class="marginRight5px">Min Selection Odds:</span><span id=accaSelectionOddsLimitMin
-                        class="displayInGreen"></span></div>
-                <div id="accaTotalOddsLimitMinRow"><span class="marginRight5px">Min Total Odds:</span><span
-                        id=accaTotalOddsLimitMin class="displayInGreen"></span></div>
-                <hr class="hRule">
-                <div id="accaMinimumStakeRow"><span class="marginRight5px">Min Stake:</span><span id=accaMinimumStake
-                        class="displayInGreen"></span></div>
-                <div id="accaMaximumStakeRow"><span class="marginRight5px">Max Stake:</span><span id=accaMaximumStake
-                        class="displayInGreen"></span></div>
+            </div>
+
+            <button onclick="toggleSection('pbSection')" class="moreLess">Price Boost Details
+            </button>
+            <div id="pbSection" class="hide marginTopBottom10px">
+                <div id="noPbFound" class="displayInRed">
+                    No Price Boost found
+                </div>
+                <div id="pbDetailsLayout">
+                    <div class="twoItemsJustified">
+                        <div>
+                            <span id="pbNumberOfBoosts" class="displayInGreen fontBold marginRight5px"></span>
+                            <span>boosts listed</span>                            
+                        </div>
+                        <span>
+                            <input type="radio" id="radioPbByName" name="pbSelecBy" class="radioSbTools vertMiddle"
+                                checked onclick="listPriceBoostsBy('pBname')">
+                            <label for="radioPbByName" class="vertMiddle marginRight10px">by Name</label>
+                            <input type="radio" id="radioPbByEvent" name="pbSelecBy" class="radioSbTools vertMiddle"
+                                onclick="listPriceBoostsBy('eventName')">
+                            <label for="radioPbByEvent" class="vertMiddle">by Event Name</label>
+                        </span>
+                    </div>
+
+                    <select id="pbSelector" onchange="selectPb(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
+                    <div id="pbSelectedDetails">
+                        <div>
+                            <span class="marginRight5px">Name:</span>
+                            <span id="pbName" class="displayInGreen"></span>
+                        </div>
+                        <div class="twoItemsJustified">
+                            <div class="width95Percent displayFlex">
+                                <span class="marginRight5px">ID:</span>
+                                <span id="pbId" class="displayInGreen"></span>
+                            </div>
+                            <button class="btCopy btIcon" id="btCopyAccaId" onclick="copyToClipboard('priceBoostId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+                        <div class="marginTopBottom10px twoItemsJustified">
+                            <div class="width95Percent">Open in
+                                <span class="sbManagerSb">sb</span>
+                                <span class="sbManagerManager">manager</span>
+                                <span>(ex-Trading Tools)</span>
+                            </div>
+                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('priceBoost')">
+                                <img class="iconOpenInNewWindow">
+                            </button>
+                        </div>
+                        <hr class="hRule">
+                        <div>
+                            Path to the Competition:
+                            <div id="catRegCompLabelForPbDiv" class="displayInGreen marginBottom10px"></div>
+                            Boosted Selection:
+                            <div class="displayInGreen">
+                                <div id="eventLabelForPbDiv"></div>
+                                <div id="marketLabelForPbDiv" class="marginLeft5px"></div>
+                                <div id="selectionLabelForPbDiv" class="marginLeft30px fontBold"></div>
+                            </div>
+                        </div>
+                        <hr class="hRule">
+                        <div class="displayFlex">
+                            <span class="keyForPb">Visibility:</span>
+                            <span id="pbVisibility" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForPb">Type:</span>
+                            <span id="pbType" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForPb">Event Phases:</span>
+                            <span id="pbEventPhases" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForPb">Odds Range:</span>
+                            <span id="pbMinMaxOdds" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForPb">Stake Range:</span>
+                            <span id="pbMinMaxStake" class="displayInGreen"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1131,12 +1251,16 @@
         width: 100%;
     }
 
-    .width45percent {
-        width: 45%;
+    .width48percent {
+        width: 48%;
     }
 
     .width75percent {
         width: 75%;
+    }
+
+    .width17percent {
+        width: 17%;
     }
 
     .width80percent {
@@ -1171,6 +1295,10 @@
     .keyColumnForBanners {
         width: 130px;
         display: inline-block;
+    }
+
+    .keyForPb {
+        width: 30%;
     }
 
     .bannersRow {
@@ -1233,10 +1361,6 @@
         text-overflow: ellipsis;
     }
 
-    /* .contextValue {
-        color: rgb(0, 160, 0);
-    } */
-
     .marginTop5px {
         margin-top: 5px;
     }
@@ -1271,6 +1395,23 @@
         margin-right: 5px;
     }
 
+    .marginRight10px {
+        margin-right: 10px;
+    }
+
+
+    .marginLeft5px {
+        margin-left: 5px;
+    }
+
+    .marginLeft15px {
+        margin-left: 15px;
+    }
+
+    .marginLeft30px {
+        margin-left: 30px;
+    }
+
     .height20px {
         height: 20px;
     }
@@ -1281,7 +1422,7 @@
     }
 
     .labelRow {
-        padding-right: 3px;
+        /* padding-right: 3px; */
         word-break: break-word;
     }
 
@@ -1475,10 +1616,11 @@
     }
 
     .newOddsLayout {
-        padding-top: 10px;
+        margin-top: 10px;
         align-items: center;
         display: grid;
-        grid-template-columns: 30% 20% auto;
+        grid-template-rows: auto auto;
+        grid-template-columns: 25% 20% auto;
     }
 
     .btSubmit {
@@ -1753,11 +1895,9 @@
         font-stretch: extra-condensed;
     }
 
-    /* .warningMessage {
-        color: rgb(160, 0, 0);
-        font-weight: bold;
-        font-stretch: extra-condensed;
-    } */
+    .fontBold {
+        font-weight: 700;
+    }
 
     .chkLock {
         margin-left: 5px;
@@ -1767,9 +1907,14 @@
     .chkSbTools {
         cursor: pointer;
         align-self: center;
+        accent-color: #008d90;
     }
 
-
+    .radioSbTools {
+        margin-right: 3px;
+        cursor: pointer;
+        accent-color: #008d90;
+    }
 
     .btCopy {
         width: 18px;
