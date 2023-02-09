@@ -198,8 +198,6 @@
                 <hr class="hRule">
                 <div>
                     <div class="width95Percent displayFlex">
-                        <!-- <span class="width17percent">ID:</span>
-                        <span id="segmentLegacyIdSpan" class="width100percent displayInGreen"></span> -->
                         <span class="marginRight5px">Segment ID (used in ISA/Redis):</span>
                         <span id="segmentLegacyIdSpan" class="displayInGreen"></span>
                     </div>
@@ -250,7 +248,6 @@
             </div>
 
             <div id="eventFeaturesSection" class="hide">
-                <!-- <div> -->
                 <button onclick="toggleSection('eventDetailsSection')" class="moreLess">Event Details</button>
                 <div id="eventDetailsSection" class="marginTopBottom10px hide">
                     <div class="displayFlex">
@@ -307,10 +304,6 @@
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
-                    <!-- <div id="sbManagerWarningForEvent" class="warningMessage">I know that I'm working on PROD data
-                            and what I am doing</div>
-
-                    </div> -->
                 </div>
 
                 <div>
@@ -390,7 +383,6 @@
                                 <div class="twoItemsJustified">
                                     <span class="width95Percent">
                                         Stop Carousel Autoplay
-                                        <!-- <span class="displayInLightGrey">with page reload</span> -->
                                     </span>
                                     <button class="btDisable btIcon"
                                         onclick="reloadPageWithFeature('stopCarouselAutoplay')">
@@ -593,10 +585,6 @@
                 </div>
 
 
-
-
-                <!-- </div> -->
-
                 <div id="sbToolsEventInfo" class="hide">
                     <hr class="hRule">
                     <img class="iconInfoSymbol">Event detection order:
@@ -744,7 +732,6 @@
                 <div id="detectedOrLockedRowForSbToolsSelection">Detected selection:</div>
                 <button class="btInfo btIcon" onclick="toggleInfo('sbToolsSelectionInfo')"><img
                         class="iconInfoCircle"></button>
-                <!-- <div class="labelRow" id="selectionLabelForSbToolsSelection"></div> -->
                 <div class="labelRow" id="labelForSbToolsSelection">
                     <div class="hide" id="messageForSbToolsSelection"></div>
                     <div id="labelsForDetectedSelectionMarketAndEvent">
@@ -770,17 +757,13 @@
                     </div>
                 </div>
                 <div class="newOddsLayout">
-                    <!-- <div> -->
                     <span>Initial Odds:</span>
                     <span id="initialOddsSpan" class="displayInGreen"></span>
                     <span></span>
-                    <!-- </div> -->
-                    <!-- <div id="newOddsRow"> -->
                     <span>New Odds:</span>
                     <input class="fdSbTools" type="number" id="newOdds" min=1 step=0.01
                         oninput="validity.valid||(value='');">
                     <button class="btSimple btSubmit" onclick="changeOdds()">Set</button>
-                    <!-- </div> -->
                 </div>
             </div>
             <div id="sbToolsSelectionInfo" class="hide">
@@ -789,135 +772,6 @@
             </div>
         </div>
     </div>
-
-    <!-- <div id="sbToolsCreateMarket" class="accordion closed">
-        <button id="createMarketAccordion" class="accHeading" onclick="initCreateMarket()">Create Fast/Player Props
-            Market</button>
-        <div class="accContent">
-            <div class="detectedEntitySection">
-                <div id="detectedOrLockedRowForCreateMarket">Detected event:</div>
-                <button class="btInfo btIcon" onclick="toggleInfo('createMarketInfo')"><img
-                        class="iconInfoCircle"></button>
-                <div class="labelRow" id="eventLabelForCreateMarket"></div>
-                <div></div>
-            </div>
-            <div id="createMarketFeatures" class="hide">
-                <button onclick="toggleSection('createPlayerPropsSection')" class="moreLess">Create Player
-                    Props</button>
-                <div id="createPlayerPropsSection" class="marginTopBottom10px hide">
-                    <div class="infoMessage">Football, Basketball, Baseball, Ice Hockey, American Football, Handball
-                    </div>
-                    <div class="createMarketLayout">
-                        <button class="btSimple playerProps" id="btCreatePlayerPropsMarket"
-                            onclick="createMarket('playerProps')">4 selections</button>
-                        <div class="buttonLabelToRight" id="playerPropsMessage"></div>
-                        <button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket"
-                            onclick="createMarket('playerPropsDummy')">15 dummy selections</button>
-                        <div></div>
-                    </div>
-                </div>
-                <button onclick="toggleSection('createFastMarketSection')" class="moreLess">
-                    <span class="ico-action-betting iconOnBtSimple"></span>
-                    <span>Create Fast Market</span>
-                </button>
-                <div id="createFastMarketSection" class="marginTopBottom10px hide">
-                    <div class="infoMessage">Football, Tennis, Table Tennis, Ice Hockey</div>
-                    <div class="createMarketLayout">
-                        <button class="btSimple" id="btCreateFastMarket" onclick="createMarket('fast')">
-                            <span class="ico-action-betting iconOnBtSimple"></span>
-                            <span class="labelOnBtSimple">Create</span>
-                        </button>
-                        <div class="buttonLabelToRight" id="fastMarketMessage"></div>
-                    </div>
-
-                </div>
-            </div>
-            <div id="createMarketInfo" class="hide">
-                <hr class="hRule">
-                <img class="iconInfoSymbol">Event detection: Open event panel
-            </div>
-        </div>
-    </div> -->
-
-    <!-- <div id="sbToolsScoreBoard" class="accordion closed">
-        <button id="scoreBoardAccordion" class="accHeading" onclick="initScoreBoard()">Football Scoreboard</button>
-        <div class="accContent">
-
-            <div class="detectedEntitySection">
-                <div id="detectedOrLockedRowForScoreBoard">Detected event:</div>
-                <button class="btInfo btIcon" onclick="toggleInfo('scoreBoardInfo')"><img
-                        class="iconInfoCircle"></button>
-                <div class="labelRow" id="eventLabelForScoreBoard"></div>
-                <div id="lockEventSectionForScoreBoard" class="hide lockSection">
-                    Lock <input type="checkbox" id="chkLockEventForScoreBoard" class="chkLock chkSbTools"
-                        onclick="lockEvent('ScoreBoard')">
-                </div>
-            </div>
-            <div id="notFootballScoreBoardMessage" class="hide displayInRed">
-                <hr class="hRule">Not having Football Scoreboard
-            </div>
-            <div id="scoreBoardFeatures" class="hide">
-                <div id="scoreBoardScores" class="scoreLayout">
-                    <div id="homeScoreLabel">
-                        <span class="ico-score vertMiddle marginRight2px"></span>Home Score
-                    </div>
-                    <input class="fdSbTools fdScoreBoardNumeric" type="number" min=0
-                        oninput="validity.valid||(value='');" id="homeScoreInputField">
-                    <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore('home')">Set</button>
-                    <div id="awayScoreLabel">
-                        <span class="ico-score vertMiddle marginRight2px"></span>Away Score
-                    </div>
-                    <input class="fdSbTools fdScoreBoardNumeric" type="number" min=0
-                        oninput="validity.valid||(value='');" id="awayScoreInputField">
-                    <button id="btSubmitHomeScore" class="btSubmit btSimple" onclick="submitScore('away')">Set</button>
-                    </button>
-                </div>
-                <div id="scoreBoardDetails">
-                    <div class="scoreBoardLayout">
-                        <div class="iconScoreboard ico-corner"></div>
-                        <div class="iconScoreboard ico-substitutions"></div>
-                        <div
-                            class="iconScoreboard outlinedText ico-referee-card obg-scoreboard-football-icon-yellow-card">
-                        </div>
-                        <div class="iconScoreboard outlinedText ico-referee-card obg-scoreboard-football-icon-red-card">
-                        </div>
-                        <div class="iconScoreboard ico-penalty"></div>
-
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeCorners" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeSubstitutions" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeYellowCards" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeRedCards" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homePenalties" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayCorners" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awaySubstitutions" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayYellowCards" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayRedCards" min=0
-                            oninput="validity.valid||(value='');">
-                        <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayPenalties" min=0
-                            oninput="validity.valid||(value='');">
-
-
-                    </div>
-                    <button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Set</button>
-                </div>
-            </div>
-            <div id="scoreBoardInfo" class="hide">
-                <img class="iconInfoSymbol">Event detection order (with Football Scoreboard):
-                <ol class="infoList">
-                    <li>Open event panel</li>
-                    <li>Last selection from betslip</li>
-                </ol>
-            </div>
-        </div>
-    </div> -->
 
     <div id="sbToolsBonuses" class="accordion closed">
         <button id="bonusesAccordion" class="accHeading" onclick="initBonuses()">
@@ -1083,9 +937,11 @@
                             <span class="keyForPb">Odds Range:</span>
                             <span id="pbMinMaxOdds" class="displayInGreen"></span>
                         </div>
-                        <div class="displayFlex">
-                            <span class="keyForPb">Stake Range:</span>
-                            <span id="pbMinMaxStake" class="displayInGreen"></span>
+                        <div id="pbStakeRangeDiv">
+                            <div class="displayFlex">
+                                <span class="keyForPb">Stake Range:</span>
+                                <span id="pbMinMaxStake" class="displayInGreen"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1157,9 +1013,11 @@
                             <span class="keyForFreeBet">Event Phases:</span>
                             <span id="freeBetEvetPhases" class="displayInGreen"></span>
                         </div>
-                        <div class="displayFlex">
-                            <span class="keyForFreeBet">Number of Selections:</span>
-                            <span id="freeBetNoOfSelections" class="displayInGreen"></span>
+                        <div id="freeBetNoOfSelectionsDiv">
+                            <div class="displayFlex">
+                                <span class="keyForFreeBet">Number of Selections:</span>
+                                <span id="freeBetNoOfSelections" class="displayInGreen"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1171,7 +1029,6 @@
 </div>
 
 <div id="sbToolsBanners" class="accordion closed">
-    <!-- <button id="bannersAccordion" class="accHeading" onclick="initBanners()">Banners</button> -->
     <button id="bannersAccordion" class="accHeading" onclick="initBanners()">
         <span class="accordionTitle">Banners</span>
         <span class="accordionHint">Carousel & Sportsbook Banners</span>
@@ -1196,7 +1053,6 @@
                     Overlay<input type="checkbox" id="chkCrlBannerOverlay" class="chkInline">
                 </span>
             </div>
-            <!-- <hr class="hRule"> -->
             <div class="bannersRow">
                 <span class="keyColumnForBanners">Sportsbook Banners</span>
                 <span>
@@ -1270,11 +1126,6 @@
                 <div id="badgeNativeBetslip" class="badgeNative badgeNativeBetslip hide"></div>
                 <div id="badgeNativeBbBetslip" class="badgeNative badgeNativeBbBetslip hide"></div>
             </button>
-
-            <!-- <button id="btNativeOther" class="btSimple btNativeToggleable" onclick="nativeToggle('other')">
-                    <div class="ico-all-games iconNativeBottomBarButton"></div>
-                    <div class="labelNativeBottomBarButton">Other</div>
-                </button> -->
         </div>
 
         <div id="nativeOtherSection" class="marginTopBottom10px nativeOtherButtons">
