@@ -16,23 +16,23 @@
     };
 
     // // ************** REMOTE ****************
-    if (isSportsbookInIframeWithoutObgTools) {
-        if (confirm("Sportsbook is in iframe so Sportsbook Tool does not work from here.\nDo you want to open the iframe itself?")) {
-            url = new URL(iframeURL);
-            reloadPageWithSearchParams([ENABLE_OBGSTATE, ENABLE_OBGRT]);
-            return;
-        } else {
-            return;
-        }
-    }
-    removeExistingSportsbookTool();
-    var sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // if (isSportsbookInIframeWithoutObgTools) {
+    //     if (confirm("Sportsbook is in iframe so Sportsbook Tool does not work from here.\nDo you want to open the iframe itself?")) {
+    //         url = new URL(iframeURL);
+    //         reloadPageWithSearchParams([ENABLE_OBGSTATE, ENABLE_OBGRT]);
+    //         return;
+    //     } else {
+    //         return;
+    //     }
+    // }
+    // removeExistingSportsbookTool();
+    // var sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // var sportsbookTool = document.getElementById("sportsbookTool");
+    var sportsbookTool = document.getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     var accCollection = document.getElementsByClassName("accordion");
@@ -60,7 +60,7 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.5.8";
+    const SB_TOOL_VERSION = "v1.5.9";
     const IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED = isExposed("obgClientEnvironmentConfig");
     const DEVICE_TYPE = getDeviceType();
     const IS_TOUCH_BROWSER = isTouchBrowser();
@@ -280,7 +280,7 @@
         }
     }
 
-    function getLanguageCode(){
+    function getLanguageCode() {
         try {
             return obgState.market.currentMarket.languageCode;
         } catch {
@@ -1073,6 +1073,247 @@
         }
     }
 
+    window.addToCarousel = () => {
+        if (!isCarouselOrCardsDefined()) {
+            obgState.sportsbook.carousel.item = {
+                "skeleton": {
+                    "backgrounds": {},
+                    "eventIds": [],
+                    "marketTemplateIds": [
+                    ],
+                    "marketGroups": {}
+                },
+                "marketToDisplay": {}
+            }
+        }
+
+        var carouselOrderDefined = isCarouselOrderDefined();
+        var pageCardCapable = isPageCardCapable();
+
+        if (lockedMarketId !== undefined) {
+            marketId = lockedMarketId;
+        }
+
+        if (pageCardCapable) {
+            var cardBackGround = getCardBackGround();
+        }
+
+        var item = obgState.sportsbook.carousel.item;
+
+        // var firstMarketTemplateId = getMarketTemplateIdOfFirstMarket();
+
+        item.skeleton.eventIds[0] = eventId;
+
+        item.marketToDisplay[eventId] = marketTemplateId;
+
+        if (pageCardCapable) {
+            item.skeleton.backgrounds[eventId] = cardBackGround;
+        }
+
+
+        // making markets available on carousel if they are not by default
+        var marketTemplateIds = item.skeleton.marketTemplateIds;
+        // var firstMarketTemplateId = getMarketTemplateIdOfFirstMarket();
+        if (!marketTemplateIds.includes(marketTemplateId)) {
+            marketTemplateIds.push(marketTemplateId);
+        }
+
+
+        // for 3-column markets
+        categoryId = getCategoryIdByEventId(eventId);        
+        if (isCategoryInUsFormat(categoryId) && !isEventTypeOutright(eventId) && isMarketTemplateIdPartOfThreeColumn(marketTemplateId)) {
+            var threeColumnLayouts = getThreeColumnLayouts();
+            if (threeColumnLayouts == undefined) {
+                show(addToCarouselErrorMessage);
+                // return;
+            } else {
+                hide(addToCarouselErrorMessage);
+            }
+            item.skeleton.threeColumnLayouts = threeColumnLayouts;
+        }
+
+        if (carouselOrderDefined) {
+            let indexOfEventInCarouselOrder = getIndexOfFirstEventInCarouselOrder();
+            let carouselOrderElement = {
+                id: eventId,
+                sortOrder: indexOfEventInCarouselOrder,
+                type: "Event"
+            }
+            item.skeleton.carouselOrder[indexOfEventInCarouselOrder] = carouselOrderElement;
+        }
+
+        obgState.sportsbook.carousel.item = item;
+        addToCarouselButtonLabel.innerText = "Added"
+        triggerChangeDetection(eventId, 100);
+
+        setTimeout(function () {
+            addToCarouselButtonLabel.innerText = "Add";
+        }, 200);
+    }
+
+    function getIndexOfFirstEventInCarouselOrder() {
+        let carouselOrder = obgState.sportsbook.carousel.item.skeleton.carouselOrder;
+        for (let obj of carouselOrder) {
+            if (obj.type == "Event") {
+                return obj.sortOrder;
+            }
+        }
+        return carouselOrder.length;
+    }
+
+    function getCardBackGround() {
+        var bgImageWidth, bgImageHeight, bgImageUrl;
+        try {
+            bgImageUrl = Object.values(obgState.sportsbook.carousel.item.skeleton.backgrounds)[0].url;
+        } catch {
+            bgImageUrl = getGoodEnoughImageUrl();
+            // console.log("bgImageUrl: " + bgImageUrl);
+            if (bgImageUrl == undefined) {
+                if (DEVICE_TYPE === "Desktop") {
+                    bgImageUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/backgounds/bg.desktop.1200x214.jpg"
+                } else {
+                    bgImageUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/backgounds/bg.mobile.750x436.jpg"
+                }
+            }
+        }
+        if (DEVICE_TYPE === "Desktop") {
+            bgImageWidth = 1000;
+            bgImageHeight = 214;
+        } else {
+            bgImageWidth = 750;
+            bgImageHeight = 436;
+        }
+        return {
+            "url": bgImageUrl,
+            "width": bgImageWidth,
+            "height": bgImageHeight
+        };
+    }
+
+    function getGoodEnoughImageUrl() {
+        var images = Object.values(obgState.image.images.sportsbook);
+        var categoryName = getCategoryTrackingLabel();
+        // console.log("categoryName: " + categoryName);
+        var platformName;
+        DEVICE_TYPE === "Desktop" ? platformName = "desktop" : platformName = "mobile";
+        var imageUrl, lowerCaseImageUrl, goodEnoughImageUrl;
+        for (var image of images) {
+            imageUrl = image.url;
+            lowerCaseImageUrl = image.url.toLowerCase();
+            if (lowerCaseImageUrl.includes(categoryName) && !lowerCaseImageUrl.includes("american-" + categoryName) && !lowerCaseImageUrl.includes("ncaa-" + categoryName)) {
+                goodEnoughImageUrl = imageUrl;
+                // console.log("categoryName imageUrl: " + goodEnoughImageUrl);
+                if (lowerCaseImageUrl.includes("card")) {
+                    goodEnoughImageUrl = imageUrl;
+                    // console.log("card imageUrl: " + imageUrl);
+                    if (lowerCaseImageUrl.includes("platform")) {
+                        goodEnoughImageUrl = imageUrl;
+                        // console.log("platform imageUrl: " + imageUrl);
+                    }
+                }
+            }
+            if (goodEnoughImageUrl == undefined) {
+                if (platformName == "desktop") {
+                    if (lowerCaseImageUrl.includes("backgrounds.generic-desktop")) {
+                        goodEnoughImageUrl = imageUrl;
+                    }
+                } else {
+                    if (lowerCaseImageUrl.includes("backgrounds.generic-mobile")) {
+                        goodEnoughImageUrl = imageUrl;
+                    }
+                }
+            }
+        }
+        // console.log(goodEnoughImageUrl);
+        return goodEnoughImageUrl;
+    }
+
+
+    var marketTemplateIdsOfThreeColumnLayout = [];
+    function getThreeColumnLayouts() {
+        var eventTables = obgState.sportsbook.eventTable.eventTables;
+        var eventIds;
+        var marketTimeFrames;
+        var timeFrame;
+        var threeColumnLayouts;
+
+        for (var table of Object.values(eventTables)) {
+            try {
+                eventIds = table.item.skeleton.eventIds;
+            } catch { }
+            for (var id of Object.values(eventIds)) {
+                if (id === eventId) {
+                    try {
+                        marketTimeFrames = table.item.skeleton.marketTimeFrames;
+                        timeFrame = Object.values(marketTimeFrames)[0];
+                    } catch { }
+                    if (timeFrame !== undefined) {
+                        threeColumnLayouts = {
+                            [categoryId]: {
+                                columns: [],
+                                key: "key",
+                                label: "label"
+                            }
+                        };
+                        for (var indexOfMarkets = 0; indexOfMarkets < Object.values(timeFrame).length; indexOfMarkets++) {
+                            threeColumnLayouts[categoryId].columns.push(
+                                {
+                                    columnIndex: indexOfMarkets,
+                                    label: Object.values(timeFrame)[indexOfMarkets].label,
+                                    marketTemplateIds: Object.values(timeFrame)[indexOfMarkets].marketTemplateIds
+                                }
+                            )
+
+                            log(Object.values(timeFrame)[indexOfMarkets].marketTemplateIds);
+                            marketTemplateIdsOfThreeColumnLayout = marketTemplateIdsOfThreeColumnLayout.concat(Object.values(timeFrame)[indexOfMarkets].marketTemplateIds);
+                            log(marketTemplateIdsOfThreeColumnLayout);
+                        }
+                    }
+                }
+            }
+        }
+        return threeColumnLayouts;
+    }
+
+    function isMarketTemplateIdPartOfThreeColumn(marketTemplateId) {
+        if (marketTemplateIdsOfThreeColumnLayout.length == 0) {
+            var eventTables = obgState.sportsbook.eventTable.eventTables;
+            var eventIds;
+            var marketTimeFrames;
+            var timeFrame;
+            for (var table of Object.values(eventTables)) {
+                try {
+                    eventIds = table.item.skeleton.eventIds;
+                } catch { }
+                for (var id of Object.values(eventIds)) {
+                    if (id === eventId) {
+                        try {
+                            marketTimeFrames = table.item.skeleton.marketTimeFrames;
+                            timeFrame = Object.values(marketTimeFrames)[0];
+                        } catch { }
+                        if (timeFrame !== undefined) {
+                            for (var indexOfMarkets = 0; indexOfMarkets < Object.values(timeFrame).length; indexOfMarkets++) {
+                                marketTemplateIdsOfThreeColumnLayout = marketTemplateIdsOfThreeColumnLayout.concat(Object.values(timeFrame)[indexOfMarkets].marketTemplateIds);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        if (marketTemplateIdsOfThreeColumnLayout.includes(marketTemplateId)) {
+            return true
+        }
+        return false;
+    }
+
+    function isCarouselOrCardsDefined() {
+        if (obgState.sportsbook.carousel.item != undefined) {
+            return true;
+        }
+        return false;
+    }
+
     function triggerMarketChangeDetection() {
         let state = obgState.sportsbook.eventMarket.markets[marketId].status;
         if (state == "Hold") {
@@ -1158,7 +1399,7 @@
         return " - ";
     }
 
-    
+
     function activate(...elements) {
         for (var element of elements) {
             element.classList.remove("inactivated");
@@ -1285,7 +1526,7 @@
         } else return obgState.sportsbook.selection.selections[selectionId].label;
     }
 
-    
+
     function isBetslipVisible() {
         return obgState.sportsbook.betslip.isVisible;
     }
@@ -2534,205 +2775,205 @@
             }
         }
 
-        window.addToCarousel = () => {
-            if (!isCarouselOrCardsDefined()) {
-                obgState.sportsbook.carousel.item = {
-                    "skeleton": {
-                        "backgrounds": {},
-                        "eventIds": [],
-                        "marketTemplateIds": [
-                            // "MW2W",
-                            // "MW3W"
-                        ],
-                        "marketGroups": {}
-                    },
-                    "marketToDisplay": {}
-                }
-            }
+        // window.addToCarousel = () => {
+        //     if (!isCarouselOrCardsDefined()) {
+        //         obgState.sportsbook.carousel.item = {
+        //             "skeleton": {
+        //                 "backgrounds": {},
+        //                 "eventIds": [],
+        //                 "marketTemplateIds": [
+        //                     // "MW2W",
+        //                     // "MW3W"
+        //                 ],
+        //                 "marketGroups": {}
+        //             },
+        //             "marketToDisplay": {}
+        //         }
+        //     }
 
-            var carouselOrderDefined = isCarouselOrderDefined();
-            var pageCardCapable = isPageCardCapable();
+        //     var carouselOrderDefined = isCarouselOrderDefined();
+        //     var pageCardCapable = isPageCardCapable();
 
-            if (lockedEventId !== undefined) {
-                eventId = lockedEventId;
-            }
+        //     if (lockedEventId !== undefined) {
+        //         eventId = lockedEventId;
+        //     }
 
-            if (pageCardCapable) {
-                var cardBackGround = getCardBackGround();
-            }
+        //     if (pageCardCapable) {
+        //         var cardBackGround = getCardBackGround();
+        //     }
 
-            var item = obgState.sportsbook.carousel.item;
-            var firstMarketTemplateId = getMarketTemplateIdOfFirstMarket();
-            item.skeleton.eventIds[0] = eventId;
-            item.marketToDisplay[eventId] = firstMarketTemplateId;
-            if (pageCardCapable) {
-                item.skeleton.backgrounds[eventId] = cardBackGround;
-            }
+        //     var item = obgState.sportsbook.carousel.item;
+        //     var firstMarketTemplateId = getMarketTemplateIdOfFirstMarket();
+        //     item.skeleton.eventIds[0] = eventId;
+        //     item.marketToDisplay[eventId] = firstMarketTemplateId;
+        //     if (pageCardCapable) {
+        //         item.skeleton.backgrounds[eventId] = cardBackGround;
+        //     }
 
-            // making markets available on carousel if they are not by default
-            var marketTemplateIds = item.skeleton.marketTemplateIds;
-            // var firstMarketTemplateId = getMarketTemplateIdOfFirstMarket();
-            if (!marketTemplateIds.includes(firstMarketTemplateId)) {
-                marketTemplateIds.push(firstMarketTemplateId);
-            }
+        //     // making markets available on carousel if they are not by default
+        //     var marketTemplateIds = item.skeleton.marketTemplateIds;
+        //     // var firstMarketTemplateId = getMarketTemplateIdOfFirstMarket();
+        //     if (!marketTemplateIds.includes(firstMarketTemplateId)) {
+        //         marketTemplateIds.push(firstMarketTemplateId);
+        //     }
 
-            // for 3-column markets
-            categoryId = getCategoryIdByEventId(eventId);
-            if (isCategoryInUsFormat(categoryId) && !isEventTypeOutright(eventId)) {
-                var threeColumnLayouts = getThreeColumnLayouts();
-                if (threeColumnLayouts == undefined) {
-                    show(addToCarouselErrorMessage);
-                    // return;
-                } else {
-                    hide(addToCarouselErrorMessage);
-                }
-                item.skeleton.threeColumnLayouts = threeColumnLayouts;
-            }
+        //     // for 3-column markets
+        //     categoryId = getCategoryIdByEventId(eventId);
+        //     if (isCategoryInUsFormat(categoryId) && !isEventTypeOutright(eventId)) {
+        //         var threeColumnLayouts = getThreeColumnLayouts();
+        //         if (threeColumnLayouts == undefined) {
+        //             show(addToCarouselErrorMessage);
+        //             // return;
+        //         } else {
+        //             hide(addToCarouselErrorMessage);
+        //         }
+        //         item.skeleton.threeColumnLayouts = threeColumnLayouts;
+        //     }
 
-            if (carouselOrderDefined) {
-                let indexOfEventInCarouselOrder = getIndexOfFirstEventInCarouselOrder();
-                let carouselOrderElement = {
-                    id: eventId,
-                    sortOrder: indexOfEventInCarouselOrder,
-                    type: "Event"
-                }
-                item.skeleton.carouselOrder[indexOfEventInCarouselOrder] = carouselOrderElement;
-            }
+        //     if (carouselOrderDefined) {
+        //         let indexOfEventInCarouselOrder = getIndexOfFirstEventInCarouselOrder();
+        //         let carouselOrderElement = {
+        //             id: eventId,
+        //             sortOrder: indexOfEventInCarouselOrder,
+        //             type: "Event"
+        //         }
+        //         item.skeleton.carouselOrder[indexOfEventInCarouselOrder] = carouselOrderElement;
+        //     }
 
 
-            obgState.sportsbook.carousel.item = item;
-            addToCarouselButtonLabel.innerText = "Added"
-            triggerChangeDetection();
+        //     obgState.sportsbook.carousel.item = item;
+        //     addToCarouselButtonLabel.innerText = "Added"
+        //     triggerChangeDetection();
 
-            setTimeout(function () {
-                addToCarouselButtonLabel.innerText = "Add";
-            }, 200);
-        }
+        //     setTimeout(function () {
+        //         addToCarouselButtonLabel.innerText = "Add";
+        //     }, 200);
+        // }
 
-        function getIndexOfFirstEventInCarouselOrder() {
-            let carouselOrder = obgState.sportsbook.carousel.item.skeleton.carouselOrder;
-            for (let obj of carouselOrder) {
-                if (obj.type == "Event") {
-                    return obj.sortOrder;
-                }
-            }
-            return carouselOrder.length;
-        }
+        // function getIndexOfFirstEventInCarouselOrder() {
+        //     let carouselOrder = obgState.sportsbook.carousel.item.skeleton.carouselOrder;
+        //     for (let obj of carouselOrder) {
+        //         if (obj.type == "Event") {
+        //             return obj.sortOrder;
+        //         }
+        //     }
+        //     return carouselOrder.length;
+        // }
 
-        function getCardBackGround() {
-            var bgImageWidth, bgImageHeight, bgImageUrl;
-            try {
-                bgImageUrl = Object.values(obgState.sportsbook.carousel.item.skeleton.backgrounds)[0].url;
-            } catch {
-                bgImageUrl = getGoodEnoughImageUrl();
-                // console.log("bgImageUrl: " + bgImageUrl);
-                if (bgImageUrl == undefined) {
-                    if (DEVICE_TYPE === "Desktop") {
-                        bgImageUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/backgounds/bg.desktop.1200x214.jpg"
-                    } else {
-                        bgImageUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/backgounds/bg.mobile.750x436.jpg"
-                    }
-                }
-            }
-            if (DEVICE_TYPE === "Desktop") {
-                bgImageWidth = 1000;
-                bgImageHeight = 214;
-            } else {
-                bgImageWidth = 750;
-                bgImageHeight = 436;
-            }
-            return {
-                "url": bgImageUrl,
-                "width": bgImageWidth,
-                "height": bgImageHeight
-            };
-        }
+        // function getCardBackGround() {
+        //     var bgImageWidth, bgImageHeight, bgImageUrl;
+        //     try {
+        //         bgImageUrl = Object.values(obgState.sportsbook.carousel.item.skeleton.backgrounds)[0].url;
+        //     } catch {
+        //         bgImageUrl = getGoodEnoughImageUrl();
+        //         // console.log("bgImageUrl: " + bgImageUrl);
+        //         if (bgImageUrl == undefined) {
+        //             if (DEVICE_TYPE === "Desktop") {
+        //                 bgImageUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/backgounds/bg.desktop.1200x214.jpg"
+        //             } else {
+        //                 bgImageUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/backgounds/bg.mobile.750x436.jpg"
+        //             }
+        //         }
+        //     }
+        //     if (DEVICE_TYPE === "Desktop") {
+        //         bgImageWidth = 1000;
+        //         bgImageHeight = 214;
+        //     } else {
+        //         bgImageWidth = 750;
+        //         bgImageHeight = 436;
+        //     }
+        //     return {
+        //         "url": bgImageUrl,
+        //         "width": bgImageWidth,
+        //         "height": bgImageHeight
+        //     };
+        // }
 
-        function getGoodEnoughImageUrl() {
-            var images = Object.values(obgState.image.images.sportsbook);
-            var categoryName = getCategoryTrackingLabel();
-            // console.log("categoryName: " + categoryName);
-            var platformName;
-            DEVICE_TYPE === "Desktop" ? platformName = "desktop" : platformName = "mobile";
-            var imageUrl, lowerCaseImageUrl, goodEnoughImageUrl;
-            for (var image of images) {
-                imageUrl = image.url;
-                lowerCaseImageUrl = image.url.toLowerCase();
-                if (lowerCaseImageUrl.includes(categoryName) && !lowerCaseImageUrl.includes("american-" + categoryName) && !lowerCaseImageUrl.includes("ncaa-" + categoryName)) {
-                    goodEnoughImageUrl = imageUrl;
-                    // console.log("categoryName imageUrl: " + goodEnoughImageUrl);
-                    if (lowerCaseImageUrl.includes("card")) {
-                        goodEnoughImageUrl = imageUrl;
-                        // console.log("card imageUrl: " + imageUrl);
-                        if (lowerCaseImageUrl.includes("platform")) {
-                            goodEnoughImageUrl = imageUrl;
-                            // console.log("platform imageUrl: " + imageUrl);
-                        }
-                    }
-                }
-                if (goodEnoughImageUrl == undefined) {
-                    if (platformName == "desktop") {
-                        if (lowerCaseImageUrl.includes("backgrounds.generic-desktop")) {
-                            goodEnoughImageUrl = imageUrl;
-                        }
-                    } else {
-                        if (lowerCaseImageUrl.includes("backgrounds.generic-mobile")) {
-                            goodEnoughImageUrl = imageUrl;
-                        }
-                    }
-                }
-            }
-            // console.log(goodEnoughImageUrl);
-            return goodEnoughImageUrl;
-        }
+        // function getGoodEnoughImageUrl() {
+        //     var images = Object.values(obgState.image.images.sportsbook);
+        //     var categoryName = getCategoryTrackingLabel();
+        //     // console.log("categoryName: " + categoryName);
+        //     var platformName;
+        //     DEVICE_TYPE === "Desktop" ? platformName = "desktop" : platformName = "mobile";
+        //     var imageUrl, lowerCaseImageUrl, goodEnoughImageUrl;
+        //     for (var image of images) {
+        //         imageUrl = image.url;
+        //         lowerCaseImageUrl = image.url.toLowerCase();
+        //         if (lowerCaseImageUrl.includes(categoryName) && !lowerCaseImageUrl.includes("american-" + categoryName) && !lowerCaseImageUrl.includes("ncaa-" + categoryName)) {
+        //             goodEnoughImageUrl = imageUrl;
+        //             // console.log("categoryName imageUrl: " + goodEnoughImageUrl);
+        //             if (lowerCaseImageUrl.includes("card")) {
+        //                 goodEnoughImageUrl = imageUrl;
+        //                 // console.log("card imageUrl: " + imageUrl);
+        //                 if (lowerCaseImageUrl.includes("platform")) {
+        //                     goodEnoughImageUrl = imageUrl;
+        //                     // console.log("platform imageUrl: " + imageUrl);
+        //                 }
+        //             }
+        //         }
+        //         if (goodEnoughImageUrl == undefined) {
+        //             if (platformName == "desktop") {
+        //                 if (lowerCaseImageUrl.includes("backgrounds.generic-desktop")) {
+        //                     goodEnoughImageUrl = imageUrl;
+        //                 }
+        //             } else {
+        //                 if (lowerCaseImageUrl.includes("backgrounds.generic-mobile")) {
+        //                     goodEnoughImageUrl = imageUrl;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     // console.log(goodEnoughImageUrl);
+        //     return goodEnoughImageUrl;
+        // }
 
-        function getThreeColumnLayouts() {
-            var eventTables = obgState.sportsbook.eventTable.eventTables;
-            var eventIds;
-            var marketTimeFrames;
-            var timeFrame;
-            var threeColumnLayouts;
+        // function getThreeColumnLayouts() {
+        //     var eventTables = obgState.sportsbook.eventTable.eventTables;
+        //     var eventIds;
+        //     var marketTimeFrames;
+        //     var timeFrame;
+        //     var threeColumnLayouts;
 
-            for (var table of Object.values(eventTables)) {
-                try {
-                    eventIds = table.item.skeleton.eventIds;
-                } catch { }
-                for (var id of Object.values(eventIds)) {
-                    if (id === eventId) {
-                        try {
-                            marketTimeFrames = table.item.skeleton.marketTimeFrames;
-                            timeFrame = Object.values(marketTimeFrames)[0];
-                        } catch { }
-                        if (timeFrame !== undefined) {
-                            threeColumnLayouts = {
-                                [categoryId]: {
-                                    columns: [],
-                                    key: "key",
-                                    label: "label"
-                                }
-                            };
-                            for (var indexOfMarkets = 0; indexOfMarkets < Object.values(timeFrame).length; indexOfMarkets++) {
-                                threeColumnLayouts[categoryId].columns.push(
-                                    {
-                                        columnIndex: indexOfMarkets,
-                                        label: Object.values(timeFrame)[indexOfMarkets].label,
-                                        marketTemplateIds: Object.values(timeFrame)[indexOfMarkets].marketTemplateIds
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            return threeColumnLayouts;
-        }
+        //     for (var table of Object.values(eventTables)) {
+        //         try {
+        //             eventIds = table.item.skeleton.eventIds;
+        //         } catch { }
+        //         for (var id of Object.values(eventIds)) {
+        //             if (id === eventId) {
+        //                 try {
+        //                     marketTimeFrames = table.item.skeleton.marketTimeFrames;
+        //                     timeFrame = Object.values(marketTimeFrames)[0];
+        //                 } catch { }
+        //                 if (timeFrame !== undefined) {
+        //                     threeColumnLayouts = {
+        //                         [categoryId]: {
+        //                             columns: [],
+        //                             key: "key",
+        //                             label: "label"
+        //                         }
+        //                     };
+        //                     for (var indexOfMarkets = 0; indexOfMarkets < Object.values(timeFrame).length; indexOfMarkets++) {
+        //                         threeColumnLayouts[categoryId].columns.push(
+        //                             {
+        //                                 columnIndex: indexOfMarkets,
+        //                                 label: Object.values(timeFrame)[indexOfMarkets].label,
+        //                                 marketTemplateIds: Object.values(timeFrame)[indexOfMarkets].marketTemplateIds
+        //                             }
+        //                         )
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     return threeColumnLayouts;
+        // }
 
-        function isCarouselOrCardsDefined() {
-            if (obgState.sportsbook.carousel.item != undefined) {
-                return true;
-            }
-            return false;
-        }
+        // function isCarouselOrCardsDefined() {
+        //     if (obgState.sportsbook.carousel.item != undefined) {
+        //         return true;
+        //     }
+        //     return false;
+        // }
     }
 
     window.getSbIdForOddsManager = (entity) => {
