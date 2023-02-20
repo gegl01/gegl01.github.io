@@ -373,7 +373,7 @@
                     </div>
                 </div>
 
-                <div>
+                <!-- <div>
                     <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
                         Carousel or Cards</button>
                     <div id="addToCarouselSection" class="hide marginTopBottom10px">
@@ -406,7 +406,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <div>
                     <button onclick="toggleSection('eventPropertiesSection')" class="moreLess">Override Event
@@ -695,6 +695,41 @@
                             onclick="setMarketState('Settled')">Settled</button>
                         <button class="btSimple btSetMarketState" id="btSetMarketStateHold"
                             onclick="setMarketState('Hold')">Hold</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
+                        Carousel/Cards</button>
+                    <div id="addToCarouselSection" class="hide marginTopBottom10px">
+                        <div id="carouselButtonsDiv">
+
+                            <div id="stopCarouselAutoplayRow" class="marginTopBottom10px">
+                                <div class="twoItemsJustified">
+                                    <span class="width95Percent">
+                                        Stop Carousel Autoplay
+                                    </span>
+                                    <button class="btDisable btIcon"
+                                        onclick="reloadPageWithFeature('stopCarouselAutoplay')">
+                                        <img class="iconDisable">
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="twoItemsJustified">
+                                <span>Add market to Carousel or Cards</span>
+                                <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()">
+                                    <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
+                                </button>
+                            </div>
+                            <div class="marginTop5px">
+                                <span id="addToCarouselMessage"></span>
+                            </div>
+                            <div id="addToCarouselErrorMessage" class="displayInRed infoMessage hide">
+                                Could not get data for 3-column layout.<br>If the slide/card is 3-column layout,
+                                please remove the detected event from the betslip/event panel, then add again.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
