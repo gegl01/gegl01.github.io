@@ -61,7 +61,7 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.5.9";
+    const SB_TOOL_VERSION = "v1.5.13";
     const IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED = isExposed("obgClientEnvironmentConfig");
     const DEVICE_TYPE = getDeviceType();
     const IS_TOUCH_BROWSER = isTouchBrowser();
@@ -306,6 +306,7 @@
         if (IS_B2B || IS_SPORTSBOOK_IN_IFRAME) {
             brandNames = {
                 betsson: "Betsson B2B",
+                betssongr: "Betsson GR",
                 nordicbet: "Nordicbet",
                 firestorm: "Firestorm",
                 firestormus: "Firestorm US",
@@ -1783,7 +1784,12 @@
         }
 
         function getSlugByRoute(route) {
+            routes = getRoutes();
             return routes[route].slug;
+        }
+
+        function getRoutes() {
+            return obgClientEnvironmentConfig.startupContext.routes;
         }
 
         window.nativeClick = (value) => {
@@ -1792,7 +1798,7 @@
 
 
         function nativeClick(value) {
-            routes = obgClientEnvironmentConfig.startupContext.routes;
+            routes = getRoutes();
             if (Object.values(routes).length == 0) {
                 show(nativeErrorMessage);
                 nativeErrorMessage.innerText = "'obgClientEnvironmentConfig.startupContext.routes' is not defined. Please refresh the page.";
@@ -4154,7 +4160,4 @@
         }
         window.open(url)
     }
-
-    // var categoriesForMarketGroupnames =
-    //     [{ Id: 1, Name: "Football" }, { Id: 2, Name: "Ice Hockey" }, { Id: 3, Name: "Handball" }, { Id: 4, Name: "Basketball" }, { Id: 5, Name: "Bandy" }, { Id: 6, Name: "Floorball" }, { Id: 7, Name: "Rugby League" }, { Id: 8, Name: "Rugby Union" }, { Id: 9, Name: "Volleyball" }, { Id: 10, Name: "American Football" }, { Id: 11, Name: "Tennis" }, { Id: 12, Name: "Winter Sports" }, { Id: 13, Name: "Cross Country" }, { Id: 14, Name: "Equine Sports" }, { Id: 15, Name: "Golf" }, { Id: 16, Name: "Formula 1" }, { Id: 17, Name: "Snooker" }, { Id: 18, Name: "Speedway" }, { Id: 19, Name: "Baseball" }, { Id: 20, Name: "Curling" }, { Id: 26, Name: "Cricket" }, { Id: 27, Name: "Trotting" }, { Id: 28, Name: "Cycling" }, { Id: 29, Name: "Rowing" }, { Id: 30, Name: "Boxing" }, { Id: 31, Name: "Business and Politics" }, { Id: 32, Name: "Music" }, { Id: 33, Name: "Live Outrights" }, { Id: 34, Name: "Darts" }, { Id: 35, Name: "Motorbikes" }, { Id: 36, Name: "DO NOT  USE!" }, { Id: 37, Name: "Poker" }, { Id: 38, Name: "Athletics" }, { Id: 39, Name: "Water Polo" }, { Id: 40, Name: "Biathlon" }, { Id: 41, Name: "Ski Jumping" }, { Id: 42, Name: "Nordic combination" }, { Id: 43, Name: "Aussie Rules" }, { Id: 44, Name: "Weather" }, { Id: 45, Name: "TV Events" }, { Id: 46, Name: "Film" }, { Id: 47, Name: "Beauty Contest" }, { Id: 48, Name: "Sport A" }, { Id: 49, Name: "Specials" }, { Id: 50, Name: "Sailing" }, { Id: 51, Name: "Class 1 World Powerboat" }, { Id: 52, Name: "Use this " }, { Id: 53, Name: "Mixed Martial Arts" }, { Id: 54, Name: "Orienteering" }, { Id: 55, Name: "Beach Soccer" }, { Id: 56, Name: "Olympics" }, { Id: 57, Name: "Chess" }, { Id: 58, Name: "Futsal" }, { Id: 59, Name: "Speed Skating" }, { Id: 60, Name: "Beach Volleyball" }, { Id: 61, Name: "Pesäpallo" }, { Id: 62, Name: "Pesa" }, { Id: 63, Name: "Olympics 2010 " }, { Id: 65, Name: "Olympics 2016" }, { Id: 66, Name: "Field Hockey" }, { Id: 67, Name: "Lacrosse" }, { Id: 68, Name: "Motor Sports" }, { Id: 69, Name: "Pool" }, { Id: 70, Name: "Horse Racing" }, { Id: 72, Name: "Badminton" }, { Id: 73, Name: "Row 4 Cancer" }, { Id: 74, Name: "Sport Specials" }, { Id: 75, Name: "Super Odds" }, { Id: 76, Name: "Motorsports" }, { Id: 77, Name: "Danmarkserien - Relegation" }, { Id: 78, Name: "Olympics 2018" }, { Id: 79, Name: "Swimming" }, { Id: 80, Name: "Arsenal Specials" }, { Id: 81, Name: "Olympics 2012" }, { Id: 82, Name: "Multipla do dia" }, { Id: 83, Name: "Almost Anything" }, { Id: 84, Name: "Snowboard" }, { Id: 85, Name: "Olympics Do Not Use" }, { Id: 86, Name: "Poker" }, { Id: 87, Name: "Yachting" }, { Id: 88, Name: "Art" }, { Id: 89, Name: "EURO 2012" }, { Id: 90, Name: "VW Bug Run" }, { Id: 91, Name: "Christmas Calendar" }, { Id: 92, Name: "WinterSports" }, { Id: 93, Name: "NBA Season Bets" }, { Id: 94, Name: "Roller Hockey" }, { Id: 95, Name: "DNU" }, { Id: 96, Name: "Religion" }, { Id: 97, Name: "Betsafe by Night" }, { Id: 98, Name: "WRC Rally" }, { Id: 99, Name: "Inline Hockey" }, { Id: 100, Name: "Iceland" }, { Id: 101, Name: "Tobet" }, { Id: 102, Name: "Triathlon" }, { Id: 103, Name: "What will happen 2015?" }, { Id: 104, Name: "Squash" }, { Id: 105, Name: "Bowls" }, { Id: 106, Name: "Car Racing" }, { Id: 107, Name: "Riksdagsvalet" }, { Id: 108, Name: "Riksdagsvalet 2014" }, { Id: 110, Name: "Gold Lottery" }, { Id: 111, Name: "Big Brother Finland" }, { Id: 112, Name: "NGG Training" }, { Id: 113, Name: "Surfing" }, { Id: 114, Name: "Christmas & New Year Specials" }, { Id: 115, Name: "A" }, { Id: 116, Name: "Gaelic Sports" }, { Id: 117, Name: "Derby Jackpot" }, { Id: 118, Name: "Nyu" }, { Id: 119, Name: "eSports" }, { Id: 120, Name: "World Championship 2017 - Lahti - Ski Jumping" }, { Id: 121, Name: "World Championship 2017 - Lahti - Cross Country" }, { Id: 122, Name: "World Championship 2017 - Lahti - Nordic Combined" }, { Id: 123, Name: "World Championship 2017 - Hochfilzen - Biathlon" }, { Id: 124, Name: "Live Academy Awards" }, { Id: 126, Name: "IN IT TO WIN IT" }, { Id: 127, Name: "Super Sunday" }, { Id: 128, Name: "Lottery" }, { Id: 129, Name: "Finalejackpot" }, { Id: 130, Name: "Cup Final Bonanza" }, { Id: 131, Name: "# Packaged Bets - Exclusive Betsson" }, { Id: 133, Name: "Ice Hockey (Summer)" }, { Id: 136, Name: "Waterski & Wakeboard" }, { Id: 137, Name: "FootballGolf" }, { Id: 138, Name: "Table Tennis" }, { Id: 139, Name: "Bridge" }, { Id: 140, Name: "Rollerderby" }, { Id: 141, Name: "International Rules" }, { Id: 142, Name: "#lovethebet - Exclusive Nordicbet" }, { Id: 143, Name: "Bobsleigh" }, { Id: 144, Name: "Skeleton" }, { Id: 145, Name: "Alternative EM" }, { Id: 146, Name: "# Price Specials - Exclusive Betsafe" }, { Id: 147, Name: "DONT USE" }, { Id: 148, Name: "CrossFit Games" }, { Id: 149, Name: "# Daily Offer" }, { Id: 150, Name: "Bowling" }, { Id: 151, Name: "Strength Athletics" }, { Id: 152, Name: "Triobet Fantasy Līga" }, { Id: 153, Name: "Kickboxing" }, { Id: 154, Name: "# Bets10 Tahmin" }, { Id: 156, Name: "Nordic Hillbillies" }, { Id: 157, Name: "Luge" }, { Id: 158, Name: "# Bets10 Stars" }, { Id: 159, Name: "World Championship 2017 - Lahti - Specials" }, { Id: 160, Name: "World Championships 2017 - Hochfilzen - Biathlon" }, { Id: 162, Name: "UK Sports" }, { Id: 163, Name: "Wrestling" }, { Id: 164, Name: "zzDNU - Sarah Sjöström" }, { Id: 165, Name: "Kommunal- og regionsrådsvalg 2017" }, { Id: 166, Name: "Love Island" }, { Id: 167, Name: "# New Customer Offer" }, { Id: 168, Name: "Israel Super Cup" }, { Id: 169, Name: "#mobilbahis" }, { Id: 170, Name: "Kommunalvalg 2017" }, { Id: 172, Name: "Regionsvalg 2017" }, { Id: 173, Name: "What will happen 2018?" }, { Id: 174, Name: "# Ronaldinho" }, { Id: 175, Name: "Football Outrights" }, { Id: 177, Name: "# Oz and Jay Trebles" }, { Id: 178, Name: "JALKAGURUD" }, { Id: 179, Name: "Enhanced Accas" }, { Id: 182, Name: "Ott Tanak" }, { Id: 183, Name: "Apuestas Extremas" }, { Id: 186, Name: "Financials" }, { Id: 187, Name: "DNU Financials" }, { Id: 189, Name: "OltiTest" }, { Id: 190, Name: "zzDNU - thfi" }, { Id: 191, Name: "zzDNU - thfi_sport" }, { Id: 192, Name: "zzDNU - thfi_category" }, { Id: 193, Name: "Padel" }, { Id: 194, Name: "zzzDNUmg-test-cat1" }];
 })();
