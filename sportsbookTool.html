@@ -52,48 +52,46 @@
 
             <div class="contextLayout">
                 <div class="displayFlex">
-                    <span class="keyForContext">Environment:</span>
-                    <span class="valueForContext" id="environment"></span>
-                </div>
-                <div class="displayFlex">
-                    <span class="keyForContext">Device Type:</span>
-                    <span class="valueForContext" id="deviceType"></span>
+                    <div class="keyForContext">Environment:</div>
+                    <div class="valueForContext" id="environment"></div>
                 </div>
 
                 <div class="displayFlex">
-                    <span class="keyForContext">Brand (Market):</span>
-                    <span class="valueForContext twoItemsJustified">
-                        <span id="brandName"></span>
-                        <span>
-                            <button class="btCopy btIcon" onclick="copyToClipboard('brand')">
-                                <img class="iconCopy">
-                            </button>
-                        </span>
-                    </span>
+                    <div class="keyForContext">Device / Login:</div>
+                    <div class="valueForContext">
+                        <span id="deviceType"></span>
+                        <span id="loginState"></span>
+                    </div>
                 </div>
 
                 <div class="displayFlex">
-                    <span class="keyForContext">Browser:</span>
-                    <span class="valueForContext twoItemsJustified">
-                        <span id="browserVersion"></span>
-                        <span>
-                            <button class="btCopy btIcon" onclick="copyToClipboard('browserVersion')">
-                                <img class="iconCopy">
-                            </button>
-                        </span>
-                    </span>
+                    <div class="keyForContext">Brand (Market):</div>
+                    <div class="valueForContext twoItemsJustified">
+                        <div id="brandName"></div>
+                        <button class="btCopy btIcon" onclick="copyToClipboard('brand')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
                 </div>
 
                 <div class="displayFlex">
-                    <span class="keyForContext">App Version:</span>
-                    <span class="valueForContext twoItemsJustified">
-                        <span id="obgVersion"></span>
-                        <span>
-                            <button class="btCopy btIcon" onclick="copyToClipboard('obgVersion')">
-                                <img class="iconCopy">
-                            </button>
-                        </span>
-                    </span>
+                    <div class="keyForContext">Browser:</div>
+                    <div class="valueForContext twoItemsJustified">
+                        <div id="browserVersion"></div>
+                        <button class="btCopy btIcon" onclick="copyToClipboard('browserVersion')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="displayFlex">
+                    <div class="keyForContext">App Version:</div>
+                    <div class="valueForContext twoItemsJustified">
+                        <div id="obgVersion"></div>
+                        <button class="btCopy btIcon" onclick="copyToClipboard('obgVersion')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
                 </div>
 
                 <button onclick="toggleSection('contextUtilities')" class="moreLess">Extras</button>
@@ -278,6 +276,12 @@
                         </span>
                     </div>
                     <hr class="hRule">
+                    <!-- <div class="twoItemsJustified">
+                        <span class="width95Percent">Navigate to event</span>
+                        <button class="btIcon btOpenInNewWindow" onclick="navigateToEvent()">
+                            <img class="iconOpenInNewWindow">
+                        </button>
+                    </div> -->
                     <div id="sbEventIdForOddsManagerSection" class="twoItemsJustified">
                         <span class="width95Percent">Get Event ID for ISA/Redis, Odds Manager/LOM </span>
                         <button class="btIcon btOpenInNewWindow" onclick="getLegacyEventId()">
@@ -672,7 +676,9 @@
 
                             <div class="twoItemsJustified">
                                 <span>Add market to Carousel or Cards</span>
-                                <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()">
+                                <!-- <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()"> -->
+                                <button class="btSimple btCarousel" id="btAddToCarousel"
+                                    onclick="addMarketToCarouselOrCards()">
                                     <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
                                 </button>
                             </div>
