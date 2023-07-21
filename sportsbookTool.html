@@ -41,6 +41,20 @@
                     Open Sportsbook iframe<button class="btSimple btGreen"
                         onclick="reloadPageWithFeature('openIframe')">SB iframe</button>
                 </div>
+                <div id="notMatchingIframeSection" class="hide">
+                    <div id="iframeNotMatchingWarningMessage">
+                        Host page and SB iframe environments are not matching, meaning you are testing <span id="notMatchingIframeEnvSpan"></span> Sportsbook! 
+                    </div>
+                    <div id="openMatchingIframeRow" class="resolveLimitationRow">
+                        Open matching SB iframe<button id="btOpenMatchingIframe" class="btSimple btGreen"
+                            onclick="reloadPageWithFeature('openMatchingIframe')"></button>
+                    </div>
+                    <div id="openNotMatchingIframeRow" class="resolveLimitationRow">
+                        <div> Open not matching SB iframe</div>
+                        <button id="btOpenNotMatchingIframe" class="btSimple btOrange"
+                            onclick="reloadPageWithFeature('openNotMatchingIframe')"></button>
+                    </div>
+                </div>
                 <div class="twoItemsJustified">
                     <div id="iframeUrlValue" class="displayInGreen sportsbookLink width100percent"></div>
                     <button class="btCopy btIcon" id="btIframeUrl" onclick="copyToClipboard('iframeURL')">
@@ -435,6 +449,16 @@
                             <input type="checkbox" onclick="toggleEventProperty('liveStatistics')"
                                 id="chkHasLiveStatistics" class="chkSbTools">
                         </div>
+
+                        <div title="Live event with scoreboard required" id="hasVarSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span id="varIcon" class="ico-var iconMockIconColumn vertMiddle"></span>
+                                <span id="varLabel" class="iconMockLabelColumn">Video Assistant Referee (VAR)</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleEventProperty('var')" id="chkHasVar"
+                                class="chkSbTools">
+                        </div>
+
                     </div>
                 </div>
 
@@ -1537,8 +1561,16 @@
 
     .resolveLimitationRow {
         display: grid;
-        grid-template-columns: auto 75px;
+        grid-template-columns: auto 100px;
         margin-bottom: 8px;
+    }
+
+    #iframeNotMatchingWarningMessage {
+        margin-bottom: 8px;
+        color: rgb(160,0,0);
+        font-weight: 700;
+        border: 1px solid rgb(160,0,0);
+        padding: 5px;
     }
 
     .width48percent {
@@ -1651,12 +1683,11 @@
         font-family: 'Arial';
         width: 310px;
         height: auto;
-        position: absolute;
+        position: fixed;
         border: 2px solid #d3d3d3;
-        top: 0px;
-        left: 0px;
+        top: 0vh;
+        left: 0vh;
         z-index: 5000;
-        /* filter: drop-shadow(0 0 2rem black); */
         box-shadow: 0 0 35px 10px black;
         font-size: 12px;
         overflow: auto
@@ -1909,7 +1940,7 @@
     }
 
     .btCopy {
-        width: 18px;
+        min-width: 18px;
         height: 20px;
     }
 
@@ -2043,6 +2074,21 @@
 
     .btGreen:active {
         background-color: #00b9bd;
+    }
+
+    .btOrange {
+        background-color: #cc8936;
+        color: #fff;
+    }
+
+    @media (hover: hover) {
+        .btOrange:hover {
+            background-color: #f9a133;
+        }
+    }
+
+    .btOrange:active {
+        background-color: #f9a133;
     }
 
     .mobileUi {
