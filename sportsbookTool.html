@@ -43,7 +43,8 @@
                 </div>
                 <div id="notMatchingIframeSection" class="hide">
                     <div id="iframeNotMatchingWarningMessage">
-                        Host page and SB iframe environments are not matching, meaning you are testing <span id="notMatchingIframeEnvSpan"></span> Sportsbook! 
+                        Host page and SB iframe environments are not matching, meaning you are testing <span
+                            id="notMatchingIframeEnvSpan"></span> Sportsbook!
                     </div>
                     <div id="openMatchingIframeRow" class="resolveLimitationRow">
                         Open matching SB iframe<button id="btOpenMatchingIframe" class="btSimple btGreen"
@@ -55,7 +56,7 @@
                             onclick="reloadPageWithFeature('openNotMatchingIframe')"></button>
                     </div>
                 </div>
-                <div class="twoItemsJustified">
+                <div class="itemsJustified">
                     <div id="iframeUrlValue" class="displayInGreen sportsbookLink width100percent"></div>
                     <button class="btCopy btIcon" id="btIframeUrl" onclick="copyToClipboard('iframeURL')">
                         <img class="iconCopy">
@@ -80,7 +81,7 @@
 
                 <div class="displayFlex">
                     <div class="keyForContext">Brand (Market):</div>
-                    <div class="valueForContext twoItemsJustified">
+                    <div class="valueForContext itemsJustified">
                         <div id="brandName"></div>
                         <button class="btCopy btIcon" onclick="copyToClipboard('brand')">
                             <img class="iconCopy">
@@ -90,7 +91,7 @@
 
                 <div class="displayFlex">
                     <div class="keyForContext">Browser:</div>
-                    <div class="valueForContext twoItemsJustified">
+                    <div class="valueForContext itemsJustified">
                         <div id="browserVersion"></div>
                         <button class="btCopy btIcon" onclick="copyToClipboard('browserVersion')">
                             <img class="iconCopy">
@@ -100,7 +101,7 @@
 
                 <div class="displayFlex">
                     <div class="keyForContext">App Version:</div>
-                    <div class="valueForContext twoItemsJustified">
+                    <div class="valueForContext itemsJustified">
                         <div id="obgVersion"></div>
                         <button class="btCopy btIcon" onclick="copyToClipboard('obgVersion')">
                             <img class="iconCopy">
@@ -111,7 +112,7 @@
                 <button onclick="toggleSection('contextUtilities')" class="moreLess">Extras</button>
                 <div id="contextUtilities" class="marginTop10px hide">
 
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <div class="width95Percent">
                             <span class="keyColumnForExtras">Jira QA Table</span>
                             <span class="displayInLightGrey">from the above data</span>
@@ -120,7 +121,7 @@
                             <img class="iconCopy">
                         </button>
                     </div>
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <div class="width95Percent">
                             <span class="keyColumnForExtras">Deep Link</span>
                             <span class="displayInLightGrey">of the actual page & slip</span>
@@ -130,7 +131,7 @@
                         </button>
                     </div>
 
-                    <div id="postMessageRow" class="twoItemsJustified hide">
+                    <div id="postMessageRow" class="itemsJustified hide">
                         <div class="width95Percent">
                             <span class="keyColumnForExtras">PostMessage</span>
                             <span class="displayInLightGrey">routeChangeIn in native</span>
@@ -140,7 +141,7 @@
                         </button>
                     </div>
 
-                    <div id="disableCacheRow" class="twoItemsJustified">
+                    <div id="disableCacheRow" class="itemsJustified">
                         <div class="width95Percent">
                             <span class="keyColumnForExtras">Off Cache</span>
                             <span class="displayInLightGrey">with page reload</span>
@@ -149,7 +150,7 @@
                             <img class="iconDisable">
                         </button>
                     </div>
-                    <div id="disableSSRRow" class="twoItemsJustified">
+                    <div id="disableSSRRow" class="itemsJustified">
                         <div class="width95Percent">
                             <span class="keyColumnForExtras">Off SSR</span>
                             <span class="displayInLightGrey">with page reload</span>
@@ -158,7 +159,7 @@
                             <img class="iconDisable">
                         </button>
                     </div>
-                    <div id="disableGeoFencingRow" class="twoItemsJustified">
+                    <div id="disableGeoFencingRow" class="itemsJustified">
                         <div class="width95Percent">
                             <span class="keyColumnForExtras">Off GeoFencing</span>
                             <span class="displayInLightGrey">for Betsson ArBa login</span>
@@ -179,7 +180,7 @@
         </button>
         <div class="accContent">
             <div class="marginBottom10px">
-                <div class="twoItemsJustified">
+                <div class="itemsJustified">
                     <div class="width95Percent displayFlex">
                         <span class="width17percent">Name:</span>
                         <span id="segmentNameSpan" class="width100percent displayInGreen"></span>
@@ -188,7 +189,7 @@
                         <img class="iconCopy">
                     </button>
                 </div>
-                <div class="twoItemsJustified">
+                <div class="itemsJustified">
                     <div class="width95Percent displayFlex">
                         <span class="width17percent">Guid:</span>
                         <span id="segmentGuidSpan" class="width100percent displayInGreen"></span>
@@ -216,7 +217,7 @@
                     class="comboSbTools height20px marginBottom10px width100percent">
                 </select>
                 <div>Enter Segment Guid manually</div>
-                <div class="twoItemsJustified">
+                <div class="itemsJustified">
                     <input id="fdSegmentGuid" class="fdSbTools width100percent height20px">
                     <button class="btSimple btSubmit" onclick="changeSegmentGuid()">Set</button>
                 </div>
@@ -254,7 +255,7 @@
                 <div id="eventDetailsSection" class="marginTopBottom10px hide">
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Event ID:</span>
-                        <span class="valueForEventDetails twoItemsJustified">
+                        <span class="valueForEventDetails itemsJustified">
                             <span id="eventIdForEventDetails" class="displayInGreen"></span>
                             <span>
                                 <button class="btCopy btIcon" id="btCopyEventId" onclick="copyToClipboard('eventId')">
@@ -270,39 +271,39 @@
 
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Category:</span>
-                        <span class="valueForEventDetails twoItemsJustified displayInGreen">
+                        <span class="valueForEventDetails itemsJustified displayInGreen">
                             <span id="categoryForEventDetails"></span>
                             <span id="categoryIdForEventDetails"></span>
                         </span>
                     </div>
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Region:</span>
-                        <span class="valueForEventDetails twoItemsJustified displayInGreen">
+                        <span class="valueForEventDetails itemsJustified displayInGreen">
                             <span id="regionForEventDetails"></span>
                             <span id="regionIdForEventDetails"></span>
                         </span>
                     </div>
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Competition:</span>
-                        <span class="valueForEventDetails twoItemsJustified displayInGreen">
+                        <span class="valueForEventDetails itemsJustified displayInGreen">
                             <span id="competitionForEventDetails"></span>
                             <span id="competitionIdForEventDetails"></span>
                         </span>
                     </div>
                     <hr class="hRule">
-                    <!-- <div class="twoItemsJustified">
+                    <!-- <div class="itemsJustified">
                         <span class="width95Percent">Navigate to event</span>
                         <button class="btIcon btOpenInNewWindow" onclick="navigateToEvent()">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div> -->
-                    <div id="sbEventIdForOddsManagerSection" class="twoItemsJustified">
+                    <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
                         <span class="width95Percent">Get Event ID for ISA/Redis, Odds Manager/LOM </span>
                         <button class="btIcon btOpenInNewWindow" onclick="getLegacyEventId()">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <div class="width95Percent">Open in
                             <span class="sbManagerSb">sb</span>
                             <span class="sbManagerManager">manager</span>
@@ -330,7 +331,7 @@
                                 class="comboSbTools width100percent height20px">
                             </select>
 
-                            <div class="twoItemsJustified marginTop5px">
+                            <div class="itemsJustified marginTop5px">
                                 <span contenteditable="true" id="fdRenameParticipantLabel"
                                     class="fdSbTools width92percent">
                                 </span>
@@ -343,7 +344,7 @@
                         <div class="marginTop10px">Label:
                             <span class="accordionHint">displayed for Outrights, Boosts Page</span>
                         </div>
-                        <div class="twoItemsJustified">
+                        <div class="itemsJustified">
                             <span contenteditable="true" id="fdRenameEventLabel" class="fdSbTools width92percent">
                             </span>
                             <button class="btIcon" onclick="setEventLabel()">
@@ -606,7 +607,7 @@
                 <button onclick="toggleSection('marketDetailsSection')" class="moreLess">Market Details</button>
                 <div id="marketDetailsSection" class="marginTopBottom10px hide">
 
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <span class="width95Percent displayFlex">
                             <span class="marginRight5px">ID:</span>
                             <span id="marketIdForSbToolsMarket" class="labelRow displayInGreen"></span>
@@ -616,7 +617,7 @@
                         </button>
                     </div>
                     <hr class="hRule">
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <span class="width95Percent displayFlex">
                             <span class="width48percent">Template ID:</span>
                             <span id="marketTemplateIdForSbToolsMarket"
@@ -627,7 +628,7 @@
                         </button>
                     </div>
 
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <span class="width95Percent displayFlex">
                             <span class="width48percent noWrap">Template Tags:</span>
                             <span id="marketTemplateTagsForSbToolsMarket"
@@ -639,20 +640,20 @@
                     </div>
 
                     <hr class="hRule">
-                    <div id="openMappingForTemplateTagSection" class="twoItemsJustified">
+                    <div id="openMappingForTemplateTagSection" class="itemsJustified">
                         <span class="width95Percent">Open Mapping for the Template Tags</span>
                         <button class="btIcon btOpenInNewWindow"
                             onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
-                    <div id="sbMarketIdForOddsManagerSection" class="twoItemsJustified">
+                    <div id="sbMarketIdForOddsManagerSection" class="itemsJustified">
                         <span id="sbIdForOddsManager" class="width95Percent"></span>
                         <button class="btIcon btOpenInNewWindow" onclick="getLegacyMarketId()">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <div class="width95Percent">Open in
                             <span class="sbManagerSb">sb</span>
                             <span class="sbManagerManager">manager</span>
@@ -687,7 +688,7 @@
                         <div id="carouselButtonsDiv">
 
                             <div id="stopCarouselAutoplayRow" class="marginTopBottom10px">
-                                <div class="twoItemsJustified">
+                                <div class="itemsJustified">
                                     <span class="width95Percent">
                                         Stop Carousel Autoplay
                                     </span>
@@ -698,7 +699,7 @@
                                 </div>
                             </div>
 
-                            <div class="twoItemsJustified">
+                            <div class="itemsJustified">
                                 <span>Add market to Carousel or Cards</span>
                                 <!-- <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()"> -->
                                 <button class="btSimple btCarousel" id="btAddToCarousel"
@@ -755,7 +756,7 @@
                     </div>
                 </div>
                 <div id="lockSelectionSection" class="hide lockSection">
-                    Lock <input type="checkbox" id="chkLockSelection" class="chkLock chkSbTools verticalAlignMiddle"
+                    Lock <input type="checkbox" id="chkLockSelection" class="chkLock chkSbTools"
                         onclick="lockSelection()">
                 </div>
             </div>
@@ -764,7 +765,7 @@
                 <hr class="hRule">
                 <div>
                     <div>Selection ID:</div>
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <span id="selectionIdForSbToolsSelection" class="labelRow displayInGreen width95Percent"></span>
                         <button class="btCopy btIcon" onclick="copyToClipboard('selectionId')"><img
                                 class="iconCopy"></button>
@@ -803,7 +804,7 @@
                 </div>
                 <div id="accaDetailsLayout" class="hide">
 
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <div class="width95Percent displayFlex">
                             <span class="marginRight5px">Name:</span>
                             <span id=accaNameField class="accaValueColumn displayInGreen"></span>
@@ -815,7 +816,7 @@
                     </div>
 
 
-                    <div class="twoItemsJustified">
+                    <div class="itemsJustified">
                         <div class="width95Percent displayFlex">
                             <span class="marginRight5px">ID:</span>
                             <span id="accaIdField" class="accaValueColumn displayInGreen"></span>
@@ -824,7 +825,7 @@
                             <img class="iconCopy">
                         </button>
                     </div>
-                    <div class="marginTopBottom10px twoItemsJustified">
+                    <div class="marginTopBottom10px itemsJustified">
                         <div class="width95Percent">Open in
                             <span class="sbManagerSb">sb</span>
                             <span class="sbManagerManager">manager</span>
@@ -881,19 +882,32 @@
                     No Price Boost found
                 </div>
                 <div id="pbDetailsLayout">
-                    <div class="twoItemsJustified">
-                        <div>
+                    <div>
+
+                        <div class="marginBottom5px">
                             <span id="pbNumberOf" class="displayInGreen fontBold marginRight5px"></span>
-                            <span>PB listed</span>
+                            <span>PB(s) returned by API&nbsp;&nbsp;&lpar;</span>
+                            <span id="pbNumberOfListed" class="displayInGreen fontBold marginRight5px"></span>
+                            <span>listed&rpar;</span>
                         </div>
-                        <span>
-                            <input type="radio" id="radioPbByName" name="pbSelecBy" class="radioSbTools vertMiddle"
-                                checked onclick="listPriceBoostsBy('pBname')">
-                            <label for="radioPbByName" class="vertMiddle marginRight10px">by Name</label>
-                            <input type="radio" id="radioPbByEvent" name="pbSelecBy" class="radioSbTools vertMiddle"
-                                onclick="listPriceBoostsBy('eventName')">
-                            <label for="radioPbByEvent" class="vertMiddle">by Event Name</label>
-                        </span>
+
+                        <div class="itemsJustified">
+                            <div>
+                                <input type="radio" name="radioPb" id="radioPbByName" class="radioSbTools vertMiddle"
+                                    checked onclick="listPriceBoostsBy('pbName')">
+                                <label for="radioPbByName" class="vertMiddle">by bonus name</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="radioPb" id="radioPbByEvent" class="radioSbTools vertMiddle"
+                                    onclick="listPriceBoostsBy('eventName')">
+                                <label for="radioPbByEvent" class="vertMiddle">by event name</label>
+                            </div>
+                            <div>
+                                <input type="radio" name="radioPb" id="radioPbNotApplicable"
+                                    class="radioSbTools vertMiddle" onclick="listPriceBoostsBy('notApplicable')">
+                                <label for="radioPbNotApplicable" class="vertMiddle">n/a ones</label>
+                            </div>
+                        </div>
                     </div>
 
                     <select id="pbSelector" onchange="selectPb(value)"
@@ -904,7 +918,7 @@
                             <span class="marginRight5px">Name:</span>
                             <span id="pbName" class="displayInGreen"></span>
                         </div>
-                        <div class="twoItemsJustified">
+                        <div class="itemsJustified">
                             <div class="width95Percent displayFlex">
                                 <span class="marginRight5px">ID:</span>
                                 <span id="pbIdSpan" class="displayInGreen"></span>
@@ -913,7 +927,7 @@
                                 <img class="iconCopy">
                             </button>
                         </div>
-                        <div class="marginTopBottom10px twoItemsJustified">
+                        <div class="marginTopBottom10px itemsJustified">
                             <div class="width95Percent">Open in
                                 <span class="sbManagerSb">sb</span>
                                 <span class="sbManagerManager">manager</span>
@@ -927,11 +941,13 @@
                         <div>
                             Path to the Competition:
                             <div id="pbPathToCompetition" class="displayInGreen marginBottom10px"></div>
-                            Boosted Selection:
-                            <div class="displayInGreen">
-                                <div id="eventLabelForPbDiv"></div>
-                                <div id="marketLabelForPbDiv" class="marginLeft5px"></div>
-                                <div id="selectionLabelForPbDiv" class="marginLeft30px fontBold"></div>
+                            <div id=boostedSelectionDiv>
+                                Boosted Selection:
+                                <div class="displayInGreen">
+                                    <div id="eventLabelForPbDiv"></div>
+                                    <div id="marketLabelForPbDiv" class="marginLeft5px"></div>
+                                    <div id="selectionLabelForPbDiv" class="marginLeft30px fontBold"></div>
+                                </div>
                             </div>
                         </div>
                         <hr class="hRule">
@@ -982,7 +998,7 @@
                             <span class="marginRight5px">Name:</span>
                             <span id="freeBetName" class="displayInGreen"></span>
                         </div>
-                        <div class="twoItemsJustified">
+                        <div class="itemsJustified">
                             <div class="width95Percent displayFlex">
                                 <span class="marginRight5px">ID:</span>
                                 <span id="freeBetIdSpan" class="displayInGreen"></span>
@@ -991,7 +1007,7 @@
                                 <img class="iconCopy">
                             </button>
                         </div>
-                        <div class="marginTopBottom10px twoItemsJustified">
+                        <div class="marginTopBottom10px itemsJustified">
                             <div class="width95Percent">Open in
                                 <span class="sbManagerSb">sb</span>
                                 <span class="sbManagerManager">manager</span>
@@ -1234,9 +1250,10 @@
 
 
 <style>
-    .twoItemsJustified {
+    .itemsJustified {
         display: flex;
         justify-content: space-between;
+        align-items: center;
     }
 
     .checkBoxRowToRight {
@@ -1567,9 +1584,9 @@
 
     #iframeNotMatchingWarningMessage {
         margin-bottom: 8px;
-        color: rgb(160,0,0);
+        color: rgb(160, 0, 0);
         font-weight: 700;
-        border: 1px solid rgb(160,0,0);
+        border: 1px solid rgb(160, 0, 0);
         padding: 5px;
     }
 
