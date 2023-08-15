@@ -51,7 +51,7 @@
                             onclick="reloadPageWithFeature('openMatchingIframe')"></button>
                     </div>
                     <div id="replaceIframeSrcRow" class="resolveLimitationRow">
-                        <div>Fix SB iframe by source replacement</div>
+                        <div>Keep host page but replace SB iframe with the matching one</div>
                         <button id="btReplaceIframeSrc" class="btSimple btOrange"
                             onclick="replaceIframeSrc()">Replace</button>
                     </div>
@@ -820,7 +820,7 @@
                             <div
                                 title="These boost are not applicable as the selections for them are not available in the system">
                                 <input type="radio" name="radioPb" id="radioPbGarbage" class="radioSbTools vertMiddle"
-                                    onclick="listPriceBoostsBy('notApplicable')">
+                                    onclick="listPriceBoostsBy('garbage')">
                                 <label for="radioPbGarbage" class="vertMiddle">garbage</label>
                             </div>
                         </div>
@@ -1369,6 +1369,7 @@
         font-size: inherit;
         padding: 2px;
         color: #444;
+        height: fit-content;
     }
 
     @media (hover: hover) {
