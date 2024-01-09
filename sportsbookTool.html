@@ -24,13 +24,14 @@
 <div id="sportsbookToolContent">
     <div id="sbToolsContext" class="accordion open">
         <button id="contextAccordion" class="accHeading" onclick="initContext()">Context<span
-                id="limitedFunctionsMessage"></span></button>
+                id="limitedFunctionsMessage"></span>
+        </button>
         <div class="accContent">
             <div id="obgStateAndRtSection" class="hide">
                 <div id="obgStateAndRtRow" class="resolveLimitationRow">
-                    Enable obgState and obgRt<button class="btSimple btGreen"
+                    Expose obgState and obgRt<button class="btSimple btGreen"
                         onclick="reloadPageWithFeature('exposeObgStateAndRt')">
-                        <span>Enable</span>
+                        <span>Expose</span>
                     </button>
                 </div>
                 <hr class="hRule">
@@ -46,8 +47,8 @@
                         Mismatch between host page and SB iframe environments, meaning you are testing <span
                             id="notMatchingIframeEnvSpan"></span> Sportsbook
                     </div>
-                    <div id="openMatchingIframeRow" class="resolveLimitationRow">
-                        Open matching SB iframe<button id="btOpenMatchingIframe" class="btSimple btGreen"
+                    <div id="openMatchingIframeRow" class="marginBottom2px resolveLimitationRow">
+                        Open just the matching SB iframe<button id="btOpenMatchingIframe" class="btSimple btGreen"
                             onclick="reloadPageWithFeature('openMatchingIframe')"></button>
                     </div>
                     <div id="replaceIframeSrcRow" class="resolveLimitationRow">
@@ -65,7 +66,8 @@
                 <hr class="hRule">
             </div>
 
-            <div class="contextLayout">
+            <div id="contextSection">
+
                 <div class="displayFlex">
                     <div class="keyForContext">Environment:</div>
                     <div class="valueForContext" id="environment"></div>
@@ -82,7 +84,10 @@
                 <div class="displayFlex">
                     <div class="keyForContext">Brand (Market):</div>
                     <div class="valueForContext itemsJustified">
-                        <div id="brandName"></div>
+                        <div>
+                            <span id="brandName"></span>
+                            <span id="B2BorB2C" class="displayInLightGrey"></span>
+                        </div>
                         <button class="btCopy btIcon" onclick="copyToClipboard('brand')">
                             <img class="iconCopy">
                         </button>
@@ -168,6 +173,18 @@
                             <img class="iconReload">
                         </button>
                     </div>
+
+                    <!-- <hr class="hRule">
+                    <div>Config Overrides</div>
+                    <select id="configOverrideSelector" onchange="selectConfigOverride(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                        <option value="ssr">SSR Off/On</option>
+                        <option value="geoFencing">GeoFencing Off (for Betsson ArBa login)</option>
+                        <option value="nextBetOffer">Next Bet Offer</option>
+                        <option value="tournament">Tournament</option>
+                        <option value="bbMaxSelection">BB Betslip Max Selection Count</option>
+                    </select> -->
+
                 </div>
             </div>
         </div>
@@ -223,8 +240,8 @@
                 </div>
 
                 <div class="checkBoxRowToRight marginTop5px">
-                    <span>Open list of existing SegmentGuids</span>
-                    <button class="btOpenInNewWindow btIcon chkInline" onclick="openInNewWindow('segmentGuidWiki')">
+                    <span>Segment data known to this tool</span>
+                    <button class="btOpenInNewWindow btIcon chkInline" onclick="openInNewWindow('brandsJson')">
                         <img class="iconOpenInNewWindow">
                     </button>
                 </div>
@@ -292,16 +309,31 @@
                     </div>
                     <hr class="hRule">
                     <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
-                        <span class="width95Percent">Get Event ID for ISA/Redis, Odds Manager/LOM </span>
+                        <span class="width95Percent itemsJustified paddingRight8px">
+                            <span>Legacy Event ID</span>
+                            <span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span>
+                        </span>
                         <button class="btIcon btOpenInNewWindow" onclick="getLegacyEventId()">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
+                    <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
+                        <span class="width95Percent itemsJustified paddingRight8px">
+                            <span>Whole ISA response</span>
+                            <span class="displayInLightGrey">el[0].sr.pbbpoe = popularity</span>
+                        </span>
+                        <button class="btIcon btOpenInNewWindow" onclick="getWholeIsaResponse()">
+                            <img class="iconOpenInNewWindow">
+                        </button>
+                    </div>
                     <div class="itemsJustified">
-                        <div class="width95Percent">Open in
-                            <span class="sbManagerSb">sb</span>
-                            <span class="sbManagerManager">manager</span>
-                            <span>(ex-Trading Tools)</span>
+                        <div class="width95Percent itemsJustified paddingRight8px">
+                            <span>
+                                <span>Open in</span>
+                                <span class="sbManagerSb">sb</span>
+                                <span class="sbManagerManager">manager</span>
+                            </span>
+                            <span class="displayInLightGrey">(ex-Trading Tools)</span>
                         </div>
                         <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('event')">
                             <img class="iconOpenInNewWindow">
@@ -394,9 +426,18 @@
                         <div id="hasPriceBoostSection" class="iconMocksRow">
                             <span class="width95Percent">
                                 <span class="ico-price-boost iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Price Boost</span>
+                                <span class="iconMockLabelColumn">Price Boost (Single)</span>
                             </span>
                             <input type="checkbox" onclick="toggleEventProperty('priceBoost')" id="chkHasPriceBoost"
+                                class="chkSbTools">
+                        </div>
+
+                        <div id="hasSuperBoostSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="ico-super-boost iconMockIconColumn vertMiddle"></span>
+                                <span class="iconMockLabelColumn">Super Boost (Single)</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleEventProperty('superBoost')" id="chkHasSuperBoost"
                                 class="chkSbTools">
                         </div>
 
@@ -635,23 +676,29 @@
 
                     <hr class="hRule">
                     <div id="openMappingForTemplateTagSection" class="itemsJustified">
-                        <span class="width95Percent">Open Mapping for the Template Tags</span>
+                        <span class="width95Percent">Mapping for the Template Tags</span>
                         <button class="btIcon btOpenInNewWindow"
                             onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
                     <div id="sbMarketIdForOddsManagerSection" class="itemsJustified">
-                        <span id="sbIdForOddsManager" class="width95Percent"></span>
+                        <span class="width95Percent itemsJustified paddingRight8px">
+                            <span>Legacy Market ID</span>
+                            <span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span>
+                        </span>
                         <button class="btIcon btOpenInNewWindow" onclick="getLegacyMarketId()">
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
                     <div class="itemsJustified">
-                        <div class="width95Percent">Open in
-                            <span class="sbManagerSb">sb</span>
-                            <span class="sbManagerManager">manager</span>
-                            <span>(ex-Trading Tools)</span>
+                        <div class="width95Percent itemsJustified paddingRight8px">
+                            <span>
+                                <span>Open in</span>
+                                <span class="sbManagerSb">sb</span>
+                                <span class="sbManagerManager">manager</span>
+                            </span>
+                            <span class="displayInLightGrey">(ex-Trading Tools)</span>
                         </div>
                         <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('market')">
                             <img class="iconOpenInNewWindow">
@@ -707,8 +754,8 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Override Market
-                    Properties</button>
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, Bet Group
+                    Description, Help Text</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
                     <div id="isCashoutAvailableSection" class="iconMocksRow">
@@ -718,6 +765,30 @@
                         </span>
                         <input type="checkbox" onclick="toggleMarketProperty('cashoutAvailable')"
                             id="chkIsCashoutAvailable" class="chkSbTools">
+                    </div>
+
+                    <hr class="hRule">
+
+                    <div class="marginTop10px">Bet Group Description:
+                        <span class="accordionHint">displayed in event page</span>
+                    </div>
+                    <div class="itemsJustified">
+                        <span contenteditable="true" id="fdBetGroupDescription" class="fdSbTools width92percent">
+                        </span>
+                        <button class="btIcon" onclick="setBetGroupDescription()">
+                            <img class="width16px iconSubmit">
+                        </button>
+                    </div>
+
+                    <div class="marginTop10px">Help Text:
+                        <span class="accordionHint">displayed in event tables & page</span>
+                    </div>
+                    <div class="itemsJustified">
+                        <span contenteditable="true" id="fdHelpText" class="fdSbTools width92percent">
+                        </span>
+                        <button class="btIcon" onclick="setHelpText()">
+                            <img class="width16px iconSubmit">
+                        </button>
                     </div>
 
                 </div>
@@ -768,11 +839,11 @@
                 <div class="newOddsLayout">
                     <span>Initial Odds:</span>
                     <span id="initialOddsSpan" class="displayInGreen"></span>
-                    <span></span>
+                    <button id="btResetOdds" class="btSimple btSubmit inactivated" onclick="resetOdds()">Reset</button>
                     <span>New Odds:</span>
-                    <input class="fdSbTools" type="number" id="newOdds" min=1 step=0.01
+                    <input class="fdSbTools" type="number" id="fdNewOdds" min=1 step=0.01
                         oninput="validity.valid||(value='');">
-                    <button class="btSimple btSubmit" onclick="changeOdds()">Set</button>
+                    <button class="btSimple btSubmit" onclick="setOdds()">Set</button>
                 </div>
             </div>
             <div id="sbToolsSelectionInfo" class="hide">
@@ -806,7 +877,7 @@
                             <span>returned by API&rpar;</span>
                         </div>
 
-                        <div class="itemsJustified">
+                        <div class="itemsJustified marginBottom2px">
                             <div id="listPbByNameDiv">
                                 <input type="radio" name="radioPb" id="radioPbByName" class="radioSbTools vertMiddle"
                                     checked onclick="listPriceBoostsBy('pbName')">
@@ -825,10 +896,19 @@
                             </div>
                         </div>
                     </div>
-
                     <select id="pbSelector" onchange="selectPb(value)"
                         class="comboSbTools height20px marginBottom10px width100percent">
                     </select>
+                    <div id="pbLegendCloseable">
+                        <div id="pbLegendSection">
+                            <div class="marginBottom2px">Icons in the above dropdown:</div>
+                            <div id="pbLegendCriteriaNotMet">&#128683; PB criteria not met</div>
+                            <div id="pbLegendPersonal">&#128151; Personal</div>
+                            <div id="pbLegendCombi">&#x1F9E9; Combination</div>
+                            <div id="pbLegendSuperBoost">&#128640; Super Boost</div>
+                            <button id="btClosePbLegend" onclick="closePbLegend()">x</button>
+                        </div>
+                    </div>
                     <div id="pbSelectedDetails">
                         <div>
                             <span class="marginRight5px">Name:</span>
@@ -846,10 +926,13 @@
 
                         <div class="marginTopBottom10px">
                             <div class="itemsJustified">
-                                <div class="width95Percent">Open in
-                                    <span class="sbManagerSb">sb</span>
-                                    <span class="sbManagerManager">manager</span>
-                                    <span>(ex-Trading Tools)</span>
+                                <div class="width95Percent itemsJustified paddingRight8px">
+                                    <span>
+                                        <span>Open in</span>
+                                        <span class="sbManagerSb">sb</span>
+                                        <span class="sbManagerManager">manager</span>
+                                    </span>
+                                    <span class="displayInLightGrey">(ex-Trading Tools)</span>
                                 </div>
                                 <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('priceBoost')">
                                     <img class="iconOpenInNewWindow">
@@ -872,7 +955,7 @@
                                 <span id="addPbToCarouselLabel" class="width95Percent">
                                     Add to carousel or cards
                                 </span>
-                                <button class="btPlusMinus btIcon" onclick="addPbToCarouselOrCards()">
+                                <button class="btIcon" onclick="addPbToCarouselOrCards()">
                                     <img class="iconPlus">
                                 </button>
                             </div>
@@ -915,6 +998,105 @@
                                 <span id="pbMinMaxStake" class="displayInGreen"></span>
                             </div>
                         </div>
+                        <div id="pbExpiryDateDiv">
+                            <div class="displayFlex">
+                                <span class="keyForPb">Expiry Date:</span>
+                                <span id="pbExpiryDate" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="toggleSection('profitBoostSection')" class="moreLess">Profit Boost
+            </button>
+            <div id="profitBoostSection" class="hide marginTopBottom10px">
+                <div id="profitBoostNotFound" class="displayInRed">
+                    No Profit Boost found
+                </div>
+                <div id="profitBoostLogin" class="displayInRed">Login to see your Profit Boosts.
+                </div>
+                <div id="profitBoostDetailsLayout">
+                    <div>
+                        <span id="profitBoostNumberOf" class="displayInGreen fontBold marginRight5px"></span>
+                        <span>Profit Boosts found</span>
+                    </div>
+                    <select id="profitBoostSelector" onchange="selectProfitBoost(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
+                    <div id="profitBoostSelectedDetails">
+                        <div>
+                            <span class="marginRight5px">Name:</span>
+                            <span id="profitBoostName" class="displayInGreen"></span>
+                        </div>
+                        <div class="itemsJustified">
+                            <div class="width95Percent displayFlex">
+                                <span class="marginRight5px">ID:</span>
+                                <span id="profitBoostId" class="displayInGreen"></span>
+                            </div>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('profitBoostId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+                        <div class="marginTopBottom10px itemsJustified">
+                            <div class="width95Percent itemsJustified paddingRight8px">
+                                <span>
+                                    <span>Open in</span>
+                                    <span class="sbManagerSb">sb</span>
+                                    <span class="sbManagerManager">manager</span>
+                                </span>
+                                <span class="displayInLightGrey">(ex-Trading Tools)</span>
+                            </div>
+                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('profitBoost')">
+                                <img class="iconOpenInNewWindow">
+                            </button>
+                        </div>
+                        <hr class="hRule">
+                        <div id="profitBoostRestrictionsSection">
+                            Restriction path:
+                            <div id="profitBoostPathToCompetition" class="displayInGreen marginBottom10px">
+                            </div>
+                            <div id="profitBoostFurtherRestricions" class="displayInOrange hide">
+                                Further restrictions are set on Event/Market level. See the details in Trading Tools.
+                            </div>
+                            <hr class="hRule">
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Profit Boost %:</span>
+                            <span id="profitBoostMultiplier" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Max Winning:</span>
+                            <span id="profitBoostMaxBoostedWinningsInEuro" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Bet Types:</span>
+                            <span id="profitBoostBetTypes" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Event Phases:</span>
+                            <span id="profitBoostEventPhases" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Stake Range:</span>
+                            <span id="profitBoostStake" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Odds Range:</span>
+                            <span id="profitBoostMinMaxOdds" class="displayInGreen"></span>
+                        </div>
+                        <div id="profitBoostNoOfSelectionsDiv">
+                            <div class="displayFlex">
+                                <span class="keyForProfitBoost">No. of Selections:</span>
+                                <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                        <div id="profitBoostExpiryDateDiv">
+                            <div class="displayFlex">
+                                <span class="keyForProfitBoost">Expiry Date:</span>
+                                <span id="profitBoostExpiryDate" class="displayInGreen"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -950,10 +1132,13 @@
                         </button>
                     </div>
                     <div class="marginTopBottom10px itemsJustified">
-                        <div class="width95Percent">Open in
-                            <span class="sbManagerSb">sb</span>
-                            <span class="sbManagerManager">manager</span>
-                            <span>(ex-Trading Tools)</span>
+                        <div class="width95Percent itemsJustified paddingRight8px">
+                            <span>
+                                <span>Open in</span>
+                                <span class="sbManagerSb">sb</span>
+                                <span class="sbManagerManager">manager</span>
+                            </span>
+                            <span class="displayInLightGrey">(ex-Trading Tools)</span>
                         </div>
                         <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('acca')">
                             <img class="iconOpenInNewWindow">
@@ -996,12 +1181,16 @@
                         <span class="marginRight5px">Stake Range:</span>
                         <span id="accaMinMaxStakeSpan" class="displayInGreen"></span>
                     </div>
+                    <div id="accaExpiryDateRow">
+                        <span class="marginRight5px">Expiry Date:</span>
+                        <span id="accaExpiryDateSpan" class="displayInGreen"></span>
+                    </div>
                 </div>
             </div>
 
             <button onclick="toggleSection('freeBetSection')" class="moreLess">Free or Risk Free Bet
             </button>
-            <div id="freeBetSection" class="hide marginTopBottom10px">
+            <div id="freeBetSection" class="hide marginTop10px">
                 <div id="freeBetNotFound" class="displayInRed">
                     No Free Bet found
                 </div>
@@ -1030,10 +1219,13 @@
                             </button>
                         </div>
                         <div class="marginTopBottom10px itemsJustified">
-                            <div class="width95Percent">Open in
-                                <span class="sbManagerSb">sb</span>
-                                <span class="sbManagerManager">manager</span>
-                                <span>(ex-Trading Tools)</span>
+                            <div class="width95Percent itemsJustified paddingRight8px">
+                                <span>
+                                    <span>Open in</span>
+                                    <span class="sbManagerSb">sb</span>
+                                    <span class="sbManagerManager">manager</span>
+                                </span>
+                                <span class="displayInLightGrey">(ex-Trading Tools)</span>
                             </div>
                             <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('freeBet')">
                                 <img class="iconOpenInNewWindow">
@@ -1063,18 +1255,24 @@
                         </div>
                         <div class="displayFlex">
                             <span class="keyForFreeBet">Event Phases:</span>
-                            <span id="freeBetEvetPhases" class="displayInGreen"></span>
+                            <span id="freeBetEventPhases" class="displayInGreen"></span>
                         </div>
                         <div id="freeBetNoOfSelectionsDiv">
                             <div class="displayFlex">
-                                <span class="keyForFreeBet">Number of Selections:</span>
+                                <span class="keyForFreeBet">No. of Selections:</span>
                                 <span id="freeBetNoOfSelections" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                        <div id="freeBetExpiryDateDiv">
+                            <div class="displayFlex">
+                                <span class="keyForFreeBet">Expiry Date:</span>
+                                <span id="freeBetExpiryDate" class="displayInGreen"></span>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
+
         </div>
 
     </div>
@@ -1267,10 +1465,14 @@
 </div>
 
 <style>
+    #sportsbookToolContent {
+        line-height: 18px;
+    }
+
     .itemsJustified {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
     }
 
     .checkBoxRowToRight {
@@ -1346,11 +1548,19 @@
     }
 
     .keyForFreeBet {
-        width: 45%;
+        width: 35%;
+    }
+
+    .keyForProfitBoost {
+        width: 35%;
     }
 
     .bannersRow {
         line-height: 25px;
+    }
+
+    .paddingRight8px {
+        padding-right: 8px;
     }
 
     .noOfBanners {
@@ -1413,6 +1623,10 @@
         margin-top: 5px;
     }
 
+    .marginBottom2px {
+        margin-bottom: 2px;
+    }
+
     .marginBottom5px {
         margin-bottom: 5px;
     }
@@ -1473,6 +1687,10 @@
         margin-left: 5px;
     }
 
+    #initialOddsSpan {
+        margin-left: 4px;
+    }
+
     .labelRow {
         /* padding-right: 3px; */
         word-break: break-word;
@@ -1485,8 +1703,7 @@
     .lockSection {
         display: flex;
         justify-content: flex-end;
-        /* margin-right: 2px; */
-        align-self: center;
+        align-self: start;
     }
 
     .infoList {
@@ -1547,7 +1764,6 @@
     }
 
     .iconMocksRow {
-        line-height: 22px;
         display: flex;
         justify-content: space-between;
     }
@@ -1586,6 +1802,25 @@
         font-stretch: condensed;
     }
 
+    #pbLegendSection {
+        position: relative;
+        margin-top: -10px;
+        margin-bottom: 10px;
+        line-height: normal;
+        font-size: x-small;
+        border: 1px solid #ccc;
+        border-top: none;
+        padding: 5px;
+    }
+
+    #btClosePbLegend {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        border-style: none;
+        cursor: pointer;
+    }
+
     #btNativeOpenEvent {
         height: 38px;
     }
@@ -1601,7 +1836,7 @@
     .resolveLimitationRow {
         display: grid;
         grid-template-columns: auto 100px;
-        /* margin-bottom: 8px; */
+        align-items: baseline;
     }
 
     #iframeNotMatchingWarningMessage {
@@ -1681,6 +1916,10 @@
         display: grid;
         grid-template-rows: auto auto;
         grid-template-columns: 25% 20% auto;
+    }
+
+    .newOddsKeys {
+        width: 50px;
     }
 
     .btSubmit {
@@ -1863,12 +2102,12 @@
         color: #008d90;
     }
 
-    .displayInLightGrey {
-        color: #ccc;
-    }
-
     .displayInOrange {
         color: #cc8936;
+    }
+
+    .displayInLightGrey {
+        color: #ccc;
     }
 
     .hide {
@@ -1979,13 +2218,7 @@
     }
 
     .btCopy {
-        min-width: 18px;
-        height: 20px;
-    }
-
-    .btReload {
-        width: 14px;
-        margin-right: 2px;
+        min-width: 16px;
     }
 
     .btIcon {
@@ -2030,9 +2263,8 @@
         content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><path d="M256,0C114.615,0,0,114.615,0,256s114.615,256,256,256s256-114.615,256-256S397.385,0,256,0z M219.429,367.932L108.606,257.108l38.789-38.789l72.033,72.035L355.463,154.32l38.789,38.789L219.429,367.932z"/></svg>');
     }
 
-
     .iconCopy {
-        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><path fill="black" d="M337.8,56H119.6c-20.1,0-36.4,16.3-36.4,36.4v254.5h36.4V92.4h218.2V56z M392.4,128.7h-200c-20.1,0-36.4,16.3-36.4,36.4v254.5c0,20.1,16.3,36.4,36.4,36.4h200c20.1,0,36.4-16.3,36.4-36.4V165.1C428.7,145,412.5,128.7,392.4,128.7z M392.4,419.6h-200V165.1h200V419.6z"/></svg>');
+        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" style="enable-background:new 0 0 512 512" xml:space="preserve" viewBox="83.2 56 345.6 400" width="16px" height="14px"><path fill="black" d="M337.8,56H119.6c-20.1,0-36.4,16.3-36.4,36.4v254.5h36.4V92.4h218.2V56z M392.4,128.7h-200c-20.1,0-36.4,16.3-36.4,36.4v254.5c0,20.1,16.3,36.4,36.4,36.4h200c20.1,0,36.4-16.3,36.4-36.4V165.1C428.7,145,412.5,128.7,392.4,128.7z M392.4,419.6h-200V165.1h200V419.6z"></path></svg>');
     }
 
     .iconClose {
@@ -2056,15 +2288,15 @@
     }
 
     .iconOpenInNewWindow {
-        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 194.818 194.818" style="enable-background:new 0 0 194.818 194.818;" xml:space="preserve"><g><path d="M185.818,2.161h-57.04c-4.971,0-9,4.029-9,9s4.029,9,9,9h35.312l-86.3,86.3c-3.515,3.515-3.515,9.213,0,12.728c1.758,1.757,4.061,2.636,6.364,2.636s4.606-0.879,6.364-2.636l86.3-86.3v35.313c0,4.971,4.029,9,9,9s9-4.029,9-9v-57.04C194.818,6.19,190.789,2.161,185.818,2.161z"/><path d="M149,77.201c-4.971,0-9,4.029-9,9v88.456H18v-122h93.778c4.971,0,9-4.029,9-9s-4.029-9-9-9H9c-4.971,0-9,4.029-9,9v140c0,4.971,4.029,9,9,9h140c4.971,0,9-4.029,9-9V86.201C158,81.23,153.971,77.201,149,77.201z"/></g></svg>');
+        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 194.818 194.818" height="14px" style="enable-background:new 0 0 194.818 194.818;" xml:space="preserve"><g><path d="M185.818,2.161h-57.04c-4.971,0-9,4.029-9,9s4.029,9,9,9h35.312l-86.3,86.3c-3.515,3.515-3.515,9.213,0,12.728c1.758,1.757,4.061,2.636,6.364,2.636s4.606-0.879,6.364-2.636l86.3-86.3v35.313c0,4.971,4.029,9,9,9s9-4.029,9-9v-57.04C194.818,6.19,190.789,2.161,185.818,2.161z"/><path d="M149,77.201c-4.971,0-9,4.029-9,9v88.456H18v-122h93.778c4.971,0,9-4.029,9-9s-4.029-9-9-9H9c-4.971,0-9,4.029-9,9v140c0,4.971,4.029,9,9,9h140c4.971,0,9-4.029,9-9V86.201C158,81.23,153.971,77.201,149,77.201z"/></g></svg>');
     }
 
     .iconReload {
-        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 492.883 492.883" style="enable-background:new 0 0 492.883 492.883;" xml:space="preserve"><g><path d="M122.941,374.241c-20.1-18.1-34.6-39.8-44.1-63.1c-25.2-61.8-13.4-135.3,35.8-186l45.4,45.4c2.5,2.5,7,0.7,7.6-3l24.8-162.3c0.4-2.7-1.9-5-4.6-4.6l-162.4,24.8c-3.7,0.6-5.5,5.1-3,7.6l45.5,45.5c-75.1,76.8-87.9,192-38.6,282c14.8,27.1,35.3,51.9,61.4,72.7c44.4,35.3,99,52.2,153.2,51.1l10.2-66.7C207.441,421.641,159.441,407.241,122.941,374.241z"/><path d="M424.941,414.341c75.1-76.8,87.9-192,38.6-282c-14.8-27.1-35.3-51.9-61.4-72.7c-44.4-35.3-99-52.2-153.2-51.1l-10.2,66.7c46.6-4,94.7,10.4,131.2,43.4c20.1,18.1,34.6,39.8,44.1,63.1c25.2,61.8,13.4,135.3-35.8,186l-45.4-45.4c-2.5-2.5-7-0.7-7.6,3l-24.8,162.3c-0.4,2.7,1.9,5,4.6,4.6l162.4-24.8c3.7-0.6,5.4-5.1,3-7.6L424.941,414.341z"/></g></svg>');
+        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 492.883 492.883" style="enable-background:new 0 0 492.883 492.883;" xml:space="preserve" width="14px" height="12px"><g><path d="M122.941,374.241c-20.1-18.1-34.6-39.8-44.1-63.1c-25.2-61.8-13.4-135.3,35.8-186l45.4,45.4c2.5,2.5,7,0.7,7.6-3l24.8-162.3c0.4-2.7-1.9-5-4.6-4.6l-162.4,24.8c-3.7,0.6-5.5,5.1-3,7.6l45.5,45.5c-75.1,76.8-87.9,192-38.6,282c14.8,27.1,35.3,51.9,61.4,72.7c44.4,35.3,99,52.2,153.2,51.1l10.2-66.7C207.441,421.641,159.441,407.241,122.941,374.241z"/><path d="M424.941,414.341c75.1-76.8,87.9-192,38.6-282c-14.8-27.1-35.3-51.9-61.4-72.7c-44.4-35.3-99-52.2-153.2-51.1l-10.2,66.7c46.6-4,94.7,10.4,131.2,43.4c20.1,18.1,34.6,39.8,44.1,63.1c25.2,61.8,13.4,135.3-35.8,186l-45.4-45.4c-2.5-2.5-7-0.7-7.6,3l-24.8,162.3c-0.4,2.7,1.9,5,4.6,4.6l162.4-24.8c3.7-0.6,5.4-5.1,3-7.6L424.941,414.341z"/></g></svg>');
     }
 
     .iconGoTo {
-        content: url('data:image/svg+xml;utf8,<svg viewBox="0 -2 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_iconCarrier"><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-360.000000, -933.000000)" fill="#000000"><path d="M388,933 L368,933 C365.791,933 364,934.791 364,937 L364,941 L366,941 L366,937 C366,935.896 366.896,935 368,935 L388,935 C389.104,935 390,935.896 390,937 L390,957 C390,958.104 389.104,959 388,959 L368,959 C366.896,959 366,958.104 366,957 L366,953 L364,953 L364,957 C364,959.209 365.791,961 368,961 L388,961 C390.209,961 392,959.209 392,957 L392,937 C392,934.791 390.209,933 388,933 L388,933 Z M377.343,953.243 C376.953,953.633 376.953,954.267 377.343,954.657 C377.733,955.048 378.367,955.048 378.758,954.657 L385.657,947.758 C385.865,947.549 385.954,947.272 385.94,947 C385.954,946.728 385.865,946.451 385.657,946.243 L378.758,939.344 C378.367,938.953 377.733,938.953 377.343,939.344 C376.953,939.733 376.953,940.367 377.343,940.758 L382.586,946 L361,946 C360.447,946 360,946.448 360,947 C360,947.553 360.447,948 361,948 L382.586,948 L377.343,953.243 L377.343,953.243 Z" id="arrow-right"></path></g></g></g></svg>');
+        content: url('data:image/svg+xml;utf8,<svg viewBox="0 -2 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_iconCarrier"><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" height="14px"><g transform="translate(-360.000000, -933.000000)" fill="#000000"><path d="M388,933 L368,933 C365.791,933 364,934.791 364,937 L364,941 L366,941 L366,937 C366,935.896 366.896,935 368,935 L388,935 C389.104,935 390,935.896 390,937 L390,957 C390,958.104 389.104,959 388,959 L368,959 C366.896,959 366,958.104 366,957 L366,953 L364,953 L364,957 C364,959.209 365.791,961 368,961 L388,961 C390.209,961 392,959.209 392,957 L392,937 C392,934.791 390.209,933 388,933 L388,933 Z M377.343,953.243 C376.953,953.633 376.953,954.267 377.343,954.657 C377.733,955.048 378.367,955.048 378.758,954.657 L385.657,947.758 C385.865,947.549 385.954,947.272 385.94,947 C385.954,946.728 385.865,946.451 385.657,946.243 L378.758,939.344 C378.367,938.953 377.733,938.953 377.343,939.344 C376.953,939.733 376.953,940.367 377.343,940.758 L382.586,946 L361,946 C360.447,946 360,946.448 360,947 C360,947.553 360.447,948 361,948 L382.586,948 L377.343,953.243 L377.343,953.243 Z" id="arrow-right"></path></g></g></g></svg>');
     }
 
     .btPlusMinus {
@@ -2072,20 +2304,20 @@
     }
 
     .iconPlus {
-        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941h-59.882V57.059c0-4.971-4.029-9-9-9s-9,4.029-9,9v59.882H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h59.882v59.882c0,4.971,4.029,9,9,9s9-4.029,9-9v-59.882h59.882c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>');
+        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve" height="14px"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941h-59.882V57.059c0-4.971-4.029-9-9-9s-9,4.029-9,9v59.882H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h59.882v59.882c0,4.971,4.029,9,9,9s9-4.029,9-9v-59.882h59.882c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>');
     }
 
     .iconMinus {
-        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h137.764c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>');
+        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve" height="14px"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h137.764c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>');
     }
 
     .iconInfoSymbol,
     .iconInfoCircle {
-        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 202.978 202.978" style="enable-background:new 0 0 202.978 202.978" xml:space="preserve"><g><path fill="black" d="M100.942,0.001C44.9,0.304-0.297,45.98,0.006,102.031c0.293,56.051,45.998,101.238,102.02,100.945c56.081-0.303,101.248-45.978,100.945-102.02C202.659,44.886,157.013-0.292,100.942,0.001z M101.948,186.436c-46.916,0.234-85.108-37.576-85.372-84.492c-0.244-46.907,37.537-85.157,84.453-85.411c46.926-0.254,85.167,37.596,85.421,84.483C186.695,147.951,148.855,186.182,101.948,186.436z M116.984,145.899l-0.42-75.865l-39.149,0.254l0.078,16.6l10.63-0.059l0.313,59.237l-11.275,0.039l0.088,15.857l49.134-0.264l-0.098-15.847L116.984,145.899z M102.065,58.837c9.575-0.039,15.349-6.448,15.3-14.323c-0.254-8.07-5.882-14.225-15.095-14.186c-9.184,0.059-15.173,6.292-15.134,14.362C87.185,52.555,93.028,58.906,102.065,58.837z"/></g></svg>');
+        content: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 202.978 202.978" style="enable-background:new 0 0 202.978 202.978" xml:space="preserve" height="14px"><g><path fill="black" d="M100.942,0.001C44.9,0.304-0.297,45.98,0.006,102.031c0.293,56.051,45.998,101.238,102.02,100.945c56.081-0.303,101.248-45.978,100.945-102.02C202.659,44.886,157.013-0.292,100.942,0.001z M101.948,186.436c-46.916,0.234-85.108-37.576-85.372-84.492c-0.244-46.907,37.537-85.157,84.453-85.411c46.926-0.254,85.167,37.596,85.421,84.483C186.695,147.951,148.855,186.182,101.948,186.436z M116.984,145.899l-0.42-75.865l-39.149,0.254l0.078,16.6l10.63-0.059l0.313,59.237l-11.275,0.039l0.088,15.857l49.134-0.264l-0.098-15.847L116.984,145.899z M102.065,58.837c9.575-0.039,15.349-6.448,15.3-14.323c-0.254-8.07-5.882-14.225-15.095-14.186c-9.184,0.059-15.173,6.292-15.134,14.362C87.185,52.555,93.028,58.906,102.065,58.837z"/></g></svg>');
     }
 
     .btInfo {
-        width: 16px;
+        /* width: 16px; */
         justify-self: end;
     }
 
@@ -2129,10 +2361,6 @@
 
     .btOrange:active {
         background-color: #f9a133;
-    }
-
-    .mobileUi {
-        line-height: 20px;
     }
 
     .moreLess {

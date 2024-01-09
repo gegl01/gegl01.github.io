@@ -8,10 +8,12 @@
             this.value = value;
         }
     }
-    const ENABLE_OBGRT = new URLParam("exposeObgRt", "1");
-    const ENABLE_OBGSTATE = new URLParam("exposeObgState", "1");
+    const EXPOSE_OBGRT = new URLParam("exposeObgRt", "1");
+    const EXPOSE_OBGSTATE = new URLParam("exposeObgState", "1");
 
     const IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED = isDefined("obgClientEnvironmentConfig");
+    const IS_NODECONTEXT_EXPOSED = isDefined("nodeContext");
+    const IS_OBGSTARTUP_EXPOSED = isDefined("obgStartup");
     const IS_OBGGLOBALAPPCONTEXT_EXPOSED = isDefined("obgGlobalAppContext");
     const IS_OBGSTATE_EXPOSED = isDefined("obgState");
     const IS_OBGRT_EXPOSED = isDefined("obgRt");
@@ -26,7 +28,7 @@
     if (isSportsbookInIframeWithoutObgTools) {
         if (confirm("Sportsbook is in iframe so Sportsbook Tool does not work from here.\nDo you want to open the iframe itself?")) {
             url = new URL(iframeURL);
-            reloadPageWithSearchParams([ENABLE_OBGSTATE, ENABLE_OBGRT]);
+            reloadPageWithSearchParams([EXPOSE_OBGSTATE, EXPOSE_OBGRT]);
             return;
         } else {
             return;
@@ -53,9 +55,10 @@
 
     const accCollection = document.getElementsByClassName("accordion");
     const accHeadCollection = document.getElementsByClassName("accHeading");
+    var versionNumber;
     var eventId, lockedEventId;
     var participants, selectedParticipantId;
-    var previousEventId, previousMarketId, previousSelectionId, previousAcca, previousPriceBoosts, previousFreeBets;
+    var previousEventId, previousMarketId, previousSelectionId, previousAcca, previousPriceBoosts, previousFreeBets, previousProfitBoosts;
     var eventLabel, savedEventLabel;
     var mockedEventPhase;
     var marketId, lockedMarketId, marketLabel, marketTemplateId;
@@ -64,7 +67,7 @@
     var selectionId, lockedSelectionId, selectionLabel;
     var detectionResultText;
     var initialOdds, lockedInitialOdds;
-    var accaName, accaId, priceBoostId, freeBetId;
+    var accaName, accaId, priceBoostId, freeBetId, profitBoostId;
     var segmentGuid, previousSegmentGuid, segmentName, segmentLegacyId;
     var intervalIdForPolling;
     var intervalIdsForPolling = [];
@@ -79,17 +82,19 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.5.58";
+    const SB_TOOL_VERSION = "v1.5.77";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const ENVIRONMENT = getEnvironment();
     const ENVIRONMENT_TO_DISPLAY = getEnvironmentToDisplay();
-    const IS_B2B = getIsB2B();
+    const IS_B2B_IFRAME_ONLY = getIsB2BIframeOnly();
+    const B2X = getB2X();
     const BRAND_NAME = getBrandName();
+    const BRAND_FRIENDLY_NAME = getBrandFriendlyName(BRAND_NAME);
     const CULTURE = getCulture();
     const LANGUAGECODE = getLanguageCode();
-    const BRAND_WITH_LANGUAGECODE = BRAND_NAME + " (" + LANGUAGECODE.toUpperCase() + ")";
+    const BRAND_NAME_WITH_LANGUAGECODE = BRAND_FRIENDLY_NAME + " (" + LANGUAGECODE.toUpperCase() + ")";
     const BROWSER_VERSION = getBrowserVersion();
     const SB_VERSION = getSbVersion();
     const NOT_FOUND = "Not found.";
@@ -103,6 +108,7 @@
     // https://www.test.betsson.com/sv/odds?configOverride=[(sportsbookUi.sportsbookCarousel.autoplayInterval,1000000,number)]
     initHeader();
     initAccordions();
+    initBrands();
     initContext();
     initTouchDependent();
     checkEnabledFeatures();
@@ -110,7 +116,7 @@
     function createWindow() {
         document.body.appendChild(sportsbookTool);
         var htmlContent =
-            '<div id="sportsbookToolHeader"><div id="sportsbookToolHeaderTitle"><div id="sportsbookToolNameRow"><span id="sportsbookToolName"><span id="sportsbookToolNameLeft">sportsbook</span><span id="sportsbookToolNameRight">tool</span></span><span id="sportsbookToolVersion"></span></div><div id="sportsbookToolAuthorName">by gergely.glosz@betssongroup.com</div></div><div id="sportsbookToolHeaderButtonRow" class="floatRight"><button id="btZoomInOut" class="sportsbookToolHeaderButtons" onclick="zoomInOut()"><img id="iconZoomInOut" class="iconZoomOut iconHeader"></button><button id="btMinimizeClosed" class="sportsbookToolHeaderButtons" onclick="toggleClosedAccordionsVisibility()"><img id="iconMinimizeClosed" class="iconMinimize iconHeader"></button><button id="btClose" class="sportsbookToolHeaderButtons" onclick="closePopup()"><img class="iconClose iconHeader"></button></div></div><div id="sportsbookToolContent"><div id="sbToolsContext" class="accordion open"><button id="contextAccordion" class="accHeading" onclick="initContext()">Context<span id="limitedFunctionsMessage"></span></button><div class="accContent"><div id="obgStateAndRtSection" class="hide"><div id="obgStateAndRtRow" class="resolveLimitationRow">Enable obgState and obgRt<button class="btSimple btGreen" onclick=\'reloadPageWithFeature("exposeObgStateAndRt")\'><span>Enable</span></button></div><hr class="hRule"></div><div id="openIframeSection" class="hide"><div id="openIframeRow" class="resolveLimitationRow">Open Sportsbook iframe<button class="btSimple btGreen" onclick=\'reloadPageWithFeature("openIframe")\'>SB iframe</button></div><div id="notMatchingIframeSection" class="hide"><div id="iframeNotMatchingWarningMessage">Mismatch between host page and SB iframe environments, meaning you are testing<span id="notMatchingIframeEnvSpan"></span>Sportsbook</div><div id="openMatchingIframeRow" class="marginBottom2px resolveLimitationRow">Open just the matching SB iframe<button id="btOpenMatchingIframe" class="btSimple btGreen" onclick=\'reloadPageWithFeature("openMatchingIframe")\'></button></div><div id="replaceIframeSrcRow" class="resolveLimitationRow"><div>Keep host page but replace SB iframe with the matching one</div><button id="btReplaceIframeSrc" class="btSimple btOrange" onclick="replaceIframeSrc()">Replace</button></div></div><div class="itemsJustified marginTop10px"><div id="iframeUrlValue" class="displayInGreen sportsbookLink width100percent"></div><button class="btCopy btIcon" id="btIframeUrl" onclick=\'copyToClipboard("iframeURL")\'><img class="iconCopy"></button></div><hr class="hRule"></div><div class="contextLayout"><div class="displayFlex"><div class="keyForContext">Environment:</div><div class="valueForContext" id="environment"></div></div><div class="displayFlex"><div class="keyForContext">Device / Login:</div><div class="valueForContext"><span id="deviceType"></span><span id="loginState"></span></div></div><div class="displayFlex"><div class="keyForContext">Brand (Market):</div><div class="valueForContext itemsJustified"><div id="brandName"></div><button class="btCopy btIcon" onclick=\'copyToClipboard("brand")\'><img class="iconCopy"></button></div></div><div class="displayFlex"><div class="keyForContext">Browser:</div><div class="valueForContext itemsJustified"><div id="browserVersion"></div><button class="btCopy btIcon" onclick=\'copyToClipboard("browserVersion")\'><img class="iconCopy"></button></div></div><div class="displayFlex"><div class="keyForContext">App Version:</div><div class="valueForContext itemsJustified"><div id="obgVersion"></div><button class="btCopy btIcon" onclick=\'copyToClipboard("obgVersion")\'><img class="iconCopy"></button></div></div><button onclick=\'toggleSection("contextUtilities")\' class="moreLess">Extras</button><div id="contextUtilities" class="marginTop10px hide"><div class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Jira QA Table</span><span class="displayInLightGrey">from the above data</span></div><button class="btCopy btIcon" id="btCreateJiraTable" onclick=\'copyToClipboard("jiraTemplate")\'><img class="iconCopy"></button></div><div class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Deep Link</span><span class="displayInLightGrey">of the actual page & slip</span></div><button class="btCopy btIcon" id="btCreateDeepLink" onclick=\'copyToClipboard("deepLink")\'><img class="iconCopy"></button></div><div id="postMessageRow" class="itemsJustified hide"><div class="width95Percent"><span class="keyColumnForExtras">PostMessage</span><span class="displayInLightGrey">routeChangeIn in native</span></div><button class="btCopy btIcon" id="btCreatePostMessage" onclick=\'copyToClipboard("postMessage")\'><img class="iconCopy"></button></div><div id="disableCacheRow" class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Off Cache</span><span class="displayInLightGrey">with page reload</span></div><button class="btReload btIcon" onclick=\'reloadPageWithFeature("disableCache")\'><img class="iconReload"></button></div><div id="disableSSRRow" class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Off SSR</span><span class="displayInLightGrey">with page reload</span></div><button class="btReload btIcon" onclick=\'reloadPageWithFeature("disableSSR")\'><img class="iconReload"></button></div><div id="disableGeoFencingRow" class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Off GeoFencing</span><span class="displayInLightGrey">for Betsson ArBa login</span></div><button class="btReload btIcon" onclick=\'reloadPageWithFeature("disableGeoFencing")\'><img class="iconReload"></button></div></div></div></div></div><div id="sbToolsSegments" class="accordion closed"><button id="segmentsAccordion" class="accHeading" onclick="initSegments()"><span class="accordionTitle">Segment</span><span class="accordionHint">Get/Set SegmentGuid</span></button><div class="accContent"><div class="marginBottom10px"><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="width17percent">Name:</span><span id="segmentNameSpan" class="width100percent displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("segmentName")\'><img class="iconCopy"></button></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="width17percent">Guid:</span><span id="segmentGuidSpan" class="width100percent displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("segmentGuid")\'><img class="iconCopy"></button></div><hr class="hRule"><div><div class="width95Percent displayFlex"><span class="marginRight5px">Segment ID (used in ISA/Redis):</span><span id="segmentLegacyIdSpan" class="displayInGreen"></span></div></div></div><button onclick=\'toggleSection("segmentChangers")\' class="moreLess">Set Segment</button><div id="segmentChangers" class="hide"><div class="segmentChangeSectionHint">Partially useful features, no data refresh triggered on change</div><div>New Segment</div><select id="segmentSelector" onchange="setSegmentGuid(value)" class="comboSbTools height20px marginBottom10px width100percent"></select><div>Enter Segment Guid manually</div><div class="itemsJustified"><input id="fdSegmentGuid" class="fdSbTools width100percent height20px"><button class="btSimple btSubmit" onclick="changeSegmentGuid()">Set</button></div><div class="checkBoxRowToRight marginTop5px"><span>Open list of existing SegmentGuids</span><button class="btOpenInNewWindow btIcon chkInline" onclick=\'openInNewWindow("segmentGuidWiki")\'><img class="iconOpenInNewWindow"></button></div></div></div></div><div id="sbToolsEvent" class="accordion closed"><button id="eventAccordion" class="accHeading" onclick="initSbToolsEvent()"><span class="accordionTitle">Event</span><span class="accordionHint">Set Phase, Carousel/Cards, Override Properties</span></button><div class="accContent"><div class="detectedEntitySection"><div id="detectedOrLockedRowForSbToolsEvent">Detected event:</div><button class="btInfo btIcon" onclick=\'toggleInfo("sbToolsEventInfo")\'><img class="iconInfoCircle"></button><div class="labelRow" id="eventLabelForSbToolsEvent"></div><div id="lockEventSectionForSbToolsEvent" class="lockSection hide">Lock <input type="checkbox" id="chkLockEventForSbToolsEvent" class="chkLock chkSbTools" onclick="lockEvent()"></div></div><div id="eventFeaturesSection" class="hide"><button onclick=\'toggleSection("eventDetailsSection")\' class="moreLess">Event Details</button><div id="eventDetailsSection" class="marginTopBottom10px hide"><div class="displayFlex"><span class="keyForEventDetails">Event ID:</span><span class="valueForEventDetails itemsJustified"><span id="eventIdForEventDetails" class="displayInGreen"></span><span><button class="btCopy btIcon" id="btCopyEventId" onclick=\'copyToClipboard("eventId")\'><img class="iconCopy"></button></span></span></div><div class="displayFlex"><span class="keyForEventDetails">Start Date:</span><span id="startDateForEventDetails" class="valueForEventDetails displayInGreen"></span></div><div class="displayFlex"><span class="keyForEventDetails">Category:</span><span class="valueForEventDetails itemsJustified displayInGreen"><span id="categoryForEventDetails"></span><span id="categoryIdForEventDetails"></span></span></div><div class="displayFlex"><span class="keyForEventDetails">Region:</span><span class="valueForEventDetails itemsJustified displayInGreen"><span id="regionForEventDetails"></span><span id="regionIdForEventDetails"></span></span></div><div class="displayFlex"><span class="keyForEventDetails">Competition:</span><span class="valueForEventDetails itemsJustified displayInGreen"><span id="competitionForEventDetails"></span><span id="competitionIdForEventDetails"></span></span></div><hr class="hRule"><div id="sbEventIdForOddsManagerSection" class="itemsJustified"><span class="width95Percent">Get Event ID for ISA/Redis, Odds Manager/LOM</span><button class="btIcon btOpenInNewWindow" onclick="getLegacyEventId()"><img class="iconOpenInNewWindow"></button></div><div class="itemsJustified"><div class="width95Percent">Open in<span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span><span>(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("event")\'><img class="iconOpenInNewWindow"></button></div></div><div><button onclick=\'toggleSection("renameEventSection")\' class="moreLess">Participants & Label</button><div id="renameEventSection" class="marginTopBottom10px hide"><div id="renameParticipantLabelSection"><div>Participant<span id="selectedParticipantIdSpan" class="displayInGreen marginLeft5px"></span><button class="btCopy btIcon" onclick=\'copyToClipboard("participantId")\'><img class="iconCopy"></button><span class="accordionHint">displayed for normal Matches</span></div><select id="participantSelector" onchange="selectParticipant(value)" class="comboSbTools width100percent height20px"></select><div class="itemsJustified marginTop5px"><span contenteditable="true" id="fdRenameParticipantLabel" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setParticipantLabel()"><img class="width16px iconSubmit"></button></div></div><div class="marginTop10px">Label:<span class="accordionHint">displayed for Outrights, Boosts Page</span></div><div class="itemsJustified"><span contenteditable="true" id="fdRenameEventLabel" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setEventLabel()"><img class="width16px iconSubmit"></button></div></div></div><div><button onclick=\'toggleSection("setEventPhaseSection")\' class="moreLess">Set Event Phase</button><div id="setEventPhaseSection" class="marginTopBottom10px hide"><div id="setEventPhaseButtonsLayout"><button id="btSetEventPhaseLive" class="btSimple btSetEventPhase" onclick=\'setEventPhase("Live")\'><span class="ico-live-betting iconOnBtSimple"></span><span class="labelOnBtSimple">Live</span></button><button id="btSetEventPhasePrematch" class="btSimple btSetEventPhase" onclick=\'setEventPhase("Prematch")\'><span class="ico-starting-soon iconOnBtSimple"></span><span class="labelOnBtSimple">Prematch</span></button><button id="btSetEventPhaseOver" class="btSimple btSetEventPhase" onclick=\'setEventPhase("Over")\'><span class="ico-event-ended iconOnBtSimple"></span><span class="labelOnBtSimple">Over</span></button></div><div class="checkBoxRowToRight"><span>\'Over\' suspends all markets</span><input type="checkbox" class="chkInline" id="chkSuspendAllMarkets"></div></div></div><div><button onclick=\'toggleSection("eventPropertiesSection")\' class="moreLess">Override Event Properties</button><div id="eventPropertiesSection" class="marginTopBottom10px hide"><div class="marginBottom5px">Has effect on icons and event panel tabs</div><div id="hasBetBuilderLinkSection" class="iconMocksRow"><span class="width95Percent"><span id="betBuilderIcon" class="ico-bet-builder iconMockIconColumn vertMiddle"></span><span id="betBuilderLabel" class="iconMockLabelColumn">Bet Builder Link</span></span><input type="checkbox" onclick=\'toggleEventProperty("betBuilderLink")\' id="chkHasBetBuilderLink" class="chkSbTools"></div><div id="hasPriceBoostSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-price-boost iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Price Boost</span></span><input type="checkbox" onclick=\'toggleEventProperty("priceBoost")\' id="chkHasPriceBoost" class="chkSbTools"></div><div id="hasFastMarketsSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-action-betting iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Fast Markets</span></span><input type="checkbox" onclick=\'toggleEventProperty("fastMarkets")\' id="chkHasFastMarkets" class="chkSbTools"></div><div id="hasLiveVisualSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-visual iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Live Visual</span></span><input type="checkbox" onclick=\'toggleEventProperty("liveVisual")\' id="chkHasLiveVisual" class="chkSbTools"></div><div id="hasLiveStreamingSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-live-streaming iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Live Streaming</span></span><input type="checkbox" onclick=\'toggleEventProperty("liveStreaming")\' id="chkHasLiveStreaming" class="chkSbTools"></div><div id="hasPrematchStatisticsSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Prematch Statistics</span></span><input type="checkbox" onclick=\'toggleEventProperty("prematchStatistics")\' id="chkHasPrematchStatistics" class="chkSbTools"></div><div id="hasLiveStatisticsSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Live Statistics</span></span><input type="checkbox" onclick=\'toggleEventProperty("liveStatistics")\' id="chkHasLiveStatistics" class="chkSbTools"></div><div title="Live event with scoreboard required" id="hasVarSection" class="iconMocksRow"><span class="width95Percent"><span id="varIcon" class="ico-var iconMockIconColumn vertMiddle"></span><span id="varLabel" class="iconMockLabelColumn">Video Assistant Referee (VAR)</span></span><input type="checkbox" onclick=\'toggleEventProperty("var")\' id="chkHasVar" class="chkSbTools"></div></div></div><div><button onclick=\'toggleSection("createMarketSection")\' class="moreLess">Create Fast/Player Props Market</button><div id="createMarketSection" class="hide marginTopBottom10px"><div id="createMarketErrorSection" class="displayInRed">Open an Event Panel.</div><div id="createMarketFeatures"><div id="createPlayerPropsSection" class="marginTopBottom10px">Player Props<div class="infoMessage">Football, Basketball, Baseball, Ice Hockey, American Football, Handball</div><div class="createMarketLayout"><button class="btSimple playerProps" id="btCreatePlayerPropsMarket" onclick=\'createMarket("playerProps")\'>4 selections</button><div class="buttonLabelToRight" id="playerPropsMessage"></div><button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket" onclick=\'createMarket("playerPropsDummy")\'>15 dummy selections</button></div></div><hr class="hRule"><div id="createFastMarketSection" class="marginTopBottom10px">Fast Market<div class="infoMessage">Football, Tennis, Table Tennis, Ice Hockey</div><div class="createMarketLayout"><button class="btSimple" id="btCreateFastMarket" onclick=\'createMarket("fast")\'><span class="ico-action-betting iconOnBtSimple"></span><span class="labelOnBtSimple">Create</span></button><div class="buttonLabelToRight" id="fastMarketMessage"></div></div></div></div></div></div><div><button onclick=\'toggleSection("footballScoreBoardSection")\' class="moreLess">Football Scoreboard</button><div id="footballScoreBoardSection" class="marginTopBottom10px hide"><div id="notFootballScoreBoardMessage" class="hide displayInRed">No Football Scoreboard found for this event.</div><div id="scoreBoardFeatures" class="hide"><div id="scoreBoardScores" class="scoreLayout"><div id="homeScoreLabel"><span class="ico-score vertMiddle marginRight2px"></span>Home Score</div><input class="fdSbTools fdScoreBoardNumeric" type="number" min="0" oninput=\'validity.valid||(value="")\' id="homeScoreInputField"><button id="btSubmitHomeScore" class="btSubmit btSimple" onclick=\'submitScore("home")\'>Set</button><div id="awayScoreLabel"><span class="ico-score vertMiddle marginRight2px"></span>Away Score</div><input class="fdSbTools fdScoreBoardNumeric" type="number" min="0" oninput=\'validity.valid||(value="")\' id="awayScoreInputField"><button id="btSubmitHomeScore" class="btSubmit btSimple" onclick=\'submitScore("away")\'>Set</button></div><div id="scoreBoardDetails"><div class="scoreBoardLayout"><div class="iconScoreboard ico-corner"></div><div class="iconScoreboard ico-substitutions"></div><div class="iconScoreboard outlinedText ico-referee-card obg-scoreboard-football-icon-yellow-card"></div><div class="iconScoreboard outlinedText ico-referee-card obg-scoreboard-football-icon-red-card"></div><div class="iconScoreboard ico-penalty"></div><input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeCorners" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeSubstitutions" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeYellowCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeRedCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homePenalties" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayCorners" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awaySubstitutions" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayYellowCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayRedCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayPenalties" min="0" oninput=\'validity.valid||(value="")\'></div><button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Set</button></div></div></div></div><div id="sbToolsEventInfo" class="hide"><hr class="hRule"><img class="iconInfoSymbol">Event detection order:<ol class="infoList"><li>Open event panel</li><li>Last selection from betslip</li></ol></div></div></div></div><div id="sbToolsMarket" class="accordion closed"><button id="marketAccordion" class="accHeading" onclick="initSbToolsMarket()"><span class="accordionTitle">Market</span><span class="accordionHint">Set Status, Override Properties</span></button><div class="accContent"><div class="detectedEntitySection"><div id="detectedOrLockedRowForSbToolsMarket">Detected market:</div><button class="btInfo btIcon" onclick=\'toggleInfo("sbToolsMarketInfo")\'><img class="iconInfoCircle"></button><div class="labelRow" id="labelRowForSbToolsMarket"><div class="hide" id="messageForSbToolsMarket"></div><div id="labelsForDetectedMarketAndEvent"><div id="eventLabelForDetectedMarket"></div><div class="marginLeft5px fontBold" id="marketLabelForDetectedMarket"></div></div></div><div id="lockMarketSection" class="lockSection hide">Lock <input type="checkbox" id="chkLockMarket" class="chkLock chkSbTools" onclick="lockMarket()"></div></div><div id="marketFeatures" class="hide"><button onclick=\'toggleSection("marketDetailsSection")\' class="moreLess">Market Details</button><div id="marketDetailsSection" class="marginTopBottom10px hide"><div class="itemsJustified"><span class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="marketIdForSbToolsMarket" class="labelRow displayInGreen"></span></span><button class="btCopy btIcon" onclick=\'copyToClipboard("marketId")\'><img class="iconCopy"></button></div><hr class="hRule"><div class="itemsJustified"><span class="width95Percent displayFlex"><span class="width48percent">Template ID:</span><span id="marketTemplateIdForSbToolsMarket" class="labelRow width100percent displayInGreen"></span></span><button class="btCopy btIcon" onclick=\'copyToClipboard("marketTemplateId")\'><img class="iconCopy"></button></div><div class="itemsJustified"><span class="width95Percent displayFlex"><span class="width48percent noWrap">Template Tags:</span><span id="marketTemplateTagsForSbToolsMarket" class="labelRow width100percent displayInGreen"></span></span><button class="btCopy btIcon" onclick=\'copyToClipboard("marketTemplateTags")\'><img class="iconCopy"></button></div><hr class="hRule"><div id="openMappingForTemplateTagSection" class="itemsJustified"><span class="width95Percent">Open Mapping for the Template Tags</span><button class="btIcon btOpenInNewWindow" onclick=\'openStaticPageInNewWindow("MarketTemplateTag.cs")\'><img class="iconOpenInNewWindow"></button></div><div id="sbMarketIdForOddsManagerSection" class="itemsJustified"><span id="sbIdForOddsManager" class="width95Percent"></span><button class="btIcon btOpenInNewWindow" onclick="getLegacyMarketId()"><img class="iconOpenInNewWindow"></button></div><div class="itemsJustified"><div class="width95Percent">Open in<span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span><span>(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("market")\'><img class="iconOpenInNewWindow"></button></div></div><button onclick=\'toggleSection("marketStatusSection")\' class="moreLess">Market Status</button><div id="marketStatusSection" class="hide"><div id="setMarketStateButtonsSection" class="setMarketStateLayout marginTopBottom10px"><button class="btSimple btSetMarketState" id="btSetMarketStateSuspended" onclick=\'setMarketState("Suspended")\'>Suspd.</button><button class="btSimple btSetMarketState" id="btSetMarketStateOpen" onclick=\'setMarketState("Open")\'>Open</button><button class="btSimple btSetMarketState" id="btSetMarketStateVoid" onclick=\'setMarketState("Void")\'>Void</button><button class="btSimple btSetMarketState" id="btSetMarketStateSettled" onclick=\'setMarketState("Settled")\'>Settled</button><button class="btSimple btSetMarketState" id="btSetMarketStateHold" onclick=\'setMarketState("Hold")\'>Hold</button></div></div><div><button onclick=\'toggleSection("addToCarouselSection")\' class="moreLess">Add to Carousel/Cards</button><div id="addToCarouselSection" class="hide marginTopBottom10px"><div id="carouselButtonsDiv"><div id="stopCarouselAutoplayRow" class="marginTopBottom10px"><div class="itemsJustified"><span class="width95Percent">Stop Carousel Autoplay</span><button class="btReload btIcon" onclick=\'reloadPageWithFeature("stopCarouselAutoplay")\'><img class="iconReload"></button></div></div><div class="itemsJustified"><span>Add market to Carousel or Cards</span><button class="btSimple btCarousel" id="btAddToCarousel" onclick="addMarketToCarouselOrCards()"><span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span></button></div><div id="addToCarouselErrorMessage" class="marginTop5px displayInRed"></div></div></div></div><button onclick=\'toggleSection("marketPropertiesSection")\' class="moreLess">Cashout, Bet Group Description, Help Text</button><div id="marketPropertiesSection" class="marginTopBottom10px hide"><div id="isCashoutAvailableSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-cash-stack iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Cash Out</span></span><input type="checkbox" onclick=\'toggleMarketProperty("cashoutAvailable")\' id="chkIsCashoutAvailable" class="chkSbTools"></div><hr class="hRule"><div class="marginTop10px">Bet Group Description:<span class="accordionHint">displayed in event page</span></div><div class="itemsJustified"><span contenteditable="true" id="fdBetGroupDescription" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setBetGroupDescription()"><img class="width16px iconSubmit"></button></div><div class="marginTop10px">Help Text:<span class="accordionHint">displayed in event tables & page</span></div><div class="itemsJustified"><span contenteditable="true" id="fdHelpText" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setHelpText()"><img class="width16px iconSubmit"></button></div></div></div><div id="sbToolsMarketInfo" class="hide"><hr class="hRule"><img class="iconInfoSymbol">Market detection: parent market of the last selection from betslip.</div></div></div><div id="sbToolsSelection" class="accordion closed"><button id="changeOddsAccordion" class="accHeading" onclick="initChangeOdds()"><span class="accordionTitle">Selection</span><span class="accordionHint">Change Odds</span></button><div class="accContent"><div class="detectedEntitySection"><div id="detectedOrLockedRowForSbToolsSelection">Detected selection:</div><button class="btInfo btIcon" onclick=\'toggleInfo("sbToolsSelectionInfo")\'><img class="iconInfoCircle"></button><div class="labelRow" id="labelForSbToolsSelection"><div class="hide" id="messageForSbToolsSelection"></div><div id="labelsForDetectedSelectionMarketAndEvent"><div id="eventLabelForDetectedSelection"></div><div id="marketLabelForDetectedSelection" class="marginLeft5px"></div><div class="marginLeft30px fontBold" id="selectionLabelForDetectedSelection"></div></div></div><div id="lockSelectionSection" class="hide lockSection">Lock <input type="checkbox" id="chkLockSelection" class="chkLock chkSbTools" onclick="lockSelection()"></div></div><div id="changeOddsFeatures" class="hide"><hr class="hRule"><div><div>Selection ID:</div><div class="itemsJustified"><span id="selectionIdForSbToolsSelection" class="labelRow displayInGreen width95Percent"></span><button class="btCopy btIcon" onclick=\'copyToClipboard("selectionId")\'><img class="iconCopy"></button></div></div><div class="newOddsLayout"><span>Initial Odds:</span><span id="initialOddsSpan" class="displayInGreen"></span><span></span><span>New Odds:</span><input class="fdSbTools" type="number" id="newOdds" min="1" step="0.01" oninput=\'validity.valid||(value="")\'><button class="btSimple btSubmit" onclick="changeOdds()">Set</button></div></div><div id="sbToolsSelectionInfo" class="hide"><hr class="hRule"><img class="iconInfoSymbol"> Selection detection: Last selection from betslip</div></div></div><div id="sbToolsBonuses" class="accordion closed"><button id="bonusesAccordion" class="accHeading" onclick="initBonuses()"><span class="accordionTitle">Bonuses</span><span class="accordionHint">Price Boost, ACCA Insurance, Free Bet</span></button><div class="accContent"><button onclick=\'toggleSection("pbSection")\' class="moreLess">Price Boost</button><div id="pbSection" class="hide marginTopBottom10px"><div id="noPbFound" class="displayInRed">No Price Boost found</div><div id="pbDetailsLayout"><div><div class="marginBottom5px"><span id="pbNumberOfListed" class="displayInGreen fontBold marginRight3px"></span><span class="marginRight5px">PB(s) listed</span><span class="marginRight3px">&lpar;altogether</span><span id="pbNumberOf" class="displayInGreen fontBold marginRight3px"></span><span>returned by API&rpar;</span></div><div class="itemsJustified marginBottom2px"><div id="listPbByNameDiv"><input type="radio" name="radioPb" id="radioPbByName" class="radioSbTools vertMiddle" checked="checked" onclick=\'listPriceBoostsBy("pbName")\'><label for="radioPbByName" class="vertMiddle">by bonus name</label></div><div id="listPbByEventNameDiv"><input type="radio" name="radioPb" id="radioPbByEvent" class="radioSbTools vertMiddle" onclick=\'listPriceBoostsBy("eventName")\'><label for="radioPbByEvent" class="vertMiddle">by event name</label></div><div title="These boost are not applicable as the selections for them are not available in the system"><input type="radio" name="radioPb" id="radioPbGarbage" class="radioSbTools vertMiddle" onclick=\'listPriceBoostsBy("garbage")\'><label for="radioPbGarbage" class="vertMiddle">garbage</label></div></div></div><select id="pbSelector" onchange="selectPb(value)" class="comboSbTools height20px marginBottom10px width100percent"></select><div id="pbLegendCloseable"><div id="pbLegendSection"><div class="marginBottom2px">Icons in the above dropdown:</div><div id="pbLegendCriteriaNotMet">&#128683; PB criteria not met</div><div id="pbLegendPersonal">&#128151; Personal</div><div id="pbLegendCombi">&#x1F9E9; Combination</div><button id="btClosePbLegend" onclick="closePbLegend()">x</button></div></div><div id="pbSelectedDetails"><div><span class="marginRight5px">Name:</span><span id="pbName" class="displayInGreen"></span></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="pbIdSpan" class="displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("priceBoostId")\'><img class="iconCopy"></button></div><div class="marginTopBottom10px"><div class="itemsJustified"><div class="width95Percent">Open in<span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span><span>(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("priceBoost")\'><img class="iconOpenInNewWindow"></button></div><div id="goToEventPageRow" class="itemsJustified"><span class="width95Percent">Go to the event page</span><a id="goToEventPageLink" href=""><button class="btReload btIcon" onclick="goToEventPage()"><img class="iconReload"></button></a></div><div title="Enabled on SB Home and A-Z pages to which the related event belongs" id="addPbToCarouselRow" class="itemsJustified"><span id="addPbToCarouselLabel" class="width95Percent">Add to carousel or cards</span><button class="btIcon" onclick="addPbToCarouselOrCards()"><img class="iconPlus"></button></div></div><hr class="hRule"><div>Path to the Competition:<div id="pbPathToCompetition" class="displayInGreen marginBottom10px"></div><div id="boostedSelectionDiv">Boosted Selection:<div class="displayInGreen"><div id="eventLabelForPbDiv"></div><div id="marketLabelForPbDiv" class="marginLeft5px"></div><div id="selectionLabelForPbDiv" class="marginLeft30px fontBold"></div></div></div></div><hr class="hRule"><div class="displayFlex"><span class="keyForPb">Visibility:</span><span id="pbVisibility" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForPb">Type:</span><span id="pbType" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForPb">Event Phases:</span><span id="pbEventPhases" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForPb">Odds Range:</span><span id="pbMinMaxOdds" class="displayInGreen"></span></div><div id="pbStakeRangeDiv"><div class="displayFlex"><span class="keyForPb">Stake Range:</span><span id="pbMinMaxStake" class="displayInGreen"></span></div></div><div id="pbExpiryDateDiv"><div class="displayFlex"><span class="keyForPb">Expiry Date:</span><span id="pbExpiryDate" class="displayInGreen"></span></div></div></div></div></div><button onclick=\'toggleSection("accaSection")\' class="moreLess">ACCA Insurance</button><div id="accaSection" class="hide marginTopBottom10px"><div id="accaMessage" class="displayInRed"><div id="loginToSeeAcca">Login to see ACCA insurance.</div><div id="noAccaFound">No active ACCA insurance found.</div></div><div id="accaDetailsLayout" class="hide"><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">Name:</span><span id="accaNameField" class="accaValueColumn displayInGreen"></span></div><button class="btCopy btIcon" id="btAccaName" onclick=\'copyToClipboard("accaName")\'><img class="iconCopy"></button></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="accaIdField" class="accaValueColumn displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("accaId")\'><img class="iconCopy"></button></div><div class="marginTopBottom10px itemsJustified"><div class="width95Percent">Open in<span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span><span>(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("acca")\'><img class="iconOpenInNewWindow"></button></div><hr class="hRule"><div id="accaCategoriesSection"><div id="accaCategoriesRow" class="displayFlex"><span class="marginRight5px">Categories:</span><span id="accaCategoriesSpan" class="displayInGreen"></span></div><div id="accaCompetitionsRow"><span class="marginRight5px">Competitions:</span><span id="accaCompetitionsSpan" class="displayInOrange"></span></div><div id="accaMarketTemplatesRow"><span class="marginRight5px">Market Templates:</span><span id="accaMarketTemplatesSpan" class="displayInOrange"></span></div><hr class="hRule"></div><div id="accaEventPhaseRow"><span class="marginRight5px">Event Phase:</span><span id="accaEventPhaseSpan" class="displayInGreen"></span></div><div><span class="marginRight5px">Min Number of Selections:</span><span id="accaMinimumNumberOfSelectionsSpan" class="displayInGreen"></span></div><div><span class="marginRight5px">Min Selection Odds:</span><span id="accaSelectionOddsLimitMinSpan" class="displayInGreen"></span></div><div id="accaTotalOddsLimitMinRow"><span class="marginRight5px">Min Total Odds:</span><span id="accaTotalOddsLimitMinSpan" class="displayInGreen"></span></div><hr class="hRule"><div id="accaMinMaxStakeRow"><span class="marginRight5px">Stake Range:</span><span id="accaMinMaxStakeSpan" class="displayInGreen"></span></div><div id="accaExpiryDateRow"><span class="marginRight5px">Expiry Date:</span><span id="accaExpiryDateSpan" class="displayInGreen"></span></div></div></div><button onclick=\'toggleSection("freeBetSection")\' class="moreLess">Free or Risk Free Bet</button><div id="freeBetSection" class="hide marginTop10px"><div id="freeBetNotFound" class="displayInRed">No Free Bet found</div><div id="freeBetLogin" class="displayInRed">Login to see your Free Bets.</div><div id="freeBetDetailsLayout"><div><span id="freeBetNumberOf" class="displayInGreen fontBold marginRight5px"></span><span>Free or Risk Free Bets found</span></div><select id="freeBetSelector" onchange="selectFreeBet(value)" class="comboSbTools height20px marginBottom10px width100percent"></select><div id="freeBetSelectedDetails"><div><span class="marginRight5px">Name:</span><span id="freeBetName" class="displayInGreen"></span></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="freeBetIdSpan" class="displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("freeBetId")\'><img class="iconCopy"></button></div><div class="marginTopBottom10px itemsJustified"><div class="width95Percent">Open in<span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span><span>(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("freeBet")\'><img class="iconOpenInNewWindow"></button></div><hr class="hRule"><div id="freeBetRestrictionsSection">Restriction path:<div id="freeBetPathToCompetition" class="displayInGreen marginBottom10px"></div><div id="freeBetFurtherRestricions" class="displayInOrange hide">Further restrictions are set on Event/Market level. See the details in Trading Tools.</div><hr class="hRule"></div><div class="displayFlex"><span class="keyForFreeBet">Type:</span><span id="freeBetType" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForFreeBet">Stake:</span><span id="freeBetStake" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForFreeBet">Bet Types:</span><span id="freeBetBetTypes" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForFreeBet">Event Phases:</span><span id="freeBetEvetPhases" class="displayInGreen"></span></div><div id="freeBetNoOfSelectionsDiv"><div class="displayFlex"><span class="keyForFreeBet">Number of Selections:</span><span id="freeBetNoOfSelections" class="displayInGreen"></span></div></div><div id="freeBetExpiryDateDiv"><div class="displayFlex"><span class="keyForFreeBet">Expiry Date:</span><span id="freeBetExpiryDate" class="displayInGreen"></span></div></div></div></div></div></div></div><div id="sbToolsBanners" class="accordion closed"><button id="bannersAccordion" class="accHeading" onclick="initBanners()"><span class="accordionTitle">Banners</span><span class="accordionHint">Carousel & Sportsbook Banners</span></button><div class="accContent"><div id="bannersMessage" class="displayInRed hide">Current page is not Sportsbook Home</div><div id="bannersFeatures" class="hide"><div class="bannersRow"><span class="keyColumnForBanners">Carousel Banners</span><span><button id="btCrlBannersMinus" class="btPlusMinus btIcon" onclick="removeCarouselBanner()"><img class="iconMinus"></button></span><span id="noOfCrlBanners" class="noOfBanners displayInGreen"></span><span><button class="btPlusMinus btIcon" onclick="addCarouselBanner()"><img class="iconPlus"></button></span><span class="floatRight">Overlay<input type="checkbox" id="chkCrlBannerOverlay" class="chkInline"></span></div><div class="bannersRow"><span class="keyColumnForBanners">Sportsbook Banners</span><span><button id="btSbBannersMinus" class="btPlusMinus btIcon" onclick="removeSportsbookBanner()"><img class="iconMinus"></button></span><span id="noOfSbBanners" class="noOfBanners displayInGreen"></span><span><button class="btPlusMinus btIcon" onclick="addSportsbookBanner()"><img class="iconPlus"></button></span></div></div></div></div><div id="sbToolsNative" class="accordion closed"><button id="nativeAccordion" class="accHeading" onclick="initNativeApp()"><span class="accordionTitle">Native App</span><span class="accordionHint">Navigate by postMessages</span></button><div class="accContent"><div class="nativeDetectedEventLayout"><div><div>Detected event from the betslip:</div><div class="labelRow" id="eventLabelForNative"></div></div><button id="btNativeOpenEvent" class="btSimple btNativeToggleable" onclick="openEventOnNative()"><div class="ico-maximize-event iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">OPEN</div></button></div><hr class="hRule"><div id="nativeErrorMessage" class="displayInRed extraCondensed hide"><hr class="hRule"></div><div class="marginTopBottom10px nativeBottomBarButtons"><button id="btNativeBack" class="btSimple" onclick=\'nativeClick("back")\'><div class="ico-arrow-back iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Back</div></button><button id="btNativeHome" class="btSimple btNativeToggleable" onclick=\'nativeClick("home")\'><div class="ico-home-bottom-bar iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Home</div></button><button id="btNativeAz" class="btSimple btNativeToggleable" onclick=\'nativeClick("az")\'><div class="ico-all-sports-search iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">A-Z</div></button><button id="btNativeLive" class="btSimple btNativeToggleable" onclick=\'nativeClick("live")\'><div class="ico-live-bottom-bar iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Live</div></button><button id="btNativeMyBets" class="btSimple loggedInOnly btNativeToggleable" onclick=\'nativeClick("myBets")\'><div class="ico-my-bets iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">My Bets</div></button><button id="btNativeBetslip" class="btSimple btWithBadge" onclick=\'nativeClick("betSlip")\'><div class="ico-betslip-bottom iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Betslip</div><div id="badgeNativeBetslip" class="badgeNative badgeNativeBetslip hide"></div><div id="badgeNativeBbBetslip" class="badgeNative badgeNativeBbBetslip hide"></div></button></div><div id="nativeOtherSection" class="marginTopBottom10px nativeOtherButtons"><button id="btNativeBetBuilder" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("betBuilder")\'><div id="iconBtNativeBetBuilder" class="ico-bet-builder iconNativeOtherButton"></div><div id="labelBtNativeBetBuilder" class="labelNativeOtherButton">Bet Builder</div></button><button id="btNativeBoost" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("boost")\'><div class="ico-price-boost iconNativeOtherButton"></div><div class="labelNativeOtherButton">Boost</div></button><button id="btNativeLiveSC" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("lsc")\'><div class="ico-live-streaming iconNativeOtherButton"></div><div class="labelNativeOtherButton">LS Calendar</div></button><button id="btNativeStartingSoon" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("startingSoon")\'><div class="ico-starting-soon iconNativeOtherButton"></div><div class="labelNativeOtherButton">Start Soon</div></button><button id="btNativeSettings" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("settings")\'><div class="ico-settings iconNativeOtherButton"></div><div class="labelNativeOtherButton">Settings</div></button></div><div id="nativeQuickLinksSection" class="hide"><div class="displayFlex"><span class="width25percent">Quick Links</span><select id="quickLinkSelector" onchange="selectQuickLink(value)" class="comboSbTools height20px marginBottom10px width75percent"></select></div></div><div id="nativeAzSection" class="hide marginTopBottom10px"><div class="displayFlex"><span class="width25percent">Category</span><select id="categorySelector" onchange="selectCategory(value)" class="comboSbTools height20px marginBottom10px width75percent"></select></div><div class="displayFlex"><span class="width25percent">Region</span><select id="regionSelector" onchange="selectRegion(value)" class="comboSbTools height20px marginBottom10px width75percent inactivated"></select></div><div class="displayFlex"><span class="width25percent">Competition</span><select id="competitionSelector" onchange="selectCompetition(value)" class="comboSbTools height20px width75percent inactivated"></select></div></div><div id="nativeBetBuilderSection" class="marginTopBottom10px hide"><div class="displayFlex"><span id="nativeBetBuilderEventLabel" class="width23percent">BB Event</span><select id="nativeBetBuilderEventSelector" onchange="selectBetuilderEvent(value)" class="comboSbTools height20px marginBottom10px width80percent"></select></div><div id="nativeBetBuilderEventsError" class="displayInRed hide">Open a Bet Builder accordion on the page.</div></div></div></div><div id="sbToolsStreamMappingHelper" class="accordion closed"><button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">IDs for stream mapping (probably YAGNI)</button><div class="accContent">Get LIVE Provider Event IDs for mapping:<div class="streamIdsLayout"><button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button><button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button><div id="twitchResults" class="extraCondensed"></div><div id="performResults" class="extraCondensed"></div></div></div></div></div><style>#sportsbookToolContent{line-height:18px}.itemsJustified{display:flex;justify-content:space-between;align-items:flex-start}.checkBoxRowToRight{display:flex;align-items:center;justify-content:flex-end}#performResults,#twitchResults{margin-left:5px;margin-top:5px}.accordionHint{float:right;font-size:x-small;color:gray}.width100percent{width:100%}.width48percent{width:48%}.width75percent{width:75%}.width17percent{width:17%}.width80percent{width:80%}.width23percent{width:23%}.width92percent{width:92%}.iconScoreboard{font-size:initial;margin-bottom:2px}.vertMiddle{vertical-align:middle}.outlinedText{-webkit-text-stroke:1px #444}.keyColumnForBanners{width:130px;display:inline-block}.keyForPb{width:30%}.keyForFreeBet{width:45%}.bannersRow{line-height:25px}.noOfBanners{width:20px;display:inline-block;text-align:center}.btSimple{border:1px solid #444;border-radius:3px;box-shadow:0 1px #666;margin:2px;cursor:pointer;line-height:1em;font-size:inherit;padding:2px;color:#444;height:fit-content}@media (hover:hover){.btSimple:hover{background-color:#fff}}.btSimple:active{box-shadow:0 0 #666;background-color:#fff;transform:translateY(1px)}.keyForContext{width:32%}.keyForEventDetails,.width25percent{width:25%}.valueForContext{width:68%;color:#008d90}.valueForEventDetails{width:75%}.truncatable{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.marginTop5px{margin-top:5px}.marginBottom2px{margin-bottom:2px}.marginBottom5px{margin-bottom:5px}.marginBottom10px{margin-bottom:10px}.marginTopBottom10px{margin-top:10px;margin-bottom:10px}.marginTopBottom5px{margin-top:5px;margin-bottom:5px}.marginTop10px{margin-top:10px}.marginRight2px{margin-right:2px}.marginRight5px{margin-right:5px}.marginRight3px{margin-right:3px}.marginRight10px{margin-right:10px}.marginLeft5px{margin-left:5px}.marginLeft15px{margin-left:15px}.marginLeft30px{margin-left:30px}.height20px{height:20px}.chkInline{vertical-align:middle;margin-left:5px}.labelRow{word-break:break-word}.noWrap{white-space:nowrap}.lockSection{display:flex;justify-content:flex-end;align-self:start}.infoList{margin:3px;padding-inline-start:25px}.detectedEntitySection{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;margin-bottom:10px}.streamIdsLayout{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto}.align-right{text-align:right}.buttonLabelToRight{margin-left:8px}.scoreLayout{margin-bottom:10px;display:grid;grid-template-columns:33% 45px auto;grid-template-rows:1fr 1fr;align-items:center}#scoreBoardDetails{border:1px solid #ccc;margin-bottom:15px}.segmentChangeSectionHint{font-size:x-small;color:#a00000;font-weight:700;margin-bottom:5px;margin-top:5px;font-stretch:extra-condensed}.scoreBoardLayout{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;grid-template-rows:auto auto auto;padding:10px;justify-items:center}.iconMocksRow{display:flex;justify-content:space-between}.iconOnBtSimple{margin-right:3px;vertical-align:middle}.labelOnBtSimple{vertical-align:middle}.iconMockIconColumn{display:inline-block;text-align:center;width:25px}.iconNativeBottomBarButton{font-size:large}.iconNativeOtherButton{color:#444}.labelNativeOtherButton{margin-top:1px;font-size:x-small;font-stretch:condensed}.labelNativeBottomBarButton{font-stretch:condensed}#pbLegendSection{position:relative;margin-top:-10px;margin-bottom:10px;line-height:normal;font-size:x-small;border:1px solid #ccc;border-top:none;padding:5px}#btClosePbLegend{position:absolute;bottom:0;right:0;border-style:none;cursor:pointer}#btNativeOpenEvent{height:38px}.iconMockLabelColumn{display:inline-block}.monoSpaceFont{font-family:monospace}.resolveLimitationRow{display:grid;grid-template-columns:auto 100px;align-items:baseline}#iframeNotMatchingWarningMessage{margin-bottom:8px;color:#a00000;font-weight:700;border:1px solid #a00000;padding:5px}.width48percent{width:48%}.keyColumnForExtras{width:120px;display:inline-block}#setEventPhaseButtonsLayout{display:grid;grid-template-columns:1fr 1fr 1fr;margin-bottom:5px}.setMarketStateLayout{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr}.nativeBottomBarButtons{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr}.nativeOtherButtons{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr}.badgeNative{position:absolute;left:29px;top:-4px;min-height:16px;min-width:16px;line-height:16px;border-radius:8px;padding:0 3px;text-align:center;font-size:10px;color:#fff}.badgeNativeBetslip{background-color:#cc8936}.badgeNativeBbBetslip{background-color:#327bff}.nativeDetectedEventLayout{display:grid;grid-template-columns:5fr 1fr}.createMarketLayout{display:grid;grid-template-columns:55% auto;align-items:center}.newOddsLayout{margin-top:10px;align-items:center;display:grid;grid-template-rows:auto auto;grid-template-columns:25% 20% auto}.btSubmit{margin-left:5px;width:45px}.vertical{writing-mode:tb-rl;transform:rotate(-180deg);margin-bottom:5px}#submitScoreBoard{margin-left:10px;margin-bottom:10px}.fdSbTools{border:1px solid #444;padding-left:3px;color:#0000a0}.comboSbTools{border:1px solid #444;font-size:inherit;color:#444}.fdScoreBoardNumeric{width:45px;margin-bottom:1px}#sportsbookTool{background-color:#fff;color:#444;font-family:Arial;width:310px;height:auto;position:fixed;border:2px solid #d3d3d3;top:0;left:0;z-index:5000;box-shadow:0 0 35px 10px #000;font-size:12px;overflow:auto}#sportsbookToolNameLeft{font-weight:900;margin-right:2px;letter-spacing:-1px;color:#00b9bd}#sportsbookToolNameRight{color:#f9a133}.sbManagerSb{color:#00b9bd;font-weight:900;margin-left:4px;margin-right:2px}.sbManagerManager{color:#cc8936;margin-right:4px}#sportsbookToolHeader{padding:3px;padding-bottom:5px;cursor:move;z-index:5000;background:#1c3448;color:#ddd}#sportsbookToolHeaderTitle{display:inline-block;padding-top:3px;padding-left:4px}#sportsbookToolName{font-size:18px;margin-right:5px}#sportsbookToolAuthorName{font-size:8px;line-height:30%;font-weight:400}.extraCondensed{font-stretch:extra-condensed}.sportsbookToolHeaderButtons{color:#fff;width:25px;height:20px;margin:1px;padding:2px;border-color:#666}#btMinimizeAll,#btZoomInOut{background:#646464}@media (hover:hover){#btMinimizeAll:hover,#btZoomInOut:hover{background:#1e1e1e}}#btMinimizeAll:active,#btZoomInOut:active{background:#1e1e1e}#btMinimizeClosed{background-color:#00b9bd}@media (hover:hover){#btMinimizeClosed:hover{background:#008d90}}#btMinimizeClosed:active{background:#008d90}.btWithBadge{position:relative}#btClose{background:#c86464}@media (hover:hover){#btClose:hover{background:#a00000}}#btClose:active{background:#a00000}.infoMessage{opacity:.5;font-size:x-small}.displayInRed{color:#a00000}.displayInGreen{color:#008d90}.displayInOrange{color:#cc8936}.displayInLightGrey{color:#ccc}.hide{display:none}.show{display:block}.accHeading{border-radius:none;background-color:#eee;color:#444;cursor:pointer;padding:8px;width:100%;text-align:left;border:none;outline:0;transition:.4s}@media (hover:hover){.accHeading:hover,.btNativeOthers:hover,.moreLess:hover{background-color:#ccc}}.accHeading:active,.btNativeOthers:active,.moreLess:active{background-color:#ccc}.open .accHeading{background-color:#ccc}.accContent{margin:10px;background-color:#fff;overflow:hidden}.closed .accContent{display:none}.open .accContent{display:block}.hRule{border-top:1px solid #eee}.scaledTo70percent{transform:scale(.7);transform-origin:0 0}.floatRight{float:right}.carouselList{padding-left:15px}.visibilityHidden{visibility:hidden}.displayInGreenGlow{text-shadow:0 0 7px #fff,0 0 10px #fff,0 0 21px #fff,0 0 42px #008d90,0 0 82px #008d90,0 0 92px #008d90,0 0 102px #008d90,0 0 151px #008d90}#limitedFunctionsMessage{color:#a00000;font-weight:700;float:right;font-stretch:extra-condensed}.fontBold{font-weight:700}.chkLock{margin-left:5px;align-self:center}.chkSbTools{cursor:pointer;align-self:center;accent-color:#008d90}.radioSbTools{margin-right:3px;cursor:pointer;accent-color:#008d90}.btCopy{min-width:16px}.btIcon{opacity:60%;border:none;background:0 0;cursor:pointer;vertical-align:middle;padding:0}@media (hover:hover){.btIcon:hover{opacity:100%}}.btIcon:active{opacity:20%}.btOpenInNewWindow{width:15px}.iconHeader{width:12px}.segmentKeyColumn{width:35px;display:inline-block}.width16px{width:16px}.iconSubmit{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><path d="M256,0C114.615,0,0,114.615,0,256s114.615,256,256,256s256-114.615,256-256S397.385,0,256,0z M219.429,367.932L108.606,257.108l38.789-38.789l72.033,72.035L355.463,154.32l38.789,38.789L219.429,367.932z"/></svg>\')}.iconCopy{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" style="enable-background:new 0 0 512 512" xml:space="preserve" viewBox="83.2 56 345.6 400" width="16px" height="14px"><path fill="black" d="M337.8,56H119.6c-20.1,0-36.4,16.3-36.4,36.4v254.5h36.4V92.4h218.2V56z M392.4,128.7h-200c-20.1,0-36.4,16.3-36.4,36.4v254.5c0,20.1,16.3,36.4,36.4,36.4h200c20.1,0,36.4-16.3,36.4-36.4V165.1C428.7,145,412.5,128.7,392.4,128.7z M392.4,419.6h-200V165.1h200V419.6z"></path></svg>\')}.iconClose{content:url(\'data:image/svg+xml;utf8,<svg class="svg-icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M954.304 190.336a15.552 15.552 0 0 1 0 21.952l-300.032 300.032 298.56 298.56a15.616 15.616 0 0 1 0 22.016l-120.96 120.896a15.552 15.552 0 0 1-21.952 0L511.36 655.232 214.272 952.32a15.552 15.552 0 0 1-21.952 0l-120.896-120.896a15.488 15.488 0 0 1 0-21.952l297.152-297.152L69.888 213.76a15.552 15.552 0 0 1 0-21.952l120.896-120.896a15.552 15.552 0 0 1 21.952 0L511.36 369.472l300.096-300.032a15.36 15.36 0 0 1 21.952 0l120.896 120.896z"/></svg>\')}.iconMaximize{content:url(\'data:image/svg+xml;utf8,<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <rect width="16" height="16" id="icon-bound" fill="none"/> <path fill="white" d="M1,9h14V7H1V9z M1,14h14v-2H1V14z M1,2v2h14V2H1z"/></svg>\')}.iconMinimize{content:url(\'data:image/svg+xml;utf8,<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <rect width="16" height="16" id="icon-bound" fill="none"/> <polygon fill="white" points="15,7 1,7 1,9 15,9"/></svg>\')}.iconZoomOut{content:url(\'data:image/svg+xml;utf8,<svg width="8px" height="8px" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"> <path fill="white" d="M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.61 0 1.19-.16 1.69-.44a1 1 0 0 0 .09.13l1 1.03a1.02 1.02 0 1 0 1.44-1.44l-1.03-1a1 1 0 0 0-.13-.09c.27-.5.44-1.08.44-1.69 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .59-.2 1.14-.53 1.56-.01.01-.02.02-.03.03a1 1 0 0 0-.06.03 1 1 0 0 0-.25.28c-.44.37-1.01.59-1.63.59-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5zm-1.5 2v1h3v-1h-3z"/></svg>\')}.iconZoomIn{content:url(\'data:image/svg+xml;utf8,<svg width="8px" height="8px" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"> <path fill="white" d="M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.61 0 1.19-.16 1.69-.44a1 1 0 0 0 .09.13l1 1.03a1.02 1.02 0 1 0 1.44-1.44l-1.03-1a1 1 0 0 0-.13-.09c.27-.5.44-1.08.44-1.69 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .59-.2 1.14-.53 1.56-.01.01-.02.02-.03.03a1 1 0 0 0-.06.03 1 1 0 0 0-.25.28c-.44.37-1.01.59-1.63.59-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5zm-.5 1v1h-1v1h1v1h1v-1h1v-1h-1v-1h-1z"/></svg>\')}.iconOpenInNewWindow{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 194.818 194.818" height="14px" style="enable-background:new 0 0 194.818 194.818;" xml:space="preserve"><g><path d="M185.818,2.161h-57.04c-4.971,0-9,4.029-9,9s4.029,9,9,9h35.312l-86.3,86.3c-3.515,3.515-3.515,9.213,0,12.728c1.758,1.757,4.061,2.636,6.364,2.636s4.606-0.879,6.364-2.636l86.3-86.3v35.313c0,4.971,4.029,9,9,9s9-4.029,9-9v-57.04C194.818,6.19,190.789,2.161,185.818,2.161z"/><path d="M149,77.201c-4.971,0-9,4.029-9,9v88.456H18v-122h93.778c4.971,0,9-4.029,9-9s-4.029-9-9-9H9c-4.971,0-9,4.029-9,9v140c0,4.971,4.029,9,9,9h140c4.971,0,9-4.029,9-9V86.201C158,81.23,153.971,77.201,149,77.201z"/></g></svg>\')}.iconReload{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 492.883 492.883" style="enable-background:new 0 0 492.883 492.883;" xml:space="preserve" width="14px" height="12px"><g><path d="M122.941,374.241c-20.1-18.1-34.6-39.8-44.1-63.1c-25.2-61.8-13.4-135.3,35.8-186l45.4,45.4c2.5,2.5,7,0.7,7.6-3l24.8-162.3c0.4-2.7-1.9-5-4.6-4.6l-162.4,24.8c-3.7,0.6-5.5,5.1-3,7.6l45.5,45.5c-75.1,76.8-87.9,192-38.6,282c14.8,27.1,35.3,51.9,61.4,72.7c44.4,35.3,99,52.2,153.2,51.1l10.2-66.7C207.441,421.641,159.441,407.241,122.941,374.241z"/><path d="M424.941,414.341c75.1-76.8,87.9-192,38.6-282c-14.8-27.1-35.3-51.9-61.4-72.7c-44.4-35.3-99-52.2-153.2-51.1l-10.2,66.7c46.6-4,94.7,10.4,131.2,43.4c20.1,18.1,34.6,39.8,44.1,63.1c25.2,61.8,13.4,135.3-35.8,186l-45.4-45.4c-2.5-2.5-7-0.7-7.6,3l-24.8,162.3c-0.4,2.7,1.9,5,4.6,4.6l162.4-24.8c3.7-0.6,5.4-5.1,3-7.6L424.941,414.341z"/></g></svg>\')}.iconGoTo{content:url(\'data:image/svg+xml;utf8,<svg viewBox="0 -2 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_iconCarrier"><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" height="14px"><g transform="translate(-360.000000, -933.000000)" fill="#000000"><path d="M388,933 L368,933 C365.791,933 364,934.791 364,937 L364,941 L366,941 L366,937 C366,935.896 366.896,935 368,935 L388,935 C389.104,935 390,935.896 390,937 L390,957 C390,958.104 389.104,959 388,959 L368,959 C366.896,959 366,958.104 366,957 L366,953 L364,953 L364,957 C364,959.209 365.791,961 368,961 L388,961 C390.209,961 392,959.209 392,957 L392,937 C392,934.791 390.209,933 388,933 L388,933 Z M377.343,953.243 C376.953,953.633 376.953,954.267 377.343,954.657 C377.733,955.048 378.367,955.048 378.758,954.657 L385.657,947.758 C385.865,947.549 385.954,947.272 385.94,947 C385.954,946.728 385.865,946.451 385.657,946.243 L378.758,939.344 C378.367,938.953 377.733,938.953 377.343,939.344 C376.953,939.733 376.953,940.367 377.343,940.758 L382.586,946 L361,946 C360.447,946 360,946.448 360,947 C360,947.553 360.447,948 361,948 L382.586,948 L377.343,953.243 L377.343,953.243 Z" id="arrow-right"></path></g></g></g></svg>\')}.btPlusMinus{width:16px}.iconPlus{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve" height="14px"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941h-59.882V57.059c0-4.971-4.029-9-9-9s-9,4.029-9,9v59.882H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h59.882v59.882c0,4.971,4.029,9,9,9s9-4.029,9-9v-59.882h59.882c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>\')}.iconMinus{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve" height="14px"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h137.764c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>\')}.iconInfoCircle,.iconInfoSymbol{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 202.978 202.978" style="enable-background:new 0 0 202.978 202.978" xml:space="preserve" height="14px"><g><path fill="black" d="M100.942,0.001C44.9,0.304-0.297,45.98,0.006,102.031c0.293,56.051,45.998,101.238,102.02,100.945c56.081-0.303,101.248-45.978,100.945-102.02C202.659,44.886,157.013-0.292,100.942,0.001z M101.948,186.436c-46.916,0.234-85.108-37.576-85.372-84.492c-0.244-46.907,37.537-85.157,84.453-85.411c46.926-0.254,85.167,37.596,85.421,84.483C186.695,147.951,148.855,186.182,101.948,186.436z M116.984,145.899l-0.42-75.865l-39.149,0.254l0.078,16.6l10.63-0.059l0.313,59.237l-11.275,0.039l0.088,15.857l49.134-0.264l-0.098-15.847L116.984,145.899z M102.065,58.837c9.575-0.039,15.349-6.448,15.3-14.323c-0.254-8.07-5.882-14.225-15.095-14.186c-9.184,0.059-15.173,6.292-15.134,14.362C87.185,52.555,93.028,58.906,102.065,58.837z"/></g></svg>\')}.btInfo{justify-self:end}.iconInfoSymbol{opacity:60%;width:12px;margin-right:5px}.btCarousel{width:32%;margin-bottom:5px;margin-right:5px}.btGreen{background-color:#008d90;color:#fff}@media (hover:hover){.btGreen:hover{background-color:#00b9bd}}.btGreen:active{background-color:#00b9bd}.btOrange{background-color:#cc8936;color:#fff}@media (hover:hover){.btOrange:hover{background-color:#f9a133}}.btOrange:active{background-color:#f9a133}.moreLess{width:100%;border:none;cursor:pointer;padding:4px;margin-top:2px;margin-bottom:2px;color:#444}.btNativeOthers{border:none;cursor:pointer;padding:6px 2px 6px 2px;margin:2px}.width95Percent{width:95%}.displayFlex{display:flex}.inactivated{pointer-events:none;opacity:40%}</style>';
+            '<div id="sportsbookToolHeader"><div id="sportsbookToolHeaderTitle"><div id="sportsbookToolNameRow"><span id="sportsbookToolName"><span id="sportsbookToolNameLeft">sportsbook</span><span id="sportsbookToolNameRight">tool</span></span><span id="sportsbookToolVersion"></span></div><div id="sportsbookToolAuthorName">by gergely.glosz@betssongroup.com</div></div><div id="sportsbookToolHeaderButtonRow" class="floatRight"><button id="btZoomInOut" class="sportsbookToolHeaderButtons" onclick="zoomInOut()"><img id="iconZoomInOut" class="iconZoomOut iconHeader"></button><button id="btMinimizeClosed" class="sportsbookToolHeaderButtons" onclick="toggleClosedAccordionsVisibility()"><img id="iconMinimizeClosed" class="iconMinimize iconHeader"></button><button id="btClose" class="sportsbookToolHeaderButtons" onclick="closePopup()"><img class="iconClose iconHeader"></button></div></div><div id="sportsbookToolContent"><div id="sbToolsContext" class="accordion open"><button id="contextAccordion" class="accHeading" onclick="initContext()">Context<span id="limitedFunctionsMessage"></span></button><div class="accContent"><div id="obgStateAndRtSection" class="hide"><div id="obgStateAndRtRow" class="resolveLimitationRow">Expose obgState and obgRt<button class="btSimple btGreen" onclick=\'reloadPageWithFeature("exposeObgStateAndRt")\'><span>Expose</span></button></div><hr class="hRule"></div><div id="openIframeSection" class="hide"><div id="openIframeRow" class="resolveLimitationRow">Open Sportsbook iframe<button class="btSimple btGreen" onclick=\'reloadPageWithFeature("openIframe")\'>SB iframe</button></div><div id="notMatchingIframeSection" class="hide"><div id="iframeNotMatchingWarningMessage">Mismatch between host page and SB iframe environments, meaning you are testing<span id="notMatchingIframeEnvSpan"></span>Sportsbook</div><div id="openMatchingIframeRow" class="marginBottom2px resolveLimitationRow">Open just the matching SB iframe<button id="btOpenMatchingIframe" class="btSimple btGreen" onclick=\'reloadPageWithFeature("openMatchingIframe")\'></button></div><div id="replaceIframeSrcRow" class="resolveLimitationRow"><div>Keep host page but replace SB iframe with the matching one</div><button id="btReplaceIframeSrc" class="btSimple btOrange" onclick="replaceIframeSrc()">Replace</button></div></div><div class="itemsJustified marginTop10px"><div id="iframeUrlValue" class="displayInGreen sportsbookLink width100percent"></div><button class="btCopy btIcon" id="btIframeUrl" onclick=\'copyToClipboard("iframeURL")\'><img class="iconCopy"></button></div><hr class="hRule"></div><div id="contextSection"><div class="displayFlex"><div class="keyForContext">Environment:</div><div class="valueForContext" id="environment"></div></div><div class="displayFlex"><div class="keyForContext">Device / Login:</div><div class="valueForContext"><span id="deviceType"></span><span id="loginState"></span></div></div><div class="displayFlex"><div class="keyForContext">Brand (Market):</div><div class="valueForContext itemsJustified"><div><span id="brandName"></span><span id="B2BorB2C" class="displayInLightGrey"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("brand")\'><img class="iconCopy"></button></div></div><div class="displayFlex"><div class="keyForContext">Browser:</div><div class="valueForContext itemsJustified"><div id="browserVersion"></div><button class="btCopy btIcon" onclick=\'copyToClipboard("browserVersion")\'><img class="iconCopy"></button></div></div><div class="displayFlex"><div class="keyForContext">App Version:</div><div class="valueForContext itemsJustified"><div id="obgVersion"></div><button class="btCopy btIcon" onclick=\'copyToClipboard("obgVersion")\'><img class="iconCopy"></button></div></div><button onclick=\'toggleSection("contextUtilities")\' class="moreLess">Extras</button><div id="contextUtilities" class="marginTop10px hide"><div class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Jira QA Table</span><span class="displayInLightGrey">from the above data</span></div><button class="btCopy btIcon" id="btCreateJiraTable" onclick=\'copyToClipboard("jiraTemplate")\'><img class="iconCopy"></button></div><div class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Deep Link</span><span class="displayInLightGrey">of the actual page & slip</span></div><button class="btCopy btIcon" id="btCreateDeepLink" onclick=\'copyToClipboard("deepLink")\'><img class="iconCopy"></button></div><div id="postMessageRow" class="itemsJustified hide"><div class="width95Percent"><span class="keyColumnForExtras">PostMessage</span><span class="displayInLightGrey">routeChangeIn in native</span></div><button class="btCopy btIcon" id="btCreatePostMessage" onclick=\'copyToClipboard("postMessage")\'><img class="iconCopy"></button></div><div id="disableCacheRow" class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Off Cache</span><span class="displayInLightGrey">with page reload</span></div><button class="btReload btIcon" onclick=\'reloadPageWithFeature("disableCache")\'><img class="iconReload"></button></div><div id="disableSSRRow" class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Off SSR</span><span class="displayInLightGrey">with page reload</span></div><button class="btReload btIcon" onclick=\'reloadPageWithFeature("disableSSR")\'><img class="iconReload"></button></div><div id="disableGeoFencingRow" class="itemsJustified"><div class="width95Percent"><span class="keyColumnForExtras">Off GeoFencing</span><span class="displayInLightGrey">for Betsson ArBa login</span></div><button class="btReload btIcon" onclick=\'reloadPageWithFeature("disableGeoFencing")\'><img class="iconReload"></button></div></div></div></div></div><div id="sbToolsSegments" class="accordion closed"><button id="segmentsAccordion" class="accHeading" onclick="initSegments()"><span class="accordionTitle">Segment</span><span class="accordionHint">Get/Set SegmentGuid</span></button><div class="accContent"><div class="marginBottom10px"><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="width17percent">Name:</span><span id="segmentNameSpan" class="width100percent displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("segmentName")\'><img class="iconCopy"></button></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="width17percent">Guid:</span><span id="segmentGuidSpan" class="width100percent displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("segmentGuid")\'><img class="iconCopy"></button></div><hr class="hRule"><div><div class="width95Percent displayFlex"><span class="marginRight5px">Segment ID (used in ISA/Redis):</span><span id="segmentLegacyIdSpan" class="displayInGreen"></span></div></div></div><button onclick=\'toggleSection("segmentChangers")\' class="moreLess">Set Segment</button><div id="segmentChangers" class="hide"><div class="segmentChangeSectionHint">Partially useful features, no data refresh triggered on change</div><div>New Segment</div><select id="segmentSelector" onchange="setSegmentGuid(value)" class="comboSbTools height20px marginBottom10px width100percent"></select><div>Enter Segment Guid manually</div><div class="itemsJustified"><input id="fdSegmentGuid" class="fdSbTools width100percent height20px"><button class="btSimple btSubmit" onclick="changeSegmentGuid()">Set</button></div><div class="checkBoxRowToRight marginTop5px"><span>Segment data known to this tool</span><button class="btOpenInNewWindow btIcon chkInline" onclick=\'openInNewWindow("brandsJson")\'><img class="iconOpenInNewWindow"></button></div></div></div></div><div id="sbToolsEvent" class="accordion closed"><button id="eventAccordion" class="accHeading" onclick="initSbToolsEvent()"><span class="accordionTitle">Event</span><span class="accordionHint">Set Phase, Carousel/Cards, Override Properties</span></button><div class="accContent"><div class="detectedEntitySection"><div id="detectedOrLockedRowForSbToolsEvent">Detected event:</div><button class="btInfo btIcon" onclick=\'toggleInfo("sbToolsEventInfo")\'><img class="iconInfoCircle"></button><div class="labelRow" id="eventLabelForSbToolsEvent"></div><div id="lockEventSectionForSbToolsEvent" class="lockSection hide">Lock <input type="checkbox" id="chkLockEventForSbToolsEvent" class="chkLock chkSbTools" onclick="lockEvent()"></div></div><div id="eventFeaturesSection" class="hide"><button onclick=\'toggleSection("eventDetailsSection")\' class="moreLess">Event Details</button><div id="eventDetailsSection" class="marginTopBottom10px hide"><div class="displayFlex"><span class="keyForEventDetails">Event ID:</span><span class="valueForEventDetails itemsJustified"><span id="eventIdForEventDetails" class="displayInGreen"></span><span><button class="btCopy btIcon" id="btCopyEventId" onclick=\'copyToClipboard("eventId")\'><img class="iconCopy"></button></span></span></div><div class="displayFlex"><span class="keyForEventDetails">Start Date:</span><span id="startDateForEventDetails" class="valueForEventDetails displayInGreen"></span></div><div class="displayFlex"><span class="keyForEventDetails">Category:</span><span class="valueForEventDetails itemsJustified displayInGreen"><span id="categoryForEventDetails"></span><span id="categoryIdForEventDetails"></span></span></div><div class="displayFlex"><span class="keyForEventDetails">Region:</span><span class="valueForEventDetails itemsJustified displayInGreen"><span id="regionForEventDetails"></span><span id="regionIdForEventDetails"></span></span></div><div class="displayFlex"><span class="keyForEventDetails">Competition:</span><span class="valueForEventDetails itemsJustified displayInGreen"><span id="competitionForEventDetails"></span><span id="competitionIdForEventDetails"></span></span></div><hr class="hRule"><div id="sbEventIdForOddsManagerSection" class="itemsJustified"><span class="width95Percent itemsJustified paddingRight8px"><span>Legacy Event ID</span><span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span></span><button class="btIcon btOpenInNewWindow" onclick="getLegacyEventId()"><img class="iconOpenInNewWindow"></button></div><div id="sbEventIdForOddsManagerSection" class="itemsJustified"><span class="width95Percent itemsJustified paddingRight8px"><span>Whole ISA response</span><span class="displayInLightGrey">el[0].sr.pbbpoe = popularity</span></span><button class="btIcon btOpenInNewWindow" onclick="getWholeIsaResponse()"><img class="iconOpenInNewWindow"></button></div><div class="itemsJustified"><div class="width95Percent itemsJustified paddingRight8px"><span><span>Open in</span><span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span></span><span class="displayInLightGrey">(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("event")\'><img class="iconOpenInNewWindow"></button></div></div><div><button onclick=\'toggleSection("renameEventSection")\' class="moreLess">Participants & Label</button><div id="renameEventSection" class="marginTopBottom10px hide"><div id="renameParticipantLabelSection"><div>Participant<span id="selectedParticipantIdSpan" class="displayInGreen marginLeft5px"></span><button class="btCopy btIcon" onclick=\'copyToClipboard("participantId")\'><img class="iconCopy"></button><span class="accordionHint">displayed for normal Matches</span></div><select id="participantSelector" onchange="selectParticipant(value)" class="comboSbTools width100percent height20px"></select><div class="itemsJustified marginTop5px"><span contenteditable="true" id="fdRenameParticipantLabel" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setParticipantLabel()"><img class="width16px iconSubmit"></button></div></div><div class="marginTop10px">Label:<span class="accordionHint">displayed for Outrights, Boosts Page</span></div><div class="itemsJustified"><span contenteditable="true" id="fdRenameEventLabel" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setEventLabel()"><img class="width16px iconSubmit"></button></div></div></div><div><button onclick=\'toggleSection("setEventPhaseSection")\' class="moreLess">Set Event Phase</button><div id="setEventPhaseSection" class="marginTopBottom10px hide"><div id="setEventPhaseButtonsLayout"><button id="btSetEventPhaseLive" class="btSimple btSetEventPhase" onclick=\'setEventPhase("Live")\'><span class="ico-live-betting iconOnBtSimple"></span><span class="labelOnBtSimple">Live</span></button><button id="btSetEventPhasePrematch" class="btSimple btSetEventPhase" onclick=\'setEventPhase("Prematch")\'><span class="ico-starting-soon iconOnBtSimple"></span><span class="labelOnBtSimple">Prematch</span></button><button id="btSetEventPhaseOver" class="btSimple btSetEventPhase" onclick=\'setEventPhase("Over")\'><span class="ico-event-ended iconOnBtSimple"></span><span class="labelOnBtSimple">Over</span></button></div><div class="checkBoxRowToRight"><span>\'Over\' suspends all markets</span><input type="checkbox" class="chkInline" id="chkSuspendAllMarkets"></div></div></div><div><button onclick=\'toggleSection("eventPropertiesSection")\' class="moreLess">Override Event Properties</button><div id="eventPropertiesSection" class="marginTopBottom10px hide"><div class="marginBottom5px">Has effect on icons and event panel tabs</div><div id="hasBetBuilderLinkSection" class="iconMocksRow"><span class="width95Percent"><span id="betBuilderIcon" class="ico-bet-builder iconMockIconColumn vertMiddle"></span><span id="betBuilderLabel" class="iconMockLabelColumn">Bet Builder Link</span></span><input type="checkbox" onclick=\'toggleEventProperty("betBuilderLink")\' id="chkHasBetBuilderLink" class="chkSbTools"></div><div id="hasPriceBoostSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-price-boost iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Price Boost (Single)</span></span><input type="checkbox" onclick=\'toggleEventProperty("priceBoost")\' id="chkHasPriceBoost" class="chkSbTools"></div><div id="hasSuperBoostSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-super-boost iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Super Boost (Single)</span></span><input type="checkbox" onclick=\'toggleEventProperty("superBoost")\' id="chkHasSuperBoost" class="chkSbTools"></div><div id="hasFastMarketsSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-action-betting iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Fast Markets</span></span><input type="checkbox" onclick=\'toggleEventProperty("fastMarkets")\' id="chkHasFastMarkets" class="chkSbTools"></div><div id="hasLiveVisualSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-visual iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Live Visual</span></span><input type="checkbox" onclick=\'toggleEventProperty("liveVisual")\' id="chkHasLiveVisual" class="chkSbTools"></div><div id="hasLiveStreamingSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-live-streaming iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Live Streaming</span></span><input type="checkbox" onclick=\'toggleEventProperty("liveStreaming")\' id="chkHasLiveStreaming" class="chkSbTools"></div><div id="hasPrematchStatisticsSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Prematch Statistics</span></span><input type="checkbox" onclick=\'toggleEventProperty("prematchStatistics")\' id="chkHasPrematchStatistics" class="chkSbTools"></div><div id="hasLiveStatisticsSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Live Statistics</span></span><input type="checkbox" onclick=\'toggleEventProperty("liveStatistics")\' id="chkHasLiveStatistics" class="chkSbTools"></div><div title="Live event with scoreboard required" id="hasVarSection" class="iconMocksRow"><span class="width95Percent"><span id="varIcon" class="ico-var iconMockIconColumn vertMiddle"></span><span id="varLabel" class="iconMockLabelColumn">Video Assistant Referee (VAR)</span></span><input type="checkbox" onclick=\'toggleEventProperty("var")\' id="chkHasVar" class="chkSbTools"></div></div></div><div><button onclick=\'toggleSection("createMarketSection")\' class="moreLess">Create Fast/Player Props Market</button><div id="createMarketSection" class="hide marginTopBottom10px"><div id="createMarketErrorSection" class="displayInRed">Open an Event Panel.</div><div id="createMarketFeatures"><div id="createPlayerPropsSection" class="marginTopBottom10px">Player Props<div class="infoMessage">Football, Basketball, Baseball, Ice Hockey, American Football, Handball</div><div class="createMarketLayout"><button class="btSimple playerProps" id="btCreatePlayerPropsMarket" onclick=\'createMarket("playerProps")\'>4 selections</button><div class="buttonLabelToRight" id="playerPropsMessage"></div><button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket" onclick=\'createMarket("playerPropsDummy")\'>15 dummy selections</button></div></div><hr class="hRule"><div id="createFastMarketSection" class="marginTopBottom10px">Fast Market<div class="infoMessage">Football, Tennis, Table Tennis, Ice Hockey</div><div class="createMarketLayout"><button class="btSimple" id="btCreateFastMarket" onclick=\'createMarket("fast")\'><span class="ico-action-betting iconOnBtSimple"></span><span class="labelOnBtSimple">Create</span></button><div class="buttonLabelToRight" id="fastMarketMessage"></div></div></div></div></div></div><div><button onclick=\'toggleSection("footballScoreBoardSection")\' class="moreLess">Football Scoreboard</button><div id="footballScoreBoardSection" class="marginTopBottom10px hide"><div id="notFootballScoreBoardMessage" class="hide displayInRed">No Football Scoreboard found for this event.</div><div id="scoreBoardFeatures" class="hide"><div id="scoreBoardScores" class="scoreLayout"><div id="homeScoreLabel"><span class="ico-score vertMiddle marginRight2px"></span>Home Score</div><input class="fdSbTools fdScoreBoardNumeric" type="number" min="0" oninput=\'validity.valid||(value="")\' id="homeScoreInputField"><button id="btSubmitHomeScore" class="btSubmit btSimple" onclick=\'submitScore("home")\'>Set</button><div id="awayScoreLabel"><span class="ico-score vertMiddle marginRight2px"></span>Away Score</div><input class="fdSbTools fdScoreBoardNumeric" type="number" min="0" oninput=\'validity.valid||(value="")\' id="awayScoreInputField"><button id="btSubmitHomeScore" class="btSubmit btSimple" onclick=\'submitScore("away")\'>Set</button></div><div id="scoreBoardDetails"><div class="scoreBoardLayout"><div class="iconScoreboard ico-corner"></div><div class="iconScoreboard ico-substitutions"></div><div class="iconScoreboard outlinedText ico-referee-card obg-scoreboard-football-icon-yellow-card"></div><div class="iconScoreboard outlinedText ico-referee-card obg-scoreboard-football-icon-red-card"></div><div class="iconScoreboard ico-penalty"></div><input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeCorners" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeSubstitutions" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeYellowCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeRedCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homePenalties" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayCorners" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awaySubstitutions" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayYellowCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayRedCards" min="0" oninput=\'validity.valid||(value="")\'> <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayPenalties" min="0" oninput=\'validity.valid||(value="")\'></div><button id="submitScoreBoard" class="btSubmit btSimple" onclick="submitScoreBoard()">Set</button></div></div></div></div><div id="sbToolsEventInfo" class="hide"><hr class="hRule"><img class="iconInfoSymbol">Event detection order:<ol class="infoList"><li>Open event panel</li><li>Last selection from betslip</li></ol></div></div></div></div><div id="sbToolsMarket" class="accordion closed"><button id="marketAccordion" class="accHeading" onclick="initSbToolsMarket()"><span class="accordionTitle">Market</span><span class="accordionHint">Set Status, Override Properties</span></button><div class="accContent"><div class="detectedEntitySection"><div id="detectedOrLockedRowForSbToolsMarket">Detected market:</div><button class="btInfo btIcon" onclick=\'toggleInfo("sbToolsMarketInfo")\'><img class="iconInfoCircle"></button><div class="labelRow" id="labelRowForSbToolsMarket"><div class="hide" id="messageForSbToolsMarket"></div><div id="labelsForDetectedMarketAndEvent"><div id="eventLabelForDetectedMarket"></div><div class="marginLeft5px fontBold" id="marketLabelForDetectedMarket"></div></div></div><div id="lockMarketSection" class="lockSection hide">Lock <input type="checkbox" id="chkLockMarket" class="chkLock chkSbTools" onclick="lockMarket()"></div></div><div id="marketFeatures" class="hide"><button onclick=\'toggleSection("marketDetailsSection")\' class="moreLess">Market Details</button><div id="marketDetailsSection" class="marginTopBottom10px hide"><div class="itemsJustified"><span class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="marketIdForSbToolsMarket" class="labelRow displayInGreen"></span></span><button class="btCopy btIcon" onclick=\'copyToClipboard("marketId")\'><img class="iconCopy"></button></div><hr class="hRule"><div class="itemsJustified"><span class="width95Percent displayFlex"><span class="width48percent">Template ID:</span><span id="marketTemplateIdForSbToolsMarket" class="labelRow width100percent displayInGreen"></span></span><button class="btCopy btIcon" onclick=\'copyToClipboard("marketTemplateId")\'><img class="iconCopy"></button></div><div class="itemsJustified"><span class="width95Percent displayFlex"><span class="width48percent noWrap">Template Tags:</span><span id="marketTemplateTagsForSbToolsMarket" class="labelRow width100percent displayInGreen"></span></span><button class="btCopy btIcon" onclick=\'copyToClipboard("marketTemplateTags")\'><img class="iconCopy"></button></div><hr class="hRule"><div id="openMappingForTemplateTagSection" class="itemsJustified"><span class="width95Percent">Mapping for the Template Tags</span><button class="btIcon btOpenInNewWindow" onclick=\'openStaticPageInNewWindow("MarketTemplateTag.cs")\'><img class="iconOpenInNewWindow"></button></div><div id="sbMarketIdForOddsManagerSection" class="itemsJustified"><span class="width95Percent itemsJustified paddingRight8px"><span>Legacy Market ID</span><span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span></span><button class="btIcon btOpenInNewWindow" onclick="getLegacyMarketId()"><img class="iconOpenInNewWindow"></button></div><div class="itemsJustified"><div class="width95Percent itemsJustified paddingRight8px"><span><span>Open in</span><span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span></span><span class="displayInLightGrey">(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("market")\'><img class="iconOpenInNewWindow"></button></div></div><button onclick=\'toggleSection("marketStatusSection")\' class="moreLess">Market Status</button><div id="marketStatusSection" class="hide"><div id="setMarketStateButtonsSection" class="setMarketStateLayout marginTopBottom10px"><button class="btSimple btSetMarketState" id="btSetMarketStateSuspended" onclick=\'setMarketState("Suspended")\'>Suspd.</button><button class="btSimple btSetMarketState" id="btSetMarketStateOpen" onclick=\'setMarketState("Open")\'>Open</button><button class="btSimple btSetMarketState" id="btSetMarketStateVoid" onclick=\'setMarketState("Void")\'>Void</button><button class="btSimple btSetMarketState" id="btSetMarketStateSettled" onclick=\'setMarketState("Settled")\'>Settled</button><button class="btSimple btSetMarketState" id="btSetMarketStateHold" onclick=\'setMarketState("Hold")\'>Hold</button></div></div><div><button onclick=\'toggleSection("addToCarouselSection")\' class="moreLess">Add to Carousel/Cards</button><div id="addToCarouselSection" class="hide marginTopBottom10px"><div id="carouselButtonsDiv"><div id="stopCarouselAutoplayRow" class="marginTopBottom10px"><div class="itemsJustified"><span class="width95Percent">Stop Carousel Autoplay</span><button class="btReload btIcon" onclick=\'reloadPageWithFeature("stopCarouselAutoplay")\'><img class="iconReload"></button></div></div><div class="itemsJustified"><span>Add market to Carousel or Cards</span><button class="btSimple btCarousel" id="btAddToCarousel" onclick="addMarketToCarouselOrCards()"><span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span></button></div><div id="addToCarouselErrorMessage" class="marginTop5px displayInRed"></div></div></div></div><button onclick=\'toggleSection("marketPropertiesSection")\' class="moreLess">Cashout, Bet Group Description, Help Text</button><div id="marketPropertiesSection" class="marginTopBottom10px hide"><div id="isCashoutAvailableSection" class="iconMocksRow"><span class="width95Percent"><span class="ico-cash-stack iconMockIconColumn vertMiddle"></span><span class="iconMockLabelColumn">Cash Out</span></span><input type="checkbox" onclick=\'toggleMarketProperty("cashoutAvailable")\' id="chkIsCashoutAvailable" class="chkSbTools"></div><hr class="hRule"><div class="marginTop10px">Bet Group Description:<span class="accordionHint">displayed in event page</span></div><div class="itemsJustified"><span contenteditable="true" id="fdBetGroupDescription" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setBetGroupDescription()"><img class="width16px iconSubmit"></button></div><div class="marginTop10px">Help Text:<span class="accordionHint">displayed in event tables & page</span></div><div class="itemsJustified"><span contenteditable="true" id="fdHelpText" class="fdSbTools width92percent"></span><button class="btIcon" onclick="setHelpText()"><img class="width16px iconSubmit"></button></div></div></div><div id="sbToolsMarketInfo" class="hide"><hr class="hRule"><img class="iconInfoSymbol">Market detection: parent market of the last selection from betslip.</div></div></div><div id="sbToolsSelection" class="accordion closed"><button id="changeOddsAccordion" class="accHeading" onclick="initChangeOdds()"><span class="accordionTitle">Selection</span><span class="accordionHint">Change Odds</span></button><div class="accContent"><div class="detectedEntitySection"><div id="detectedOrLockedRowForSbToolsSelection">Detected selection:</div><button class="btInfo btIcon" onclick=\'toggleInfo("sbToolsSelectionInfo")\'><img class="iconInfoCircle"></button><div class="labelRow" id="labelForSbToolsSelection"><div class="hide" id="messageForSbToolsSelection"></div><div id="labelsForDetectedSelectionMarketAndEvent"><div id="eventLabelForDetectedSelection"></div><div id="marketLabelForDetectedSelection" class="marginLeft5px"></div><div class="marginLeft30px fontBold" id="selectionLabelForDetectedSelection"></div></div></div><div id="lockSelectionSection" class="hide lockSection">Lock <input type="checkbox" id="chkLockSelection" class="chkLock chkSbTools" onclick="lockSelection()"></div></div><div id="changeOddsFeatures" class="hide"><hr class="hRule"><div><div>Selection ID:</div><div class="itemsJustified"><span id="selectionIdForSbToolsSelection" class="labelRow displayInGreen width95Percent"></span><button class="btCopy btIcon" onclick=\'copyToClipboard("selectionId")\'><img class="iconCopy"></button></div></div><div class="newOddsLayout"><span>Initial Odds:</span><span id="initialOddsSpan" class="displayInGreen"></span><button id="btResetOdds" class="btSimple btSubmit inactivated" onclick="resetOdds()">Reset</button><span>New Odds:</span><input class="fdSbTools" type="number" id="fdNewOdds" min="1" step="0.01" oninput=\'validity.valid||(value="")\'><button class="btSimple btSubmit" onclick="setOdds()">Set</button></div></div><div id="sbToolsSelectionInfo" class="hide"><hr class="hRule"><img class="iconInfoSymbol"> Selection detection: Last selection from betslip</div></div></div><div id="sbToolsBonuses" class="accordion closed"><button id="bonusesAccordion" class="accHeading" onclick="initBonuses()"><span class="accordionTitle">Bonuses</span><span class="accordionHint">Price Boost, ACCA Insurance, Free Bet</span></button><div class="accContent"><button onclick=\'toggleSection("pbSection")\' class="moreLess">Price Boost</button><div id="pbSection" class="hide marginTopBottom10px"><div id="noPbFound" class="displayInRed">No Price Boost found</div><div id="pbDetailsLayout"><div><div class="marginBottom5px"><span id="pbNumberOfListed" class="displayInGreen fontBold marginRight3px"></span><span class="marginRight5px">PB(s) listed</span><span class="marginRight3px">&lpar;altogether</span><span id="pbNumberOf" class="displayInGreen fontBold marginRight3px"></span><span>returned by API&rpar;</span></div><div class="itemsJustified marginBottom2px"><div id="listPbByNameDiv"><input type="radio" name="radioPb" id="radioPbByName" class="radioSbTools vertMiddle" checked="checked" onclick=\'listPriceBoostsBy("pbName")\'><label for="radioPbByName" class="vertMiddle">by bonus name</label></div><div id="listPbByEventNameDiv"><input type="radio" name="radioPb" id="radioPbByEvent" class="radioSbTools vertMiddle" onclick=\'listPriceBoostsBy("eventName")\'><label for="radioPbByEvent" class="vertMiddle">by event name</label></div><div title="These boost are not applicable as the selections for them are not available in the system"><input type="radio" name="radioPb" id="radioPbGarbage" class="radioSbTools vertMiddle" onclick=\'listPriceBoostsBy("garbage")\'><label for="radioPbGarbage" class="vertMiddle">garbage</label></div></div></div><select id="pbSelector" onchange="selectPb(value)" class="comboSbTools height20px marginBottom10px width100percent"></select><div id="pbLegendCloseable"><div id="pbLegendSection"><div class="marginBottom2px">Icons in the above dropdown:</div><div id="pbLegendCriteriaNotMet">&#128683; PB criteria not met</div><div id="pbLegendPersonal">&#128151; Personal</div><div id="pbLegendCombi">&#x1F9E9; Combination</div><div id="pbLegendSuperBoost">&#128640; Super Boost</div><button id="btClosePbLegend" onclick="closePbLegend()">x</button></div></div><div id="pbSelectedDetails"><div><span class="marginRight5px">Name:</span><span id="pbName" class="displayInGreen"></span></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="pbIdSpan" class="displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("priceBoostId")\'><img class="iconCopy"></button></div><div class="marginTopBottom10px"><div class="itemsJustified"><div class="width95Percent itemsJustified paddingRight8px"><span><span>Open in</span><span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span></span><span class="displayInLightGrey">(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("priceBoost")\'><img class="iconOpenInNewWindow"></button></div><div id="goToEventPageRow" class="itemsJustified"><span class="width95Percent">Go to the event page</span><a id="goToEventPageLink" href=""><button class="btReload btIcon" onclick="goToEventPage()"><img class="iconReload"></button></a></div><div title="Enabled on SB Home and A-Z pages to which the related event belongs" id="addPbToCarouselRow" class="itemsJustified"><span id="addPbToCarouselLabel" class="width95Percent">Add to carousel or cards</span><button class="btIcon" onclick="addPbToCarouselOrCards()"><img class="iconPlus"></button></div></div><hr class="hRule"><div>Path to the Competition:<div id="pbPathToCompetition" class="displayInGreen marginBottom10px"></div><div id="boostedSelectionDiv">Boosted Selection:<div class="displayInGreen"><div id="eventLabelForPbDiv"></div><div id="marketLabelForPbDiv" class="marginLeft5px"></div><div id="selectionLabelForPbDiv" class="marginLeft30px fontBold"></div></div></div></div><hr class="hRule"><div class="displayFlex"><span class="keyForPb">Visibility:</span><span id="pbVisibility" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForPb">Type:</span><span id="pbType" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForPb">Event Phases:</span><span id="pbEventPhases" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForPb">Odds Range:</span><span id="pbMinMaxOdds" class="displayInGreen"></span></div><div id="pbStakeRangeDiv"><div class="displayFlex"><span class="keyForPb">Stake Range:</span><span id="pbMinMaxStake" class="displayInGreen"></span></div></div><div id="pbExpiryDateDiv"><div class="displayFlex"><span class="keyForPb">Expiry Date:</span><span id="pbExpiryDate" class="displayInGreen"></span></div></div></div></div></div><button onclick=\'toggleSection("profitBoostSection")\' class="moreLess">Profit Boost</button><div id="profitBoostSection" class="hide marginTopBottom10px"><div id="profitBoostNotFound" class="displayInRed">No Profit Boost found</div><div id="profitBoostLogin" class="displayInRed">Login to see your Profit Boosts.</div><div id="profitBoostDetailsLayout"><div><span id="profitBoostNumberOf" class="displayInGreen fontBold marginRight5px"></span><span>Profit Boosts found</span></div><select id="profitBoostSelector" onchange="selectProfitBoost(value)" class="comboSbTools height20px marginBottom10px width100percent"></select><div id="profitBoostSelectedDetails"><div><span class="marginRight5px">Name:</span><span id="profitBoostName" class="displayInGreen"></span></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="profitBoostId" class="displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("profitBoostId")\'><img class="iconCopy"></button></div><div class="marginTopBottom10px itemsJustified"><div class="width95Percent itemsJustified paddingRight8px"><span><span>Open in</span><span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span></span><span class="displayInLightGrey">(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("profitBoost")\'><img class="iconOpenInNewWindow"></button></div><hr class="hRule"><div id="profitBoostRestrictionsSection">Restriction path:<div id="profitBoostPathToCompetition" class="displayInGreen marginBottom10px"></div><div id="profitBoostFurtherRestricions" class="displayInOrange hide">Further restrictions are set on Event/Market level. See the details in Trading Tools.</div><hr class="hRule"></div><div class="displayFlex"><span class="keyForProfitBoost">Profit Boost %:</span><span id="profitBoostMultiplier" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForProfitBoost">Max Winning:</span><span id="profitBoostMaxBoostedWinningsInEuro" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForProfitBoost">Bet Types:</span><span id="profitBoostBetTypes" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForProfitBoost">Event Phases:</span><span id="profitBoostEventPhases" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForProfitBoost">Stake Range:</span><span id="profitBoostStake" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForProfitBoost">Odds Range:</span><span id="profitBoostMinMaxOdds" class="displayInGreen"></span></div><div id="profitBoostNoOfSelectionsDiv"><div class="displayFlex"><span class="keyForProfitBoost">No. of Selections:</span><span id="profitBoostNoOfSelections" class="displayInGreen"></span></div></div><div id="profitBoostExpiryDateDiv"><div class="displayFlex"><span class="keyForProfitBoost">Expiry Date:</span><span id="profitBoostExpiryDate" class="displayInGreen"></span></div></div></div></div></div><button onclick=\'toggleSection("accaSection")\' class="moreLess">ACCA Insurance</button><div id="accaSection" class="hide marginTopBottom10px"><div id="accaMessage" class="displayInRed"><div id="loginToSeeAcca">Login to see ACCA insurance.</div><div id="noAccaFound">No active ACCA insurance found.</div></div><div id="accaDetailsLayout" class="hide"><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">Name:</span><span id="accaNameField" class="accaValueColumn displayInGreen"></span></div><button class="btCopy btIcon" id="btAccaName" onclick=\'copyToClipboard("accaName")\'><img class="iconCopy"></button></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="accaIdField" class="accaValueColumn displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("accaId")\'><img class="iconCopy"></button></div><div class="marginTopBottom10px itemsJustified"><div class="width95Percent itemsJustified paddingRight8px"><span><span>Open in</span><span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span></span><span class="displayInLightGrey">(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("acca")\'><img class="iconOpenInNewWindow"></button></div><hr class="hRule"><div id="accaCategoriesSection"><div id="accaCategoriesRow" class="displayFlex"><span class="marginRight5px">Categories:</span><span id="accaCategoriesSpan" class="displayInGreen"></span></div><div id="accaCompetitionsRow"><span class="marginRight5px">Competitions:</span><span id="accaCompetitionsSpan" class="displayInOrange"></span></div><div id="accaMarketTemplatesRow"><span class="marginRight5px">Market Templates:</span><span id="accaMarketTemplatesSpan" class="displayInOrange"></span></div><hr class="hRule"></div><div id="accaEventPhaseRow"><span class="marginRight5px">Event Phase:</span><span id="accaEventPhaseSpan" class="displayInGreen"></span></div><div><span class="marginRight5px">Min Number of Selections:</span><span id="accaMinimumNumberOfSelectionsSpan" class="displayInGreen"></span></div><div><span class="marginRight5px">Min Selection Odds:</span><span id="accaSelectionOddsLimitMinSpan" class="displayInGreen"></span></div><div id="accaTotalOddsLimitMinRow"><span class="marginRight5px">Min Total Odds:</span><span id="accaTotalOddsLimitMinSpan" class="displayInGreen"></span></div><hr class="hRule"><div id="accaMinMaxStakeRow"><span class="marginRight5px">Stake Range:</span><span id="accaMinMaxStakeSpan" class="displayInGreen"></span></div><div id="accaExpiryDateRow"><span class="marginRight5px">Expiry Date:</span><span id="accaExpiryDateSpan" class="displayInGreen"></span></div></div></div><button onclick=\'toggleSection("freeBetSection")\' class="moreLess">Free or Risk Free Bet</button><div id="freeBetSection" class="hide marginTop10px"><div id="freeBetNotFound" class="displayInRed">No Free Bet found</div><div id="freeBetLogin" class="displayInRed">Login to see your Free Bets.</div><div id="freeBetDetailsLayout"><div><span id="freeBetNumberOf" class="displayInGreen fontBold marginRight5px"></span><span>Free or Risk Free Bets found</span></div><select id="freeBetSelector" onchange="selectFreeBet(value)" class="comboSbTools height20px marginBottom10px width100percent"></select><div id="freeBetSelectedDetails"><div><span class="marginRight5px">Name:</span><span id="freeBetName" class="displayInGreen"></span></div><div class="itemsJustified"><div class="width95Percent displayFlex"><span class="marginRight5px">ID:</span><span id="freeBetIdSpan" class="displayInGreen"></span></div><button class="btCopy btIcon" onclick=\'copyToClipboard("freeBetId")\'><img class="iconCopy"></button></div><div class="marginTopBottom10px itemsJustified"><div class="width95Percent itemsJustified paddingRight8px"><span><span>Open in</span><span class="sbManagerSb">sb</span><span class="sbManagerManager">manager</span></span><span class="displayInLightGrey">(ex-Trading Tools)</span></div><button class="btIcon btOpenInNewWindow" onclick=\'openInTradingTools("freeBet")\'><img class="iconOpenInNewWindow"></button></div><hr class="hRule"><div id="freeBetRestrictionsSection">Restriction path:<div id="freeBetPathToCompetition" class="displayInGreen marginBottom10px"></div><div id="freeBetFurtherRestricions" class="displayInOrange hide">Further restrictions are set on Event/Market level. See the details in Trading Tools.</div><hr class="hRule"></div><div class="displayFlex"><span class="keyForFreeBet">Type:</span><span id="freeBetType" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForFreeBet">Stake:</span><span id="freeBetStake" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForFreeBet">Bet Types:</span><span id="freeBetBetTypes" class="displayInGreen"></span></div><div class="displayFlex"><span class="keyForFreeBet">Event Phases:</span><span id="freeBetEventPhases" class="displayInGreen"></span></div><div id="freeBetNoOfSelectionsDiv"><div class="displayFlex"><span class="keyForFreeBet">No. of Selections:</span><span id="freeBetNoOfSelections" class="displayInGreen"></span></div></div><div id="freeBetExpiryDateDiv"><div class="displayFlex"><span class="keyForFreeBet">Expiry Date:</span><span id="freeBetExpiryDate" class="displayInGreen"></span></div></div></div></div></div></div></div><div id="sbToolsBanners" class="accordion closed"><button id="bannersAccordion" class="accHeading" onclick="initBanners()"><span class="accordionTitle">Banners</span><span class="accordionHint">Carousel & Sportsbook Banners</span></button><div class="accContent"><div id="bannersMessage" class="displayInRed hide">Current page is not Sportsbook Home</div><div id="bannersFeatures" class="hide"><div class="bannersRow"><span class="keyColumnForBanners">Carousel Banners</span><span><button id="btCrlBannersMinus" class="btPlusMinus btIcon" onclick="removeCarouselBanner()"><img class="iconMinus"></button></span><span id="noOfCrlBanners" class="noOfBanners displayInGreen"></span><span><button class="btPlusMinus btIcon" onclick="addCarouselBanner()"><img class="iconPlus"></button></span><span class="floatRight">Overlay<input type="checkbox" id="chkCrlBannerOverlay" class="chkInline"></span></div><div class="bannersRow"><span class="keyColumnForBanners">Sportsbook Banners</span><span><button id="btSbBannersMinus" class="btPlusMinus btIcon" onclick="removeSportsbookBanner()"><img class="iconMinus"></button></span><span id="noOfSbBanners" class="noOfBanners displayInGreen"></span><span><button class="btPlusMinus btIcon" onclick="addSportsbookBanner()"><img class="iconPlus"></button></span></div></div></div></div><div id="sbToolsNative" class="accordion closed"><button id="nativeAccordion" class="accHeading" onclick="initNativeApp()"><span class="accordionTitle">Native App</span><span class="accordionHint">Navigate by postMessages</span></button><div class="accContent"><div class="nativeDetectedEventLayout"><div><div>Detected event from the betslip:</div><div class="labelRow" id="eventLabelForNative"></div></div><button id="btNativeOpenEvent" class="btSimple btNativeToggleable" onclick="openEventOnNative()"><div class="ico-maximize-event iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">OPEN</div></button></div><hr class="hRule"><div id="nativeErrorMessage" class="displayInRed extraCondensed hide"><hr class="hRule"></div><div class="marginTopBottom10px nativeBottomBarButtons"><button id="btNativeBack" class="btSimple" onclick=\'nativeClick("back")\'><div class="ico-arrow-back iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Back</div></button><button id="btNativeHome" class="btSimple btNativeToggleable" onclick=\'nativeClick("home")\'><div class="ico-home-bottom-bar iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Home</div></button><button id="btNativeAz" class="btSimple btNativeToggleable" onclick=\'nativeClick("az")\'><div class="ico-all-sports-search iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">A-Z</div></button><button id="btNativeLive" class="btSimple btNativeToggleable" onclick=\'nativeClick("live")\'><div class="ico-live-bottom-bar iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Live</div></button><button id="btNativeMyBets" class="btSimple loggedInOnly btNativeToggleable" onclick=\'nativeClick("myBets")\'><div class="ico-my-bets iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">My Bets</div></button><button id="btNativeBetslip" class="btSimple btWithBadge" onclick=\'nativeClick("betSlip")\'><div class="ico-betslip-bottom iconNativeBottomBarButton"></div><div class="labelNativeBottomBarButton">Betslip</div><div id="badgeNativeBetslip" class="badgeNative badgeNativeBetslip hide"></div><div id="badgeNativeBbBetslip" class="badgeNative badgeNativeBbBetslip hide"></div></button></div><div id="nativeOtherSection" class="marginTopBottom10px nativeOtherButtons"><button id="btNativeBetBuilder" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("betBuilder")\'><div id="iconBtNativeBetBuilder" class="ico-bet-builder iconNativeOtherButton"></div><div id="labelBtNativeBetBuilder" class="labelNativeOtherButton">Bet Builder</div></button><button id="btNativeBoost" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("boost")\'><div class="ico-price-boost iconNativeOtherButton"></div><div class="labelNativeOtherButton">Boost</div></button><button id="btNativeLiveSC" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("lsc")\'><div class="ico-live-streaming iconNativeOtherButton"></div><div class="labelNativeOtherButton">LS Calendar</div></button><button id="btNativeStartingSoon" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("startingSoon")\'><div class="ico-starting-soon iconNativeOtherButton"></div><div class="labelNativeOtherButton">Start Soon</div></button><button id="btNativeSettings" class="btNativeOthers btNativeToggleable" onclick=\'nativeClick("settings")\'><div class="ico-settings iconNativeOtherButton"></div><div class="labelNativeOtherButton">Settings</div></button></div><div id="nativeQuickLinksSection" class="hide"><div class="displayFlex"><span class="width25percent">Quick Links</span><select id="quickLinkSelector" onchange="selectQuickLink(value)" class="comboSbTools height20px marginBottom10px width75percent"></select></div></div><div id="nativeAzSection" class="hide marginTopBottom10px"><div class="displayFlex"><span class="width25percent">Category</span><select id="categorySelector" onchange="selectCategory(value)" class="comboSbTools height20px marginBottom10px width75percent"></select></div><div class="displayFlex"><span class="width25percent">Region</span><select id="regionSelector" onchange="selectRegion(value)" class="comboSbTools height20px marginBottom10px width75percent inactivated"></select></div><div class="displayFlex"><span class="width25percent">Competition</span><select id="competitionSelector" onchange="selectCompetition(value)" class="comboSbTools height20px width75percent inactivated"></select></div></div><div id="nativeBetBuilderSection" class="marginTopBottom10px hide"><div class="displayFlex"><span id="nativeBetBuilderEventLabel" class="width23percent">BB Event</span><select id="nativeBetBuilderEventSelector" onchange="selectBetuilderEvent(value)" class="comboSbTools height20px marginBottom10px width80percent"></select></div><div id="nativeBetBuilderEventsError" class="displayInRed hide">Open a Bet Builder accordion on the page.</div></div></div></div><div id="sbToolsStreamMappingHelper" class="accordion closed"><button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">IDs for stream mapping (probably YAGNI)</button><div class="accContent">Get LIVE Provider Event IDs for mapping:<div class="streamIdsLayout"><button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button><button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button><div id="twitchResults" class="extraCondensed"></div><div id="performResults" class="extraCondensed"></div></div></div></div></div><style>#sportsbookToolContent{line-height:18px}.itemsJustified{display:flex;justify-content:space-between;align-items:flex-start}.checkBoxRowToRight{display:flex;align-items:center;justify-content:flex-end}#performResults,#twitchResults{margin-left:5px;margin-top:5px}.accordionHint{float:right;font-size:x-small;color:gray}.width100percent{width:100%}.width48percent{width:48%}.width75percent{width:75%}.width17percent{width:17%}.width80percent{width:80%}.width23percent{width:23%}.width92percent{width:92%}.iconScoreboard{font-size:initial;margin-bottom:2px}.vertMiddle{vertical-align:middle}.outlinedText{-webkit-text-stroke:1px #444}.keyColumnForBanners{width:130px;display:inline-block}.keyForPb{width:30%}.keyForFreeBet{width:35%}.keyForProfitBoost{width:35%}.bannersRow{line-height:25px}.paddingRight8px{padding-right:8px}.noOfBanners{width:20px;display:inline-block;text-align:center}.btSimple{border:1px solid #444;border-radius:3px;box-shadow:0 1px #666;margin:2px;cursor:pointer;line-height:1em;font-size:inherit;padding:2px;color:#444;height:fit-content}@media (hover:hover){.btSimple:hover{background-color:#fff}}.btSimple:active{box-shadow:0 0 #666;background-color:#fff;transform:translateY(1px)}.keyForContext{width:32%}.keyForEventDetails,.width25percent{width:25%}.valueForContext{width:68%;color:#008d90}.valueForEventDetails{width:75%}.truncatable{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.marginTop5px{margin-top:5px}.marginBottom2px{margin-bottom:2px}.marginBottom5px{margin-bottom:5px}.marginBottom10px{margin-bottom:10px}.marginTopBottom10px{margin-top:10px;margin-bottom:10px}.marginTopBottom5px{margin-top:5px;margin-bottom:5px}.marginTop10px{margin-top:10px}.marginRight2px{margin-right:2px}.marginRight5px{margin-right:5px}.marginRight3px{margin-right:3px}.marginRight10px{margin-right:10px}.marginLeft5px{margin-left:5px}.marginLeft15px{margin-left:15px}.marginLeft30px{margin-left:30px}.height20px{height:20px}.chkInline{vertical-align:middle;margin-left:5px}#initialOddsSpan{margin-left:4px}.labelRow{word-break:break-word}.noWrap{white-space:nowrap}.lockSection{display:flex;justify-content:flex-end;align-self:start}.infoList{margin:3px;padding-inline-start:25px}.detectedEntitySection{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;margin-bottom:10px}.streamIdsLayout{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto}.align-right{text-align:right}.buttonLabelToRight{margin-left:8px}.scoreLayout{margin-bottom:10px;display:grid;grid-template-columns:33% 45px auto;grid-template-rows:1fr 1fr;align-items:center}#scoreBoardDetails{border:1px solid #ccc;margin-bottom:15px}.segmentChangeSectionHint{font-size:x-small;color:#a00000;font-weight:700;margin-bottom:5px;margin-top:5px;font-stretch:extra-condensed}.scoreBoardLayout{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;grid-template-rows:auto auto auto;padding:10px;justify-items:center}.iconMocksRow{display:flex;justify-content:space-between}.iconOnBtSimple{margin-right:3px;vertical-align:middle}.labelOnBtSimple{vertical-align:middle}.iconMockIconColumn{display:inline-block;text-align:center;width:25px}.iconNativeBottomBarButton{font-size:large}.iconNativeOtherButton{color:#444}.labelNativeOtherButton{margin-top:1px;font-size:x-small;font-stretch:condensed}.labelNativeBottomBarButton{font-stretch:condensed}#pbLegendSection{position:relative;margin-top:-10px;margin-bottom:10px;line-height:normal;font-size:x-small;border:1px solid #ccc;border-top:none;padding:5px}#btClosePbLegend{position:absolute;bottom:0;right:0;border-style:none;cursor:pointer}#btNativeOpenEvent{height:38px}.iconMockLabelColumn{display:inline-block}.monoSpaceFont{font-family:monospace}.resolveLimitationRow{display:grid;grid-template-columns:auto 100px;align-items:baseline}#iframeNotMatchingWarningMessage{margin-bottom:8px;color:#a00000;font-weight:700;border:1px solid #a00000;padding:5px}.width48percent{width:48%}.keyColumnForExtras{width:120px;display:inline-block}#setEventPhaseButtonsLayout{display:grid;grid-template-columns:1fr 1fr 1fr;margin-bottom:5px}.setMarketStateLayout{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr}.nativeBottomBarButtons{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr}.nativeOtherButtons{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr}.badgeNative{position:absolute;left:29px;top:-4px;min-height:16px;min-width:16px;line-height:16px;border-radius:8px;padding:0 3px;text-align:center;font-size:10px;color:#fff}.badgeNativeBetslip{background-color:#cc8936}.badgeNativeBbBetslip{background-color:#327bff}.nativeDetectedEventLayout{display:grid;grid-template-columns:5fr 1fr}.createMarketLayout{display:grid;grid-template-columns:55% auto;align-items:center}.newOddsLayout{margin-top:10px;align-items:center;display:grid;grid-template-rows:auto auto;grid-template-columns:25% 20% auto}.newOddsKeys{width:50px}.btSubmit{margin-left:5px;width:45px}.vertical{writing-mode:tb-rl;transform:rotate(-180deg);margin-bottom:5px}#submitScoreBoard{margin-left:10px;margin-bottom:10px}.fdSbTools{border:1px solid #444;padding-left:3px;color:#0000a0}.comboSbTools{border:1px solid #444;font-size:inherit;color:#444}.fdScoreBoardNumeric{width:45px;margin-bottom:1px}#sportsbookTool{background-color:#fff;color:#444;font-family:Arial;width:310px;height:auto;position:fixed;border:2px solid #d3d3d3;top:0;left:0;z-index:5000;box-shadow:0 0 35px 10px #000;font-size:12px;overflow:auto}#sportsbookToolNameLeft{font-weight:900;margin-right:2px;letter-spacing:-1px;color:#00b9bd}#sportsbookToolNameRight{color:#f9a133}.sbManagerSb{color:#00b9bd;font-weight:900;margin-left:4px;margin-right:2px}.sbManagerManager{color:#cc8936;margin-right:4px}#sportsbookToolHeader{padding:3px;padding-bottom:5px;cursor:move;z-index:5000;background:#1c3448;color:#ddd}#sportsbookToolHeaderTitle{display:inline-block;padding-top:3px;padding-left:4px}#sportsbookToolName{font-size:18px;margin-right:5px}#sportsbookToolAuthorName{font-size:8px;line-height:30%;font-weight:400}.extraCondensed{font-stretch:extra-condensed}.sportsbookToolHeaderButtons{color:#fff;width:25px;height:20px;margin:1px;padding:2px;border-color:#666}#btMinimizeAll,#btZoomInOut{background:#646464}@media (hover:hover){#btMinimizeAll:hover,#btZoomInOut:hover{background:#1e1e1e}}#btMinimizeAll:active,#btZoomInOut:active{background:#1e1e1e}#btMinimizeClosed{background-color:#00b9bd}@media (hover:hover){#btMinimizeClosed:hover{background:#008d90}}#btMinimizeClosed:active{background:#008d90}.btWithBadge{position:relative}#btClose{background:#c86464}@media (hover:hover){#btClose:hover{background:#a00000}}#btClose:active{background:#a00000}.infoMessage{opacity:.5;font-size:x-small}.displayInRed{color:#a00000}.displayInGreen{color:#008d90}.displayInOrange{color:#cc8936}.displayInLightGrey{color:#ccc}.hide{display:none}.show{display:block}.accHeading{border-radius:none;background-color:#eee;color:#444;cursor:pointer;padding:8px;width:100%;text-align:left;border:none;outline:0;transition:.4s}@media (hover:hover){.accHeading:hover,.btNativeOthers:hover,.moreLess:hover{background-color:#ccc}}.accHeading:active,.btNativeOthers:active,.moreLess:active{background-color:#ccc}.open .accHeading{background-color:#ccc}.accContent{margin:10px;background-color:#fff;overflow:hidden}.closed .accContent{display:none}.open .accContent{display:block}.hRule{border-top:1px solid #eee}.scaledTo70percent{transform:scale(.7);transform-origin:0 0}.floatRight{float:right}.carouselList{padding-left:15px}.visibilityHidden{visibility:hidden}.displayInGreenGlow{text-shadow:0 0 7px #fff,0 0 10px #fff,0 0 21px #fff,0 0 42px #008d90,0 0 82px #008d90,0 0 92px #008d90,0 0 102px #008d90,0 0 151px #008d90}#limitedFunctionsMessage{color:#a00000;font-weight:700;float:right;font-stretch:extra-condensed}.fontBold{font-weight:700}.chkLock{margin-left:5px;align-self:center}.chkSbTools{cursor:pointer;align-self:center;accent-color:#008d90}.radioSbTools{margin-right:3px;cursor:pointer;accent-color:#008d90}.btCopy{min-width:16px}.btIcon{opacity:60%;border:none;background:0 0;cursor:pointer;vertical-align:middle;padding:0}@media (hover:hover){.btIcon:hover{opacity:100%}}.btIcon:active{opacity:20%}.btOpenInNewWindow{width:15px}.iconHeader{width:12px}.segmentKeyColumn{width:35px;display:inline-block}.width16px{width:16px}.iconSubmit{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><path d="M256,0C114.615,0,0,114.615,0,256s114.615,256,256,256s256-114.615,256-256S397.385,0,256,0z M219.429,367.932L108.606,257.108l38.789-38.789l72.033,72.035L355.463,154.32l38.789,38.789L219.429,367.932z"/></svg>\')}.iconCopy{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" style="enable-background:new 0 0 512 512" xml:space="preserve" viewBox="83.2 56 345.6 400" width="16px" height="14px"><path fill="black" d="M337.8,56H119.6c-20.1,0-36.4,16.3-36.4,36.4v254.5h36.4V92.4h218.2V56z M392.4,128.7h-200c-20.1,0-36.4,16.3-36.4,36.4v254.5c0,20.1,16.3,36.4,36.4,36.4h200c20.1,0,36.4-16.3,36.4-36.4V165.1C428.7,145,412.5,128.7,392.4,128.7z M392.4,419.6h-200V165.1h200V419.6z"></path></svg>\')}.iconClose{content:url(\'data:image/svg+xml;utf8,<svg class="svg-icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M954.304 190.336a15.552 15.552 0 0 1 0 21.952l-300.032 300.032 298.56 298.56a15.616 15.616 0 0 1 0 22.016l-120.96 120.896a15.552 15.552 0 0 1-21.952 0L511.36 655.232 214.272 952.32a15.552 15.552 0 0 1-21.952 0l-120.896-120.896a15.488 15.488 0 0 1 0-21.952l297.152-297.152L69.888 213.76a15.552 15.552 0 0 1 0-21.952l120.896-120.896a15.552 15.552 0 0 1 21.952 0L511.36 369.472l300.096-300.032a15.36 15.36 0 0 1 21.952 0l120.896 120.896z"/></svg>\')}.iconMaximize{content:url(\'data:image/svg+xml;utf8,<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <rect width="16" height="16" id="icon-bound" fill="none"/> <path fill="white" d="M1,9h14V7H1V9z M1,14h14v-2H1V14z M1,2v2h14V2H1z"/></svg>\')}.iconMinimize{content:url(\'data:image/svg+xml;utf8,<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <rect width="16" height="16" id="icon-bound" fill="none"/> <polygon fill="white" points="15,7 1,7 1,9 15,9"/></svg>\')}.iconZoomOut{content:url(\'data:image/svg+xml;utf8,<svg width="8px" height="8px" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"> <path fill="white" d="M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.61 0 1.19-.16 1.69-.44a1 1 0 0 0 .09.13l1 1.03a1.02 1.02 0 1 0 1.44-1.44l-1.03-1a1 1 0 0 0-.13-.09c.27-.5.44-1.08.44-1.69 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .59-.2 1.14-.53 1.56-.01.01-.02.02-.03.03a1 1 0 0 0-.06.03 1 1 0 0 0-.25.28c-.44.37-1.01.59-1.63.59-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5zm-1.5 2v1h3v-1h-3z"/></svg>\')}.iconZoomIn{content:url(\'data:image/svg+xml;utf8,<svg width="8px" height="8px" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"> <path fill="white" d="M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.61 0 1.19-.16 1.69-.44a1 1 0 0 0 .09.13l1 1.03a1.02 1.02 0 1 0 1.44-1.44l-1.03-1a1 1 0 0 0-.13-.09c.27-.5.44-1.08.44-1.69 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .59-.2 1.14-.53 1.56-.01.01-.02.02-.03.03a1 1 0 0 0-.06.03 1 1 0 0 0-.25.28c-.44.37-1.01.59-1.63.59-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5zm-.5 1v1h-1v1h1v1h1v-1h1v-1h-1v-1h-1z"/></svg>\')}.iconOpenInNewWindow{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 194.818 194.818" height="14px" style="enable-background:new 0 0 194.818 194.818;" xml:space="preserve"><g><path d="M185.818,2.161h-57.04c-4.971,0-9,4.029-9,9s4.029,9,9,9h35.312l-86.3,86.3c-3.515,3.515-3.515,9.213,0,12.728c1.758,1.757,4.061,2.636,6.364,2.636s4.606-0.879,6.364-2.636l86.3-86.3v35.313c0,4.971,4.029,9,9,9s9-4.029,9-9v-57.04C194.818,6.19,190.789,2.161,185.818,2.161z"/><path d="M149,77.201c-4.971,0-9,4.029-9,9v88.456H18v-122h93.778c4.971,0,9-4.029,9-9s-4.029-9-9-9H9c-4.971,0-9,4.029-9,9v140c0,4.971,4.029,9,9,9h140c4.971,0,9-4.029,9-9V86.201C158,81.23,153.971,77.201,149,77.201z"/></g></svg>\')}.iconReload{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 492.883 492.883" style="enable-background:new 0 0 492.883 492.883;" xml:space="preserve" width="14px" height="12px"><g><path d="M122.941,374.241c-20.1-18.1-34.6-39.8-44.1-63.1c-25.2-61.8-13.4-135.3,35.8-186l45.4,45.4c2.5,2.5,7,0.7,7.6-3l24.8-162.3c0.4-2.7-1.9-5-4.6-4.6l-162.4,24.8c-3.7,0.6-5.5,5.1-3,7.6l45.5,45.5c-75.1,76.8-87.9,192-38.6,282c14.8,27.1,35.3,51.9,61.4,72.7c44.4,35.3,99,52.2,153.2,51.1l10.2-66.7C207.441,421.641,159.441,407.241,122.941,374.241z"/><path d="M424.941,414.341c75.1-76.8,87.9-192,38.6-282c-14.8-27.1-35.3-51.9-61.4-72.7c-44.4-35.3-99-52.2-153.2-51.1l-10.2,66.7c46.6-4,94.7,10.4,131.2,43.4c20.1,18.1,34.6,39.8,44.1,63.1c25.2,61.8,13.4,135.3-35.8,186l-45.4-45.4c-2.5-2.5-7-0.7-7.6,3l-24.8,162.3c-0.4,2.7,1.9,5,4.6,4.6l162.4-24.8c3.7-0.6,5.4-5.1,3-7.6L424.941,414.341z"/></g></svg>\')}.iconGoTo{content:url(\'data:image/svg+xml;utf8,<svg viewBox="0 -2 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"><g id="SVGRepo_iconCarrier"><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" height="14px"><g transform="translate(-360.000000, -933.000000)" fill="#000000"><path d="M388,933 L368,933 C365.791,933 364,934.791 364,937 L364,941 L366,941 L366,937 C366,935.896 366.896,935 368,935 L388,935 C389.104,935 390,935.896 390,937 L390,957 C390,958.104 389.104,959 388,959 L368,959 C366.896,959 366,958.104 366,957 L366,953 L364,953 L364,957 C364,959.209 365.791,961 368,961 L388,961 C390.209,961 392,959.209 392,957 L392,937 C392,934.791 390.209,933 388,933 L388,933 Z M377.343,953.243 C376.953,953.633 376.953,954.267 377.343,954.657 C377.733,955.048 378.367,955.048 378.758,954.657 L385.657,947.758 C385.865,947.549 385.954,947.272 385.94,947 C385.954,946.728 385.865,946.451 385.657,946.243 L378.758,939.344 C378.367,938.953 377.733,938.953 377.343,939.344 C376.953,939.733 376.953,940.367 377.343,940.758 L382.586,946 L361,946 C360.447,946 360,946.448 360,947 C360,947.553 360.447,948 361,948 L382.586,948 L377.343,953.243 L377.343,953.243 Z" id="arrow-right"></path></g></g></g></svg>\')}.btPlusMinus{width:16px}.iconPlus{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve" height="14px"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941h-59.882V57.059c0-4.971-4.029-9-9-9s-9,4.029-9,9v59.882H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h59.882v59.882c0,4.971,4.029,9,9,9s9-4.029,9-9v-59.882h59.882c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>\')}.iconMinus{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 251.882 251.882" style="enable-background:new 0 0 251.882 251.882;" xml:space="preserve" height="14px"><g><path d="M215.037,36.846c-49.129-49.128-129.063-49.128-178.191,0c-49.127,49.127-49.127,129.063,0,178.19c24.564,24.564,56.83,36.846,89.096,36.846s64.531-12.282,89.096-36.846C264.164,165.909,264.164,85.973,215.037,36.846z M49.574,202.309c-42.109-42.109-42.109-110.626,0-152.735c21.055-21.054,48.711-31.582,76.367-31.582s55.313,10.527,76.367,31.582c42.109,42.109,42.109,110.626,0,152.735C160.199,244.417,91.683,244.417,49.574,202.309z"/><path d="M194.823,116.941H57.059c-4.971,0-9,4.029-9,9s4.029,9,9,9h137.764c4.971,0,9-4.029,9-9S199.794,116.941,194.823,116.941z"/></g></svg>\')}.iconInfoCircle,.iconInfoSymbol{content:url(\'data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 202.978 202.978" style="enable-background:new 0 0 202.978 202.978" xml:space="preserve" height="14px"><g><path fill="black" d="M100.942,0.001C44.9,0.304-0.297,45.98,0.006,102.031c0.293,56.051,45.998,101.238,102.02,100.945c56.081-0.303,101.248-45.978,100.945-102.02C202.659,44.886,157.013-0.292,100.942,0.001z M101.948,186.436c-46.916,0.234-85.108-37.576-85.372-84.492c-0.244-46.907,37.537-85.157,84.453-85.411c46.926-0.254,85.167,37.596,85.421,84.483C186.695,147.951,148.855,186.182,101.948,186.436z M116.984,145.899l-0.42-75.865l-39.149,0.254l0.078,16.6l10.63-0.059l0.313,59.237l-11.275,0.039l0.088,15.857l49.134-0.264l-0.098-15.847L116.984,145.899z M102.065,58.837c9.575-0.039,15.349-6.448,15.3-14.323c-0.254-8.07-5.882-14.225-15.095-14.186c-9.184,0.059-15.173,6.292-15.134,14.362C87.185,52.555,93.028,58.906,102.065,58.837z"/></g></svg>\')}.btInfo{justify-self:end}.iconInfoSymbol{opacity:60%;width:12px;margin-right:5px}.btCarousel{width:32%;margin-bottom:5px;margin-right:5px}.btGreen{background-color:#008d90;color:#fff}@media (hover:hover){.btGreen:hover{background-color:#00b9bd}}.btGreen:active{background-color:#00b9bd}.btOrange{background-color:#cc8936;color:#fff}@media (hover:hover){.btOrange:hover{background-color:#f9a133}}.btOrange:active{background-color:#f9a133}.moreLess{width:100%;border:none;cursor:pointer;padding:4px;margin-top:2px;margin-bottom:2px;color:#444}.btNativeOthers{border:none;cursor:pointer;padding:6px 2px 6px 2px;margin:2px}.width95Percent{width:95%}.displayFlex{display:flex}.inactivated{pointer-events:none;opacity:40%}</style>';
 
         sportsbookTool.innerHTML = htmlContent;
     }
@@ -124,28 +130,9 @@
     }
 
     function getIsItSportsbookPage() {
-        // try {
-        //     obgNavigationSupported;
-        // } catch {
-        //     try {
-        //         obgClientEnvironmentConfig;
-        //     } catch {
-        //         try {
-        //             obgGlobalAppContext;
-        //         } catch {
-        //             if (getIsSportsbookInIframe()) {
-        //                 isSportsbookInIframeWithoutObgTools = true;
-        //             } else {
-        //                 alert("You are not on a Sportsbook page.\nIf you think you are, please contact: gergely.glosz@betssongroup.com")
-        //                 return false;
-        //             }
-        //         }
-        //     }
-        // }
-        // return true;
-
         if (IS_OBGNAVIGATIONSUPPORTED_EXPOSED
             || IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED
+            || IS_OBGSTARTUP_EXPOSED
             || IS_OBGGLOBALAPPCONTEXT_EXPOSED) {
             return true;
         }
@@ -174,7 +161,7 @@
         }
     }
 
-    function getIsB2B() {
+    function getIsB2BIframeOnly() {
         try {
             return obgClientEnvironmentConfig.startupContext.config.core.experiment["isSBB2BEnabled"];
         } catch {
@@ -188,23 +175,6 @@
         }
     }
 
-    // function isDefined(command) {
-    //     try {
-    //         switch (command) {
-    //             case "obgState":
-    //                 obgState;
-    //                 break;
-    //             case "obgRt":
-    //                 obgRt;
-    //                 break;
-    //             case "obgClientEnvironmentConfig":
-    //                 obgClientEnvironmentConfig;
-    //                 break;
-    //         }
-    //     } catch { return false; }
-    //     return true;
-    // }
-
     function isDefined(entityNameAsString) {
         try {
             eval(entityNameAsString);
@@ -215,22 +185,6 @@
         }
         return true;
     }
-
-    // function getIsSportsbookInIframe() {
-    //     setIframeURL();
-    //     if (iframeURL == undefined) {
-    //         return false
-    //     } else { return true; }
-    // }
-
-    // function setIframeURL() {
-    //     var iframes = document.body.getElementsByTagName("iframe");
-    //     for (var iframe of iframes) {
-    //         if (iframe.src.includes("playground") && iframe.src.includes("/stc-")) {
-    //             iframeURL = iframe.src;
-    //         }
-    // }
-    // }
 
     function getIsSportsbookInIframe() {
         if (!!getIframe()) {
@@ -262,6 +216,12 @@
         return "prod";
     }
 
+    function getB2X() {
+        if (IS_B2B_IFRAME_ONLY || IS_SPORTSBOOK_IN_IFRAME) {
+            return "B2B";
+        } return "B2C";
+    }
+
 
 
     function getStaticContextId() {
@@ -281,40 +241,58 @@
     // }
 
     function getSbVersion() {
-        var appVersion;
         if (IS_SPORTSBOOK_IN_IFRAME) {
             return "(Open the SB iframe to get this)";
         }
-        try {
-            appVersion = obgClientEnvironmentConfig.startupContext.appContext.version;
-        } catch {
-            try {
-                appVersion = obgState.appContext.version;
-            } catch {
-                return "Data not available"
-            }
+        versionNumber = getSbVersionNumber();
+        if (versionNumber == null) {
+            return "Data not available";
         }
-        if (IS_B2B) {
-            return "SBB2B-FE-" + appVersion;
+        if (IS_B2B_IFRAME_ONLY) {
+            return "SBB2B-FE-" + versionNumber;
         }
-        return "OBGA-" + appVersion;
+        return "OBGA-" + versionNumber;
+    }
+
+    function getSbVersionNumber() {
+        if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
+            return obgClientEnvironmentConfig.startupContext.appContext.version;
+        }
+        if (IS_NODECONTEXT_EXPOSED) {
+            return nodeContext.version;
+        }
+        if (IS_OBGSTATE_EXPOSED) {
+            return obgState.appContext.version;
+        }
+        return null;
+        // try {
+        //     return obgClientEnvironmentConfig.startupContext.appContext.version;
+        // } catch {
+        //     try {
+        //         return obgState.appContext.version;
+        //     } catch {
+        //         return null;
+        //     }
+        // }
     }
 
     function getDeviceType() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceType; }
         if (IS_OBGSTATE_EXPOSED) { return obgState.appContext.device.deviceType; }
         if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return obgGlobalAppContext.deviceType; }
-        return "could't get";
+        if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceType; }
+        return "couldn't get";
     }
 
     function getIsAnyEssentialObjectExposed() {
-        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED || IS_OBGSTATE_EXPOSED || IS_OBGGLOBALAPPCONTEXT_EXPOSED;
+        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED || IS_OBGSTATE_EXPOSED || IS_OBGGLOBALAPPCONTEXT_EXPOSED || IS_OBGSTARTUP_EXPOSED;
     }
 
     function getDeviceExperience() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceExperience; }
         if (IS_OBGSTATE_EXPOSED) { return obgState.appContext.device.deviceExperience; }
         if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return obgState.appContext.device.deviceExperience; }
+        if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceExperience; }
         return null;
     }
 
@@ -334,6 +312,9 @@
     function getEnvironment() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
             return obgClientEnvironmentConfig.startupContext.appContext.environment;
+        }
+        if (IS_OBGSTARTUP_EXPOSED) {
+            return obgStartup.config.appSettings.environment;
         }
         return obgState.appContext.environment;
     }
@@ -359,7 +340,7 @@
                 }
             } return false;
         } else {
-            if (BRAND_NAME == "Betsafe" && CULTURE == "en-CA") {
+            if (BRAND_NAME == "betsafe" && CULTURE == "en-CA") {
                 return false;
             }
             if (CULTURE == "en-CA" || CULTURE == "en-US") {
@@ -372,14 +353,25 @@
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
             return obgClientEnvironmentConfig.startupContext.appContext.device.culture;
         }
-        return obgState.appContext.device.culture;
+        if (IS_OBGSTATE_EXPOSED) {
+            return obgState.appContext.device.culture;
+        }
+        if (IS_OBGSTARTUP_EXPOSED) {
+            return obgStartup.config.core.culture.defaultCultureCode;
+        }
+        return null;
     }
 
     function getLanguageCode() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
             return obgClientEnvironmentConfig.startupContext.config.core.market.languageCode;
         }
-        return obgState.market.currentMarket.languageCode;
+        if (IS_OBGSTATE_EXPOSED) { return obgState.market.currentMarket.languageCode; }
+        if (IS_NODECONTEXT_EXPOSED) { return nodeContext.detectedMarket.code; }
+        if (IS_OBGSTARTUP_EXPOSED) {
+            return obgStartup.config.core.market.languageCode;
+        }
+        return null;
     }
 
     function getIsEventInObgState(eventId) {
@@ -399,76 +391,71 @@
         return true;
     }
 
-    function getIsMarketInObgState(marketId) {
-        return !!obgState.sportsbook.eventMarket.markets[marketId];
-    }
-
+    // function getIsMarketInObgState(marketId) {
+    //     return !!obgState.sportsbook.eventMarket.markets[marketId];
+    // }
 
     function isBonusSystemUs() {
-        return (BRAND_NAME == "Firestorm US" || BRAND_NAME == "Betsafe Colorado");
+        return (BRAND_NAME == "firestormus" || BRAND_NAME == "betsafeco");
     }
 
-    function getBrandName() {
-        let brandName;
-        if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
-            brandName = obgClientEnvironmentConfig.startupContext.brandName;
-        } else {
-            brandName = "localhost";
-        }
 
-        let brandNames;
-        if (IS_B2B || IS_SPORTSBOOK_IN_IFRAME) {
-            brandNames = {
-                betsson: "Betsson COM B2B",
-                betssongr: "Betsson GR",
-                betssonarcb: "Betsson ArCb",
-                nordicbet: "Nordicbet",
-                firestorm: "Firestorm",
-                firestormus: "Firestorm US",
-                guts: "Guts",
-                ibet: "Ibet",
-                jetbahis: "Jetbahis",
-                rexbet: "Rexbet",
-                rizk: "Rizk",
-                betsafeco: "Betsafe CO",
-                betsafeon: "Betsafe ON",
-                hovarda: "Hovarda",
-                betssonmx: "Betsson MX",
-                localhost: "Localhost",
-                betssoncz: "Betsson CZ",
-                betssondk: "Betsson DK",
-                casinodk: "Betsson DK",
-                bethard: "Bethard",
-                hommerson: "Hommerson"
-            }
-        } else {
-            brandNames = {
-                localhost: "Localhost",
-                betsafe: "Betsafe COM",
-                betsafelatvia: "Betsafe LV",
-                betsafeestonia: "Betsafe EE",
-                betsson: "Betsson COM",
-                betssonco: "Betsson CO",
-                betssoncz: "Betsson CZ",
-                betssonarba: "Betsson ArBa (Province)",
-                betssonarbacity: "Betsson ArBaCity",
-                // betssongr: "Betsson GR",
-                betssones: "Betsson ES",
-                nordicbetdk: "Nordicbet DK",
-                bets10: "Bets10",
-                mobilbahis: "Mobilbahis",
-                b10: "B10",
-                krooncasino: "KroonCasino",
-                oranjecasino: "OranjeCasino",
-                betssonnl: "Betsson NL"
-            }
+    function getBrandFriendlyName(brandName) {
+        let brands = {
+            b10: "B10",
+            betsafe: "Betsafe COM",
+            betsafeco: "Betsafe CO",
+            betsafeestonia: "Betsafe EE",
+            betsafelatvia: "Betsafe LV",
+            betsafeon: "Betsafe ON",
+            betsson: "Betsson COM",
+            btsarbacity: "Betsson ArBaCity",
+            betssonarbacity: "Betsson ArBaCity",
+            btsarba: "Betsson ArBa (Province)",
+            betssonarba: "Betsson ArBa (Province)",
+            betssonarcb: "Betsson ArCb",
+            betssonco: "Betsson CO",
+            betssoncz: "Betsson CZ",
+            betssondk: "Betsson DK",
+            betssones: "Betsson ES",
+            betssongr: "Betsson GR",
+            betssonmx: "Betsson MX",
+            betssonnl: "Betsson NL",
+            betssonnlb2b: "Betsson NL B2B",
+            bethard: "Bethard",
+            firestorm: "Firestorm",
+            firestormus: "Firestorm US",
+            guts: "Guts",
+            hommerson: "Hommerson",
+            hovarda: "Hovarda",
+            ibet: "Ibet",
+            jetbahis: "Jetbahis",
+            krooncasino: "KroonCasino",
+            localhost: "Localhost",
+            mobilbahis: "Mobilbahis",
+            nordicbet: "Nordicbet",
+            nordicbetdk: "Nordicbet DK",
+            oranjecasino: "OranjeCasino",
+            rexbet: "Rexbet",
+            rizk: "Rizk"
         }
-        let brandNameToReturn = brandNames[brandName];
-        if (brandNameToReturn == undefined) {
+        if (brands[brandName] == undefined) {
             return brandName;
         }
-        return brandNames[brandName];
+        return brands[brandName];
     }
+
+
+    function getBrandName() {
+        if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
+            return obgClientEnvironmentConfig.startupContext.brandName.toLowerCase();
+        }
+        if (IS_OBGSTARTUP_EXPOSED) {
+            return obgStartup.config.appSettings.brandName.toLowerCase();
+        }
+        return "localhost";
+    }
+
 
     function log(content) {
         console.log("SPORTSBOOKTOOL SAYS: " + content);
@@ -546,7 +533,7 @@
         function limitFeatures(limitationCause) {
             switch (limitationCause) {
                 case "obgState":
-                    limitedFunctionsMessageText = "obgState is not enabled";
+                    limitedFunctionsMessageText = "obgState not exposed";
                     removeObgStateFeatures()
                     break;
                 case "iframe":
@@ -554,7 +541,7 @@
                     removeObgStateFeatures()
                     break;
                 case "obgRt":
-                    limitedFunctionsMessageText = "obgRt is not enabled";
+                    limitedFunctionsMessageText = "obgRt not exposed";
                     removeObgRtFeatures()
                     break;
             }
@@ -607,6 +594,12 @@
         }
     }
 
+    function initBrands() {
+        if (IS_OBGSTATE_EXPOSED) {
+            brands = getBrands();
+        }
+    }
+
     window.initContext = () => {
         initContext();
     }
@@ -624,7 +617,7 @@
         const postMessageRow = document.getElementById("postMessageRow");
 
 
-        if (IS_B2B) {
+        if (IS_B2B_IFRAME_ONLY) {
             show(postMessageRow);
         } else {
             hide(postMessageRow);
@@ -651,7 +644,8 @@
             deviceType.innerText = DEVICE_TYPE + " " + DEVICE_EXPERIENCE;
         }
         document.getElementById("environment").innerText = ENVIRONMENT_TO_DISPLAY;
-        document.getElementById("brandName").innerText = BRAND_WITH_LANGUAGECODE;
+        document.getElementById("brandName").innerText = BRAND_NAME_WITH_LANGUAGECODE;
+        document.getElementById("B2BorB2C").innerText = " - " + B2X;
         document.getElementById("browserVersion").innerText = BROWSER_VERSION;
         document.getElementById("obgVersion").innerText = SB_VERSION;
 
@@ -731,17 +725,17 @@
                 messageRowId = "disableSSRRow";
                 break;
             case "exposeObgStateAndRt":
-                params.push(ENABLE_OBGSTATE, ENABLE_OBGRT);
+                params.push(EXPOSE_OBGSTATE, EXPOSE_OBGRT);
                 messageRowId = "obgStateAndRtRow";
                 break;
             case "openMatchingIframe":
                 url = new URL(replaceEnvInIframeURL(getCleanIframeURL(iframeURL)) + getPathAndParamsFromSportsbookURL(window.location.href));
-                params.push(ENABLE_OBGSTATE, ENABLE_OBGRT);
+                params.push(EXPOSE_OBGSTATE, EXPOSE_OBGRT);
                 messageRowId = "openMatchingIframeRow";
                 break;
             case "openIframe":
                 url = new URL(getCleanIframeURL(iframeURL) + getPathAndParamsFromSportsbookURL(window.location.href));
-                params.push(ENABLE_OBGSTATE, ENABLE_OBGRT);
+                params.push(EXPOSE_OBGSTATE, EXPOSE_OBGRT);
                 messageRowId = "openIframeRow";
                 break;
             case "disableGeoFencing":
@@ -815,7 +809,10 @@
     }
 
     function getRoutes() {
-        return obgClientEnvironmentConfig.startupContext.routes;
+        if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
+            return obgClientEnvironmentConfig.startupContext.routes;
+        }
+        return obgStartup.routes;
     }
 
     function replaceEnvInIframeURL(iframeURL) {
@@ -901,7 +898,7 @@
         // windowMoverForMouse();
         const isTouchBrowser = ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0);
 
-        if (isTouchBrowser || (IS_B2B && !IS_SPORTSBOOK_IN_IFRAME && !(DEVICE_TYPE == "Desktop"))) {
+        if (isTouchBrowser || (IS_B2B_IFRAME_ONLY && !IS_SPORTSBOOK_IN_IFRAME && !(DEVICE_TYPE == "Desktop"))) {
             if (!(/Mobi|Android/i.test(navigator.userAgent))) {
                 windowMoverForMouse();
             } else {
@@ -1012,7 +1009,7 @@
             "|| ||Desktop||Mobile||\n" +
             "|Test|*{color:#00875a}Passed{color}*|*{color:#00875a}Passed{color}*|" + "\n" +
             "|Env|" + ENVIRONMENT_TO_DISPLAY + "|" + ENVIRONMENT_TO_DISPLAY + "|\n" +
-            "|Brand(s)|" + BRAND_WITH_LANGUAGECODE + "|" + BRAND_WITH_LANGUAGECODE + "|\n" +
+            "|Brand(s)|" + BRAND_NAME_WITH_LANGUAGECODE + "|" + BRAND_NAME_WITH_LANGUAGECODE + "|\n" +
             "|Browser(s)|" + BROWSER_VERSION + "|" + BROWSER_VERSION + "|\n" +
             "|Version|" + SB_VERSION + "|" + SB_VERSION + "|\n" +
             "|Proof| | |";
@@ -1070,11 +1067,13 @@
     }
 
     function getPostMessage() {
-        var href = window.location.href;
-        var origin = window.location.origin;
-        var staticContextId = obgClientEnvironmentConfig.startupContext.contextId.staticContextId;
-        var userContextId = obgClientEnvironmentConfig.startupContext.contextId.userContextId;
-        var externalUrl = href.replace(origin + "/", "").replace(staticContextId + "/", "").replace(userContextId, "");
+        let href = window.location.href;
+        let origin = window.location.origin;
+        // var staticContextId = obgClientEnvironmentConfig.startupContext.contextId.staticContextId;
+        let staticContextId = getStaticContextId();
+        // var userContextId = obgClientEnvironmentConfig.startupContext.contextId.userContextId;
+        let userContextId = getUserContextId();
+        let externalUrl = href.replace(origin + "/", "").replace(staticContextId + "/", "").replace(userContextId, "");
         return `postMessage(
     {
         type: "routeChangeIn",
@@ -1085,10 +1084,10 @@
     }
 
     window.copyToClipboard = (param) => {
-        var text;
+        let text;
         switch (param) {
             case "brand":
-                text = BRAND_WITH_LANGUAGECODE;
+                text = BRAND_NAME_WITH_LANGUAGECODE;
                 break;
             case "obgVersion":
                 text = SB_VERSION;
@@ -1113,6 +1112,9 @@
                 break;
             case "accaId":
                 text = accaId;
+                break;
+            case "profitBoostId":
+                text = profitBoostId;
                 break;
             case "freeBetId":
                 text = freeBetId;
@@ -1185,6 +1187,21 @@
         return obgState.sportsbook.eventMarket.markets[marketId].eventId;
     }
 
+    function getEventIdBySelectionId(selectionId) {
+        return getEventIdByMarketId(getMarketIdBySelectionId(selectionId));
+    }
+
+    function getMarketIdBySelectionId(selectionId) {
+        return obgState.sportsbook.selection.selections[selectionId].marketId;
+    }
+
+    function getMarketIdByEventIdAndMarketTemplateId(eventId, marketTemplateId) {
+        try {
+            return obgState.sportsbook.eventMarket.marketMap[eventId][marketTemplateId][0];
+        } catch { return undefined; }
+    }
+
+
     window.initSbToolsMarket = () => {
         initSbToolsMarket();
     }
@@ -1228,11 +1245,9 @@
 
         function listenerForMarket() {
             marketId = getLastMarketIdFromBetslip();
-            // log("\nmarketId: " + marketId + "\npreviousMarketId: " + previousMarketId);
             if (marketId === previousMarketId) {
                 if (marketId !== null) {
                     listenerForMarketButtonsOnly();
-                    // checkIfPageIsValidToAddToCarousel();
                 }
                 return;
             } else {
@@ -1253,13 +1268,7 @@
                 marketLabelForDetectedMarket.innerHTML = "&boxur;&HorizontalLine; " + getMarketLabel(marketId);
                 displayInGreen(labelRow);
                 initAddHelpTextAndDescriptionSection();
-
                 eventId = getEventIdByMarketId(marketId);
-                if (getEventPhase(eventId) == "Prematch") {
-                    sbIdForOddsManager.innerText = "Get Market ID for ISA/Redis & Odds Manager"
-                } else {
-                    sbIdForOddsManager.innerText = "Get Market ID for ISA/Redis"
-                }
 
                 if (IS_OBGRT_EXPOSED) {
                     show(lockMarketSection, marketStateButtonsSection);
@@ -1463,7 +1472,6 @@
                 item.skeleton.threeColumnLayouts = threeColumnLayouts;
             }
 
-            // if (isCarouselOrderDefined()) {
             var carouselOrder = item.skeleton.carouselOrder;
             for (let element of carouselOrder) {
                 element.sortOrder++;
@@ -1474,10 +1482,10 @@
                 type: "Event"
             }
             item.skeleton.carouselOrder.unshift(carouselOrderElement);
-            // }
 
             addToCarouselButtonLabel.innerText = "Added"
             triggerChangeDetection(eventId, 300);
+
 
             setTimeout(function () {
                 addToCarouselButtonLabel.innerText = "Add";
@@ -1751,6 +1759,7 @@
     window.initChangeOdds = () => {
         stopPolling();
         previousSelectionId = undefined;
+
         labelRow = document.getElementById("labelForSbToolsSelection");
         const selectionIdForSbToolsSelection = document.getElementById("selectionIdForSbToolsSelection");
         const changeOddsFeatures = document.getElementById("changeOddsFeatures");
@@ -1759,7 +1768,9 @@
         const selectionLabelForDetectedSelection = document.getElementById("selectionLabelForDetectedSelection");
         const messageForSbToolsSelection = document.getElementById("messageForSbToolsSelection");
         const labelsForDetectedSelectionMarketAndEvent = document.getElementById("labelsForDetectedSelectionMarketAndEvent");
+        const btResetOdds = document.getElementById("btResetOdds");
         const initialOddsSpan = document.getElementById("initialOddsSpan");
+        const fdNewOdds = document.getElementById("fdNewOdds");
 
         intervalIdForPolling = setInterval(listenerForChangeOdds, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
@@ -1776,7 +1787,7 @@
             selectionLabel = getSelectionLabel(selectionId);
             eventLabel = getEventDisplayLabel(getLastEventIdFromBetslip());
             marketLabel = getMarketLabel(getLastMarketIdFromBetslip());
-            let odds = getLastInitialOddsFromBetslip();
+            initialOdds = getInitialOddsFromBetslip(selectionId);
 
             if (eventLabel === null || selectionLabel === null) {
                 displayInRed(labelRow);
@@ -1784,6 +1795,7 @@
                 messageForSbToolsSelection.innerText = NOT_FOUND;
                 hide(changeOddsFeatures, lockSelectionSection, labelsForDetectedSelectionMarketAndEvent);
             } else {
+                fdNewOdds.value = initialOdds.toFixed(2);
                 displayInGreen(labelRow);
                 show(changeOddsFeatures, lockSelectionSection, labelsForDetectedSelectionMarketAndEvent);
                 hide(messageForSbToolsSelection);
@@ -1791,28 +1803,51 @@
                 marketLabelForDetectedSelection.innerHTML = "&boxur;&HorizontalLine; " + marketLabel;
                 selectionLabelForDetectedSelection.innerHTML = "&boxur;&HorizontalLine; " + selectionLabel;
                 selectionIdForSbToolsSelection.innerHTML = selectionId;
-                initialOddsSpan.innerText = odds.toFixed(2);
+                initialOddsSpan.innerText = initialOdds.toFixed(2);
             }
         }
-    }
+
+        window.setOdds = () => {
+            let newOdds = fdNewOdds.value;
+            if (newOdds != initialOdds) {
+                activate(btResetOdds);
+            } else {
+                inactivate(btResetOdds);
+            }
+            if (lockedSelectionId != undefined) {
+                selectionId = lockedSelectionId;
+            }
+            if (lockedInitialOdds != undefined) {
+                initialOdds = lockedInitialOdds;
+            }
+            if (newOdds == "" || newOdds == null) {
+                newOdds = initialOdds;
+                fdNewOdds.value = initialOdds.toFixed(2);
+            }
+            obgRt.setSelectionOdds([{
+                msi: selectionId,
+                o: Number(newOdds)
+            }]);
+        }
+
+        window.resetOdds = () => {
+            inactivate(btResetOdds);
+            if (lockedSelectionId != undefined) {
+                selectionId = lockedSelectionId;
+            }
+            if (lockedInitialOdds != undefined) {
+                initialOdds = lockedInitialOdds;
+            }
+            obgRt.setSelectionOdds([{
+                msi: selectionId,
+                o: Number(initialOdds)
+            }]);
+            fdNewOdds.value = initialOdds.toFixed(2);
+        }
 
 
-    window.changeOdds = () => {
-        var newOdds = document.getElementById("newOdds").value;
-        if (lockedSelectionId !== undefined) {
-            selectionId = lockedSelectionId;
-        }
-        if (lockedInitialOdds !== undefined) {
-            initialOdds = lockedInitialOdds;
-        }
-        if (newOdds === "" || newOdds === null) {
-            newOdds = initialOdds;
-        }
-        obgRt.setSelectionOdds([{
-            msi: selectionId,
-            o: Number(newOdds)
-        }]);
     }
+
 
     window.lockSelection = () => {
         const checkBox = document.getElementById("chkLockSelection");
@@ -1821,7 +1856,7 @@
 
         if (checkBox.checked) {
             lockedSelectionId = getLastSelectionIdFromBetslip();
-            lockedInitialOdds = getLastInitialOddsFromBetslip();
+            lockedInitialOdds = getInitialOddsFromBetslip(selectionId);
             detectedOrLockedRow.innerHTML = "&#128274; Locked selection:";
             labelRow.classList.add("displayInGreenGlow");
             stopPolling();
@@ -1837,26 +1872,29 @@
     }
 
     function getLastSelectionIdFromBetslip() {
+        let betslip = getBetSlipByObgState();
         try {
-            // var selections = Object.values(getBetSlipByObgState().selections);
-            // var indexOfLastSelection = selections.length - 1;
-            // selectionId = selections[indexOfLastSelection].selectionId;
-            return getBetSlipByObgState().orderedSelections[0].selection.selectionId;
+            if (betslip.orderedSelections.length == 0) {
+                return null;
+            }
+            let orderedSelections = betslip.orderedSelections;
+            let lastOrderedSelection = orderedSelections[orderedSelections.length - 1];
+            if (!!lastOrderedSelection.selection) {
+                return lastOrderedSelection.selection.selectionId;
+            } else {
+                let bbEventId = lastOrderedSelection.bbEventId;
+                let betBuilderSelections = betslip.betBuilderSelections;
+                let lastBetBuilderSelection = betBuilderSelections[bbEventId];
+                let selectionLegs = lastBetBuilderSelection.selectionLegs;
+                return selectionLegs[selectionLegs.length - 1].id;
+            }
         } catch {
             return null;
         }
-        // return selectionId;
     }
 
-    function getLastInitialOddsFromBetslip() {
-        try {
-            var allInitialOdds = Object.values(getBetSlipByObgState().initialOdds);
-            var indexOfLastInitialOdds = allInitialOdds.length - 1;
-            initialOdds = allInitialOdds[indexOfLastInitialOdds];
-        } catch {
-            initialOdds = null;
-        }
-        return initialOdds;
+    function getInitialOddsFromBetslip(selectionId) {
+        return getBetSlipByObgState().initialOdds[selectionId];
     }
 
     function getSelectionLabel(selectionId) {
@@ -2430,7 +2468,8 @@
         try {
             // let selections = Object.values(getBetSlipByObgState().selections);
             // return selections[selections.length - 1].eventId;
-            return getBetSlipByObgState().orderedSelections[0].selection.eventId;
+            // return getBetSlipByObgState().orderedSelections[0].selection.eventId;
+            return getEventIdBySelectionId(getLastSelectionIdFromBetslip());
         } catch {
             return null;
         }
@@ -2565,6 +2604,9 @@
         const hasPriceBoostSection = document.getElementById("hasPriceBoostSection");
         const chkHasPriceBoost = document.getElementById("chkHasPriceBoost");
 
+        const hasSuperBoostSection = document.getElementById("hasSuperBoostSection");
+        const chkHasSuperBoost = document.getElementById("chkHasSuperBoost");
+
         const hasLiveVisualSection = document.getElementById("hasLiveVisualSection");
         const chkHasLiveVisual = document.getElementById("chkHasLiveVisual");
 
@@ -2655,6 +2697,7 @@
                 categoryIdForEventDetails.innerHTML = "[" + getCategoryIdByEventId(eventId) + "]";
                 regionIdForEventDetails.innerHTML = "[" + getRegionIdByEventId(eventId) + "]";
                 competitionIdForEventDetails.innerHTML = "[" + getCompetitionIdByEventId(eventId) + "]";
+                initEventPropertyCheckboxes();
                 displayInGreen(labelRow);
                 initRenameEventSection();
                 listenerForEventButtonsOnly();
@@ -2860,6 +2903,10 @@
                     toggleHasPriceBoost();
                     delay = 0;
                     break;
+                case "superBoost":
+                    toggleHasSuperBoost();
+                    delay = 0;
+                    break;
                 case "liveVisual":
                     toggleHasLiveVisual();
                     break;
@@ -2881,7 +2928,6 @@
                     delay = 0;
                     break;
             }
-            // triggerChangeDetection(eventId, 500);
             triggerChangeDetection(eventId, delay);
         }
 
@@ -2895,72 +2941,151 @@
 
         function toggleHasPriceBoost() {
             if (chkHasPriceBoost.checked) {
-                obgState.sportsbook.priceBoost.eventMap[eventId] = ["Prematch", "Live"];
+                createPriceBoost(false);
+            } else {
+                deletePriceBoost(false);
+            }
+        }
+
+        function toggleHasSuperBoost() {
+            if (chkHasSuperBoost.checked) {
+                createPriceBoost(true);
+            } else {
+                deletePriceBoost(true);
+            }
+        }
+
+        function createPriceBoost(isSuperBoost) {
+            selectionId = getLastSelectionIdFromBetslip();
+            if (selectionId == null) {
                 marketId = getFirstMarketIdOfEvent(eventId);
                 selectionId = getFirstSelectionIdOfMarket(marketId);
-                createPriceBoost(eventId, marketId, selectionId);
             } else {
-                delete obgState.sportsbook.priceBoost.eventMap[eventId];
-                let boosts = Object.keys(obgState.sportsbook.priceBoost.priceBoost);
-                let criteriaEntityDetails;
-                for (let b of boosts) {
-                    criteriaEntityDetails = obgState.sportsbook.priceBoost.priceBoost[b].criteria.criteriaEntityDetails;
-                    for (let detail of criteriaEntityDetails) {
-                        if (detail.eventId == eventId) {
-                            delete obgState.sportsbook.priceBoost.priceBoost[b];
+                marketId = getMarketIdBySelectionId(selectionId);
+            }
+            categoryId = getCategoryIdByEventId(eventId);
+            let competitionId = getCompetitionIdByEventId(eventId);
+            obgState.sportsbook.priceBoost.eventMap[eventId] = ["Prematch", "Live"];
+            obgState.sportsbook.priceBoost.marketMap[marketId] = ["Prematch", "Live"];
+            createPriceBoostObject(eventId, marketId, selectionId, categoryId, competitionId, isSuperBoost);
+
+        }
+
+        function createPriceBoostObject(eventId, marketId, selectionId, categoryId, competitionId, isSuperBoost) {
+            let sbToolPriceBoostId = "SBTOOL-" + generateGuid();
+            let priceBoostStateItem = {
+                "id": sbToolPriceBoostId,
+                "name": "Generated by SB Tool, can't lookup in TT",
+                "type": "PriceBoost",
+                "expiryDate": "2050-12-30T23:00:00Z",
+                "createdDate": "2023-08-02T09:10:28.027Z",
+                "criteria": {
+                    "eventPhases": [
+                        "Prematch",
+                        "Live"
+                    ],
+                    "marketTemplateIds": [],
+                    "criteriaEntityDetails": [
+                        {
+                            "categoryId": categoryId,
+                            "competitionId": competitionId,
+                            "eventId": eventId,
+                            "marketId": marketId,
+                            "marketSelectionId": selectionId
                         }
+                    ]
+                },
+                "conditions": {
+                    "betTypes": [
+                        "Single"
+                    ],
+                    "minimumStake": 0.11,
+                    "maximumStake": 120,
+                    "oddsLimit": {
+                        "maxOdds": 10,
+                        "minOdds": 1.1
+                    },
+                    "allSelectionsEligible": false
+                },
+                "bonusData": {
+                    "type": "Multiplier",
+                    "boostedOdds": 5,
+                    "isOptedInByDefault": false,
+                    "isSuperBoost": isSuperBoost,
+                    "priceBoostedFormats": {
+                        "1": "5.00"
+                    }
+                },
+                "isPersonal": false
+            }
+
+            // updateCategoryAndCompetition(categoryId, competitionId);
+
+            obgState.sportsbook.priceBoost.priceBoost = {
+                ...obgState.sportsbook.priceBoost.priceBoost, [sbToolPriceBoostId]: priceBoostStateItem
+            }
+
+
+        }
+
+        // function updateCategoryAndCompetition(categoryId, competitionId) {
+        //     let categoryObj = obgState.sportsbook.eventMarketWidget.skeleton.categories.find(cat => cat.id === categoryId);
+
+        //     if (!categoryObj) {
+        //         let label = obgState.sportsbook.sportCatalog.categories[categoryId].label;
+        //         let slug = obgState.sportsbook.sportCatalog.categories[categoryId].slug;
+        //         categoryObj = {
+        //             id: categoryId,
+        //             label,
+        //             slug,
+        //             competitions: []
+        //         };
+        //         obgState.sportsbook.eventMarketWidget.skeleton.categories = [
+        //             ...obgState.sportsbook.eventMarketWidget.skeleton.categories,
+        //             categoryObj
+        //         ];
+        //     }
+
+        //     let competitionObj = categoryObj.competitions.find(comp => comp.id === competitionId);
+
+        //     if (!competitionObj) {
+        //         const { label } = obgState.sportsbook.sportCatalog.competitions[competitionId];
+        //         competitionObj = {
+        //             id: competitionId,
+        //             label
+        //         };
+        //         categoryObj.competitions = [...categoryObj.competitions, competitionObj];
+
+        //     }
+        //     obgState.sportsbook.eventMarketWidget.skeleton.categories = [
+        //         ...obgState.sportsbook.eventMarketWidget.skeleton.categories                
+        //     ];
+        // }
+
+        function deletePriceBoost(isSuperBoost) {
+            delete obgState.sportsbook.priceBoost.eventMap[eventId];
+            delete obgState.sportsbook.priceBoost.marketMap[marketId];
+            let boosts = Object.keys(obgState.sportsbook.priceBoost.priceBoost);
+            let criteriaEntityDetails;
+            for (let b of boosts) {
+                criteriaEntityDetails = obgState.sportsbook.priceBoost.priceBoost[b].criteria.criteriaEntityDetails;
+                for (let detail of criteriaEntityDetails) {
+                    if (detail.eventId == eventId) {
+                        if (isSuperBoost) {
+                            if (obgState.sportsbook.priceBoost.priceBoost[b].bonusData.isSuperBoost) {
+                                delete obgState.sportsbook.priceBoost.priceBoost[b];
+                            }
+                        } else {
+                            if (!obgState.sportsbook.priceBoost.priceBoost[b].bonusData.isSuperBoost) {
+                                delete obgState.sportsbook.priceBoost.priceBoost[b];
+                            }
+                        }
+
                     }
                 }
             }
-            function createPriceBoost(eventId, marketId, selectionId) {
-                let sbtPbId = "SBTOOL-" + generateGuid();
-                let priceBoostStateItem = {
-                    "id": sbtPbId,
-                    "customerBonusId": "",
-                    "name": "Generated by SB Tool, can't lookup in TT",
-                    "type": "PriceBoost",
-                    "expiryDate": "2050-12-30T23:00:00Z",
-                    "createdDate": "2023-08-02T09:10:28.027Z",
-                    "criteria": {
-                        "eventPhases": [
-                            "Prematch",
-                            "Live"
-                        ],
-                        "marketTemplateIds": [],
-                        "criteriaEntityDetails": [
-                            {
-                                "categoryId": "1",
-                                "competitionId": "15",
-                                "eventId": eventId,
-                                "marketId": marketId,
-                                "marketSelectionId": selectionId
-                            }
-                        ]
-                    },
-                    "conditions": {
-                        "betTypes": [
-                            "Single"
-                        ],
-                        "minimumStake": 0.11,
-                        "maximumStake": 120,
-                        "oddsLimit": {
-                            "maxOdds": 10,
-                            "minOdds": 1.1
-                        },
-                        "allSelectionsEligible": false
-                    },
-                    "bonusData": {
-                        "type": "Multiplier",
-                        "boostedOdds": 5,
-                        "isOptedInByDefault": false,
-                        "priceBoostedFormats": {
-                            "1": "5.00"
-                        }
-                    },
-                    "isPersonal": false
-                }
-
-                obgState.sportsbook.priceBoost.priceBoost[sbtPbId] = priceBoostStateItem;
+            obgState.sportsbook.priceBoost.priceBoost = {
+                ...obgState.sportsbook.priceBoost.priceBoost
             }
         }
 
@@ -3014,63 +3139,43 @@
             }
         }
 
-        // function getStartDate() {
-        //     return getFriendlyDateFromIsoDate(obgState.sportsbook.event.events[eventId].startDate);
-        //     // var dateObj = new Date(obgState.sportsbook.event.events[eventId].startDate);
-        //     // var day = dateObj.getDate();
-        //     // var month = (dateObj.toLocaleString('default', { month: 'short' })).toUpperCase();
-        //     // var year = dateObj.getFullYear();
-        //     // var hours = ("0" + dateObj.getHours()).slice(-2);
-        //     // var minutes = ("0" + dateObj.getMinutes()).slice(-2);
-        //     // return day + " " + month + " " + year + ", " + hours + ":" + minutes;
-        // }
-
         function initEventPropertyCheckboxes() {
 
-            obgState.sportsbook.event.events[eventId].hasLiveVisual ?
-                chkHasLiveVisual.checked = true :
-                chkHasLiveVisual.checked = false;
+            chkHasLiveVisual.checked = obgState.sportsbook.event.events[eventId].hasLiveVisual ?? false;
 
-            obgState.sportsbook.event.events[eventId].hasLiveStreaming ?
-                chkHasLiveStreaming.checked = true :
-                chkHasLiveStreaming.checked = false;
+            chkHasLiveStreaming.checked = obgState.sportsbook.event.events[eventId].hasLiveStreaming ?? false;
 
-            obgState.sportsbook.event.events[eventId].hasFastMarkets ?
-                chkHasFastMarkets.checked = true :
-                chkHasFastMarkets.checked = false;
+            chkHasFastMarkets.checked = obgState.sportsbook.event.events[eventId].hasFastMarkets ?? false;
 
-            if (obgState.sportsbook.priceBoost.eventMap[eventId] !== undefined) {
-                if (obgState.sportsbook.priceBoost.eventMap[eventId].length !== 0) {
-                    chkHasPriceBoost.checked = true;
+            chkHasPriceBoost.checked = getEventHasSingleBoost(eventId, false);
+
+            chkHasSuperBoost.checked = getEventHasSingleBoost(eventId, true);
+
+            chkHasLiveStatistics.checked = obgState.sportsbook.event.events[eventId].hasLiveStatistics ?? false;
+
+            chkHasBetBuilderLink.checked = obgState.sportsbook.event.events[eventId].hasBetBuilderLink ?? false;
+
+            chkHasPrematchStatistics.checked = obgState.sportsbook.event.events[eventId].prematchStatisticsProviders.length !== 0;
+
+            chkHasVar.checked = !!obgState.sportsbook.scoreboard[eventId] && obgState.sportsbook.scoreboard[eventId].varState === 2;
+
+        }
+
+        function getEventHasSingleBoost(eventId, isSuperBoost) {
+            for (const pb of Object.values(obgState.sportsbook.priceBoost.priceBoost)) {
+                if (pb.criteria.criteriaEntityDetails.length === 1
+                    && pb.criteria.criteriaEntityDetails[0].eventId === eventId
+                    && pb.bonusData.isSuperBoost === isSuperBoost) {
+                    return true;
                 }
-            } else chkHasPriceBoost.checked = false;
-
-
-            obgState.sportsbook.event.events[eventId].hasLiveStatistics ?
-                chkHasLiveStatistics.checked = true :
-                chkHasLiveStatistics.checked = false;
-
-            obgState.sportsbook.event.events[eventId].hasBetBuilderLink ?
-                chkHasBetBuilderLink.checked = true :
-                chkHasBetBuilderLink.checked = false;
-
-            obgState.sportsbook.event.events[eventId].prematchStatisticsProviders.length !== 0 ?
-                chkHasPrematchStatistics.checked = true :
-                chkHasPrematchStatistics.checked = false;
-
-            if (!!obgState.sportsbook.scoreboard[eventId]) {
-                obgState.sportsbook.scoreboard[eventId].varState == 2 ?
-                    chkHasVar.checked = true :
-                    chkHasVar.checked = false;
-            } else {
-                chkHasVar.checked = false;
             }
+            return false;
         }
 
         const eventPropertiesSection = document.getElementById("eventPropertiesSection");
 
         function listenerForEventButtonsOnly() {
-            initEventPropertyCheckboxes();
+            // initEventPropertyCheckboxes();
 
             if (mockedEventPhase == undefined) {
                 mockedEventPhase = getEventPhase(eventId);
@@ -3142,26 +3247,25 @@
         }
     }
 
-    // window.getSbIdForOddsManager = (entity) => {
-    //     entity === 'event' ?
-    //         window.open("http://sbtradingmappingmainapi.qa.bde.local/mapping/fixture/new/" + eventId) :
-    //         window.open("http://sbtradingmappingmainapi.qa.bde.local/mapping/market/new/" + marketId);
-    // }
-
     window.getLegacyEventId = () => {
         IS_BLE ?
-            window.open("http://sbtradingmappingmainapi.ble.local/mapping/fixture/new/" + eventId) :
+            window.open("http://sbpk8mappingmainapi.sportsbook-prod.euc1.betsson.tech/mapping/fixture/new/" + eventId) :
             window.open("http://sbtradingmappingmainapi.qa.bde.local/mapping/fixture/new/" + eventId);
 
     }
 
-    window.navigateToEvent = () => {
-
+    window.getWholeIsaResponse = () => {
+        if (segmentLegacyId == undefined) {
+            segmentLegacyId = getSegmentLegacyId();
+        }
+        IS_BLE ?
+            window.open("http://sbpisaobg.sportsbook-prod.use1.betsson.tech/v2/" + segmentLegacyId + "/" + LANGUAGECODE + "/event?fixturetags=" + eventId) :
+            window.open("http://sbqk8isaobg.sportsbook-qa-qa.euc1.betsson.tech/isa/v2/" + segmentLegacyId + "/" + LANGUAGECODE + "/event?fixturetags=" + eventId);
     }
 
     window.getLegacyMarketId = () => {
         IS_BLE ?
-            window.open("http://sbtradingmappingmainapi.ble.local/mapping/market/new/" + marketId) :
+            window.open("http://sbpk8mappingmainapi.sportsbook-prod.euc1.betsson.tech/mapping/market/new/" + marketId) :
             window.open("http://sbtradingmappingmainapi.qa.bde.local/mapping/market/new/" + marketId);
 
     }
@@ -3231,21 +3335,13 @@
         return obgState.sportsbook.eventMarket.markets[marketId].marketTemplateId;
     }
 
-    function isCarouselOrderDefined() {
-        return obgState.sportsbook.carousel.item.skeleton.carouselOrder != undefined
-    }
-
-    // function getMarketTemplateIdOfFirstMarket() {
-    //     return getMarketTemplateId(obgState.sportsbook.eventMarket.eventMap[eventId][0]);
-    // }
-
     function getIsUserLoggedIn() {
         var aReducer = localStorage.authReducer;
         if (!aReducer) {
             if (IS_OBGSTATE_EXPOSED) {
                 return obgState.auth.isAuthenticated;
             }
-            if (IS_B2B) {
+            if (IS_B2B_IFRAME_ONLY) {
                 if (IS_SPORTSBOOK_IN_IFRAME) {
                     return iframeURL.includes("/ctx");
                 }
@@ -3261,14 +3357,11 @@
 
     function getLastMarketIdFromBetslip() {
         try {
-            // var markets = Object.values(getBetSlipByObgState().selections);
-            // var indexOfLastMarket = markets.length - 1;
-            // marketId = markets[indexOfLastMarket].marketId;
-            return getBetSlipByObgState().orderedSelections[0].selection.marketId;
+            return getMarketIdBySelectionId(getLastSelectionIdFromBetslip());
+
         } catch {
             return null;
         }
-        // return marketId;
     }
 
     function getFirstMarketIdOfEvent(eventId) {
@@ -3689,15 +3782,17 @@
         previousPriceBoosts = null;
         previousSelectionId = undefined;
 
-        const pBcombiIcon = "&#x1F9E9;";
+        const pbCombiIcon = "&#x1F9E9;";
         const pbPersonalIcon = "&#128151;";
-        const pBcriteriaNotMetIcon = "&#128683;";
+        const pbCriteriaNotMetIcon = "&#128683;";
+        const pbSuperBoostIcon = "&#128640;";
 
         const noPbFound = document.getElementById("noPbFound");
         const pbSelector = document.getElementById("pbSelector");
         const pbLegendSection = document.getElementById("pbLegendSection");
         const pbLegendCombi = document.getElementById("pbLegendCombi");
         const pbLegendPersonal = document.getElementById("pbLegendPersonal");
+        const pbLegendSuperBoost = document.getElementById("pbLegendSuperBoost");
         const pbLegendCriteriaNotMet = document.getElementById("pbLegendCriteriaNotMet");
         const pbLegendCloseable = document.getElementById("pbLegendCloseable");
 
@@ -3742,15 +3837,40 @@
         const freeBetType = document.getElementById("freeBetType");
         const freeBetStake = document.getElementById("freeBetStake");
         const freeBetBetTypes = document.getElementById("freeBetBetTypes");
-        const freeBetEvetPhases = document.getElementById("freeBetEvetPhases");
+        const freeBetEventPhases = document.getElementById("freeBetEventPhases");
         const freeBetNoOfSelectionsDiv = document.getElementById("freeBetNoOfSelectionsDiv");
         const freeBetNoOfSelections = document.getElementById("freeBetNoOfSelections");
         const freeBetExpiryDate = document.getElementById("freeBetExpiryDate");
+
+        var profitBoostsArray;
+        previousProfitBoosts = null;
+        const profitBoostNotFound = document.getElementById("profitBoostNotFound");
+        const profitBoostLogin = document.getElementById("profitBoostLogin");
+        const profitBoostSelector = document.getElementById("profitBoostSelector");
+        const profitBoostNumberOf = document.getElementById("profitBoostNumberOf");
+        const profitBoostDetailsLayout = document.getElementById("profitBoostDetailsLayout");
+        const profitBoostName = document.getElementById("profitBoostName");
+        const profitBoostIdSpan = document.getElementById("profitBoostId");
+        const profitBoostRestrictionsSection = document.getElementById("profitBoostRestrictionsSection");
+        const profitBoostPathToCompetition = document.getElementById("profitBoostPathToCompetition");
+        const profitBoostMultiplier = document.getElementById("profitBoostMultiplier");
+        const profitBoostMaxBoostedWinningsInEuro = document.getElementById("profitBoostMaxBoostedWinningsInEuro");
+        const profitBoostStake = document.getElementById("profitBoostStake");
+        const profitBoostMinMaxOdds = document.getElementById("profitBoostMinMaxOdds");
+        const profitBoostBetTypes = document.getElementById("profitBoostBetTypes");
+        const profitBoostEventPhases = document.getElementById("profitBoostEventPhases");
+        const profitBoostNoOfSelectionsDiv = document.getElementById("profitBoostNoOfSelectionsDiv");
+        const profitBoostNoOfSelections = document.getElementById("profitBoostNoOfSelections");
+        const profitBoostExpiryDate = document.getElementById("profitBoostExpiryDate");
+
 
         intervalIdForPolling = setInterval(listenerForAccaDetails, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
 
         intervalIdForPolling = setInterval(listenerForPriceBoostDetails, POLLING_INTERVAL);
+        intervalIdsForPolling.push(intervalIdForPolling);
+
+        intervalIdForPolling = setInterval(listenerForProfitBoostDetails, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
 
         intervalIdForPolling = setInterval(listenerForFreeBetDetails, POLLING_INTERVAL);
@@ -3762,7 +3882,7 @@
         intervalIdForPolling = setInterval(listenerForAddPbToCarouselOrCards, POLLING_INTERVAL); //
         intervalIdsForPolling.push(intervalIdForPolling);
 
-        window.closePbLegend = () =>{
+        window.closePbLegend = () => {
             hide(pbLegendCloseable);
         }
 
@@ -3866,6 +3986,140 @@
             accaMinMaxStakeSpan.innerText = accaMinStake + " - " + accaMaxStake + " " + usersCurrency;
             accaExpiryDateSpan.innerText = getFriendlyDateFromIsoDate(acca.expiryDate);
         }
+
+        ////////////////////////////////// PROFITBOOST ///////////////////////////////////////////
+
+        function listenerForProfitBoostDetails() {
+            if (!getIsUserLoggedIn()) {
+                hide(profitBoostNotFound, profitBoostDetailsLayout);
+                show(profitBoostLogin);
+                return;
+            } else {
+                hide(profitBoostLogin);
+            }
+
+            profitBoosts = obgState.sportsbook.profitBoost.profitBoost;
+            profitBoostsArray = Object.values(profitBoosts);
+
+            if (profitBoosts == previousProfitBoosts) {
+                return;
+            } else {
+                previousProfitBoosts = profitBoosts;
+            }
+            if (profitBoostsArray.length == 0) {
+                show(profitBoostNotFound);
+                hide(profitBoostDetailsLayout);
+                return;
+            } else {
+                show(profitBoostDetailsLayout);
+                hide(profitBoostNotFound);
+            }
+            populateProfitBoostSelector();
+
+        }
+
+        function populateProfitBoostSelector() {
+            profitBoostNumberOf.innerText = profitBoostsArray.length;
+            profitBoostSelector.innerHTML = "";
+            let option;
+            profitBoostsArray = profitBoostsArray.sort((a, b) => a.name > b.name ? 1 : -1);
+            for (let boost of profitBoostsArray) {
+                option = document.createElement("option");
+                option.text = boost.name;
+                option.value = boost.id;
+                profitBoostSelector.appendChild(option);
+            }
+            selectProfitBoost(profitBoostsArray[0].id);
+        }
+
+        window.selectProfitBoost = (value) => {
+            selectProfitBoost(value);
+        }
+
+        function selectProfitBoost(value) {
+            let selectedProfitBoost;
+            for (let boost of profitBoostsArray) {
+                if (value == boost.id) {
+                    selectedProfitBoost = boost;
+                }
+            }
+            profitBoostId = selectedProfitBoost.id;
+            profitBoostIdSpan.innerText = profitBoostId;
+            profitBoostName.innerText = selectedProfitBoost.name;
+
+            if (selectedProfitBoost.criteria.criteriaEntityDetails.length > 0) {
+                show(profitBoostRestrictionsSection);
+                profitBoostPathToCompetition.innerHTML = getProfitBoostPathToCompetition();
+            } else {
+                hide(profitBoostRestrictionsSection);
+            }
+
+            profitBoostMultiplier.innerText = selectedProfitBoost.bonusData.profitBoostMultiplier + "%";
+            profitBoostMaxBoostedWinningsInEuro.innerText = selectedProfitBoost.bonusData.maxBoostedWinningsInEuro + " EUR";
+            profitBoostStake.innerText = selectedProfitBoost.conditions.minimumStake + " - " + selectedProfitBoost.conditions.maximumStake + " " + getCurrencyForBonuses();
+            profitBoostMinMaxOdds.innerText = selectedProfitBoost.conditions.oddsLimit.minOdds + " - " + selectedProfitBoost.conditions.oddsLimit.maxOdds;
+            profitBoostBetTypes.innerText = getArrayAsCommaSeparatedString(selectedProfitBoost.conditions.betTypes);
+            profitBoostEventPhases.innerText = getArrayAsCommaSeparatedString(selectedProfitBoost.criteria.eventPhases);
+            profitBoostExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedProfitBoost.expiryDate);
+            let noOfSelection = getNumberOfSelections();
+            if (noOfSelection != undefined) {
+                show(freeBetNoOfSelectionsDiv);
+                profitBoostNoOfSelections.innerText = noOfSelection;
+            } else {
+                hide(profitBoostNoOfSelectionsDiv);
+            }
+
+            function getNumberOfSelections() {
+                let min = checkIfZero(selectedProfitBoost.conditions.minimumNumberOfSelections);
+                let max = checkIfZero(selectedProfitBoost.conditions.maximumNumberOfSelections);
+                if (min == "..." && max == "...") {
+                    return undefined;
+                }
+                if (min == max) {
+                    return min;
+                }
+                return min + " - " + max;
+            }
+
+            function getProfitBoostPathToCompetition() {
+                let pathToCompetition, categoryName, competitionId, eventId, marketTemplateId;
+                categoryName = getCategoryNameById(selectedProfitBoost.criteria.criteriaEntityDetails[0].categoryId)
+                pathToCompetition = categoryName;
+                competitionId = selectedProfitBoost.criteria.criteriaEntityDetails[0].competitionId;
+                if (competitionId != undefined) {
+                    pathToCompetition
+                        += separatorArrow
+                        + getRegionNameByCompetitionId(competitionId)
+                        + separatorArrow + getCompetitionNameById(competitionId);
+
+                    eventId = selectedProfitBoost.criteria.criteriaEntityDetails[0].eventId;
+                    if (eventId != undefined) {
+                        if (!isEventInObgState(eventId)) {
+                            return pathToCompetition += separatorArrow + "[EVENT DATA NOT YET IN OBGSTATE]";
+                        }
+                        pathToCompetition
+                            += separatorArrow
+                            + getEventDisplayLabel(eventId);
+                        marketTemplateId = selectedProfitBoost.criteria.marketTemplateIds[0];
+                        if (marketTemplateId != undefined) {
+                            marketId = getMarketIdByEventIdAndMarketTemplateId(eventId, marketTemplateId);
+                            if (marketId == undefined) {
+                                return pathToCompetition += separatorArrow + "[MARKET DATA NOT YET IN OBGSTATE]";
+                            }
+                            pathToCompetition
+                                += separatorArrow
+                                + getMarketLabel(marketId)
+                                + " (" + marketTemplateId + ")";
+                        }
+                    }
+                    return pathToCompetition;
+                } else {
+                    // hide(profitBoostFurtherRestricions);
+                    return categoryName;
+                }
+            }
+        }
+        ////////////////////////////////// END PROFITBOOST ///////////////////////////////////////////
 
         function listenerForPriceBoostDetails() {
             priceBoosts = getPriceBoosts();
@@ -4111,29 +4365,29 @@
             pbNumberOfListed.innerText = sortedPbArray.length;
 
             let option;
-            let isCombi, isPersonal, isOddsOutOfRange, isEventPhaseNotMatching;
+            let isCombi, isPersonal, isSuperBoost, isOddsOutOfRange, isEventPhaseNotMatching;
             let arrow = " &#9658;"
-            let noOfCombis = 0;
-            let noOfPersonals = 0;
-            let noOfOddsOutOfRange = 0;
-            let noOfEventPhaseNotMatching = 0;
+            let areThereCombis, areTherePersonals, areThereSuperBoosts, areThereOddsOutOfRanges, areThereEventPhaseNotMatchings;
             let optionInnerHTML;
 
             for (var pb of sortedPbArray) {
                 isCombi = getIsCombinationPriceBoost(pb.id);
-                if (isCombi) { noOfCombis++ }
+                if (isCombi) { areThereCombis = true }
                 isPersonal = pb.isPersonal;
-                if (isPersonal) { noOfPersonals++ }
+                if (isPersonal) { areTherePersonals = true }
+
+                isSuperBoost = pb.bonusData.isSuperBoost;
+                if (isSuperBoost) { areThereSuperBoosts = true }
+
                 if (entityName != "garbage") {
                     isOddsOutOfRange = getIsOddsOutOfRange(pb.id);
                     if (isOddsOutOfRange) {
-                        noOfOddsOutOfRange++;
+                        areThereOddsOutOfRanges = true;
                     }
                     if (isCombi) {
-                        // log("iscombi " + isCombi + " " + pb.name);
                         isEventPhaseNotMatching = getIsEventPhaseNotMatching(pb.id);
                         if (isEventPhaseNotMatching) {
-                            noOfEventPhaseNotMatching++;
+                            areThereEventPhaseNotMatchings = true;
                         }
                     }
                 }
@@ -4150,13 +4404,16 @@
 
 
                 if (isOddsOutOfRange || isEventPhaseNotMatching) {
-                    optionInnerHTML += " " + pBcriteriaNotMetIcon;
+                    optionInnerHTML += " " + pbCriteriaNotMetIcon;
                 }
                 if (isPersonal) {
                     optionInnerHTML += " " + pbPersonalIcon;
                 }
                 if (isCombi) {
-                    optionInnerHTML += " " + pBcombiIcon;
+                    optionInnerHTML += " " + pbCombiIcon;
+                }
+                if (isSuperBoost) {
+                    optionInnerHTML += " " + pbSuperBoostIcon;
                 }
                 option.innerHTML = optionInnerHTML;
                 option.value = pb.id;
@@ -4164,19 +4421,29 @@
             }
 
 
-            if (noOfCombis > 0 || noOfPersonals > 0) {
+            if (areThereCombis || areTherePersonals || areThereOddsOutOfRanges || areThereEventPhaseNotMatchings || areThereSuperBoosts) {
                 show(pbLegendSection);
-                if (noOfCombis > 0) {
+                if (areThereCombis) {
                     show(pbLegendCombi);
                 } else {
                     hide(pbLegendCombi);
                 }
-                if (noOfPersonals > 0) {
+
+                if (areTherePersonals) {
                     show(pbLegendPersonal);
                 } else {
                     hide(pbLegendPersonal);
                 }
-                if (noOfOddsOutOfRange > 0 || noOfEventPhaseNotMatching > 0) {
+
+                if (areThereSuperBoosts) {
+                    show(pbLegendSuperBoost);
+                } else {
+                    hide(pbLegendSuperBoost);
+                }
+
+
+
+                if (areThereOddsOutOfRanges || areThereEventPhaseNotMatchings) {
                     show(pbLegendCriteriaNotMet);
                 } else {
                     hide(pbLegendCriteriaNotMet);
@@ -4248,7 +4515,7 @@
             let slug = getSlugByEventId(eventId);
             let urlString;
 
-            if (IS_B2B) {
+            if (IS_B2B_IFRAME_ONLY) {
                 urlString = origin + "/"
                     + getStaticContextId() + "/"
                     + getUserContextId() + "/"
@@ -4291,7 +4558,7 @@
             priceBoostId = selectedPriceBoost.id;
             pbIdSpan.innerText = priceBoostId;
             pbName.innerText = selectedPriceBoost.name;
-            pbVisibility.innerText = getPbVisibility();
+            pbVisibility.innerHTML = getPbVisibility();
             pbType.innerHTML = getPbType();
             pbEventPhases.innerText = getArrayAsCommaSeparatedString(selectedPriceBoost.criteria.eventPhases);
             pbExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedPriceBoost.expiryDate);
@@ -4308,7 +4575,7 @@
             if (!radioPbGarbage.checked) {
                 if (getIsOddsOutOfRange(selectedPriceBoost.id)) {
                     let computedPriceBoostOdds = getComputedActualOddsOfBoostedSelections(selectedPriceBoost.id);
-                    pbMinMaxOdds.innerHTML += " " + pBcriteriaNotMetIcon + " (Out of Range: " + computedPriceBoostOdds.toFixed(2) + ")";
+                    pbMinMaxOdds.innerHTML += " " + pbCriteriaNotMetIcon + " (Out of Range: " + computedPriceBoostOdds.toFixed(2) + ")";
                 }
             }
 
@@ -4320,7 +4587,7 @@
                 pbPathToCompetition.innerHTML = "Boosted selection cannot be found. Probably not open anymore.";
             } else {
                 if (getIsCombinationPriceBoost(selectedPriceBoost.id)) {
-                    pbPathToCompetition.innerHTML = pBcombiIcon + " This is a combination boost having multipe selections that don't fit here. Use Trading Tools to get their details.";
+                    pbPathToCompetition.innerHTML = pbCombiIcon + " This is a combination boost having multipe selections that don't fit here. Use Trading Tools to get their details.";
                     displayInOrange(pbPathToCompetition);
                     hide(boostedSelectionDiv, goToEventPageRow, addPbToCarouselRow);
                 } else {
@@ -4342,12 +4609,13 @@
 
             function getPbVisibility() {
                 if (selectedPriceBoost.isPersonal) {
-                    return "Personal";
+                    return "Personal " + pbPersonalIcon;
                 }
                 return "Global";
             }
 
             function getPbType() {
+                let type;
                 if (selectedPriceBoost.bonusData.type == "FixedOdds") {
                     let priceBoostedFormats = selectedPriceBoost.bonusData.priceBoostedFormats;
                     let priceBoostedOdds = priceBoostedFormats["1"];
@@ -4357,11 +4625,16 @@
                     } else if (selectedPriceFormat == "Fractional") {
                         priceBoostedOdds = priceBoostedOdds + " (Fractional: " + priceBoostedFormats["3"] + ")";
                     }
-                    return "Fixed Odds: " + priceBoostedOdds;
+                    type = "Fixed Odds: " + priceBoostedOdds;
+                } else {
+                    if (selectedPriceBoost.bonusData.type == "Multiplier") {
+                        type = "Percentage: " + selectedPriceBoost.bonusData.boostedOdds + "%";
+                    }
                 }
-                if (selectedPriceBoost.bonusData.type == "Multiplier") {
-                    return "Percentage: " + selectedPriceBoost.bonusData.boostedOdds + "%";
+                if (selectedPriceBoost.bonusData.isSuperBoost) {
+                    type += ", Super Boost " + pbSuperBoostIcon;
                 }
+                return type;
             }
 
             function getPbMinMaxStake() {
@@ -4444,7 +4717,7 @@
             freeBetType.innerText = getFreeBetType();
             freeBetStake.innerText = selectedFreebet.conditions.minimumStake + " " + getCurrencyForBonuses();
             freeBetBetTypes.innerText = getArrayAsCommaSeparatedString(selectedFreebet.conditions.betTypes);
-            freeBetEvetPhases.innerText = getArrayAsCommaSeparatedString(selectedFreebet.criteria.eventPhases);
+            freeBetEventPhases.innerText = getArrayAsCommaSeparatedString(selectedFreebet.criteria.eventPhases);
             freeBetExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedFreebet.expiryDate);
             let noOfSelection = getNumberOfSelections();
             if (noOfSelection != undefined) {
@@ -4584,19 +4857,47 @@
         }
     }
 
-    window.initSegments = () => {
 
-        if (brands == undefined) {
-            var brandsUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/brands.json";
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", brandsUrl, true);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    brands = JSON.parse(xhr.responseText);
-                    setIntervalForSegments();
+    function getBrands() {
+        let brandsUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/brands.json";
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", brandsUrl, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                brands = JSON.parse(xhr.responseText);
+                // setIntervalForSegments();
+            }
+        }
+        xhr.send();
+        return brands;
+    }
+
+    function getSegmentLegacyId() {
+        if (segmentGuid == undefined) {
+            segmentGuid = getSegmentGuid();
+        }
+        for (let brand of brands) {
+            let segments = brand.segments;
+            for (var segment of segments) {
+                if (segment.id.toLowerCase() === segmentGuid) {
+                    return segment.legacyId;
                 }
             }
-            xhr.send();
+        }
+    }
+
+    function getSegmentGuid() {
+        return segmentGuid = obgState.sportsbook.segment.segmentGuid.toLowerCase();
+    }
+
+
+    window.initSegments = () => {
+        initSegments()
+    }
+    function initSegments() {
+        if (brands == undefined) {
+            brands = getBrands();
+            setIntervalForSegments();
         } else {
             if (intervalIdForPolling != undefined) {
                 setIntervalForSegments();
@@ -4648,10 +4949,6 @@
             segmentLegacyIdSpan.innerText = segmentLegacyId;
         }
 
-        function getSegmentGuid() {
-            return segmentGuid = obgState.sportsbook.segment.segmentGuid.toLowerCase();
-        }
-
         function populateSegmentSelector() {
             var segments = getSegments(getLegacyBrandId());
             var segmentSelector = document.getElementById("segmentSelector");
@@ -4698,17 +4995,6 @@
                 for (var segment of segments) {
                     if (segment.id.toLowerCase() === segmentGuid) {
                         return segment.name;
-                    }
-                }
-            }
-        }
-
-        function getSegmentLegacyId() {
-            for (var brand of brands) {
-                var segments = brand.segments;
-                for (var segment of segments) {
-                    if (segment.id.toLowerCase() === segmentGuid) {
-                        return segment.legacyId;
                     }
                 }
             }
@@ -4958,6 +5244,9 @@
             case "priceBoost":
                 ttPath = "bonus/" + priceBoostId + "?serviceInstanceId=" + serviceInstanceId;
                 break;
+            case "profitBoost":
+                ttPath = "bonus/" + profitBoostId + "?serviceInstanceId=" + serviceInstanceId;
+                break;
             case "freeBet":
                 ttPath = "bonus/" + freeBetId + "?serviceInstanceId=" + serviceInstanceId;
                 break;
@@ -4967,15 +5256,14 @@
             case "market":
                 ttPath = "fixture-management/fixture/" + eventId + "/market/" + marketId;
                 break;
-
         }
         window.open(ttBaseUrl + ttPath);
     }
 
     window.openInNewWindow = (url) => {
         switch (url) {
-            case "segmentGuidWiki":
-                url = "https://edgebravo.corpsson.com/display/OSB/SB+Segment+GUIDs";
+            case "brandsJson":
+                url = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/brands.json";
                 break;
         }
         window.open(url)
