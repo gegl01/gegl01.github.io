@@ -59,8 +59,8 @@
     var eventId, lockedEventId;
     var participants, selectedParticipantId;
     var previousEventId, previousMarketId, previousSelectionId, previousAcca, previousPriceBoosts, previousFreeBets, previousProfitBoosts;
-    var eventLabel, savedEventLabel;
-    var mockedEventPhase;
+    var eventLabel; //,savedEventLabel;
+    // var mockedEventPhase;
     var marketId, lockedMarketId, marketLabel, marketTemplateId;
     var marketTemplateTagsToDisplay;
     var categoryId;
@@ -82,7 +82,7 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.5.77";
+    const SB_TOOL_VERSION = "v1.5.78";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -1172,7 +1172,7 @@
             detectedOrLockedRow.innerHTML = "&#128274; Locked event:"
             labelRow.classList.add("displayInGreenGlow");
             stopPolling();
-            initSbToolsEvent("buttonsOnly");
+            initSbToolsEvent("eventLocked");
             inactivateAllAccordions();
         } else {
             lockedEventId = undefined;
@@ -1192,7 +1192,16 @@
     }
 
     function getMarketIdBySelectionId(selectionId) {
-        return obgState.sportsbook.selection.selections[selectionId].marketId;
+        let id = obgState.sportsbook.selection.selections[selectionId].marketId;
+        if (id != "") {
+            return id;
+        }
+        let marketMap = obgState.sportsbook.selection.marketMap;
+        for (let key in marketMap) {
+            if (key !== "" && marketMap[key].includes(selectionId)) {
+                return key;
+            }
+        }
     }
 
     function getMarketIdByEventIdAndMarketTemplateId(eventId, marketTemplateId) {
@@ -1231,8 +1240,8 @@
         const fdHelpText = document.getElementById("fdHelpText");
         const fdBetGroupDescription = document.getElementById("fdBetGroupDescription");
 
-        scope === "buttonsOnly" ?
-            intervalIdForPolling = setInterval(listenerForMarketButtonsOnly, POLLING_INTERVAL) :
+        scope === "marketLocked" ?
+            intervalIdForPolling = setInterval(listenerForMarketIfMarketLocked, POLLING_INTERVAL) :
             intervalIdForPolling = setInterval(listenerForMarket, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
 
@@ -1247,7 +1256,7 @@
             marketId = getLastMarketIdFromBetslip();
             if (marketId === previousMarketId) {
                 if (marketId !== null) {
-                    listenerForMarketButtonsOnly();
+                    listenerForMarketIfMarketLocked();
                 }
                 return;
             } else {
@@ -1272,7 +1281,7 @@
 
                 if (IS_OBGRT_EXPOSED) {
                     show(lockMarketSection, marketStateButtonsSection);
-                    listenerForMarketButtonsOnly();
+                    listenerForMarketIfMarketLocked();
                 } else {
                     hide(lockMarketSection, marketStateButtonsSection);
                 }
@@ -1355,10 +1364,16 @@
 
         const marketPropertiesSection = document.getElementById("marketPropertiesSection");
 
-        function listenerForMarketButtonsOnly() {
+        let previousMarketStatus = null;
+        function listenerForMarketIfMarketLocked() {
             checkIfPageIsValidToAddToCarousel();
-            var marketStatus = obgState.sportsbook.eventMarket.markets[marketId].status;
-            for (var button of marketStateButtons) {
+            let marketStatus = obgState.sportsbook.eventMarket.markets[marketId].status;
+            if (marketStatus == previousMarketStatus) {
+                return;
+            } else {
+                previousMarketStatus = marketStatus;
+            }
+            for (let button of marketStateButtons) {
                 if (marketStatus === button.id.replace("btSetMarketState", "")) {
                     inactivate(button);
                 } else {
@@ -1689,7 +1704,7 @@
             detectedOrLockedRow.innerHTML = "&#128274; Locked market:";
             labelRow.classList.add("displayInGreenGlow");
             stopPolling();
-            initSbToolsMarket("buttonsOnly");
+            initSbToolsMarket("marketLocked");
             inactivateAllAccordions();
         } else {
             lockedMarketId = undefined;
@@ -1756,13 +1771,17 @@
         }
     }
 
-    window.initChangeOdds = () => {
+    window.initSbToolsSelection = () => {
+        initSbToolsSelection();
+    }
+
+    function initSbToolsSelection(scope) {
         stopPolling();
         previousSelectionId = undefined;
 
         labelRow = document.getElementById("labelForSbToolsSelection");
         const selectionIdForSbToolsSelection = document.getElementById("selectionIdForSbToolsSelection");
-        const changeOddsFeatures = document.getElementById("changeOddsFeatures");
+        const selectionFeatures = document.getElementById("selectionFeatures");
         const eventLabelForDetectedSelection = document.getElementById("eventLabelForDetectedSelection");
         const marketLabelForDetectedSelection = document.getElementById("marketLabelForDetectedSelection");
         const selectionLabelForDetectedSelection = document.getElementById("selectionLabelForDetectedSelection");
@@ -1771,39 +1790,95 @@
         const btResetOdds = document.getElementById("btResetOdds");
         const initialOddsSpan = document.getElementById("initialOddsSpan");
         const fdNewOdds = document.getElementById("fdNewOdds");
+        const selectionStateButtons = document.getElementsByClassName("btSetSelectionState");
 
-        intervalIdForPolling = setInterval(listenerForChangeOdds, POLLING_INTERVAL);
+        scope === "selectionLocked" ?
+            intervalIdForPolling = setInterval(listenerForSelectionIfSelectionLocked, POLLING_INTERVAL) :
+            intervalIdForPolling = setInterval(listenerForSelection, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
 
-        function listenerForChangeOdds() {
+        function listenerForSelection() {
             selectionId = getLastSelectionIdFromBetslip();
 
             if (selectionId === previousSelectionId) {
+                if (selectionId !== null) {
+                    listenerForSelectionIfSelectionLocked();
+                }
                 return;
             } else {
                 previousSelectionId = selectionId;
             }
 
-            selectionLabel = getSelectionLabel(selectionId);
-            eventLabel = getEventDisplayLabel(getLastEventIdFromBetslip());
-            marketLabel = getMarketLabel(getLastMarketIdFromBetslip());
-            initialOdds = getInitialOddsFromBetslip(selectionId);
-
-            if (eventLabel === null || selectionLabel === null) {
+            if (selectionId == null) {
                 displayInRed(labelRow);
                 show(messageForSbToolsSelection);
                 messageForSbToolsSelection.innerText = NOT_FOUND;
-                hide(changeOddsFeatures, lockSelectionSection, labelsForDetectedSelectionMarketAndEvent);
+                hide(selectionFeatures, lockSelectionSection, labelsForDetectedSelectionMarketAndEvent);
             } else {
+                selectionLabel = getSelectionLabel(selectionId);
+                eventLabel = getEventDisplayLabel(getLastEventIdFromBetslip());
+                marketLabel = getMarketLabel(getLastMarketIdFromBetslip());
+                initialOdds = getInitialOddsFromBetslip(selectionId);
+
                 fdNewOdds.value = initialOdds.toFixed(2);
                 displayInGreen(labelRow);
-                show(changeOddsFeatures, lockSelectionSection, labelsForDetectedSelectionMarketAndEvent);
+                show(selectionFeatures, lockSelectionSection, labelsForDetectedSelectionMarketAndEvent);
                 hide(messageForSbToolsSelection);
                 eventLabelForDetectedSelection.innerText = eventLabel;
                 marketLabelForDetectedSelection.innerHTML = "&boxur;&HorizontalLine; " + marketLabel;
                 selectionLabelForDetectedSelection.innerHTML = "&boxur;&HorizontalLine; " + selectionLabel;
                 selectionIdForSbToolsSelection.innerHTML = selectionId;
                 initialOddsSpan.innerText = initialOdds.toFixed(2);
+
+                listenerForSelectionIfSelectionLocked();
+            }
+        }
+
+        let previousSelectionStatus = null;
+        function listenerForSelectionIfSelectionLocked() {
+            let selectionStatus = obgState.sportsbook.selection.selections[selectionId].status;
+            if (selectionStatus == previousSelectionStatus) {
+                return;
+            } else {
+                previousSelectionStatus = selectionStatus;
+            }
+            for (let button of selectionStateButtons) {
+                if (selectionStatus === button.id.replace("btSetSelectionState", "")) {
+                    inactivate(button);
+                } else {
+                    activate(button);
+                }
+            }
+
+        }
+
+        window.setSelectionState = (state) => {
+            setSelectionState(state);
+        }
+
+        function setSelectionState(state) {
+            if (lockedSelectionId !== undefined) {
+                selectionId = lockedSelectionId;
+            }
+            switch (state) {
+                case "Suspended":
+                    obgRt.setSelectionStatusSuspended(selectionId);
+                    break;
+                case "Open":
+                    obgRt.setSelectionStatusOpen(selectionId);
+                    break;
+                case "Lost":
+                    obgRt.setSelectionStatusLost(selectionId);
+                    break;
+                case "Won":
+                    obgRt.setSelectionStatusWon(selectionId);
+                    break;
+                case "Settled":
+                    obgRt.setSelectionStatusSettled(selectionId);
+                    break;
+                case "Void":
+                    obgRt.setSelectionStatusVoid(selectionId);
+                    break;
             }
         }
 
@@ -1860,13 +1935,14 @@
             detectedOrLockedRow.innerHTML = "&#128274; Locked selection:";
             labelRow.classList.add("displayInGreenGlow");
             stopPolling();
+            initSbToolsSelection("selectionLocked");
             inactivateAllAccordions();
         } else {
             lockedSelectionId = undefined;
             lockedInitialOdds = undefined;
             detectedOrLockedRow.innerText = "Detected selection:";
             labelRow.classList.remove("displayInGreenGlow");
-            initChangeOdds();
+            initSbToolsSelection();
             activateAllAccordions();
         }
     }
@@ -2465,14 +2541,25 @@
 
 
     function getLastEventIdFromBetslip() {
-        try {
-            // let selections = Object.values(getBetSlipByObgState().selections);
-            // return selections[selections.length - 1].eventId;
-            // return getBetSlipByObgState().orderedSelections[0].selection.eventId;
-            return getEventIdBySelectionId(getLastSelectionIdFromBetslip());
-        } catch {
-            return null;
+        let lastSelectionId = getLastSelectionIdFromBetslip();
+        if (lastSelectionId == null) { return null };
+        let lastEventId = getEventIdBySelectionId(lastSelectionId);
+        if (lastEventId != "") {
+            return lastEventId;
         }
+        let lastMarketId = getMarketIdBySelectionId(lastSelectionId);
+        let eventMap = obgState.sportsbook.eventMarket.eventMap;
+        for (let key in eventMap) {
+            if (key !== "" && eventMap[key].includes(lastMarketId)) {
+                return key;
+            }
+        }
+
+        // try {
+        //     return getEventIdBySelectionId(getLastSelectionIdFromBetslip());
+        // } catch {
+        //     return null;
+        // }
     }
 
     function getEventDisplayLabel(eventId) {
@@ -2652,8 +2739,8 @@
 
         changeBetBuilderToSGPifNeeded();
 
-        scope === "buttonsOnly" ?
-            intervalIdForPolling = setInterval(listenerForEventButtonsOnly, POLLING_INTERVAL) :
+        scope === "eventLocked" ?
+            intervalIdForPolling = setInterval(listenerForEventIfEventLocked, POLLING_INTERVAL) :
             intervalIdForPolling = setInterval(listenerForEvent, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
 
@@ -2672,7 +2759,7 @@
 
             if (eventId == previousEventId && isEventVisible == previousIsEventVisible) {
                 if (eventId !== null) {
-                    listenerForEventButtonsOnly();
+                    listenerForEventIfEventLocked();
                 }
                 return;
             } else {
@@ -2700,13 +2787,13 @@
                 initEventPropertyCheckboxes();
                 displayInGreen(labelRow);
                 initRenameEventSection();
-                listenerForEventButtonsOnly();
+                listenerForEventIfEventLocked();
                 initFootballScoreboard();
                 initCreateMarkets();
             }
 
             labelRow.innerText = detectionResultText;
-            savedEventLabel = eventLabel;
+            // savedEventLabel = eventLabel;
         }
 
 
@@ -2874,7 +2961,7 @@
         }
 
         window.setEventPhase = (phase) => {
-            mockedEventPhase = phase;
+            // mockedEventPhase = phase;
             if (lockedEventId !== undefined) {
                 eventId = lockedEventId;
             }
@@ -3174,16 +3261,23 @@
 
         const eventPropertiesSection = document.getElementById("eventPropertiesSection");
 
-        function listenerForEventButtonsOnly() {
+        let previousEventPhase = null;
+        function listenerForEventIfEventLocked() {
+            eventPhase = getEventPhase(eventId);
+            if (eventPhase == previousEventPhase) {
+                return;
+            } else {
+                previousEventPhase = eventPhase;
+            }
             // initEventPropertyCheckboxes();
 
-            if (mockedEventPhase == undefined) {
-                mockedEventPhase = getEventPhase(eventId);
-            }
+            // if (mockedEventPhase == undefined) {
+            //     mockedEventPhase = getEventPhase(eventId);
+            // }
 
-            eventLabel !== savedEventLabel ?
-                eventPhase = getEventPhase(eventId) :
-                eventPhase = mockedEventPhase;
+            // eventLabel !== savedEventLabel ?
+            //     eventPhase = getEventPhase(eventId) :
+            //     eventPhase = mockedEventPhase;
 
             for (var button of eventPhaseButtons) {
                 if (eventPhase === button.id.replace("btSetEventPhase", "")) {
@@ -3204,6 +3298,7 @@
                         activate(hasLiveStreamingSection,
                             hasLiveStatisticsSection,
                             hasPriceBoostSection,
+                            hasSuperBoostSection,
                             hasFastMarketsSection,
                             hasLiveVisualSection);
                         inactivate(hasBetBuilderLinkSection,
@@ -3213,7 +3308,8 @@
                         activate(hasBetBuilderLinkSection,
                             hasPrematchStatisticsSection,
                             hasLiveStreamingSection,
-                            hasPriceBoostSection);
+                            hasPriceBoostSection,
+                            hasSuperBoostSection);
                         inactivate(hasLiveStatisticsSection,
                             hasFastMarketsSection,
                             hasLiveVisualSection,
@@ -3225,6 +3321,7 @@
                             hasPrematchStatisticsSection,
                             hasLiveStatisticsSection,
                             hasPriceBoostSection,
+                            hasSuperBoostSection,
                             hasFastMarketsSection,
                             hasLiveVisualSection,
                             hasVarSection);

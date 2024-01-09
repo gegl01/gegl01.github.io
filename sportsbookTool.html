@@ -709,10 +709,10 @@
                 <button onclick="toggleSection('marketStatusSection')" class="moreLess">Market Status</button>
                 <div id="marketStatusSection" class="hide">
                     <div id="setMarketStateButtonsSection" class="setMarketStateLayout marginTopBottom10px">
-                        <button class="btSimple btSetMarketState" id="btSetMarketStateSuspended"
-                            onclick="setMarketState('Suspended')">Suspd.</button>
                         <button class="btSimple btSetMarketState" id="btSetMarketStateOpen"
                             onclick="setMarketState('Open')">Open</button>
+                        <button class="btSimple btSetMarketState" id="btSetMarketStateSuspended"
+                            onclick="setMarketState('Suspended')">Suspd.</button>
                         <button class="btSimple btSetMarketState" id="btSetMarketStateVoid"
                             onclick="setMarketState('Void')">Void</button>
                         <button class="btSimple btSetMarketState" id="btSetMarketStateSettled"
@@ -803,7 +803,7 @@
     </div>
 
     <div id="sbToolsSelection" class="accordion closed">
-        <button id="changeOddsAccordion" class="accHeading" onclick="initChangeOdds()">
+        <button id="changeOddsAccordion" class="accHeading" onclick="initSbToolsSelection()">
             <span class="accordionTitle">Selection</span>
             <span class="accordionHint">Change Odds</span>
         </button>
@@ -826,7 +826,7 @@
                 </div>
             </div>
 
-            <div id="changeOddsFeatures" class="hide">
+            <div id="selectionFeatures" class="hide">
                 <hr class="hRule">
                 <div>
                     <div>Selection ID:</div>
@@ -845,6 +845,25 @@
                         oninput="validity.valid||(value='');">
                     <button class="btSimple btSubmit" onclick="setOdds()">Set</button>
                 </div>
+                <hr class="hRule">
+                <div id="selectionStatusSection">
+                    <div class="marginBottom5px">Selection Status:</div>
+                    <div id="setSelectionStateButtonsSection" class="setSelectionStateLayout marginBottom10px">
+                        <button class="btSimple btSetSelectionState" id="btSetSelectionStateOpen"
+                            onclick="setSelectionState('Open')">Open</button>
+                        <button class="btSimple btSetSelectionState" id="btSetSelectionStateWon"
+                            onclick="setSelectionState('Won')">Won</button>
+                        <button class="btSimple btSetSelectionState" id="btSetSelectionStateLost"
+                            onclick="setSelectionState('Lost')">Lost</button>
+                        <button class="btSimple btSetSelectionState" id="btSetSelectionStateVoid"
+                            onclick="setSelectionState('Void')">Void</button>
+                        <button class="btSimple btSetSelectionState" id="btSetSelectionStateSuspended"
+                            onclick="setSelectionState('Suspended')">Suspd</button>
+                        <button class="btSimple btSetSelectionState" id="btSetSelectionStateSettled"
+                            onclick="setSelectionState('Settled')">Settled</button>
+                    </div>
+                </div>
+
             </div>
             <div id="sbToolsSelectionInfo" class="hide">
                 <hr class="hRule">
@@ -1865,6 +1884,11 @@
     .setMarketStateLayout {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    }
+
+    .setSelectionStateLayout {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     }
 
     .nativeBottomBarButtons {
