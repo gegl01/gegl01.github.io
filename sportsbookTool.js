@@ -43,14 +43,14 @@
 
 
     // ************** REMOTE ****************
-    // removeExistingSportsbookTool();
-    // const sportsbookTool = document.createElement("div");
-    // sportsbookTool.id = "sportsbookTool";
-    // createWindow();
+    removeExistingSportsbookTool();
+    const sportsbookTool = document.createElement("div");
+    sportsbookTool.id = "sportsbookTool";
+    createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    const sportsbookTool = document.getElementById("sportsbookTool");
+    // const sportsbookTool = document.getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = document.getElementsByClassName("accordion");
