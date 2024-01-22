@@ -43,14 +43,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = document.getElementById("sportsbookTool");
+    const sportsbookTool = document.getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = document.getElementsByClassName("accordion");
@@ -82,7 +82,7 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.5.81";
+    const SB_TOOL_VERSION = "v1.5.82";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -3036,7 +3036,7 @@
 
         function createPriceBoostObject(eventId, marketId, selectionId, categoryId, competitionId, isSuperBoost) {
             let sbToolPriceBoostId = "SBTOOL-" + generateGuid();
-            
+
             let namePrefix = isSuperBoost ? "Super Boost" : "Price Boost";
             let boostedOdds = isSuperBoost ? 1000 : 10;
             let priceBoostedFormat = isSuperBoost ? "1000.00" : "10.00";
@@ -3089,48 +3089,48 @@
                 "isPersonal": false
             }
 
-            // updateCategoryAndCompetition(categoryId, competitionId);
+            updateCategoryAndCompetition(categoryId, competitionId);
 
             obgState.sportsbook.priceBoost.priceBoost = {
                 ...obgState.sportsbook.priceBoost.priceBoost, [sbToolPriceBoostId]: priceBoostStateItem
             }
-
-
         }
 
-        // function updateCategoryAndCompetition(categoryId, competitionId) {
-        //     let categoryObj = obgState.sportsbook.eventMarketWidget.skeleton.categories.find(cat => cat.id === categoryId);
+        function updateCategoryAndCompetition(categoryId, competitionId) {
+            debugger;
+            let categoryObj = obgState.sportsbook.eventMarketWidget.skeleton.categories.find(cat => cat.id === categoryId);
 
-        //     if (!categoryObj) {
-        //         let label = obgState.sportsbook.sportCatalog.categories[categoryId].label;
-        //         let slug = obgState.sportsbook.sportCatalog.categories[categoryId].slug;
-        //         categoryObj = {
-        //             id: categoryId,
-        //             label,
-        //             slug,
-        //             competitions: []
-        //         };
-        //         obgState.sportsbook.eventMarketWidget.skeleton.categories = [
-        //             ...obgState.sportsbook.eventMarketWidget.skeleton.categories,
-        //             categoryObj
-        //         ];
-        //     }
+            if (!categoryObj) {
+                let label = obgState.sportsbook.sportCatalog.categories[categoryId].label;
+                let slug = obgState.sportsbook.sportCatalog.categories[categoryId].slug;
+                categoryObj = {
+                    id: categoryId,
+                    label,
+                    slug,
+                    competitions: []
+                };
+                // obgState.sportsbook.eventMarketWidget.skeleton.categories = [
+                //     ...obgState.sportsbook.eventMarketWidget.skeleton.categories,
+                //     categoryObj
+                // ];
+            }
 
-        //     let competitionObj = categoryObj.competitions.find(comp => comp.id === competitionId);
+            let competitionObj = categoryObj.competitions.find(comp => comp.id === competitionId);
 
-        //     if (!competitionObj) {
-        //         const { label } = obgState.sportsbook.sportCatalog.competitions[competitionId];
-        //         competitionObj = {
-        //             id: competitionId,
-        //             label
-        //         };
-        //         categoryObj.competitions = [...categoryObj.competitions, competitionObj];
+            if (!competitionObj) {
+                const { label } = obgState.sportsbook.sportCatalog.competitions[competitionId];
+                competitionObj = {
+                    id: competitionId,
+                    label
+                };
+                categoryObj.competitions = [...categoryObj.competitions, competitionObj];
 
-        //     }
-        //     obgState.sportsbook.eventMarketWidget.skeleton.categories = [
-        //         ...obgState.sportsbook.eventMarketWidget.skeleton.categories                
-        //     ];
-        // }
+            }
+            obgState.sportsbook.eventMarketWidget.skeleton.categories = [
+                ...obgState.sportsbook.eventMarketWidget.skeleton.categories,
+                categoryObj
+            ];
+        }
 
         function deletePriceBoost(isSuperBoost) {
             delete obgState.sportsbook.priceBoost.eventMap[eventId];
