@@ -875,9 +875,13 @@
                     <div id="addSelectionToPbSection">
                         <div class="displayFlex">
                             <button class="btSimple flex1" id="btAddSelectionToPb"
-                                onclick="addSelectionToPriceBoost()">Add Selection to Price Boost
+                                onclick="addSelectionToPriceBoost()">Add Selection
                             </button>
+                            <button class="btSimple flex1 inactivated" id="btRemoveAllSelectionsFomrPb"
+                            onclick="removeAllSelectionsFomrPriceBoost()">Remove All
+                        </button>
                         </div>
+                        <div id="addASelectionMessage" class="displayInRed marginTop5px">No selection addded</div>
                         <div id="selectionsAddedToPb" class="marginTop5px">
                         </div>
                     </div>
