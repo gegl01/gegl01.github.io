@@ -61,7 +61,7 @@
     var previousEventId, previousMarketId, previousSelectionId, previousAcca, previousPriceBoosts, previousFreeBets, previousProfitBoosts;
     var eventLabel; //,savedEventLabel;
     // var mockedEventPhase;
-    var marketId, lockedMarketId, marketLabel, marketTemplateId;
+    var marketId, lockedMarketId, marketLabel, marketTemplateId, marketVersion;
     var marketTemplateTagsToDisplay;
     var categoryId, competitionId;
     var selectionId, lockedSelectionId, selectionLabel;
@@ -82,7 +82,7 @@
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.5.82";
+    const SB_TOOL_VERSION = "v1.5.83";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -1863,24 +1863,29 @@
             if (lockedSelectionId !== undefined) {
                 selectionId = lockedSelectionId;
             }
+
+            marketId = getMarketIdBySelectionId(selectionId);
+            eventId = getEventIdBySelectionId(selectionId);
+            marketVersion = getMarketVersion(marketId);
+
             switch (state) {
                 case "Suspended":
-                    obgRt.setSelectionStatusSuspended(selectionId);
+                    obgRt.setSelectionStatusSuspended(selectionId, marketId, eventId, marketVersion);
                     break;
                 case "Open":
-                    obgRt.setSelectionStatusOpen(selectionId);
+                    obgRt.setSelectionStatusOpen(selectionId, marketId, eventId, marketVersion);
                     break;
                 case "Lost":
-                    obgRt.setSelectionStatusLost(selectionId);
+                    obgRt.setSelectionStatusLost(selectionId, marketId, eventId, marketVersion);
                     break;
                 case "Won":
-                    obgRt.setSelectionStatusWon(selectionId);
+                    obgRt.setSelectionStatusWon(selectionId, marketId, eventId, marketVersion);
                     break;
                 case "Settled":
-                    obgRt.setSelectionStatusSettled(selectionId);
+                    obgRt.setSelectionStatusSettled(selectionId, marketId, eventId, marketVersion);
                     break;
                 case "Void":
-                    obgRt.setSelectionStatusVoid(selectionId);
+                    obgRt.setSelectionStatusVoid(selectionId, marketId, eventId, marketVersion);
                     break;
             }
         }
@@ -1902,10 +1907,25 @@
                 newOdds = initialOdds;
                 fdNewOdds.value = initialOdds.toFixed(2);
             }
-            obgRt.setSelectionOdds([{
-                msi: selectionId,
-                o: Number(newOdds)
-            }]);
+            // obgRt.setSelectionOdds([{
+            //     msi: selectionId,
+            //     o: Number(newOdds)
+            // }]);
+            
+            // eventId = getEventIdBySelectionId(selectionId);
+            // marketId = getMarketIdBySelectionId(selectionId);
+            // marketVersion = getMarketVersion(marketId);
+            // obgRt.setSelectionOdds(
+            //     [{
+            //         msi: selectionId,
+            //         o: Number(newOdds),
+            //         ei: eventId,
+            //         mv: marketVersion
+            //     }],
+            //     marketId
+            // );
+
+            setSelectionOdds(selectionId, newOdds);
         }
 
         window.resetOdds = () => {
@@ -1916,10 +1936,11 @@
             if (lockedInitialOdds != undefined) {
                 initialOdds = lockedInitialOdds;
             }
-            obgRt.setSelectionOdds([{
-                msi: selectionId,
-                o: Number(initialOdds)
-            }]);
+            // obgRt.setSelectionOdds([{
+            //     msi: selectionId,
+            //     o: Number(initialOdds)
+            // }]);
+            setSelectionOdds(selectionId, initialOdds);
             fdNewOdds.value = initialOdds.toFixed(2);
         }
 
@@ -2008,13 +2029,13 @@
             cleanUpSelectionsFromPriceBoost();
         }
 
-        function cleanUpSelectionsFromPriceBoost(){
+        function cleanUpSelectionsFromPriceBoost() {
             createPbCriteriaEntityDetails = [];
             selectionsAddedToPb.innerHTML = "";
             show(addASelectionMessage);
             inactivate(btRemoveAllSelectionsFomrPb, btCreatePbFromSelections);
         }
-        
+
         window.createPbFromSelections = () => {
 
             initCreatePbVariables();
@@ -2057,7 +2078,7 @@
 
             function initCreatePbVariables() {
                 createPbName = fdCreatePbName.value;
-                
+
                 if (radioCreatePbEventPrematch.checked) {
                     createPbEventPhases = ["Prematch"];
                 } else if (radioCreatePbEventLive.checked) {
@@ -2065,9 +2086,9 @@
                 } else {
                     createPbEventPhases = ["Prematch", "Live"];
                 }
-                
+
                 createPbIsPersonal = !radioPbGlobal.checked;
-                
+
                 if (radioCreatePbPercentage.checked) {
                     createPbType = "Multiplier"
                     createPbBoostedOdds = Number(fdCreatePbPercentage.value);
@@ -3689,24 +3710,44 @@
         if (lockedMarketId !== undefined) {
             marketId = lockedMarketId;
         }
-        // obgState.sportsbook.eventMarket.markets[marketId].status = state;
+        eventId = getEventIdByMarketId(marketId);
+        marketVersion = getMarketVersion(marketId);
         switch (state) {
             case "Suspended":
-                obgRt.setMarketStateSuspended(marketId);
+                obgRt.setMarketStateSuspended(marketId, eventId, marketVersion);
                 break;
             case "Open":
-                obgRt.setMarketStateOpen(marketId);
+                obgRt.setMarketStateOpen(marketId, eventId, marketVersion);
                 break;
             case "Void":
-                obgRt.setMarketStateVoid(marketId);
+                obgRt.setMarketStateVoid(marketId, eventId, marketVersion);
                 break;
             case "Settled":
-                obgRt.setMarketStateSettled(marketId);
+                obgRt.setMarketStateSettled(marketId, eventId, marketVersion);
                 break;
             case "Hold":
-                obgRt.setMarketStateHold(marketId);
+                obgRt.setMarketStateHold(marketId, eventId, marketVersion);
                 break;
         }
+    }
+
+    function getMarketVersion(marketId) {
+        return obgState.sportsbook.eventMarket.markets[marketId].marketVersion;
+    }
+
+    function setSelectionOdds(selectionId, odds){
+        eventId = getEventIdBySelectionId(selectionId);
+        marketId = getMarketIdBySelectionId(selectionId);
+        marketVersion = getMarketVersion(marketId);
+        obgRt.setSelectionOdds(
+            [{
+                msi: selectionId,
+                o: Number(odds),
+                ei: eventId,
+                mv: marketVersion
+            }],
+            marketId
+        );
     }
 
     window.createMarket = (marketType) => {
@@ -3785,11 +3826,12 @@
                         selectionId = "s-" + marketId + "-sel-" + String(j) + String(k);
                         k == 1 ? selectionLabel = "Over " + String(j) + ".5" : selectionLabel = "Under " + String(j) + ".5";
                         obgRt.createSelection(eventId, marketId, selectionId, selectionLabel);
-                        obgRt.setSelectionOdds([{
-                            msi: selectionId,
-                            // o: i + k + j / 10 * 2
-                            o: getRandomOdds()
-                        }]);
+                        // obgRt.setSelectionOdds([{
+                        //     msi: selectionId,
+                        //     // o: i + k + j / 10 * 2
+                        //     o: getRandomOdds()
+                        // }]);
+                        setSelectionOdds(selectionId, getRandomOdds());
                     }
                 }
             }
