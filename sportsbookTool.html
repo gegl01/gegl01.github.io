@@ -357,7 +357,7 @@
                                 class="comboSbTools width100percent height20px">
                             </select>
 
-                            <div class="itemsJustified marginTop5px">
+                            <div id="renameParticipantLabelRow" class="itemsJustified marginTop5px">
                                 <span contenteditable="true" id="fdRenameParticipantLabel"
                                     class="fdSbTools width92percent">
                                 </span>
@@ -403,7 +403,7 @@
                         </div>
                         <div class="checkBoxRowToRight">
                             <span>'Over' suspends all markets</span>
-                            <input type="checkbox" class="chkInline" id="chkSuspendAllMarkets">
+                            <input type="checkbox" class="chkInline chkSbTools" id="chkSuspendAllMarkets">
                         </div>
                     </div>
                 </div>
@@ -869,7 +869,7 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost</button>
+                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess hide">Create Price Boost</button>
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
                     <div id="addSelectionToPbSection">
@@ -1444,7 +1444,7 @@
                     </button>
                 </span>
                 <span class="floatRight">
-                    Overlay<input type="checkbox" id="chkCrlBannerOverlay" class="chkInline">
+                    Overlay<input type="checkbox" id="chkBannerOverlay" class="chkInline chkSbTools">
                 </span>
             </div>
             <div class="bannersRow">
@@ -1459,6 +1459,9 @@
                     <button class="btPlusMinus btIcon" onclick="addSportsbookBanner()">
                         <img class="iconPlus">
                     </button>
+                </span>
+                <span class="floatRight">
+                    Diff. Color<input type="checkbox" id="chkBannerDiffColor" class="chkInline chkSbTools">
                 </span>
             </div>
         </div>
