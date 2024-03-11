@@ -52,9 +52,11 @@
                             onclick="reloadPageWithFeature('openMatchingIframe')"></button>
                     </div>
                     <div id="replaceIframeSrcRow" class="resolveLimitationRow">
-                        <div>Keep host page but replace SB iframe with the matching one</div>
-                        <button id="btReplaceIframeSrc" class="btSimple btOrange"
-                            onclick="replaceIframeSrc()">Replace</button>
+                        <div>Keep host page and fix SB iframe with matching one</div>
+                        <!-- <button id="btReplaceIframeSrc" class="btSimple btOrange"
+                            onclick="replaceIframeSrc()">Replace</button> -->
+                        <button id="btOpenFullPageWithMatchingIframe" class="btSimple btOrange"
+                            onclick="reloadPageWithFeature('hostPageWithMatchingIframe')"></button>
                     </div>
                 </div>
                 <div class="itemsJustified marginTop10px">
@@ -414,13 +416,14 @@
                     <div id="eventPropertiesSection" class="marginTopBottom10px hide">
                         <div class="marginBottom5px">Has effect on icons and event panel tabs</div>
 
-                        <div id="hasBetBuilderLinkSection" class="iconMocksRow">
+                        <div id="hasBetBuilderSection" class="iconMocksRow">
                             <span class="width95Percent">
-                                <span id="betBuilderIcon" class="ico-bet-builder iconMockIconColumn vertMiddle"></span>
-                                <span id="betBuilderLabel" class="iconMockLabelColumn">Bet Builder Link</span>
+                                <span id="betBuilderIcon"
+                                    class="ico-bet-builder-seamless iconMockIconColumn vertMiddle"></span>
+                                <span class="iconMockLabelColumn">Bet Builder / SGP</span>
                             </span>
-                            <input type="checkbox" onclick="toggleEventProperty('betBuilderLink')"
-                                id="chkHasBetBuilderLink" class="chkSbTools">
+                            <input type="checkbox" onclick="toggleEventProperty('betBuilderLink')" id="chkHasBetBuilder"
+                                class="chkSbTools">
                         </div>
 
                         <div id="hasPriceBoostSection" class="iconMocksRow">
@@ -754,7 +757,7 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, Bet Group
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet Group
                     Description, Help Text</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
@@ -766,6 +769,16 @@
                         <input type="checkbox" onclick="toggleMarketProperty('cashoutAvailable')"
                             id="chkIsCashoutAvailable" class="chkSbTools">
                     </div>
+                    <div id="isBetBuilderAvailable" class="iconMocksRow">
+                        <span class="width95Percent">
+                            <span class="ico-bet-builder-seamless iconMockIconColumn vertMiddle"></span>
+                            <span class="iconMockLabelColumn">Bet Builder / SGP</span>
+                        </span>
+                        <input type="checkbox" onclick="toggleMarketProperty('betBuilderAvailable')"
+                            id="chkIsBetBuilderAvailable" class="chkSbTools">
+                    </div>
+
+
 
                     <hr class="hRule">
 
@@ -869,7 +882,8 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess hide">Create Price Boost</button>
+                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess hide">Create Price
+                    Boost</button>
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
                     <div id="addSelectionToPbSection">
@@ -878,8 +892,8 @@
                                 onclick="addSelectionToPriceBoost()">Add Selection
                             </button>
                             <button class="btSimple flex1 inactivated" id="btRemoveAllSelectionsFomrPb"
-                            onclick="removeAllSelectionsFomrPriceBoost()">Remove All
-                        </button>
+                                onclick="removeAllSelectionsFomrPriceBoost()">Remove All
+                            </button>
                         </div>
                         <div id="addASelectionMessage" class="displayInRed marginTop5px">No selection addded</div>
                         <div id="selectionsAddedToPb" class="marginTop5px">
