@@ -43,14 +43,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = document.getElementById("sportsbookTool");
+    const sportsbookTool = document.getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = document.getElementsByClassName("accordion");
@@ -58,6 +58,7 @@
     var versionNumber;
     var eventId, lockedEventId;
     var participants, selectedParticipantId;
+    var participantsArrayInScoreboard = [];
     var previousEventId, previousMarketId, previousSelectionId, previousAcca, previousPriceBoosts, previousFreeBets, previousProfitBoosts;
     var eventLabel; //,savedEventLabel;
     // var mockedEventPhase;
@@ -79,10 +80,11 @@
     var threeColumnLayouts;
     var carouselOrCardsDefined;
     var isPageValidForCarousel, previousIsPageValidForCarousel;
+    var lastDateTimeSet;
 
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.5.87";
+    const SB_TOOL_VERSION = "v1.5.88";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -2117,8 +2119,8 @@
 
             updatePriceBoost(priceBoostObj);
 
-            // obgState.sportsbook.priceBoost.eventMap[eventId] = ["Prematch", "Live"];
-            // obgState.sportsbook.priceBoost.marketMap[marketId] = ["Prematch", "Live"];
+            obgState.sportsbook.priceBoost.eventMap[eventId] = ["Prematch", "Live"];
+            obgState.sportsbook.priceBoost.marketMap[marketId] = ["Prematch", "Live"];
 
             function initCreatePbVariables() {
                 createPbName = fdCreatePbName.value;
@@ -2958,6 +2960,8 @@
         const competitionIdForEventDetails = document.getElementById("competitionIdForEventDetails");
 
         const chkSuspendAllMarkets = document.getElementById("chkSuspendAllMarkets");
+        const chkLiveAddsScoreBoard = document.getElementById("chkLiveAddsScoreBoard");
+        const liveAddsScoreBoardSection = document.getElementById("liveAddsScoreBoardSection");
 
 
         const hasBetBuilderSection = document.getElementById("hasBetBuilderSection");
@@ -3054,6 +3058,7 @@
                 initEventPropertyCheckboxes();
                 displayInGreen(labelRow);
                 initRenameEventSection();
+                initSetEventPhaseSection();
                 listenerForEventIfEventLocked();
                 initFootballScoreboard();
                 initCreateMarkets();
@@ -3073,7 +3078,7 @@
                 show(createMarketFeatures);
                 hide(createMarketErrorSection);
                 detectionResultText = getEventLabel(eventId);
-                let categoryId = getCategoryIdByEventId(eventId);
+                categoryId = getCategoryIdByEventId(eventId);
                 initCreateFastMarketSection(categoryId);
                 initCreatePlayerPropsMarketSection(categoryId);
             }
@@ -3092,6 +3097,17 @@
             }
         }
 
+        function initSetEventPhaseSection() {
+            categoryId = getCategoryIdByEventId(eventId);
+            let eligibleCategoryIdsForScoreBoard = ["1", "2", "4", "9", "11", "19", "34"];
+            if (eligibleCategoryIdsForScoreBoard.includes(categoryId)) {
+                activate(liveAddsScoreBoardSection);
+            } else {
+                inactivate(liveAddsScoreBoardSection);
+            }
+
+        }
+
         function initCreatePlayerPropsMarketSection(categoryId) {
             let eligibleCategoryIdsPlayerPropsMarket = ["1", "2", "3", "4", "10", "19"];
             if (eligibleCategoryIdsPlayerPropsMarket.includes(categoryId)) {
@@ -3106,13 +3122,14 @@
         }
 
         function initFootballScoreboard() {
-            scoreBoardObjects = Object.values(obgState.sportsbook.scoreboard);
+            // scoreBoardObjects = Object.values(obgState.sportsbook.scoreboard);
+            scoreBoardObject = obgState.sportsbook.scoreboard;
             itHasFootballScoreBoard = false;
             if (eventId === null) {
                 hide(notFootballScoreBoardMessage, lockEventSection);
             } else {
-                for (object of scoreBoardObjects) {
-                    if (eventId == object.eventId && getCategoryIdByEventId(eventId) === "1") {
+                for (object in scoreBoardObject) {
+                    if (eventId == scoreBoardObject[object].eventId && getCategoryIdByEventId(eventId) === "1") {
                         itHasFootballScoreBoard = true;
                         hide(notFootballScoreBoardMessage);
                         break;
@@ -3222,9 +3239,15 @@
             }
             switch (phase) {
                 case "Prematch":
+                    if (!!obgState.sportsbook.scoreboard[eventId]) {
+                        delete obgState.sportsbook.scoreboard[eventId];
+                    }
                     obgRt.setEventPhasePrematch(eventId);
                     break;
                 case "Live":
+                    if (chkLiveAddsScoreBoard.checked) {
+                        obgState.sportsbook.scoreboard[eventId] = createScoreBoard(eventId);
+                    }
                     obgRt.setEventPhaseLive(eventId);
                     break;
                 case "Over":
@@ -3273,8 +3296,10 @@
         }
 
         function toggleHasBetBuilder() {
-            // obgState.sportsbook.event.events[eventId].hasBetBuilderLink = true;
             if (chkHasBetBuilder.checked) {
+
+                obgState.sportsbook.event.events[eventId].hasBetBuilderLink = true; // legacy bb for us brands
+
                 obgRt.setFixtureUpserted(eventId,
                     {
                         bc_bb_available:
@@ -3282,7 +3307,8 @@
                     }
                 )
             } else {
-                // obgState.sportsbook.event.events[eventId].hasBetBuilderLink = false;
+                obgState.sportsbook.event.events[eventId].hasBetBuilderLink = false; // legacy bb for us brands
+
                 delete obgState.sportsbook.event.events[eventId].tags.bc_bb_available;
             }
         }
@@ -5674,4 +5700,578 @@
         }
         window.open(url)
     }
+
+    function getRandomInt(minOrMax, max) {
+        if (max === undefined) {
+            max = minOrMax;
+            minOrMax = 0;
+        }
+        minOrMax = Math.ceil(minOrMax);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - minOrMax + 1)) + minOrMax;
+    }
+
+    function getRandomBoolean() {
+        return Math.random() < 0.5;
+    }
+
+
+    function createScoreBoard(eventId) {
+        categoryId = getCategoryIdByEventId(eventId);
+        participants = getParticipants(eventId);
+        participantsArrayInScoreboard = [
+            {
+                label: participants[0].label,
+                id: participants[0].id,
+                sortOrder: 1,
+                side: 1
+            },
+            {
+                label: participants[1].label,
+                id: participants[1].id,
+                sortOrder: 2,
+                side: 2
+            }
+        ]
+        lastDateTimeSet = new Date().toISOString();
+
+        switch (categoryId) {
+            case "1": return getFootballScoreBoard(participants);
+            case "2": return getIceHockeyScoreBoard(participants);
+            case "4": return getBasketBallScoreBoard(participants);
+            case "9": return getVolleyBallScoreBoard(participants);
+            case "11": return getTennisScoreBoard(participants);
+            case "19": return getBaseballScoreBoard(participants);
+            case "34": return getDartsScoreBoard(participants);
+        }
+    }
+
+    function getFootballScoreBoard(participants) {
+        let homeFinalScore = getRandomInt(4);
+        let awayFinalScore = getRandomInt(4);
+        return {
+            participants: participantsArrayInScoreboard,
+            scorePerParticipant: {
+                [participants[0].id]: homeFinalScore,
+                [participants[1].id]: awayFinalScore
+            },
+            statistics: {
+                [participants[0].id]: {
+                    corners: { value: getRandomInt(4), isActive: true },
+                    goalsScored: { value: homeFinalScore, isActive: true },
+                    penaltyShots: { value: getRandomInt(4), isActive: true },
+                    redCards: { value: getRandomInt(0, 2), isActive: true },
+                    substitutions: { value: getRandomInt(2), isActive: false },
+                    yellowCards: { value: getRandomInt(4), isActive: true },
+                    isSecondLeg: { value: true, isActive: true },
+                    aggregateScore: { value: homeFinalScore + getRandomInt(4), isActive: true }
+                },
+                [participants[1].id]: {
+                    corners: { value: getRandomInt(4), isActive: true },
+                    goalsScored: { value: awayFinalScore, isActive: true },
+                    penaltyShots: { value: getRandomInt(4), isActive: true },
+                    redCards: { value: getRandomInt(0, 2), isActive: true },
+                    substitutions: { value: getRandomInt(2), isActive: false },
+                    yellowCards: { value: getRandomInt(4), isActive: true },
+                    isSecondLeg: { value: true, isActive: true },
+                    aggregateScore: { value: awayFinalScore + getRandomInt(4), isActive: true }
+                }
+            },
+            eventId: eventId,
+            categoryId: 1,
+            category: "Football",
+            currentPhase: {
+                id: 1,
+                label: "1st half"
+            },
+            currentVarState: 0,
+            isSecondLeg: getRandomBoolean(),
+            matchClock: {
+                seconds: getRandomInt(59),
+                minutes: getRandomInt(45),
+                gameClockMode: "RunningUp",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0
+        };
+    }
+
+    function getBaseballScoreBoard(participants) {
+        let isServerHome = getRandomBoolean();
+        let scoreBoard = {
+            participants: participantsArrayInScoreboard,
+            scorePerParticipant: {
+                [participants[0].id]: 0,
+                [participants[1].id]: 0
+            },
+            statistics: {
+                [participants[0].id]: {
+                    hitsScored: {
+                        value: 0,
+                        isActive: false
+                    },
+                    inningRuns: {
+                        byPhase: [
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: 0, isActive: true },
+                        ],
+                        total: { value: 0, isActive: true }
+                    },
+                    isBaseOccupied: [
+                        { value: false, isActive: true },
+                        { value: false, isActive: true },
+                        { value: false, isActive: true }
+                    ],
+                    isServer: { value: isServerHome, isActive: true },
+                    outs: { value: 0, isActive: true }
+                },
+                [participants[1].id]: {
+                    hitsScored: {
+                        value: 0,
+                        isActive: false
+                    },
+                    inningRuns: {
+                        byPhase: [
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: 0, isActive: true },
+                        ],
+                        total: { value: 0, isActive: true }
+                    },
+                    isBaseOccupied: [
+                        { value: false, isActive: true },
+                        { value: false, isActive: true },
+                        { value: false, isActive: true }
+                    ],
+                    isServer: { value: !isServerHome, isActive: true },
+                    outs: { value: 0, isActive: true }
+                }
+            },
+            eventId: eventId,
+            categoryId: 19,
+            category: "Baseball",
+            currentPhase: { id: 8, label: "8th Inning" },
+            currentVarState: 0,
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: 0,
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0,
+            phaseCategoryId: "8-19"
+        }
+        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+    }
+
+    function getIceHockeyScoreBoard(participants) {
+        let penaltyValueHome, penaltyValueAway;
+        if (getRandomBoolean()) {
+            penaltyValueHome = getRandomInt(1, 2);
+            penaltyValueAway = 0;
+        } else {
+            penaltyValueHome = 0;
+            penaltyValueAway = getRandomInt(1, 2);
+        }
+
+
+        let scoreBoard = {
+            participants: participantsArrayInScoreboard,
+            scorePerParticipant: {
+                [participants[0].id]: 0,
+                [participants[0].id]: 0
+            },
+            statistics: {
+                [participants[0].id]: {
+                    score: {
+                        byPhase: [
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false }
+                        ],
+                        total: { value: 0, isActive: true }
+                    },
+                    penaltyShots: { value: penaltyValueHome, isActive: true }
+                },
+                [participants[1].id]: {
+                    score: {
+                        byPhase: [
+                            { value: getRandomInt(5), isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false }
+                        ],
+                        total: { value: 1, isActive: true }
+                    },
+                    penaltyShots: { value: penaltyValueAway, isActive: true }
+                }
+            },
+            eventId: eventId,
+            categoryId: 2,
+            category: "IceHockey",
+            currentPhase: { id: 2, label: "2nd Period" },
+            currentVarState: 0,
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: getRandomInt(1, 19),
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0
+        }
+
+        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+    }
+
+    function getTennisScoreBoard(participants) {
+        let set1HomeScore, set1AwayScore;
+        let isSet1WonByHome = getRandomBoolean();
+        let isServerHome = getRandomBoolean();
+        let setPointHome = isSet1WonByHome ? 1 : 0;
+        let setPointAway = isSet1WonByHome ? 0 : 1;
+
+
+        log("setPointHome" + setPointHome);
+        log("setPointAway" + setPointAway);
+
+        if (isSet1WonByHome) {
+            set1HomeScore = getRandomInt(6, 7);
+            set1AwayScore = (set1HomeScore === 6) ? getRandomInt(4) : getRandomInt(5);
+        } else {
+            set1AwayScore = getRandomInt(6, 7);
+            set1HomeScore = (set1AwayScore === 6) ? getRandomInt(4) : getRandomInt(5);
+        }
+
+        let scoreBoard = {
+            participants: participantsArrayInScoreboard,
+            scorePerParticipant: {
+                [participants[0].id]: setPointHome,
+                [participants[1].id]: setPointAway
+            },
+            statistics: {
+                [participants[0].id]: {
+                    score: {
+                        byPhase: [
+                            { value: set1HomeScore, isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false },
+                            { value: 0, isActive: false }
+                        ],
+                        total: { value: getRandomTennisScore(), isActive: true }
+                    },
+                    isServer: { value: isServerHome, isActive: true },
+                    setPoints: { value: 0, isActive: true },
+                    tieBreakPoints: { value: 0, isActive: false }
+                },
+                [participants[1].id]: {
+                    score: {
+                        byPhase: [
+                            { value: set1AwayScore, isActive: true },
+                            { value: getRandomInt(5), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false },
+                            { value: 0, isActive: false }
+                        ],
+                        total: { value: getRandomTennisScore(), isActive: true }
+                    },
+                    isServer: { value: !isServerHome, isActive: true },
+                    setPoints: { value: 0, isActive: true },
+                    tieBreakPoints: { value: 0, isActive: false }
+                }
+            },
+            eventId: eventId,
+            categoryId: 11,
+            category: "Tennis",
+            currentPhase: {
+                id: 2,
+                label: "2nd Set"
+            },
+            currentVarState: 0,
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: 0,
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0,
+            phaseCategoryId: "2-11"
+        }
+        return scoreBoard;
+
+        function getRandomTennisScore() {
+            const scores = ['0', '15', '30', '40'];
+            const randomIndex = Math.floor(Math.random() * scores.length);
+            return scores[randomIndex];
+        }
+
+    }
+
+    function getBasketBallScoreBoard(participants) {
+        let scoreBoard = {
+            actions: [],
+            participants: participantsArrayInScoreboard,
+            scorePerParticipant: {
+                [participants[0].id]: 42,
+                [participants[1].id]: 36
+            },
+            statistics: {
+                [participants[0].id]: {
+                    score: {
+                        byPhase: [
+                            { value: getRandomInt(50), isActive: true },
+                            { value: getRandomInt(50), isActive: true },
+                            { value: getRandomInt(50), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false },
+                            { value: 0, isActive: false },
+                            { value: 0, isActive: false },
+                        ],
+                        total: {
+                            value: 0,
+                            isActive: true
+                        }
+                    }
+                },
+                [participants[1].id]: {
+                    score: {
+                        byPhase: [
+                            { value: getRandomInt(50), isActive: true },
+                            { value: getRandomInt(50), isActive: true },
+                            { value: getRandomInt(50), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false },
+                            { value: 0, isActive: false },
+                            { value: 0, isActive: false },
+                        ],
+                        total: {
+                            value: 0,
+                            isActive: true
+                        }
+                    }
+                }
+            },
+            eventId: eventId,
+            categoryId: 4,
+            category: "Basketball",
+            currentPhase: {
+                id: 3,
+                label: "3rd Quarter"
+            },
+            currentVarState: 0,
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: 0,
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0,
+            phaseCategoryId: "3-4"
+        }
+        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+    }
+
+    function getDartsScoreBoard(participants) {
+        let homeFinalScore = getRandomInt(3);
+        let awayFinalScore = getRandomInt(3);
+        let isServer = getRandomBoolean();
+        let scoreBoard = {
+            participants: participantsArrayInScoreboard,
+            scorePerParticipant: {
+                [participants[0].id]: homeFinalScore,
+                [participants[1].id]: awayFinalScore
+            },
+            statistics: {
+                [participants[0].id]: {
+                    leftovers: { value: getRandomInt(1, 501), isActive: false },
+                    legPoints: { value: homeFinalScore, isActive: true },
+                    setPoints: { value: homeFinalScore, isActive: false },
+                    isServer: { value: isServer, isActive: true },
+                    oneEighties: { value: getRandomInt(2), isActive: true },
+                    matchFormat: { value: "0", isActive: true },
+                    matchFormatSummary: { value: "0", isActive: true }
+
+                },
+                [participants[1].id]: {
+                    leftovers: { value: getRandomInt(1, 501), isActive: false },
+                    legPoints: { value: awayFinalScore, isActive: true },
+                    setPoints: { value: awayFinalScore, isActive: false },
+                    isServer: { value: !isServer, isActive: true },
+                    oneEighties: { value: getRandomInt(2), isActive: true },
+                    matchFormat: { value: "0", isActive: true },
+                    matchFormatSummary: { value: "0", isActive: true }
+
+                }
+            },
+            eventId: eventId,
+            categoryId: 34,
+            category: "Darts",
+            currentPhase: {
+                id: 1,
+                label: ""
+            },
+            currentVarState: 0,
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: 0,
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0,
+            phaseCategoryId: "1-34"
+        }
+        return scoreBoard;
+
+
+    }
+
+    function getVolleyBallScoreBoard(participants) {
+        let isServer = getRandomBoolean();
+        let isSet1WonByHome = getRandomBoolean();
+        let isSet2WonByHome = getRandomBoolean();
+        let isSet3WonByHome = getRandomBoolean();
+
+        let set1HomeScore, set2HomeScore, set3HomeScore;
+        let set1AwayScore, set2AwayScore, set3AwayScore;
+
+        let totalScoreHome = 0;
+        let totalScoreAway = 0;
+        
+        if (isSet1WonByHome) {
+            totalScoreHome++;
+            set1HomeScore = 25;
+            set1AwayScore = getRandomInt(23);
+        } else {
+            totalScoreAway++;
+            set1HomeScore = getRandomInt(23);
+            set1AwayScore = 25;
+        }
+
+        if (isSet2WonByHome) {
+            totalScoreHome++;
+            set2HomeScore = 25;
+            set2AwayScore = getRandomInt(23);
+        } else {
+            totalScoreAway++;
+            set2HomeScore = getRandomInt(23);
+            set2AwayScore = 25;
+        }
+
+        if (isSet3WonByHome) {
+            totalScoreHome++;
+            set3HomeScore = 25;
+            set3AwayScore = getRandomInt(23);
+        } else {
+            totalScoreAway++;
+            set3HomeScore = getRandomInt(23);
+            set3AwayScore = 25;
+        }
+
+        let scoreBoard = {
+            participants: participantsArrayInScoreboard,
+            scorePerParticipant: {
+                [participants[0].id]: totalScoreHome,
+                [participants[1].id]: totalScoreAway
+            },
+            statistics: {
+                [participants[0].id]: {
+                    score: {
+                        byPhase: [
+                            { value: set1HomeScore, isActive: true },
+                            { value: set2HomeScore, isActive: true },
+                            { value: set3HomeScore, isActive: true },
+                            { value: getRandomInt(24), isActive: true },
+                            { value: 0, isActive: true }
+                        ],
+                        total: {
+                            value: totalScoreHome,
+                            isActive: true
+                        }
+                    },
+                    isServer: {
+                        value: isServer,
+                        isActive: true
+                    }
+                },
+                [participants[1].id]: {
+                    score: {
+                        byPhase: [
+                            { value: set1AwayScore, isActive: true },
+                            { value: set2AwayScore, isActive: true },
+                            { value: set3AwayScore, isActive: true },
+                            { value: getRandomInt(24), isActive: true },
+                            { value: 0, isActive: true }
+                        ],
+                        total: {
+                            value: totalScoreAway,
+                            isActive: true
+                        }
+                    },
+                    isServer: {
+                        value: !isServer,
+                        isActive: true
+                    }
+                }
+            },
+            eventId: eventId,
+            categoryId: 9,
+            category: "Volleyball",
+            currentPhase: {
+                id: 2,
+                label: "4th Set"
+            },
+            currentVarState: 0,
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: 0,
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0,
+            phaseCategoryId: "4-9"
+        }
+        return scoreBoard;
+    }
+
+    function getScoreBoardWithFinalScores(scoreBoard, participants, categoryId) {
+        let homeFinalScore = getFinalScore(0);
+        let awayFinalScore = getFinalScore(1);
+
+        scoreBoard.scorePerParticipant[participants[0].id] = homeFinalScore;
+        scoreBoard.scorePerParticipant[participants[1].id] = awayFinalScore;
+
+        let statKey = categoryId === "19" ? "inningRuns" : "score";
+        scoreBoard.statistics[participants[0].id][statKey].total.value = homeFinalScore;
+        scoreBoard.statistics[participants[1].id][statKey].total.value = awayFinalScore;
+
+        function getFinalScore(index) {
+            log("categoryId " + categoryId);
+            log(categoryId === "19");
+            let byPhase = categoryId === "19" ? scoreBoard.statistics[participants[index].id].inningRuns.byPhase : scoreBoard.statistics[participants[index].id].score.byPhase;
+            return byPhase.reduce((total, currentValue) => total + currentValue.value, 0);
+        }
+        return scoreBoard;
+    }
+
+
 })();

@@ -407,6 +407,10 @@
                             <span>'Over' suspends all markets</span>
                             <input type="checkbox" class="chkInline chkSbTools" id="chkSuspendAllMarkets">
                         </div>
+                        <div id="liveAddsScoreBoardSection" class="checkBoxRowToRight">
+                            <span>'Live' adds random scoreboard (experimental)</span>
+                            <input type="checkbox" checked class="chkInline chkSbTools" id="chkLiveAddsScoreBoard">
+                        </div>
                     </div>
                 </div>
 
@@ -542,7 +546,7 @@
 
                 <div>
                     <button onclick="toggleSection('footballScoreBoardSection')" class="moreLess">Football
-                        Scoreboard</button>
+                        Scoreboard (RealTime Test)</button>
                     <div id="footballScoreBoardSection" class="marginTopBottom10px hide">
                         <div id="notFootballScoreBoardMessage" class="hide displayInRed">
                             No Football Scoreboard found for this event.
@@ -882,7 +886,9 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price
+                <!-- <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price
+                    Boost</button> -->
+                <button onclick="toggleSection('createPriceBoostSection')" class="hide moreLess">Create Price
                     Boost</button>
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
