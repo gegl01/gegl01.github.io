@@ -384,7 +384,7 @@
 
                 <div>
                     <button onclick="toggleSection('setEventPhaseSection')" class="moreLess">Set Event
-                        Phase</button>
+                        Phase / Scoreboards</button>
                     <div id="setEventPhaseSection" class="marginTopBottom10px hide">
                         <div id="setEventPhaseButtonsLayout">
                             <button id="btSetEventPhaseLive" class="btSimple btSetEventPhase"
@@ -408,7 +408,7 @@
                             <input type="checkbox" checked class="chkInline chkSbTools" id="chkLiveAddsScoreBoard">
                         </div>
                         <div id="scoreBoardNotSupportedSection" class="inactivated checkBoxRowToRight">
-                            <span>Scoreboard for this category not yet supported</span>                            
+                            <span>Scoreboard for this category not yet supported</span>
                             <input type="checkbox" class="chkInline chkSbTools">
                         </div>
                         <div class="checkBoxRowToRight">
@@ -765,25 +765,36 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet Group
-                    Description, Help Text</button>
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet Dist, Help Text</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
-                    <div id="isCashoutAvailableSection" class="iconMocksRow">
-                        <span class="width95Percent">
-                            <span class="ico-cash-stack iconMockIconColumn vertMiddle"></span>
-                            <span class="iconMockLabelColumn">Cash Out</span>
-                        </span>
-                        <input type="checkbox" onclick="toggleMarketProperty('cashoutAvailable')"
-                            id="chkIsCashoutAvailable" class="chkSbTools">
-                    </div>
-                    <div id="isBetBuilderAvailable" class="iconMocksRow">
-                        <span class="width95Percent">
-                            <span class="ico-bet-builder-seamless iconMockIconColumn vertMiddle"></span>
-                            <span class="iconMockLabelColumn">Bet Builder / SGP</span>
-                        </span>
-                        <input type="checkbox" onclick="toggleMarketProperty('betBuilderAvailable')"
-                            id="chkIsBetBuilderAvailable" class="chkSbTools">
+                    <div id="marketCheckboxesSection">
+                        <div id="isCashoutAvailableSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="ico-cash-stack iconMockIconColumn vertMiddle"></span>
+                                <span class="iconMockLabelColumn">Cash Out</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleMarketProperty('cashoutAvailable')"
+                                id="chkIsCashoutAvailable" class="chkSbTools">
+                        </div>
+
+                        <div id="isBetBuilderAvailableSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="ico-bet-builder-seamless iconMockIconColumn vertMiddle"></span>
+                                <span class="iconMockLabelColumn">Bet Builder / SGP</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleMarketProperty('betBuilderAvailable')"
+                                id="chkIsBetBuilderAvailable" class="chkSbTools">
+                        </div>
+
+                        <div id="isBetDistributionAvailableSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="ico-bet-trends iconMockIconColumn vertMiddle"></span>
+                                <span class="iconMockLabelColumn">Bet Distribution</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleMarketProperty('betDistributionAvailable')"
+                                id="chkIsBetDistributionAvailable" class="chkSbTools">
+                        </div>
                     </div>
 
 
@@ -813,7 +824,6 @@
                     </div>
 
                 </div>
-
             </div>
 
             <div id="sbToolsMarketInfo" class="hide">
@@ -891,7 +901,8 @@
                 </div>
 
                 <!-- <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost</button> -->
-                <button onclick="toggleSection('createPriceBoostSection')" class="hide moreLess">Create Price Boost</button>
+                <button onclick="toggleSection('createPriceBoostSection')" class="hide moreLess">Create Price
+                    Boost</button>
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
                     <div id="addSelectionToPbSection">
@@ -1018,81 +1029,193 @@
             <img class="iconInfoSymbol"> Selection detection: Last selection from betslip
         </div>
     </div>
-</div>
 
-<div id="sbToolsBonuses" class="accordion closed">
-    <button id="bonusesAccordion" class="accHeading" onclick="initBonuses()">
-        <span class="accordionTitle">Bonuses</span>
-        <span class="accordionHint">Price Boost, ACCA Insurance, Free Bet</span>
-    </button>
-    <div class="accContent">
-
-        <button onclick="toggleSection('pbSection')" class="moreLess">Price Boost
+    <div id="sbToolsBonuses" class="accordion closed">
+        <button id="bonusesAccordion" class="accHeading" onclick="initBonuses()">
+            <span class="accordionTitle">Bonuses</span>
+            <span class="accordionHint">Price Boost, ACCA Insurance, Free Bet</span>
         </button>
-        <div id="pbSection" class="hide marginTopBottom10px">
-            <div id="noPbFound" class="displayInRed">
-                No Price Boost found
-            </div>
-            <div id="pbDetailsLayout">
-                <div>
+        <div class="accContent">
 
-                    <div class="marginBottom5px">
-                        <span id="pbNumberOfListed" class="displayInGreen fontBold marginRight3px"></span>
-                        <span class="marginRight5px">PB(s) listed</span>
-                        <span class="marginRight3px">&lpar;altogether</span>
-                        <span id="pbNumberOf" class="displayInGreen fontBold marginRight3px"></span>
-                        <span>returned by API&rpar;</span>
-                    </div>
-
-                    <div class="itemsJustified marginBottom2px">
-                        <div id="listPbByNameDiv">
-                            <input type="radio" name="radioPb" id="radioPbByName" class="radioSbTools vertMiddle"
-                                checked onclick="listPriceBoostsBy('pbName')">
-                            <label for="radioPbByName" class="vertMiddle">by bonus name</label>
-                        </div>
-                        <div id="listPbByEventNameDiv">
-                            <input type="radio" name="radioPb" id="radioPbByEvent" class="radioSbTools vertMiddle"
-                                onclick="listPriceBoostsBy('eventName')">
-                            <label for="radioPbByEvent" class="vertMiddle">by event name</label>
-                        </div>
-                        <div
-                            title="These boost are not applicable as the selections for them are not available in the system">
-                            <input type="radio" name="radioPb" id="radioPbGarbage" class="radioSbTools vertMiddle"
-                                onclick="listPriceBoostsBy('garbage')">
-                            <label for="radioPbGarbage" class="vertMiddle">garbage</label>
-                        </div>
-                    </div>
+            <button onclick="toggleSection('pbSection')" class="moreLess">Price Boost
+            </button>
+            <div id="pbSection" class="hide marginTopBottom10px">
+                <div id="noPbFound" class="displayInRed">
+                    No Price Boost found
                 </div>
-                <select id="pbSelector" onchange="selectPb(value)"
-                    class="comboSbTools height20px marginBottom10px width100percent">
-                </select>
-                <div id="pbLegendCloseable">
-                    <div id="pbLegendSection">
-                        <div class="marginBottom2px">Icons in the above dropdown:</div>
-                        <div id="pbLegendCriteriaNotMet">&#128683; PB criteria not met</div>
-                        <div id="pbLegendPersonal">&#128151; Personal</div>
-                        <div id="pbLegendCombi">&#x1F9E9; Combination</div>
-                        <div id="pbLegendSuperBoost">&#128640; Super Boost</div>
-                        <button id="btClosePbLegend" onclick="closePbLegend()">x</button>
-                    </div>
-                </div>
-                <div id="pbSelectedDetails">
+                <div id="pbDetailsLayout">
                     <div>
-                        <span class="marginRight5px">Name:</span>
-                        <span id="pbName" class="displayInGreen"></span>
-                    </div>
-                    <div class="itemsJustified">
-                        <div class="width95Percent displayFlex">
-                            <span class="marginRight5px">ID:</span>
-                            <span id="pbIdSpan" class="displayInGreen"></span>
-                        </div>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('priceBoostId')">
-                            <img class="iconCopy">
-                        </button>
-                    </div>
 
-                    <div class="marginTopBottom10px">
+                        <div class="marginBottom5px">
+                            <span id="pbNumberOfListed" class="displayInGreen fontBold marginRight3px"></span>
+                            <span class="marginRight5px">PB(s) listed</span>
+                            <span class="marginRight3px">&lpar;altogether</span>
+                            <span id="pbNumberOf" class="displayInGreen fontBold marginRight3px"></span>
+                            <span>returned by API&rpar;</span>
+                        </div>
+
+                        <div class="itemsJustified marginBottom2px">
+                            <div id="listPbByNameDiv">
+                                <input type="radio" name="radioPb" id="radioPbByName" class="radioSbTools vertMiddle"
+                                    checked onclick="listPriceBoostsBy('pbName')">
+                                <label for="radioPbByName" class="vertMiddle">by bonus name</label>
+                            </div>
+                            <div id="listPbByEventNameDiv">
+                                <input type="radio" name="radioPb" id="radioPbByEvent" class="radioSbTools vertMiddle"
+                                    onclick="listPriceBoostsBy('eventName')">
+                                <label for="radioPbByEvent" class="vertMiddle">by event name</label>
+                            </div>
+                            <div
+                                title="These boost are not applicable as the selections for them are not available in the system">
+                                <input type="radio" name="radioPb" id="radioPbGarbage" class="radioSbTools vertMiddle"
+                                    onclick="listPriceBoostsBy('garbage')">
+                                <label for="radioPbGarbage" class="vertMiddle">garbage</label>
+                            </div>
+                        </div>
+                    </div>
+                    <select id="pbSelector" onchange="selectPb(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
+                    <div id="pbLegendCloseable">
+                        <div id="pbLegendSection">
+                            <div class="marginBottom2px">Icons in the above dropdown:</div>
+                            <div id="pbLegendCriteriaNotMet">&#128683; PB criteria not met</div>
+                            <div id="pbLegendPersonal">&#128151; Personal</div>
+                            <div id="pbLegendCombi">&#x1F9E9; Combination</div>
+                            <div id="pbLegendSuperBoost">&#128640; Super Boost</div>
+                            <button id="btClosePbLegend" onclick="closePbLegend()">x</button>
+                        </div>
+                    </div>
+                    <div id="pbSelectedDetails">
+                        <div>
+                            <span class="marginRight5px">Name:</span>
+                            <span id="pbName" class="displayInGreen"></span>
+                        </div>
                         <div class="itemsJustified">
+                            <div class="width95Percent displayFlex">
+                                <span class="marginRight5px">ID:</span>
+                                <span id="pbIdSpan" class="displayInGreen"></span>
+                            </div>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('priceBoostId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+
+                        <div class="marginTopBottom10px">
+                            <div class="itemsJustified">
+                                <div class="width95Percent itemsJustified paddingRight8px">
+                                    <span>
+                                        <span>Open in</span>
+                                        <span class="sbManagerSb">sb</span>
+                                        <span class="sbManagerManager">manager</span>
+                                    </span>
+                                    <span class="displayInLightGrey">(ex-Trading Tools)</span>
+                                </div>
+                                <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('priceBoost')">
+                                    <img class="iconOpenInNewWindow">
+                                </button>
+                            </div>
+
+                            <div id="goToEventPageRow" class="itemsJustified">
+                                <span class="width95Percent">
+                                    Go to the event page
+                                </span>
+                                <a id="goToEventPageLink" href="">
+                                    <button class="btReload btIcon" onclick="goToEventPage()">
+                                        <img class="iconReload">
+                                    </button>
+                                </a>
+                            </div>
+
+                            <div title="Enabled on SB Home and A-Z pages to which the related event belongs"
+                                id="addPbToCarouselRow" class="itemsJustified">
+                                <span id="addPbToCarouselLabel" class="width95Percent">
+                                    Add to carousel or cards
+                                </span>
+                                <button class="btIcon" onclick="addPbToCarouselOrCards()">
+                                    <img class="iconPlus">
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <hr class="hRule">
+                        <div>
+                            Path to the Competition:
+                            <div id="pbPathToCompetition" class="displayInGreen marginBottom10px"></div>
+                            <div id=boostedSelectionDiv>
+                                Boosted Selection:
+                                <div class="displayInGreen">
+                                    <div id="eventLabelForPbDiv"></div>
+                                    <div id="marketLabelForPbDiv" class="marginLeft5px"></div>
+                                    <div id="selectionLabelForPbDiv" class="marginLeft30px fontBold"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="hRule">
+                        <div class="displayFlex">
+                            <span class="keyForPb">Visibility:</span>
+                            <span id="pbVisibility" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForPb">Type:</span>
+                            <span id="pbType" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForPb">Event Phases:</span>
+                            <span id="pbEventPhases" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForPb">Odds Range:</span>
+                            <span id="pbMinMaxOdds" class="displayInGreen"></span>
+                        </div>
+                        <div id="pbStakeRangeDiv">
+                            <div class="displayFlex">
+                                <span class="keyForPb">Stake Range:</span>
+                                <span id="pbMinMaxStake" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                        <div id="pbExpiryDateDiv">
+                            <div class="displayFlex">
+                                <span class="keyForPb">Expiry Date:</span>
+                                <span id="pbExpiryDate" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="toggleSection('profitBoostSection')" class="moreLess">Profit Boost
+            </button>
+            <div id="profitBoostSection" class="hide marginTopBottom10px">
+                <div id="profitBoostNotFound" class="displayInRed">
+                    No Profit Boost found
+                </div>
+                <div id="profitBoostLogin" class="displayInRed">Login to see your Profit Boosts.
+                </div>
+                <div id="profitBoostDetailsLayout">
+                    <div>
+                        <span id="profitBoostNumberOf" class="displayInGreen fontBold marginRight5px"></span>
+                        <span>Profit Boosts found</span>
+                    </div>
+                    <select id="profitBoostSelector" onchange="selectProfitBoost(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
+                    <div id="profitBoostSelectedDetails">
+                        <div>
+                            <span class="marginRight5px">Name:</span>
+                            <span id="profitBoostName" class="displayInGreen"></span>
+                        </div>
+                        <div class="itemsJustified">
+                            <div class="width95Percent displayFlex">
+                                <span class="marginRight5px">ID:</span>
+                                <span id="profitBoostId" class="displayInGreen"></span>
+                            </div>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('profitBoostId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+                        <div class="marginTopBottom10px itemsJustified">
                             <div class="width95Percent itemsJustified paddingRight8px">
                                 <span>
                                     <span>Open in</span>
@@ -1101,536 +1224,424 @@
                                 </span>
                                 <span class="displayInLightGrey">(ex-Trading Tools)</span>
                             </div>
-                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('priceBoost')">
+                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('profitBoost')">
                                 <img class="iconOpenInNewWindow">
                             </button>
                         </div>
-
-                        <div id="goToEventPageRow" class="itemsJustified">
-                            <span class="width95Percent">
-                                Go to the event page
-                            </span>
-                            <a id="goToEventPageLink" href="">
-                                <button class="btReload btIcon" onclick="goToEventPage()">
-                                    <img class="iconReload">
-                                </button>
-                            </a>
+                        <hr class="hRule">
+                        <div id="profitBoostRestrictionsSection">
+                            Restriction path:
+                            <div id="profitBoostPathToCompetition" class="displayInGreen marginBottom10px">
+                            </div>
+                            <div id="profitBoostFurtherRestricions" class="displayInOrange hide">
+                                Further restrictions are set on Event/Market level. See the details in Trading Tools.
+                            </div>
+                            <hr class="hRule">
                         </div>
-
-                        <div title="Enabled on SB Home and A-Z pages to which the related event belongs"
-                            id="addPbToCarouselRow" class="itemsJustified">
-                            <span id="addPbToCarouselLabel" class="width95Percent">
-                                Add to carousel or cards
-                            </span>
-                            <button class="btIcon" onclick="addPbToCarouselOrCards()">
-                                <img class="iconPlus">
-                            </button>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Profit Boost %:</span>
+                            <span id="profitBoostMultiplier" class="displayInGreen"></span>
                         </div>
-
-                    </div>
-
-                    <hr class="hRule">
-                    <div>
-                        Path to the Competition:
-                        <div id="pbPathToCompetition" class="displayInGreen marginBottom10px"></div>
-                        <div id=boostedSelectionDiv>
-                            Boosted Selection:
-                            <div class="displayInGreen">
-                                <div id="eventLabelForPbDiv"></div>
-                                <div id="marketLabelForPbDiv" class="marginLeft5px"></div>
-                                <div id="selectionLabelForPbDiv" class="marginLeft30px fontBold"></div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Max Winning:</span>
+                            <span id="profitBoostMaxBoostedWinningsInEuro" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Bet Types:</span>
+                            <span id="profitBoostBetTypes" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Event Phases:</span>
+                            <span id="profitBoostEventPhases" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Stake Range:</span>
+                            <span id="profitBoostStake" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForProfitBoost">Odds Range:</span>
+                            <span id="profitBoostMinMaxOdds" class="displayInGreen"></span>
+                        </div>
+                        <div id="profitBoostNoOfSelectionsDiv">
+                            <div class="displayFlex">
+                                <span class="keyForProfitBoost">No. of Selections:</span>
+                                <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                        <div id="profitBoostExpiryDateDiv">
+                            <div class="displayFlex">
+                                <span class="keyForProfitBoost">Expiry Date:</span>
+                                <span id="profitBoostExpiryDate" class="displayInGreen"></span>
                             </div>
                         </div>
                     </div>
-                    <hr class="hRule">
-                    <div class="displayFlex">
-                        <span class="keyForPb">Visibility:</span>
-                        <span id="pbVisibility" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForPb">Type:</span>
-                        <span id="pbType" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForPb">Event Phases:</span>
-                        <span id="pbEventPhases" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForPb">Odds Range:</span>
-                        <span id="pbMinMaxOdds" class="displayInGreen"></span>
-                    </div>
-                    <div id="pbStakeRangeDiv">
-                        <div class="displayFlex">
-                            <span class="keyForPb">Stake Range:</span>
-                            <span id="pbMinMaxStake" class="displayInGreen"></span>
-                        </div>
-                    </div>
-                    <div id="pbExpiryDateDiv">
-                        <div class="displayFlex">
-                            <span class="keyForPb">Expiry Date:</span>
-                            <span id="pbExpiryDate" class="displayInGreen"></span>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </div>
 
-        <button onclick="toggleSection('profitBoostSection')" class="moreLess">Profit Boost
-        </button>
-        <div id="profitBoostSection" class="hide marginTopBottom10px">
-            <div id="profitBoostNotFound" class="displayInRed">
-                No Profit Boost found
-            </div>
-            <div id="profitBoostLogin" class="displayInRed">Login to see your Profit Boosts.
-            </div>
-            <div id="profitBoostDetailsLayout">
-                <div>
-                    <span id="profitBoostNumberOf" class="displayInGreen fontBold marginRight5px"></span>
-                    <span>Profit Boosts found</span>
-                </div>
-                <select id="profitBoostSelector" onchange="selectProfitBoost(value)"
-                    class="comboSbTools height20px marginBottom10px width100percent">
-                </select>
-                <div id="profitBoostSelectedDetails">
-                    <div>
-                        <span class="marginRight5px">Name:</span>
-                        <span id="profitBoostName" class="displayInGreen"></span>
-                    </div>
-                    <div class="itemsJustified">
-                        <div class="width95Percent displayFlex">
-                            <span class="marginRight5px">ID:</span>
-                            <span id="profitBoostId" class="displayInGreen"></span>
-                        </div>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('profitBoostId')">
-                            <img class="iconCopy">
-                        </button>
-                    </div>
-                    <div class="marginTopBottom10px itemsJustified">
-                        <div class="width95Percent itemsJustified paddingRight8px">
-                            <span>
-                                <span>Open in</span>
-                                <span class="sbManagerSb">sb</span>
-                                <span class="sbManagerManager">manager</span>
-                            </span>
-                            <span class="displayInLightGrey">(ex-Trading Tools)</span>
-                        </div>
-                        <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('profitBoost')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <hr class="hRule">
-                    <div id="profitBoostRestrictionsSection">
-                        Restriction path:
-                        <div id="profitBoostPathToCompetition" class="displayInGreen marginBottom10px">
-                        </div>
-                        <div id="profitBoostFurtherRestricions" class="displayInOrange hide">
-                            Further restrictions are set on Event/Market level. See the details in Trading Tools.
-                        </div>
-                        <hr class="hRule">
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForProfitBoost">Profit Boost %:</span>
-                        <span id="profitBoostMultiplier" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForProfitBoost">Max Winning:</span>
-                        <span id="profitBoostMaxBoostedWinningsInEuro" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForProfitBoost">Bet Types:</span>
-                        <span id="profitBoostBetTypes" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForProfitBoost">Event Phases:</span>
-                        <span id="profitBoostEventPhases" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForProfitBoost">Stake Range:</span>
-                        <span id="profitBoostStake" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForProfitBoost">Odds Range:</span>
-                        <span id="profitBoostMinMaxOdds" class="displayInGreen"></span>
-                    </div>
-                    <div id="profitBoostNoOfSelectionsDiv">
-                        <div class="displayFlex">
-                            <span class="keyForProfitBoost">No. of Selections:</span>
-                            <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
-                        </div>
-                    </div>
-                    <div id="profitBoostExpiryDateDiv">
-                        <div class="displayFlex">
-                            <span class="keyForProfitBoost">Expiry Date:</span>
-                            <span id="profitBoostExpiryDate" class="displayInGreen"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button onclick="toggleSection('accaSection')" class="moreLess">ACCA Insurance
-        </button>
-        <div id="accaSection" class="hide marginTopBottom10px">
-            <div id="accaMessage" class="displayInRed">
-                <div id="loginToSeeAcca">Login to see ACCA insurance.
-                </div>
-                <div id="noAccaFound">No active ACCA insurance found.</div>
-            </div>
-            <div id="accaDetailsLayout" class="hide">
-
-                <div class="itemsJustified">
-                    <div class="width95Percent displayFlex">
-                        <span class="marginRight5px">Name:</span>
-                        <span id=accaNameField class="accaValueColumn displayInGreen"></span>
-                    </div>
-
-                    <button class="btCopy btIcon" id="btAccaName" onclick="copyToClipboard('accaName')">
-                        <img class="iconCopy">
-                    </button>
-                </div>
-
-                <div class="itemsJustified">
-                    <div class="width95Percent displayFlex">
-                        <span class="marginRight5px">ID:</span>
-                        <span id="accaIdField" class="accaValueColumn displayInGreen"></span>
-                    </div>
-                    <button class="btCopy btIcon" onclick="copyToClipboard('accaId')">
-                        <img class="iconCopy">
-                    </button>
-                </div>
-                <div class="marginTopBottom10px itemsJustified">
-                    <div class="width95Percent itemsJustified paddingRight8px">
-                        <span>
-                            <span>Open in</span>
-                            <span class="sbManagerSb">sb</span>
-                            <span class="sbManagerManager">manager</span>
-                        </span>
-                        <span class="displayInLightGrey">(ex-Trading Tools)</span>
-                    </div>
-                    <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('acca')">
-                        <img class="iconOpenInNewWindow">
-                    </button>
-                </div>
-                <hr class="hRule">
-                <div id="accaCategoriesSection">
-                    <div id="accaCategoriesRow" class="displayFlex">
-                        <span class="marginRight5px">Categories:</span>
-                        <span id="accaCategoriesSpan" class="displayInGreen"></span>
-                    </div>
-                    <div id="accaCompetitionsRow">
-                        <span class="marginRight5px">Competitions:</span>
-                        <span id="accaCompetitionsSpan" class="displayInOrange"></span>
-                    </div>
-                    <div id="accaMarketTemplatesRow">
-                        <span class="marginRight5px">Market Templates:</span>
-                        <span id="accaMarketTemplatesSpan" class="displayInOrange"></span>
-                    </div>
-                    <hr class="hRule">
-                </div>
-                <div id="accaEventPhaseRow">
-                    <span class="marginRight5px">Event Phase:</span>
-                    <span id="accaEventPhaseSpan" class="displayInGreen"></span>
-                </div>
-                <div>
-                    <span class="marginRight5px">Min Number of Selections:</span>
-                    <span id="accaMinimumNumberOfSelectionsSpan" class="displayInGreen"></span>
-                </div>
-                <div>
-                    <span class="marginRight5px">Min Selection Odds:</span>
-                    <span id="accaSelectionOddsLimitMinSpan" class="displayInGreen"></span>
-                </div>
-                <div id="accaTotalOddsLimitMinRow">
-                    <span class="marginRight5px">Min Total Odds:</span>
-                    <span id="accaTotalOddsLimitMinSpan" class="displayInGreen"></span>
-                </div>
-                <hr class="hRule">
-                <div id="accaMinMaxStakeRow">
-                    <span class="marginRight5px">Stake Range:</span>
-                    <span id="accaMinMaxStakeSpan" class="displayInGreen"></span>
-                </div>
-                <div id="accaExpiryDateRow">
-                    <span class="marginRight5px">Expiry Date:</span>
-                    <span id="accaExpiryDateSpan" class="displayInGreen"></span>
-                </div>
-            </div>
-        </div>
-
-        <button onclick="toggleSection('freeBetSection')" class="moreLess">Free or Risk Free Bet
-        </button>
-        <div id="freeBetSection" class="hide marginTop10px">
-            <div id="freeBetNotFound" class="displayInRed">
-                No Free Bet found
-            </div>
-            <div id="freeBetLogin" class="displayInRed">Login to see your Free Bets.
-            </div>
-            <div id="freeBetDetailsLayout">
-                <div>
-                    <span id="freeBetNumberOf" class="displayInGreen fontBold marginRight5px"></span>
-                    <span>Free or Risk Free Bets found</span>
-                </div>
-                <select id="freeBetSelector" onchange="selectFreeBet(value)"
-                    class="comboSbTools height20px marginBottom10px width100percent">
-                </select>
-                <div id="freeBetSelectedDetails">
-                    <div>
-                        <span class="marginRight5px">Name:</span>
-                        <span id="freeBetName" class="displayInGreen"></span>
-                    </div>
-                    <div class="itemsJustified">
-                        <div class="width95Percent displayFlex">
-                            <span class="marginRight5px">ID:</span>
-                            <span id="freeBetIdSpan" class="displayInGreen"></span>
-                        </div>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('freeBetId')">
-                            <img class="iconCopy">
-                        </button>
-                    </div>
-                    <div class="marginTopBottom10px itemsJustified">
-                        <div class="width95Percent itemsJustified paddingRight8px">
-                            <span>
-                                <span>Open in</span>
-                                <span class="sbManagerSb">sb</span>
-                                <span class="sbManagerManager">manager</span>
-                            </span>
-                            <span class="displayInLightGrey">(ex-Trading Tools)</span>
-                        </div>
-                        <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('freeBet')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <hr class="hRule">
-                    <div id="freeBetRestrictionsSection">
-                        Restriction path:
-                        <div id="freeBetPathToCompetition" class="displayInGreen marginBottom10px">
-                        </div>
-                        <div id="freeBetFurtherRestricions" class="displayInOrange hide">
-                            Further restrictions are set on Event/Market level. See the details in Trading Tools.
-                        </div>
-                        <hr class="hRule">
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForFreeBet">Type:</span>
-                        <span id="freeBetType" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForFreeBet">Stake:</span>
-                        <span id="freeBetStake" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForFreeBet">Bet Types:</span>
-                        <span id="freeBetBetTypes" class="displayInGreen"></span>
-                    </div>
-                    <div class="displayFlex">
-                        <span class="keyForFreeBet">Event Phases:</span>
-                        <span id="freeBetEventPhases" class="displayInGreen"></span>
-                    </div>
-                    <div id="freeBetNoOfSelectionsDiv">
-                        <div class="displayFlex">
-                            <span class="keyForFreeBet">No. of Selections:</span>
-                            <span id="freeBetNoOfSelections" class="displayInGreen"></span>
-                        </div>
-                    </div>
-                    <div id="freeBetExpiryDateDiv">
-                        <div class="displayFlex">
-                            <span class="keyForFreeBet">Expiry Date:</span>
-                            <span id="freeBetExpiryDate" class="displayInGreen"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-<div id="sbToolsBanners" class="accordion closed">
-    <button id="bannersAccordion" class="accHeading" onclick="initBanners()">
-        <span class="accordionTitle">Banners</span>
-        <span class="accordionHint">Carousel & Sportsbook Banners</span>
-    </button>
-    <div class="accContent">
-        <div id="bannersMessage" class="displayInRed hide">Current page is not Sportsbook Home</div>
-        <div id="bannersFeatures" class="hide">
-            <div class="bannersRow">
-                <span class="keyColumnForBanners">Carousel Banners</span>
-                <span>
-                    <button id="btCrlBannersMinus" class="btPlusMinus btIcon" onclick="removeCarouselBanner()">
-                        <img class="iconMinus">
-                    </button>
-                </span>
-                <span id="noOfCrlBanners" class="noOfBanners displayInGreen"></span>
-                <span>
-                    <button class="btPlusMinus btIcon" onclick="addCarouselBanner()">
-                        <img class="iconPlus">
-                    </button>
-                </span>
-                <span class="floatRight">
-                    Overlay<input type="checkbox" id="chkBannerOverlay" class="chkInline chkSbTools">
-                </span>
-            </div>
-            <div class="bannersRow">
-                <span class="keyColumnForBanners">Sportsbook Banners</span>
-                <span>
-                    <button id="btSbBannersMinus" class="btPlusMinus btIcon" onclick="removeSportsbookBanner()">
-                        <img class="iconMinus">
-                    </button>
-                </span>
-                <span id="noOfSbBanners" class="noOfBanners displayInGreen"></span>
-                <span>
-                    <button class="btPlusMinus btIcon" onclick="addSportsbookBanner()">
-                        <img class="iconPlus">
-                    </button>
-                </span>
-                <span class="floatRight">
-                    Diff. Color<input type="checkbox" id="chkBannerDiffColor" class="chkInline chkSbTools">
-                </span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="sbToolsNative" class="accordion closed">
-    <button id="nativeAccordion" class="accHeading" onclick="initNativeApp()">
-        <span class="accordionTitle">Native App</span>
-        <span class="accordionHint">Navigate by postMessages</span>
-    </button>
-    <div class="accContent">
-
-        <div class="nativeDetectedEventLayout">
-            <div>
-                <div>Detected event from the betslip:</div>
-                <div class="labelRow" id="eventLabelForNative"></div>
-            </div>
-
-            <button id="btNativeOpenEvent" class="btSimple btNativeToggleable" onclick="openEventOnNative()">
-                <div class="ico-maximize-event iconNativeBottomBarButton"></div>
-                <div class="labelNativeBottomBarButton">OPEN</div>
+            <button onclick="toggleSection('accaSection')" class="moreLess">ACCA Insurance
             </button>
+            <div id="accaSection" class="hide marginTopBottom10px">
+                <div id="accaMessage" class="displayInRed">
+                    <div id="loginToSeeAcca">Login to see ACCA insurance.
+                    </div>
+                    <div id="noAccaFound">No active ACCA insurance found.</div>
+                </div>
+                <div id="accaDetailsLayout" class="hide">
+
+                    <div class="itemsJustified">
+                        <div class="width95Percent displayFlex">
+                            <span class="marginRight5px">Name:</span>
+                            <span id=accaNameField class="accaValueColumn displayInGreen"></span>
+                        </div>
+
+                        <button class="btCopy btIcon" id="btAccaName" onclick="copyToClipboard('accaName')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
+
+                    <div class="itemsJustified">
+                        <div class="width95Percent displayFlex">
+                            <span class="marginRight5px">ID:</span>
+                            <span id="accaIdField" class="accaValueColumn displayInGreen"></span>
+                        </div>
+                        <button class="btCopy btIcon" onclick="copyToClipboard('accaId')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
+                    <div class="marginTopBottom10px itemsJustified">
+                        <div class="width95Percent itemsJustified paddingRight8px">
+                            <span>
+                                <span>Open in</span>
+                                <span class="sbManagerSb">sb</span>
+                                <span class="sbManagerManager">manager</span>
+                            </span>
+                            <span class="displayInLightGrey">(ex-Trading Tools)</span>
+                        </div>
+                        <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('acca')">
+                            <img class="iconOpenInNewWindow">
+                        </button>
+                    </div>
+                    <hr class="hRule">
+                    <div id="accaCategoriesSection">
+                        <div id="accaCategoriesRow" class="displayFlex">
+                            <span class="marginRight5px">Categories:</span>
+                            <span id="accaCategoriesSpan" class="displayInGreen"></span>
+                        </div>
+                        <div id="accaCompetitionsRow">
+                            <span class="marginRight5px">Competitions:</span>
+                            <span id="accaCompetitionsSpan" class="displayInOrange"></span>
+                        </div>
+                        <div id="accaMarketTemplatesRow">
+                            <span class="marginRight5px">Market Templates:</span>
+                            <span id="accaMarketTemplatesSpan" class="displayInOrange"></span>
+                        </div>
+                        <hr class="hRule">
+                    </div>
+                    <div id="accaEventPhaseRow">
+                        <span class="marginRight5px">Event Phase:</span>
+                        <span id="accaEventPhaseSpan" class="displayInGreen"></span>
+                    </div>
+                    <div>
+                        <span class="marginRight5px">Min Number of Selections:</span>
+                        <span id="accaMinimumNumberOfSelectionsSpan" class="displayInGreen"></span>
+                    </div>
+                    <div>
+                        <span class="marginRight5px">Min Selection Odds:</span>
+                        <span id="accaSelectionOddsLimitMinSpan" class="displayInGreen"></span>
+                    </div>
+                    <div id="accaTotalOddsLimitMinRow">
+                        <span class="marginRight5px">Min Total Odds:</span>
+                        <span id="accaTotalOddsLimitMinSpan" class="displayInGreen"></span>
+                    </div>
+                    <hr class="hRule">
+                    <div id="accaMinMaxStakeRow">
+                        <span class="marginRight5px">Stake Range:</span>
+                        <span id="accaMinMaxStakeSpan" class="displayInGreen"></span>
+                    </div>
+                    <div id="accaExpiryDateRow">
+                        <span class="marginRight5px">Expiry Date:</span>
+                        <span id="accaExpiryDateSpan" class="displayInGreen"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="toggleSection('freeBetSection')" class="moreLess">Free or Risk Free Bet
+            </button>
+            <div id="freeBetSection" class="hide marginTop10px">
+                <div id="freeBetNotFound" class="displayInRed">
+                    No Free Bet found
+                </div>
+                <div id="freeBetLogin" class="displayInRed">Login to see your Free Bets.
+                </div>
+                <div id="freeBetDetailsLayout">
+                    <div>
+                        <span id="freeBetNumberOf" class="displayInGreen fontBold marginRight5px"></span>
+                        <span>Free or Risk Free Bets found</span>
+                    </div>
+                    <select id="freeBetSelector" onchange="selectFreeBet(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
+                    <div id="freeBetSelectedDetails">
+                        <div>
+                            <span class="marginRight5px">Name:</span>
+                            <span id="freeBetName" class="displayInGreen"></span>
+                        </div>
+                        <div class="itemsJustified">
+                            <div class="width95Percent displayFlex">
+                                <span class="marginRight5px">ID:</span>
+                                <span id="freeBetIdSpan" class="displayInGreen"></span>
+                            </div>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('freeBetId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+                        <div class="marginTopBottom10px itemsJustified">
+                            <div class="width95Percent itemsJustified paddingRight8px">
+                                <span>
+                                    <span>Open in</span>
+                                    <span class="sbManagerSb">sb</span>
+                                    <span class="sbManagerManager">manager</span>
+                                </span>
+                                <span class="displayInLightGrey">(ex-Trading Tools)</span>
+                            </div>
+                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('freeBet')">
+                                <img class="iconOpenInNewWindow">
+                            </button>
+                        </div>
+                        <hr class="hRule">
+                        <div id="freeBetRestrictionsSection">
+                            Restriction path:
+                            <div id="freeBetPathToCompetition" class="displayInGreen marginBottom10px">
+                            </div>
+                            <div id="freeBetFurtherRestricions" class="displayInOrange hide">
+                                Further restrictions are set on Event/Market level. See the details in Trading Tools.
+                            </div>
+                            <hr class="hRule">
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForFreeBet">Type:</span>
+                            <span id="freeBetType" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForFreeBet">Stake:</span>
+                            <span id="freeBetStake" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForFreeBet">Bet Types:</span>
+                            <span id="freeBetBetTypes" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
+                            <span class="keyForFreeBet">Event Phases:</span>
+                            <span id="freeBetEventPhases" class="displayInGreen"></span>
+                        </div>
+                        <div id="freeBetNoOfSelectionsDiv">
+                            <div class="displayFlex">
+                                <span class="keyForFreeBet">No. of Selections:</span>
+                                <span id="freeBetNoOfSelections" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                        <div id="freeBetExpiryDateDiv">
+                            <div class="displayFlex">
+                                <span class="keyForFreeBet">Expiry Date:</span>
+                                <span id="freeBetExpiryDate" class="displayInGreen"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <hr class="hRule">
+    </div>
 
-        <div id="nativeErrorMessage" class="displayInRed extraCondensed hide">
+    <div id="sbToolsBanners" class="accordion closed">
+        <button id="bannersAccordion" class="accHeading" onclick="initBanners()">
+            <span class="accordionTitle">Banners</span>
+            <span class="accordionHint">Carousel & Sportsbook Banners</span>
+        </button>
+        <div class="accContent">
+            <div id="bannersMessage" class="displayInRed hide">Current page is not Sportsbook Home</div>
+            <div id="bannersFeatures" class="hide">
+                <div class="bannersRow">
+                    <span class="keyColumnForBanners">Carousel Banners</span>
+                    <span>
+                        <button id="btCrlBannersMinus" class="btPlusMinus btIcon" onclick="removeCarouselBanner()">
+                            <img class="iconMinus">
+                        </button>
+                    </span>
+                    <span id="noOfCrlBanners" class="noOfBanners displayInGreen"></span>
+                    <span>
+                        <button class="btPlusMinus btIcon" onclick="addCarouselBanner()">
+                            <img class="iconPlus">
+                        </button>
+                    </span>
+                    <span class="floatRight">
+                        Overlay<input type="checkbox" id="chkBannerOverlay" class="chkInline chkSbTools">
+                    </span>
+                </div>
+                <div class="bannersRow">
+                    <span class="keyColumnForBanners">Sportsbook Banners</span>
+                    <span>
+                        <button id="btSbBannersMinus" class="btPlusMinus btIcon" onclick="removeSportsbookBanner()">
+                            <img class="iconMinus">
+                        </button>
+                    </span>
+                    <span id="noOfSbBanners" class="noOfBanners displayInGreen"></span>
+                    <span>
+                        <button class="btPlusMinus btIcon" onclick="addSportsbookBanner()">
+                            <img class="iconPlus">
+                        </button>
+                    </span>
+                    <span class="floatRight">
+                        Diff. Color<input type="checkbox" id="chkBannerDiffColor" class="chkInline chkSbTools">
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sbToolsNative" class="accordion closed">
+        <button id="nativeAccordion" class="accHeading" onclick="initNativeApp()">
+            <span class="accordionTitle">Native App</span>
+            <span class="accordionHint">Navigate by postMessages</span>
+        </button>
+        <div class="accContent">
+
+            <div class="nativeDetectedEventLayout">
+                <div>
+                    <div>Detected event from the betslip:</div>
+                    <div class="labelRow" id="eventLabelForNative"></div>
+                </div>
+
+                <button id="btNativeOpenEvent" class="btSimple btNativeToggleable" onclick="openEventOnNative()">
+                    <div class="ico-maximize-event iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">OPEN</div>
+                </button>
+            </div>
+
             <hr class="hRule">
-        </div>
 
-        <div class="marginTopBottom10px nativeBottomBarButtons">
-            <button id="btNativeBack" class="btSimple" onclick="nativeClick('back')">
-                <div class="ico-arrow-back iconNativeBottomBarButton"></div>
-                <div class="labelNativeBottomBarButton">Back</div>
-            </button>
-            <button id="btNativeHome" class="btSimple btNativeToggleable" onclick="nativeClick('home')">
-                <div class="ico-home-bottom-bar iconNativeBottomBarButton"></div>
-                <div class="labelNativeBottomBarButton">Home</div>
-            </button>
-            <button id="btNativeAz" class="btSimple btNativeToggleable" onclick="nativeClick('az')">
-                <div class="ico-all-sports-search iconNativeBottomBarButton"></div>
-                <div class="labelNativeBottomBarButton">A-Z</div>
-            </button>
-            <button id="btNativeLive" class="btSimple btNativeToggleable" onclick="nativeClick('live')">
-                <div class="ico-live-bottom-bar iconNativeBottomBarButton"></div>
-                <div class="labelNativeBottomBarButton">Live</div>
-            </button>
-
-            <button id="btNativeMyBets" class="btSimple loggedInOnly btNativeToggleable"
-                onclick="nativeClick('myBets')">
-                <div class="ico-my-bets iconNativeBottomBarButton"></div>
-                <div class="labelNativeBottomBarButton">My Bets</div>
-            </button>
-
-            <button id="btNativeBetslip" class="btSimple btWithBadge" onclick="nativeClick('betSlip')">
-                <div class="ico-betslip-bottom iconNativeBottomBarButton"></div>
-                <div class="labelNativeBottomBarButton">Betslip</div>
-                <div id="badgeNativeBetslip" class="badgeNative badgeNativeBetslip hide"></div>
-                <div id="badgeNativeBbBetslip" class="badgeNative badgeNativeBbBetslip hide"></div>
-            </button>
-        </div>
-
-        <div id="nativeOtherSection" class="marginTopBottom10px nativeOtherButtons">
-            <button id="btNativeBetBuilder" class="btNativeOthers btNativeToggleable"
-                onclick="nativeClick('betBuilder')">
-                <div id="iconBtNativeBetBuilder" class="ico-bet-builder iconNativeOtherButton"></div>
-                <div id="labelBtNativeBetBuilder" class="labelNativeOtherButton">Bet Builder</div>
-            </button>
-            <button id="btNativeBoost" class="btNativeOthers btNativeToggleable" onclick="nativeClick('boost')">
-                <div class="ico-price-boost iconNativeOtherButton"></div>
-                <div class="labelNativeOtherButton">Boost</div>
-            </button>
-            <button id="btNativeLiveSC" class="btNativeOthers btNativeToggleable" onclick="nativeClick('lsc')">
-                <div class="ico-live-streaming iconNativeOtherButton"></div>
-                <div class="labelNativeOtherButton">LS Calendar</div>
-            </button>
-            <button id="btNativeStartingSoon" class="btNativeOthers btNativeToggleable"
-                onclick="nativeClick('startingSoon')">
-                <div class="ico-starting-soon iconNativeOtherButton"></div>
-                <div class="labelNativeOtherButton">Start Soon</div>
-            </button>
-            <button id="btNativeSettings" class="btNativeOthers btNativeToggleable" onclick="nativeClick('settings')">
-                <div class="ico-settings iconNativeOtherButton"></div>
-                <div class="labelNativeOtherButton">Settings</div>
-            </button>
-        </div>
-
-        <div id="nativeQuickLinksSection" class="hide">
-            <div class="displayFlex">
-                <span class="width25percent">Quick Links</span>
-                <select id="quickLinkSelector" onchange="selectQuickLink(value)"
-                    class="comboSbTools height20px marginBottom10px width75percent">
-                </select>
+            <div id="nativeErrorMessage" class="displayInRed extraCondensed hide">
+                <hr class="hRule">
             </div>
-        </div>
 
-        <div id="nativeAzSection" class="hide marginTopBottom10px">
-            <div class="displayFlex">
-                <span class="width25percent">Category</span>
-                <select id="categorySelector" onchange="selectCategory(value)"
-                    class="comboSbTools height20px marginBottom10px width75percent">
-                </select>
-            </div>
-            <div class="displayFlex">
-                <span class="width25percent">Region</span>
-                <select id="regionSelector" onchange="selectRegion(value)"
-                    class="comboSbTools height20px marginBottom10px width75percent inactivated">
-                </select>
-            </div>
-            <div class="displayFlex">
-                <span class="width25percent">Competition</span>
-                <select id="competitionSelector" onchange="selectCompetition(value)"
-                    class="comboSbTools height20px width75percent inactivated">
-                </select>
-            </div>
-        </div>
+            <div class="marginTopBottom10px nativeBottomBarButtons">
+                <button id="btNativeBack" class="btSimple" onclick="nativeClick('back')">
+                    <div class="ico-arrow-back iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Back</div>
+                </button>
+                <button id="btNativeHome" class="btSimple btNativeToggleable" onclick="nativeClick('home')">
+                    <div class="ico-home-bottom-bar iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Home</div>
+                </button>
+                <button id="btNativeAz" class="btSimple btNativeToggleable" onclick="nativeClick('az')">
+                    <div class="ico-all-sports-search iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">A-Z</div>
+                </button>
+                <button id="btNativeLive" class="btSimple btNativeToggleable" onclick="nativeClick('live')">
+                    <div class="ico-live-bottom-bar iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Live</div>
+                </button>
 
-        <div id="nativeBetBuilderSection" class="marginTopBottom10px hide">
-            <div class="displayFlex">
-                <span id="nativeBetBuilderEventLabel" class="width23percent">BB Event</span>
-                <select id="nativeBetBuilderEventSelector" onchange="selectBetuilderEvent(value)"
-                    class="comboSbTools height20px marginBottom10px width80percent">
-                </select>
+                <button id="btNativeMyBets" class="btSimple loggedInOnly btNativeToggleable"
+                    onclick="nativeClick('myBets')">
+                    <div class="ico-my-bets iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">My Bets</div>
+                </button>
+
+                <button id="btNativeBetslip" class="btSimple btWithBadge" onclick="nativeClick('betSlip')">
+                    <div class="ico-betslip-bottom iconNativeBottomBarButton"></div>
+                    <div class="labelNativeBottomBarButton">Betslip</div>
+                    <div id="badgeNativeBetslip" class="badgeNative badgeNativeBetslip hide"></div>
+                    <div id="badgeNativeBbBetslip" class="badgeNative badgeNativeBbBetslip hide"></div>
+                </button>
             </div>
-            <div id="nativeBetBuilderEventsError" class="displayInRed hide">
-                Open a Bet Builder accordion on the page.
+
+            <div id="nativeOtherSection" class="marginTopBottom10px nativeOtherButtons">
+                <button id="btNativeBetBuilder" class="btNativeOthers btNativeToggleable"
+                    onclick="nativeClick('betBuilder')">
+                    <div id="iconBtNativeBetBuilder" class="ico-bet-builder iconNativeOtherButton"></div>
+                    <div id="labelBtNativeBetBuilder" class="labelNativeOtherButton">Bet Builder</div>
+                </button>
+                <button id="btNativeBoost" class="btNativeOthers btNativeToggleable" onclick="nativeClick('boost')">
+                    <div class="ico-price-boost iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">Boost</div>
+                </button>
+                <button id="btNativeLiveSC" class="btNativeOthers btNativeToggleable" onclick="nativeClick('lsc')">
+                    <div class="ico-live-streaming iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">LS Calendar</div>
+                </button>
+                <button id="btNativeStartingSoon" class="btNativeOthers btNativeToggleable"
+                    onclick="nativeClick('startingSoon')">
+                    <div class="ico-starting-soon iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">Start Soon</div>
+                </button>
+                <button id="btNativeSettings" class="btNativeOthers btNativeToggleable"
+                    onclick="nativeClick('settings')">
+                    <div class="ico-settings iconNativeOtherButton"></div>
+                    <div class="labelNativeOtherButton">Settings</div>
+                </button>
             </div>
-        </div>
+
+            <div id="nativeQuickLinksSection" class="hide">
+                <div class="displayFlex">
+                    <span class="width25percent">Quick Links</span>
+                    <select id="quickLinkSelector" onchange="selectQuickLink(value)"
+                        class="comboSbTools height20px marginBottom10px width75percent">
+                    </select>
+                </div>
+            </div>
+
+            <div id="nativeAzSection" class="hide marginTopBottom10px">
+                <div class="displayFlex">
+                    <span class="width25percent">Category</span>
+                    <select id="categorySelector" onchange="selectCategory(value)"
+                        class="comboSbTools height20px marginBottom10px width75percent">
+                    </select>
+                </div>
+                <div class="displayFlex">
+                    <span class="width25percent">Region</span>
+                    <select id="regionSelector" onchange="selectRegion(value)"
+                        class="comboSbTools height20px marginBottom10px width75percent inactivated">
+                    </select>
+                </div>
+                <div class="displayFlex">
+                    <span class="width25percent">Competition</span>
+                    <select id="competitionSelector" onchange="selectCompetition(value)"
+                        class="comboSbTools height20px width75percent inactivated">
+                    </select>
+                </div>
+            </div>
+
+            <div id="nativeBetBuilderSection" class="marginTopBottom10px hide">
+                <div class="displayFlex">
+                    <span id="nativeBetBuilderEventLabel" class="width23percent">BB Event</span>
+                    <select id="nativeBetBuilderEventSelector" onchange="selectBetuilderEvent(value)"
+                        class="comboSbTools height20px marginBottom10px width80percent">
+                    </select>
+                </div>
+                <div id="nativeBetBuilderEventsError" class="displayInRed hide">
+                    Open a Bet Builder accordion on the page.
+                </div>
+            </div>
 
 
-    </div>
-</div>
-
-<div id="sbToolsStreamMappingHelper" class="accordion closed">
-    <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">IDs for stream
-        mapping (probably YAGNI)</button>
-    <div class="accContent">
-        Get LIVE Provider Event IDs for mapping:
-        <div class="streamIdsLayout">
-            <button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button>
-            <button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button>
-            <div id="twitchResults" class="extraCondensed"></div>
-            <div id="performResults" class="extraCondensed"></div>
         </div>
     </div>
-</div>
+
+    <div id="sbToolsStreamMappingHelper" class="accordion closed">
+        <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">IDs for stream
+            mapping (probably YAGNI)</button>
+        <div class="accContent">
+            Get LIVE Provider Event IDs for mapping:
+            <div class="streamIdsLayout">
+                <button id="getTwitchProviderIds" class="btSimple" onclick="getTwitchProviderIds()">Twitch</button>
+                <button id="getPerformProviderIds" class="btSimple" onclick="getPerformProviderIds()">Perform</button>
+                <div id="twitchResults" class="extraCondensed"></div>
+                <div id="performResults" class="extraCondensed"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
