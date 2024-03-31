@@ -403,17 +403,88 @@
                                 <span class="labelOnBtSimple">Over</span>
                             </button>
                         </div>
-                        <div id="liveAddsScoreBoardSection" class="checkBoxRowToRight">
-                            <span id="scoreBoardSupportedMessage"></span>
-                            <input type="checkbox" checked class="chkInline chkSbTools" id="chkLiveAddsScoreBoard">
-                        </div>
-                        <div id="scoreBoardNotSupportedSection" class="inactivated checkBoxRowToRight">
-                            <span id="scoreBoardNotSupportedMessage"></span>
-                            <input type="checkbox" class="chkInline chkSbTools">
-                        </div>
-                        <div class="checkBoxRowToRight">
+
+                        <div class="checkBoxRowToLeft">
+                            <input type="checkbox" class="chkInlineRight chkSbTools" id="chkSuspendAllMarkets">
                             <span>'Over' suspends all markets</span>
-                            <input type="checkbox" class="chkInline chkSbTools" id="chkSuspendAllMarkets">
+                        </div>
+
+                        <div id="liveAddsScoreBoardSection" class="checkBoxRowToLeft">
+                            <input type="checkbox" checked class="chkInlineRight chkSbTools" id="chkLiveAddsScoreBoard"
+                                onclick="toggleScoreBoardExtras()">
+                            <span id="scoreBoardSupportedMessage"></span>
+                        </div>
+                        <div id="scoreBoardExtrasSection">
+                            <hr class="hRule">
+                            <div>Scoreboard Extras</div>
+                            <div class="scoreBoardExtrasDetails">
+
+                                <div id="footballScoreBoardExtrasSection">
+                                    <div class="checkBoxRowToLeft">
+                                        <span class="scoreBoardExtrasKey">Red Cards</span>
+                                        <input id="chkRedCardsHome" type="checkbox" checked
+                                            class="chkInlineRight chkSbTools">
+                                        <span>Home</span>
+                                        <input id="chkRedCardsAway" type="checkbox" checked
+                                            class="marginLeft15px chkInlineRight chkSbTools">
+                                        <span>Away</span>
+                                    </div>
+                                    <div class="checkBoxRowToLeft">
+                                        <span class="scoreBoardExtrasKey">Aggregated Score</span>
+                                        <input id="chkAggScore" type="checkbox" checked
+                                            class="chkInlineRight chkSbTools">
+                                    </div>
+                                </div>
+
+                                <div id="iceHockeyScoreBoardExtrasSection">
+                                    <div class="radioRowToLeft">
+                                        <span class="scoreBoardExtrasKey">Power Play Home</span>
+                                        <input id="radioPPHome" type="radio" checked name="powerPlay" class="radioSbTools">
+                                        <span>PP</span>
+                                        <input id="radioPP2Home" type="radio" name="powerPlay"
+                                            class="marginLeft15px radioSbTools">
+                                        <span>PP2</span>
+                                    </div>
+                                    <div class="radioRowToLeft">
+                                        <span class="scoreBoardExtrasKey">Power Play Away</span>
+                                        <input id="radioPPAway" type="radio" name="powerPlay" class="radioSbTools">
+                                        <span>PP</span>
+                                        <input id="radioPP2Away" type="radio" name="powerPlay"
+                                            class="marginLeft15px chkInlineRight radioSbTools">
+                                        <span>PP2</span>
+                                    </div>
+                                    <div class="radioRowToLeft">
+                                        <span class="scoreBoardExtrasKey">No Power Play</span>
+                                        <input id="radioPPNone" type="radio" name="powerPlay" class="radioSbTools">
+                                    </div>
+                                </div>
+
+                                <div id="dartsScoreBoardExtrasSection">
+                                    <div class="checkBoxRowToLeft">
+                                        <span class="scoreBoardExtrasKey35px">180s</span>
+                                        <input id="chk180s" type="checkbox" checked
+                                            class="chkInlineRight chkSbTools">
+                                    </div>
+                                </div>
+
+                                <!-- <div id="isServerScoreBoardExtrasSection">
+                                    <div class="radioRowToLeft">
+                                        <span class="scoreBoardExtrasKey">Server is</span>
+                                        <input id="radioServerHome" type="radio" checked name="isServer" class="radioSbTools">
+                                        <span>Home</span>
+                                        <input id="radioServerAway" type="radio" name="isServer"
+                                            class="marginLeft15px radioSbTools">
+                                        <span>Away</span>
+                                    </div>
+                                </div> -->
+
+
+                            </div>
+
+                        </div>
+                        <div id="scoreBoardNotSupportedSection" class="inactivated checkBoxRowToLeft">
+                            <input type="checkbox" class="chkInlineRight chkSbTools">
+                            <span id="scoreBoardNotSupportedMessage"></span>
                         </div>
                     </div>
                 </div>
@@ -765,7 +836,8 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet Dist, Help Text</button>
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet Dist, Help
+                    Text</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
                     <div id="marketCheckboxesSection">
@@ -901,8 +973,7 @@
                 </div>
 
                 <!-- <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost</button> -->
-                <button onclick="toggleSection('createPriceBoostSection')" class="hide moreLess">Create Price
-                    Boost</button>
+                <button onclick="toggleSection('createPriceBoostSection')" class="hide moreLess">Create Price Boost</button>
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
                     <div id="addSelectionToPbSection">
@@ -1661,6 +1732,13 @@
         justify-content: flex-end;
     }
 
+    .radioRowToLeft,
+    .checkBoxRowToLeft {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
     #twitchResults,
     #performResults {
         margin-left: 5px;
@@ -1889,8 +1967,21 @@
         margin-left: 5px;
     }
 
+    .chkInlineRight {
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
     #initialOddsSpan {
         margin-left: 4px;
+    }
+
+    .scoreBoardExtrasKey {
+        width: 110px;
+    }
+
+    .scoreBoardExtrasKey35px{
+        width: 35px;
     }
 
     .labelRow {
@@ -2417,6 +2508,11 @@
         cursor: pointer;
         align-self: center;
         accent-color: #008d90;
+    }
+
+    .scoreBoardExtrasDetails {
+        transform: scale(0.85);
+        transform-origin: left;
     }
 
     .radioSbTools {
