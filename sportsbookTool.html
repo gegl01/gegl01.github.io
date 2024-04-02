@@ -460,15 +460,30 @@
                                         <input id="radioPPNone" type="radio" name="powerPlay" class="radioSbTools">
                                     </div>
                                 </div>
-                                
+
                                 <div id="dartsScoreBoardExtrasSection">
                                     <div class="checkBoxRowToLeft">
-                                        <input id="chkSetPoints" type="checkbox" checked class="chkInlineRight chkSbTools">
+                                        <input id="chkSetPoints" type="checkbox" checked
+                                            class="chkInlineRight chkSbTools">
                                         <span>Set Points</span>
-                                        <input id="chk180s" type="checkbox" checked class="marginLeft30px chkInlineRight chkSbTools">
+                                        <input id="chk180s" type="checkbox" checked
+                                            class="marginLeft30px chkInlineRight chkSbTools">
                                         <span>180s</span>
                                     </div>
-                                </div>                            </div>
+                                </div>
+
+                                <div id="tennisScoreBoardExtrasSection">
+                                    <div class="radioRowToLeft">
+                                        <span class="scoreBoardExtrasKey">Number of Sets</span>
+                                        <input id="radio3setTennis" type="radio" checked name="tennisNumberOfSets"
+                                            class="radioSbTools">
+                                        <span>3</span>
+                                        <input id="radio5setTennis" type="radio" name="tennisNumberOfSets"
+                                            class="marginLeft15px radioSbTools">
+                                        <span>5</span>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                         <div id="scoreBoardNotSupportedSection" class="inactivated checkBoxRowToLeft">
@@ -825,7 +840,8 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet Distribution, Help
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet
+                    Distribution, Help
                     Text</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
