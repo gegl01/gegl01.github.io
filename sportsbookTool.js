@@ -1893,7 +1893,7 @@
     }
 
 
-    var createPbCriteriaEntityDetails = [];
+    var pbCriteriaEntityDetailsArray = [];
     function initSbToolsSelection(scope) {
         stopPolling();
         previousSelectionId = undefined;
@@ -1949,6 +1949,7 @@
                 selectionIdForSbToolsSelection.innerHTML = selectionId;
                 initialOddsSpan.innerText = initialOdds.toFixed(2);
 
+                setPbName(eventLabel, marketLabel, selectionLabel);
                 listenerForSelectionIfSelectionLocked();
             }
         }
@@ -1968,7 +1969,6 @@
                     activate(button);
                 }
             }
-
         }
 
         window.setSelectionState = (state) => {
@@ -2052,19 +2052,15 @@
             if (lockedInitialOdds != undefined) {
                 initialOdds = lockedInitialOdds;
             }
-            // obgRt.setSelectionOdds([{
-            //     msi: selectionId,
-            //     o: Number(initialOdds)
-            // }]);
             setSelectionOdds(selectionId, initialOdds);
             fdNewOdds.value = initialOdds.toFixed(2);
         }
 
-
-        const btAddSelectionToPb = document.getElementById("btAddSelectionToPb");
-        const addASelectionMessage = document.getElementById("addASelectionMessage");
-        const btRemoveAllSelectionsFomrPb = document.getElementById("btRemoveAllSelectionsFomrPb");
-        const selectionsAddedToPb = document.getElementById("selectionsAddedToPb");
+        //pbrework
+        // const btAddSelectionToPb = document.getElementById("btAddSelectionToPb");
+        // const addASelectionMessage = document.getElementById("addASelectionMessage");
+        // const btRemoveAllSelectionsFomrPb = document.getElementById("btRemoveAllSelectionsFomrPb");
+        // const selectionsAddedToPb = document.getElementById("selectionsAddedToPb");
 
         const fdCreatePbName = document.getElementById("fdCreatePbName");
 
@@ -2082,14 +2078,17 @@
         const fdCreatePbMinStake = document.getElementById("fdCreatePbMinStake");
         const fdCreatePbMaxStake = document.getElementById("fdCreatePbMaxStake");
         const chkCreatePbIsSuperBoost = document.getElementById("chkCreatePbIsSuperBoost");
-        const btCreatePbFromSelections = document.getElementById("btCreatePbFromSelections");
+        // rework
+        // const btCreatePbFromSelections = document.getElementById("btCreatePbFromSelections");
 
 
         // createPbCriteriaEntityDetails = [];
         // selectionsAddedToPb.innerHTML = "";
         // show(addASelectionMessage);
         // inactivate(btRemoveAllSelectionsFomrPb);
-        cleanUpSelectionsFromPriceBoost();
+
+        //rework
+        // cleanUpSelectionsFromPriceBoost();
 
         let createPbName,
             createPbEventPhases,
@@ -2115,8 +2114,36 @@
             }
         }
 
-        window.addSelectionToPriceBoost = () => {
-            activate(btCreatePbFromSelections);
+        // window.addSelectionToPriceBoost = () => {
+        //     activate(btCreatePbFromSelections);
+        //     eventId = getEventIdBySelectionId(selectionId);
+        //     eventIdArray.push(eventId);
+
+        //     marketId = getMarketIdBySelectionId(selectionId);
+        //     categoryId = getCategoryIdByEventId(eventId);
+        //     competitionId = getCompetitionIdByEventId(eventId);
+
+        //     // debugger;
+        //     let criteriaEntityDetail = {
+        //         categoryId: categoryId,
+        //         competitionId: competitionId,
+        //         eventId: eventId,
+        //         marketId: marketId,
+        //         marketSelectionId: selectionId
+        //     }
+
+        //     createPbCriteriaEntityDetails.push(criteriaEntityDetail);
+        //     // log("createPbCriteriaEntityDetails pushed\n" + JSON.stringify(criteriaEntityDetail));
+
+        //     let addedPb = document.createElement("div")
+        //     selectionsAddedToPb.appendChild(addedPb)
+        //         .innerText = getEventLabel(eventId);
+        //     hide(addASelectionMessage);
+        //     activate(btRemoveAllSelectionsFomrPb);
+        // }
+
+        function addSelectionToPriceBoost() {
+            // activate(btCreatePbFromSelections);
             eventId = getEventIdBySelectionId(selectionId);
             eventIdArray.push(eventId);
 
@@ -2133,31 +2160,29 @@
                 marketSelectionId: selectionId
             }
 
-            createPbCriteriaEntityDetails.push(criteriaEntityDetail);
+            pbCriteriaEntityDetailsArray.push(criteriaEntityDetail);
             // log("createPbCriteriaEntityDetails pushed\n" + JSON.stringify(criteriaEntityDetail));
+            // log("pbCriteriaEntityDetailsArray content:\n" + JSON.stringify(pbCriteriaEntityDetailsArray));
 
-            let addedPb = document.createElement("div")
-            selectionsAddedToPb.appendChild(addedPb)
-                .innerText = getEventLabel(eventId);
-            hide(addASelectionMessage);
-            activate(btRemoveAllSelectionsFomrPb);
+            // let addedPb = document.createElement("div")
+            // selectionsAddedToPb.appendChild(addedPb)
+            //     .innerText = getEventLabel(eventId);
+            // hide(addASelectionMessage);
+            // activate(btRemoveAllSelectionsFomrPb);
         }
 
-        window.removeAllSelectionsFomrPriceBoost = () => {
-            cleanUpSelectionsFromPriceBoost();
-        }
+        // rework
+        // window.removeAllSelectionsFomrPriceBoost = () => {
+        //     cleanUpSelectionsFromPriceBoost();
+        // }
 
-        function cleanUpSelectionsFromPriceBoost() {
-            createPbCriteriaEntityDetails = [];
-            eventIdArray = [];
-            selectionsAddedToPb.innerHTML = "";
-            show(addASelectionMessage);
-            inactivate(btRemoveAllSelectionsFomrPb, btCreatePbFromSelections);
-        }
+        // rework
+
 
         window.createPbFromSelections = () => {
 
             initCreatePbVariables();
+            addSelectionToPriceBoost();
 
             let priceBoostObj = {
                 id: "SBTOOL-" + generateGuid(),
@@ -2168,7 +2193,7 @@
                 criteria: {
                     eventPhases: createPbEventPhases,
                     marketTemplateIds: [],
-                    criteriaEntityDetails: createPbCriteriaEntityDetails
+                    criteriaEntityDetails: pbCriteriaEntityDetailsArray
                 },
                 conditions: {
                     betTypes: [createPbBetTypes],
@@ -2191,9 +2216,10 @@
             }
 
             updatePriceBoost(priceBoostObj);
-            for (let eid of eventIdArray) {
-                triggerChangeDetection(eid);
-                log(getEventLabel(eid) + " (" + getCategoryNameByEventId(eid) + ") added");
+
+            for (let eId of eventIdArray) {
+                triggerChangeDetection(eId);
+                // log(getEventLabel(eid) + " (" + getCategoryNameByEventId(eid) + ") added");
             }
 
 
@@ -2230,7 +2256,7 @@
                     };
                 }
 
-                createPbCriteriaEntityDetails.length > 1 ? createPbBetTypes = "Combination" : createPbBetTypes = "Single";
+                pbCriteriaEntityDetailsArray.length > 1 ? createPbBetTypes = "Combination" : createPbBetTypes = "Single";
 
                 createPbMinOdds = Number(fdCreatePbMinOdds.value);
                 createPbMaxOdds = Number(fdCreatePbMaxOdds.value);
@@ -2238,6 +2264,17 @@
                 createPbMaximumStake = Number(fdCreatePbMaxStake.value);
                 createPbIsSuperBoost = !!chkCreatePbIsSuperBoost.checked;
             }
+
+            cleanUpSelectionsFromPriceBoost();
+        }
+
+        function cleanUpSelectionsFromPriceBoost() {
+            pbCriteriaEntityDetailsArray = [];
+            eventIdArray = [];
+        }
+
+        function setPbName(eventLabel, marketLabel, selectionLabel) {
+              fdCreatePbName.value = "SBTOOL - " + eventLabel + " - " + marketLabel + " - " + selectionLabel;
         }
 
     }
@@ -2251,32 +2288,23 @@
     }
 
     function getFractionalOdds(decimalOdds) {
-        // Initialize numerator and denominator
         let numerator = decimalOdds - 1;
         let denominator = 1;
-
-        // Handle the case where the decimalOdds is an integer greater than 2
         if (Number.isInteger(numerator) && numerator > 1) {
             return `${numerator}/1`;
         }
-
-        // Find the greatest common divisor (GCD) of numerator and denominator
         while (Math.abs(numerator - Math.round(numerator)) > 0.0001) {
             numerator *= 10;
             denominator *= 10;
         }
-
         let gcd = 1;
         while (denominator !== 0) {
             gcd = denominator;
             denominator = numerator % denominator;
             numerator = gcd;
         }
-
-        // Simplify the fraction
         numerator /= gcd;
         denominator /= gcd;
-
         return `${numerator}/${denominator}`;
     }
 
@@ -7052,11 +7080,11 @@
         return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
     }
 
-    function getSnookerScoreBoard() {        
+    function getSnookerScoreBoard() {
         let homeMatchPoints = getRandomInt(140);
         let awayMatchPoints = getRandomInt(140);
-        let homeFramePoints = getRandomInt(16);  
-        let awayFramePoints = getRandomInt(16);   
+        let homeFramePoints = getRandomInt(16);
+        let awayFramePoints = getRandomInt(16);
         let currentPhaseId = homeFramePoints + awayFramePoints + 1;
 
         return {
@@ -7634,7 +7662,7 @@
     //             randomParticipantLabels.push(randomLabel);
     //         }    
     //         return randomParticipantLabels;
-        
+
     //         function getRandomElementFromArray(arr) {
     //             let randomIndex = Math.floor(Math.random() * arr.length);
     //             return arr[randomIndex];

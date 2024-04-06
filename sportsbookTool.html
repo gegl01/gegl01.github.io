@@ -977,12 +977,12 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost</button>
+                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost (Single)</button>
                 <!-- <button onclick="toggleSection('createPriceBoostSection')" class="hide moreLess">Create Price
                     Boost</button> -->
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
-                    <div id="addSelectionToPbSection">
+                    <!-- <div id="addSelectionToPbSection">
                         <div class="displayFlex">
                             <button class="btSimple flex1" id="btAddSelectionToPb"
                                 onclick="addSelectionToPriceBoost()">Add Selection
@@ -994,11 +994,11 @@
                         <div id="addASelectionMessage" class="displayInRed marginTop5px">No selection addded</div>
                         <div id="selectionsAddedToPb" class="marginTop5px">
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="displayFlex">
                         <span class="keyForCreatePb">Name:</span>
-                        <input class="fdSbTools flex1" id="fdCreatePbName" value="test name">
+                        <input class="fdSbTools flex1" id="fdCreatePbName" value="">
                     </div>
 
                     <div class="displayFlex">
@@ -1092,7 +1092,9 @@
                     </div>
 
                     <div class="displayFlex">
-                        <button class="btSimple btGreen flex1 inactivated" id="btCreatePbFromSelections"
+                        <!-- <button class="btSimple btGreen flex1 inactivated" id="btCreatePbFromSelections"
+                            onclick="createPbFromSelections()">Create Price Boost</button> -->
+                            <button class="btSimple flex1" id="btCreatePbFromSelections"
                             onclick="createPbFromSelections()">Create Price Boost</button>
                     </div>
                 </div>
