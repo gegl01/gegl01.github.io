@@ -977,24 +977,9 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost (Single)</button>
-                <!-- <button onclick="toggleSection('createPriceBoostSection')" class="hide moreLess">Create Price
-                    Boost</button> -->
-                <div id="createPriceBoostSection" class="marginTopBottom10px hide">
+                <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost</button>
 
-                    <!-- <div id="addSelectionToPbSection">
-                        <div class="displayFlex">
-                            <button class="btSimple flex1" id="btAddSelectionToPb"
-                                onclick="addSelectionToPriceBoost()">Add Selection
-                            </button>
-                            <button class="btSimple flex1 inactivated" id="btRemoveAllSelectionsFomrPb"
-                                onclick="removeAllSelectionsFomrPriceBoost()">Remove All
-                            </button>
-                        </div>
-                        <div id="addASelectionMessage" class="displayInRed marginTop5px">No selection addded</div>
-                        <div id="selectionsAddedToPb" class="marginTop5px">
-                        </div>
-                    </div> -->
+                <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
                     <div class="displayFlex">
                         <span class="keyForCreatePb">Name:</span>
@@ -1002,18 +987,37 @@
                     </div>
 
                     <div class="displayFlex">
+                        <span class="keyForCreatePb">Bet Type:</span>
+
+                        <span class="radioForCreatePb">
+                            <input type="radio" name="radioPbBetType" id="radioPbSingle" class="vertMiddle radioSbTools"
+                                checked onclick="selectRadioForPbBetType('single')">
+                            <label for="radioPbSingle">Single</label>
+                        </span>
+
+                        <span>
+                            <input type="radio" name="radioPbBetType" id="radioPbCombi" class="vertMiddle radioSbTools"
+                                onclick="selectRadioForPbBetType('combi')">
+                            <label for="radioPbCombi">Combination</label>
+                        </span>
+                    </div>
+
+                    <div class="displayFlex">
                         <span class="keyForCreatePb">Event Phase:</span>
+
                         <span class="radioForCreatePb">
                             <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventPrematch"
                                 class="vertMiddle radioSbTools">
                             <label for="radioCreatePbEventPrematch" class="vertMiddle">Prematch</label>
                         </span>
-                        <span class="radioForCreatePb">
+
+                        <span class="radioForCreatePb disabledIfCombi">
                             <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventLive"
                                 class="vertMiddle radioSbTools">
                             <label for="radioCreatePbEventLive" class="vertMiddle">Live</label>
                         </span>
-                        <span>
+
+                        <span class="disabledIfCombi">
                             <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventBoth"
                                 class="vertMiddle radioSbTools" checked>
                             <label for="radioCreatePbEventBoth" class="vertMiddle">All</label>
@@ -1041,13 +1045,13 @@
 
                         <span class="radioForCreatePb">
                             <input type="radio" name="radioPbType" id="radioCreatePbPercentage"
-                                class="vertMiddle radioSbTools" onclick="selectRadioForCreatePb('percentage')" checked>
+                                class="vertMiddle radioSbTools" onclick="selectRadioForPbType('percentage')" checked>
                             <label for="radioCreatePbPercentage" class="vertMiddle">Percentage</label>
                         </span>
 
                         <span>
                             <input type="radio" name="radioPbType" id="radioCreatePbFixedOdds"
-                                class="vertMiddle radioSbTools" onclick="selectRadioForCreatePb('fixedOdds')">
+                                class="vertMiddle radioSbTools" onclick="selectRadioForPbType('fixedOdds')">
                             <label for="radioCreatePbFixedOdds">Fixed Odds</label>
                         </span>
                     </div>
@@ -1056,7 +1060,7 @@
                         <div class="displayFlex">
                             <span class="keyForCreatePb">Percentage:</span>
                             <input class="fdSbTools width23percent" type="number" id="fdCreatePbPercentage" min="1"
-                                value="15" max="1000" step="1" oninput="validity.valid||(value='');">
+                                value="10" max="1000" step="1" oninput="validity.valid||(value='');">
                         </div>
                     </div>
 
@@ -1064,7 +1068,7 @@
                         <div class="displayFlex">
                             <span class="keyForCreatePb">Fixed Odds:</span>
                             <input class="fdSbTools width23percent" type="number" id="fdCreatePbFixed" min="1"
-                                max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                            value="500" max="1000000" step="0.01" oninput="validity.valid||(value='');">
                         </div>
                     </div>
 
@@ -1092,10 +1096,16 @@
                     </div>
 
                     <div class="displayFlex">
-                        <!-- <button class="btSimple btGreen flex1 inactivated" id="btCreatePbFromSelections"
-                            onclick="createPbFromSelections()">Create Price Boost</button> -->
-                            <button class="btSimple flex1" id="btCreatePbFromSelections"
+                        <button class="btSimple btGreen flex1" id="btCreatePbFromSelections"
                             onclick="createPbFromSelections()">Create Price Boost</button>
+                    </div>
+                    <div id="betTypeCombiHintSection" class="hide displayInLightGrey">
+                        <span class="ico-info lineHeight20px"></span>
+                        <span>Combination Price Boost</span>
+                        <ul>
+                            <li>requires at least two prematch selections on the betslip</li>
+                            <li>created from all prematch selections found on the betslip</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -1796,10 +1806,6 @@
         vertical-align: middle;
     }
 
-    /* .color444 {
-        color: #444;
-    } */
-
     .outlinedText {
         -webkit-text-stroke: 1px #444;
     }
@@ -1809,14 +1815,25 @@
         display: inline-block;
     }
 
-    #addSelectionToPbSection {
-        padding: 5px;
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
+    #betTypeCombiHintSection {
+        font-size: smaller;
+        color: gray;
     }
 
-    #selectionsAddedToPb {
-        color: rgb(0, 0, 160);
+    #betTypeCombiHintSection span {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 3px;
+    }
+
+    #betTypeCombiHintSection ul {
+        margin: unset;
+        line-height: 15px;
+        padding-left: 20px;
+    }
+
+    .lineHeight20px {
+        line-height: 20px;
     }
 
     .keyForPb {
