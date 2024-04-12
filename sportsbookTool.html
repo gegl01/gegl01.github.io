@@ -554,13 +554,22 @@
                                 id="chkHasLiveStreaming" class="chkSbTools">
                         </div>
 
-                        <div id="hasPrematchStatisticsSection" class="iconMocksRow">
+                        <div id="hasScore24StatisticsSection" class="iconMocksRow">
                             <span class="width95Percent">
                                 <span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span>
-                                <span class="iconMockLabelColumn">Prematch Statistics</span>
+                                <span class="iconMockLabelColumn">Prematch Statistics (Score24)</span>
                             </span>
-                            <input type="checkbox" onclick="toggleEventProperty('prematchStatistics')"
-                                id="chkHasPrematchStatistics" class="chkSbTools">
+                            <input type="checkbox" onclick="toggleEventProperty('score24Stats')"
+                                id="chkHasScore24Statistics" class="chkSbTools">
+                        </div>
+
+                        <div id="hasExternalStatisticsSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="ico-stats-prematch iconMockIconColumn vertMiddle"></span>
+                                <span class="iconMockLabelColumn">Prematch Statistics (External)</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleEventProperty('externalStats')"
+                                id="chkHasExternalStatistics" class="chkSbTools">
                         </div>
 
                         <div id="hasLiveStatisticsSection" class="iconMocksRow">
@@ -1025,6 +1034,20 @@
                     </div>
 
                     <div class="displayFlex">
+                        <span class="keyForCreatePb">Payout Mode:</span>
+                        <span class="radioForCreatePb">
+                            <input type="radio" name="radioPbPayoutMode" id="radioCreatePbRealMoney"
+                                class="vertMiddle radioSbTools" checked>
+                            <label for="radioCreatePbRealMoney" class="vertMiddle">Real Money</label>
+                        </span>
+                        <span>
+                            <input type="radio" name="radioPbPayoutMode" id="radioCreatePbBonusMoney"
+                                class="vertMiddle radioSbTools">
+                            <label for="radioCreatePbBonusMoney">Bonus Money</label>
+                        </span>
+                    </div>
+
+                    <div class="displayFlex">
                         <span class="keyForCreatePb">Visibility:</span>
 
                         <span class="radioForCreatePb">
@@ -1040,15 +1063,15 @@
                         </span>
                     </div>
 
+
+
                     <div class="displayFlex">
                         <span class="keyForCreatePb">Type:</span>
-
                         <span class="radioForCreatePb">
                             <input type="radio" name="radioPbType" id="radioCreatePbPercentage"
                                 class="vertMiddle radioSbTools" onclick="selectRadioForPbType('percentage')" checked>
                             <label for="radioCreatePbPercentage" class="vertMiddle">Percentage</label>
                         </span>
-
                         <span>
                             <input type="radio" name="radioPbType" id="radioCreatePbFixedOdds"
                                 class="vertMiddle radioSbTools" onclick="selectRadioForPbType('fixedOdds')">
