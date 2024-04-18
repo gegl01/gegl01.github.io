@@ -42,14 +42,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = document.getElementById("sportsbookTool");
+    const sportsbookTool = document.getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = document.getElementsByClassName("accordion");
@@ -4258,28 +4258,39 @@
         }
     }
 
-    function triggerChangeDetection(eventId, delay) {
-        if (eventId === undefined) {
-            eventId = Object.values(obgState.sportsbook.event.events)[0].id;
-        }
-        if (delay === undefined) {
-            delay = 0;
-        }
-        var currentEventPhase = obgState.sportsbook.event.events[eventId].phase;
-        switch (currentEventPhase) {
-            case "Live":
-                obgRt.setEventPhaseOver(eventId);
-                setTimeout(function () { obgRt.setEventPhaseLive(eventId); }, delay);
-                break;
-            case "Prematch":
-                obgRt.setEventPhaseOver(eventId);
-                setTimeout(function () { obgRt.setEventPhasePrematch(eventId); }, delay);
-                break;
-            case "Over":
-                obgRt.setEventPhasePrematch(eventId);
-                setTimeout(function () { obgRt.setEventPhaseOver(eventId); }, delay);
-                break;
-        }
+    // function triggerChangeDetection(eventId, delay) {
+    //     if (eventId === undefined) {
+    //         eventId = Object.values(obgState.sportsbook.event.events)[0].id;
+    //     }
+    //     if (delay === undefined) {
+    //         delay = 0;
+    //     }
+    //     var currentEventPhase = obgState.sportsbook.event.events[eventId].phase;
+    //     switch (currentEventPhase) {
+    //         case "Live":
+    //             obgRt.setEventPhaseOver(eventId);
+    //             setTimeout(function () { obgRt.setEventPhaseLive(eventId); }, delay);
+    //             break;
+    //         case "Prematch":
+    //             obgRt.setEventPhaseOver(eventId);
+    //             setTimeout(function () { obgRt.setEventPhasePrematch(eventId); }, delay);
+    //             break;
+    //         case "Over":
+    //             obgRt.setEventPhasePrematch(eventId);
+    //             setTimeout(function () { obgRt.setEventPhaseOver(eventId); }, delay);
+    //             break;
+    //     }
+    // }
+
+    function triggerChangeDetection(eventId = Object.values(obgState.sportsbook.event.events)[0].id, delay = 0) {
+        let currentEventPhase = obgState.sportsbook.event.events[eventId].phase;
+        let setEventPhase = {
+            "Live": "setEventPhaseOver",
+            "Prematch": "setEventPhaseOver",
+            "Over": "setEventPhasePrematch"
+        };
+        obgRt[setEventPhase[currentEventPhase]](eventId);
+        setTimeout(function () { obgRt["setEventPhase" + currentEventPhase](eventId); }, delay);
     }
 
     window.submitScoreBoard = () => {
@@ -5500,9 +5511,9 @@
     }
 
     function getRegionNameByCompetitionId(competitionId) {
-        var categories = obgState.sportsbook.sportCatalog.menu.items;
-        var regions, competitions;
-        for (cat of categories) {
+        let categories = obgState.sportsbook.sportCatalog.menu.items;
+        let regions, competitions;
+        for (let cat of categories) {
             regions = cat.items;
             if (regions != undefined) {
                 for (reg of regions) {
@@ -5520,9 +5531,9 @@
     }
 
     function getCompetitionNameById(competitionId) {
-        var categories = obgState.sportsbook.sportCatalog.menu.items;
-        var regions, competitions;
-        for (cat of categories) {
+        let categories = obgState.sportsbook.sportCatalog.menu.items;
+        let regions, competitions;
+        for (let cat of categories) {
             regions = cat.items;
             if (regions != undefined) {
                 for (reg of regions) {
@@ -7649,7 +7660,7 @@
         }
 
         function getRandomParticipantLabels(amount) {
-            const possibleLabels=["Mighty Muffin Men","Turbo Turtles","Quirky Quokkas","Wacky Walruses","Funky Ferrets","Jolly Jellybeans","Sneaky Sloths","Zany Zebras","Silly Squirrels","Laughing Llamas","Goofy Gophers","Crazy Crickets","Cheeky Chinchillas","Bouncing Bananas","Hilarious Hedgehogs","Bonkers Badgers","Whimsical Wombats","Chuckling Chipmunks","Riotous Rhinos","Outrageous Ostriches","Happy Hippos","Daring Donkeys","Giggling Giraffes","Playful Pandas","Sassy Salamanders","Marvelous Meerkats","Bubbly Buffaloes","Adventurous Anteaters","Dynamic Dolphins","Sparkling Sparrows","Clever Cranes","Merry Monkeys","Dizzy Ducks","Radiant Rabbits","Joyful Jaguars","Cunning Coyotes","Sizzling Snakes","Vivacious Vultures","Rowdy Raccoons","Eccentric Elephants","Peculiar Penguins","Zesty Zeppelins","Gleeful Gazelles","Wondrous Whales","Fierce Falcons","Elegant Eagles","Swift Seals","Majestic Moose","Proud Pumas"];
+            const possibleLabels = ["Mighty Muffin Men", "Turbo Turtles", "Quirky Quokkas", "Wacky Walruses", "Funky Ferrets", "Jolly Jellybeans", "Sneaky Sloths", "Zany Zebras", "Silly Squirrels", "Laughing Llamas", "Goofy Gophers", "Crazy Crickets", "Cheeky Chinchillas", "Bouncing Bananas", "Hilarious Hedgehogs", "Bonkers Badgers", "Whimsical Wombats", "Chuckling Chipmunks", "Riotous Rhinos", "Outrageous Ostriches", "Happy Hippos", "Daring Donkeys", "Giggling Giraffes", "Playful Pandas", "Sassy Salamanders", "Marvelous Meerkats", "Bubbly Buffaloes", "Adventurous Anteaters", "Dynamic Dolphins", "Sparkling Sparrows", "Clever Cranes", "Merry Monkeys", "Dizzy Ducks", "Radiant Rabbits", "Joyful Jaguars", "Cunning Coyotes", "Sizzling Snakes", "Vivacious Vultures", "Rowdy Raccoons", "Eccentric Elephants", "Peculiar Penguins", "Zesty Zeppelins", "Gleeful Gazelles", "Wondrous Whales", "Fierce Falcons", "Elegant Eagles", "Swift Seals", "Majestic Moose", "Proud Pumas"];
             let selectedLabels = [];
             while (selectedLabels.length < amount && possibleLabels.length > 0) {
                 let randomIndex = Math.floor(Math.random() * possibleLabels.length);
