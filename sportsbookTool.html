@@ -254,7 +254,7 @@
     <div id="sbToolsEvent" class="accordion closed">
         <button id="eventAccordion" class="accHeading" onclick="initSbToolsEvent()">
             <span class="accordionTitle">Event</span>
-            <span class="accordionHint">Set Phase, Override Properties</span>
+            <span class="accordionHint">Set Phase & Properties</span>
         </button>
         <div class="accContent">
 
@@ -494,8 +494,7 @@
                 </div>
 
                 <div>
-                    <button onclick="toggleSection('eventPropertiesSection')" class="moreLess">Override Event
-                        Properties</button>
+                    <button onclick="toggleSection('eventPropertiesSection')" class="moreLess">Event Properties</button>
                     <div id="eventPropertiesSection" class="marginTopBottom10px hide">
                         <div class="marginBottom5px">Has effect on icons and event panel tabs</div>
 
@@ -987,7 +986,6 @@
                 </div>
 
                 <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost</button>
-
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
                     <div class="displayFlex">
@@ -1091,7 +1089,7 @@
                         <div class="displayFlex">
                             <span class="keyForCreatePb">Fixed Odds:</span>
                             <input class="fdSbTools width23percent" type="number" id="fdCreatePbFixed" min="1"
-                            value="500" max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                                value="500" max="1000000" step="0.01" oninput="validity.valid||(value='');">
                         </div>
                     </div>
 
@@ -1131,6 +1129,30 @@
                         </ul>
                     </div>
                 </div>
+            </div>
+
+            <button onclick="toggleSection('popularBetsSection')" class="hide moreLess">Popular Bets</button>
+            <div id="popularBetsSection" class="marginTopBottom10px hide">
+                <div id="popularBetsControls">
+                    <div class="checkBoxRowToLeft">
+                        <input id="chkPrematchOnly" type="checkbox" checked class="chkInlineRight chkSbTools">
+                        <span>Prematch only (as designed)</span>
+                    </div>
+                    <div class="displayFlex">
+                        <button id="btAddDetectedToPopBets" onclick="setPopularBets('addDetected')"
+                            class="btSimple btEqualWidth">Add Detected</button>
+                        <button id="btAddAllToPopBets" onclick="setPopularBets('addAllFromSlip')"
+                            class="btSimple btEqualWidth">Add Full Slip</button>
+                    </div>
+                    <div class="marginTop10px">Remove All</div>
+                    <div class="displayFlex">
+                        <button id="btRemoveAllFromPopBets" onclick="setPopularBets('removeAllNormal')"
+                            class="btSimple btEqualWidth">Popular Bets</button>
+                        <button id="btRemoveAllFromPopBets" onclick="setPopularBets('removeAllPreBuilt')"
+                            class="btSimple btEqualWidth">Popular PreBuilt Bets</button>
+                    </div>
+                </div>
+                <div id="popularBetsMessage" class="displayInRed hide">Works only on Sportsbook Home</div>
             </div>
 
 
@@ -1908,6 +1930,10 @@
         padding: 2px;
         color: #444;
         height: fit-content;
+    }
+
+    .btEqualWidth {
+        flex: 1;
     }
 
     @media (hover: hover) {
