@@ -1685,26 +1685,28 @@
         var platformName;
         DEVICE_TYPE === "Desktop" ? platformName = "desktop" : platformName = "mobile";
         var imageUrl, lowerCaseImageUrl, goodEnoughImageUrl;
-        for (var image of images) {
-            imageUrl = image.url;
-            lowerCaseImageUrl = image.url.toLowerCase();
-            if (lowerCaseImageUrl.includes(categoryName) && !lowerCaseImageUrl.includes("american-" + categoryName) && !lowerCaseImageUrl.includes("ncaa-" + categoryName)) {
-                goodEnoughImageUrl = imageUrl;
-                if (lowerCaseImageUrl.includes("card")) {
+        for (let image of images) {
+            if (image.url) {
+                imageUrl = image.url;
+                lowerCaseImageUrl = image.url.toLowerCase();
+                if (lowerCaseImageUrl.includes(categoryName) && !lowerCaseImageUrl.includes("american-" + categoryName) && !lowerCaseImageUrl.includes("ncaa-" + categoryName)) {
                     goodEnoughImageUrl = imageUrl;
-                    if (lowerCaseImageUrl.includes("platform")) {
+                    if (lowerCaseImageUrl.includes("card")) {
                         goodEnoughImageUrl = imageUrl;
+                        if (lowerCaseImageUrl.includes("platform")) {
+                            goodEnoughImageUrl = imageUrl;
+                        }
                     }
                 }
-            }
-            if (goodEnoughImageUrl == undefined) {
-                if (platformName == "desktop") {
-                    if (lowerCaseImageUrl.includes("backgrounds.generic-desktop")) {
-                        goodEnoughImageUrl = imageUrl;
-                    }
-                } else {
-                    if (lowerCaseImageUrl.includes("backgrounds.generic-mobile")) {
-                        goodEnoughImageUrl = imageUrl;
+                if (goodEnoughImageUrl == undefined) {
+                    if (platformName == "desktop") {
+                        if (lowerCaseImageUrl.includes("backgrounds.generic-desktop")) {
+                            goodEnoughImageUrl = imageUrl;
+                        }
+                    } else {
+                        if (lowerCaseImageUrl.includes("backgrounds.generic-mobile")) {
+                            goodEnoughImageUrl = imageUrl;
+                        }
                     }
                 }
             }
@@ -4124,7 +4126,8 @@
         let competitionObj = categoryObj.competitions.find(comp => comp.id === competitionId);
 
         if (!competitionObj) {
-            const { label } = obgState.sportsbook.sportCatalog.competitions[competitionId];
+            // const { label } = obgState.sportsbook.sportCatalog.competitions[competitionId];
+            let label = getCompetitionLabelByCompetitionId(competitionId);
             competitionObj = {
                 id: competitionId,
                 label
@@ -5044,14 +5047,14 @@
 
             function getProfitBoostPathToCompetition() {
                 let pathToCompetition, categoryName, competitionId, eventId, marketTemplateId;
-                categoryName = getCategoryNameById(selectedProfitBoost.criteria.criteriaEntityDetails[0].categoryId)
+                categoryName = getCategoryLabelByCategoryId(selectedProfitBoost.criteria.criteriaEntityDetails[0].categoryId)
                 pathToCompetition = categoryName;
                 competitionId = selectedProfitBoost.criteria.criteriaEntityDetails[0].competitionId;
                 if (competitionId != undefined) {
                     pathToCompetition
                         += separatorArrow
                         + getRegionNameByCompetitionId(competitionId)
-                        + separatorArrow + getCompetitionNameById(competitionId);
+                        + separatorArrow + getCompetitionLabelByCompetitionId(competitionId);
 
                     eventId = selectedProfitBoost.criteria.criteriaEntityDetails[0].eventId;
                     if (eventId != undefined) {
@@ -5692,10 +5695,10 @@
                 let categoryId, categoryName, regionName, competitionId, competitionName, eventId;
 
                 categoryId = selectedFreebet.criteria.criteriaEntityDetails[0].categoryId;
-                categoryName = getCategoryNameById(categoryId);
+                categoryName = getCategoryLabelByCategoryId(categoryId);
                 competitionId = selectedFreebet.criteria.criteriaEntityDetails[0].competitionId;
                 if (competitionId != undefined) {
-                    competitionName = getCompetitionNameById(competitionId);
+                    competitionName = getCompetitionLabelByCompetitionId(competitionId);
                     regionName = getRegionNameByCompetitionId(competitionId);
                     eventId = selectedFreebet.criteria.criteriaEntityDetails[0].eventId;
                     if (eventId != undefined) {
@@ -5769,42 +5772,89 @@
         });
     }
 
-    function getCategoryNameById(categoryId) {
-        var categories = obgState.sportsbook.sportCatalog.menu.items;
-        for (cat of categories) {
-            if (cat.id == categoryId) {
-                return cat.label;
+    // oldSportcatalog
+    function getCategoryLabelByCategoryId(categoryId) {
+        if (getIsOldSportCatalog()) {
+            var categories = obgState.sportsbook.sportCatalog.menu.items;
+            for (let cat of categories) {
+                if (cat.id == categoryId) {
+                    return cat.label;
+                }
+            }
+        } else {
+            let categories = Object.values(getCategories());
+            for (let cat of categories) {
+                if (cat.id == categoryId) {
+                    return cat.label;
+                }
             }
         }
     }
 
-    function getRegionNameById(regionId) {
-        var categories = obgState.sportsbook.sportCatalog.menu.items;
-        var regions;
-        for (cat of categories) {
-            regions = cat.items;
-            if (regions != undefined) {
-                for (reg of regions) {
-                    if (reg.id == regionId) {
-                        return reg.label;
+    // oldSportcatalog
+    function getRegionLabelByRegionId(regionId) {
+        if (getIsOldSportCatalog()) {
+            var categories = obgState.sportsbook.sportCatalog.menu.items;
+            var regions;
+            for (let cat of categories) {
+                regions = cat.items;
+                if (regions != undefined) {
+                    for (reg of regions) {
+                        if (reg.id == regionId) {
+                            return reg.label;
+                        }
+                    }
+                }
+            }
+        } else {
+            var categories = Object.values(getCategories());
+            var regions;
+            for (let cat of categories) {
+                regions = Object.values(cat.regions);
+                if (regions != undefined) {
+                    for (reg of regions) {
+                        if (reg.id == regionId) {
+                            return reg.label;
+                        }
                     }
                 }
             }
         }
     }
 
+    // oldSportcatalog
     function getRegionNameByCompetitionId(competitionId) {
-        let categories = obgState.sportsbook.sportCatalog.menu.items;
-        let regions, competitions;
-        for (let cat of categories) {
-            regions = cat.items;
-            if (regions != undefined) {
-                for (reg of regions) {
-                    competitions = reg.items;
-                    if (competitions != undefined) {
-                        for (comp of competitions) {
-                            if (comp.id == competitionId) {
-                                return reg.label;
+        if (getIsOldSportCatalog()) {
+            let categories = obgState.sportsbook.sportCatalog.menu.items;
+            let regions, competitions;
+            for (let cat of categories) {
+                regions = cat.items;
+                if (regions != undefined) {
+                    for (let reg of regions) {
+                        competitions = reg.items;
+                        if (competitions != undefined) {
+                            for (let comp of competitions) {
+                                if (comp.id == competitionId) {
+                                    return reg.label;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            let categories = Object.values(getCategories());
+            let regions, competitions;
+            for (let cat of categories) {
+                regions = Object.values(cat.regions);
+                if (regions != undefined) {
+                    for (let reg of regions) {
+                        competitions = Object.values(reg.competitions);
+                        if (competitions != undefined) {
+                            for (let comp of competitions) {
+                                if (comp.id == competitionId) {
+                                    return reg.label;
+                                }
                             }
                         }
                     }
@@ -5813,24 +5863,49 @@
         }
     }
 
-    function getCompetitionNameById(competitionId) {
-        let categories = obgState.sportsbook.sportCatalog.menu.items;
-        let regions, competitions;
-        for (let cat of categories) {
-            regions = cat.items;
-            if (regions != undefined) {
-                for (reg of regions) {
-                    competitions = reg.items;
-                    if (competitions != undefined) {
-                        for (comp of competitions) {
-                            if (comp.id == competitionId) {
-                                return comp.label;
+    // oldSportcatalog
+    function getCompetitionLabelByCompetitionId(competitionId) {
+        if (getIsOldSportCatalog()) {
+            let categories = obgState.sportsbook.sportCatalog.menu.items;
+            let regions, competitions;
+            for (let cat of categories) {
+                regions = cat.items;
+                if (regions != undefined) {
+                    for (let reg of regions) {
+                        competitions = reg.items;
+                        if (competitions != undefined) {
+                            for (let comp of competitions) {
+                                if (comp.id == competitionId) {
+                                    return comp.label;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            let categories = Object.values(getCategories());
+            let regions, competitions;
+            for (let cat of categories) {
+                regions = Object.values(cat.regions);
+                if (regions != undefined) {
+                    for (let reg of regions) {
+                        competitions = Object.values(reg.competitions);
+                        if (competitions != undefined) {
+                            for (let comp of competitions) {
+                                if (comp.id == competitionId) {
+                                    return comp.label;
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    function getIsOldSportCatalog() {
+        return !!obgState.sportsbook.sportCatalog?.menu?.items;
     }
 
 
