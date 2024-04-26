@@ -732,6 +732,21 @@
                     <input type="checkbox" id="chkLockMarket" class="chkLock chkSbTools" onclick="lockMarket()">
                 </div>
             </div>
+
+            <div id="addToCarouselSection">
+                <hr class="hRule">
+                <div id="carouselButtonsDiv">
+                    <div class="itemsJustifiedVertCenter">
+                        <span>Add market to Carousel or Cards</span>
+                        <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addMarketToCarouselOrCards()">
+                            <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="addToCarouselErrorMessage" class="marginBottom10px displayInRed">
+                </div>
+            </div>
+
             <div id="marketFeatures" class="hide">
                 <button onclick="toggleSection('marketDetailsSection')" class="moreLess">Market Details</button>
                 <div id="marketDetailsSection" class="marginTopBottom10px hide">
@@ -816,38 +831,6 @@
                     </div>
                 </div>
 
-                <div>
-                    <button onclick="toggleSection('addToCarouselSection')" class="moreLess">Add to
-                        Carousel/Cards</button>
-                    <div id="addToCarouselSection" class="hide marginTopBottom10px">
-                        <div id="carouselButtonsDiv">
-
-                            <div id="stopCarouselAutoplayRow" class="marginTopBottom10px">
-                                <div class="itemsJustified">
-                                    <span class="width95Percent">
-                                        Stop Carousel Autoplay
-                                    </span>
-                                    <button class="btReload btIcon"
-                                        onclick="reloadPageWithFeature('stopCarouselAutoplay')">
-                                        <img class="iconReload">
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="itemsJustified">
-                                <span>Add market to Carousel or Cards</span>
-                                <!-- <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addToCarousel()"> -->
-                                <button class="btSimple btCarousel" id="btAddToCarousel"
-                                    onclick="addMarketToCarouselOrCards()">
-                                    <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
-                                </button>
-                            </div>
-                            <div id="addToCarouselErrorMessage" class="marginTop5px displayInRed">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet
                     Distribution, Help
                     Text</button>
@@ -921,7 +904,7 @@
     <div id="sbToolsSelection" class="accordion closed">
         <button id="changeOddsAccordion" class="accHeading" onclick="initSbToolsSelection()">
             <span class="accordionTitle">Selection</span>
-            <span class="accordionHint">Change Odds/Status, Add Price Boost</span>
+            <span class="accordionHint">Change Odds/Status, Add Price Boost, Pop Bets</span>
         </button>
         <div class="accContent">
             <div class="detectedEntitySection">
@@ -1120,7 +1103,7 @@
                         <button class="btSimple btGreen flex1" id="btCreatePbFromSelections"
                             onclick="createPbFromSelections()">Create Price Boost</button>
                     </div>
-                    <div id="betTypeCombiHintSection" class="hide displayInLightGrey">
+                    <div id="betTypeCombiHintSection" class="hide fontSizeSmaller displayInGray">
                         <span class="ico-info lineHeight20px"></span>
                         <span>Combination Price Boost</span>
                         <ul>
@@ -1131,28 +1114,39 @@
                 </div>
             </div>
 
-            <button onclick="toggleSection('popularBetsSection')" class="hide moreLess">Popular Bets</button>
+            <button onclick="toggleSection('popularBetsSection')" class="moreLess">Popular Bets or Pre-Built
+                Bets</button>
             <div id="popularBetsSection" class="marginTopBottom10px hide">
                 <div id="popularBetsControls">
-                    <div class="checkBoxRowToLeft">
+                    <!-- <div class="checkBoxRowToLeft">
                         <input id="chkPrematchOnly" type="checkbox" checked class="chkInlineRight chkSbTools">
                         <span>Prematch only (as designed)</span>
-                    </div>
+                    </div> -->
+                    <div class="">Add detected selection or full betslip content</div>
                     <div class="displayFlex">
                         <button id="btAddDetectedToPopBets" onclick="setPopularBets('addDetected')"
                             class="btSimple btEqualWidth">Add Detected</button>
                         <button id="btAddAllToPopBets" onclick="setPopularBets('addAllFromSlip')"
                             class="btSimple btEqualWidth">Add Full Slip</button>
                     </div>
-                    <div class="marginTop10px">Remove All</div>
+                    <div class="checkBoxRowToLeft">
+                        <input id="chkPrematchOnly" type="checkbox" checked class="chkInlineRight chkSbTools">
+                        <span>Prematch only (as designed)</span>
+                    </div>
+                    <hr class="hRule">
+                    <div class="">Remove all normal or pre-built bets respectively</div>
                     <div class="displayFlex">
-                        <button id="btRemoveAllFromPopBets" onclick="setPopularBets('removeAllNormal')"
-                            class="btSimple btEqualWidth">Popular Bets</button>
-                        <button id="btRemoveAllFromPopBets" onclick="setPopularBets('removeAllPreBuilt')"
-                            class="btSimple btEqualWidth">Popular PreBuilt Bets</button>
+                        <button id="btRemoveAllPopBets" onclick="setPopularBets('removeAllNormal')"
+                            class="btSimple btEqualWidth">Remove Pop Normal</button>
+                        <button id="btRemoveAllPerBuilt" onclick="setPopularBets('removeAllPreBuilt')"
+                            class="btSimple btEqualWidth">Remove Pop Pre-Built</button>
                     </div>
                 </div>
-                <div id="popularBetsMessage" class="displayInRed hide">Works only on Sportsbook Home</div>
+                <div id="popularBetsNotHomeMessage" class="displayInRed hide">Works only on Sportsbook Home</div>
+                <div id="popularBetsTooManySelectionsMessage" class="hide fontSizeSmaller displayInGray">
+                    <span class="ico-info lineHeight20px"></span>
+                    <span>Pre-built cards can have maximum 3 swipeable bets</span>
+                </div>
             </div>
 
 
@@ -1789,6 +1783,12 @@
         align-items: flex-start;
     }
 
+    .itemsJustifiedVertCenter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .checkBoxRowToRight {
         display: flex;
         align-items: center;
@@ -1797,6 +1797,7 @@
 
     .radioRowToLeft,
     .checkBoxRowToLeft {
+        margin-left: 2px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -1860,13 +1861,25 @@
         display: inline-block;
     }
 
-    #betTypeCombiHintSection {
-        font-size: smaller;
+    .displayInGray {
         color: gray;
     }
 
+    .fontSizeSmaller {
+        font-size: smaller;
+    }
+
+    /* #betTypeCombiHintSection {
+        font-size: smaller;        
+    }     */
+
     #betTypeCombiHintSection span {
         display: inline-block;
+        vertical-align: middle;
+        margin-right: 3px;
+    }
+
+    #popularBetsTooManySelectionsMessage span {
         vertical-align: middle;
         margin-right: 3px;
     }
@@ -2134,7 +2147,6 @@
     .iconOnBtSimple {
         margin-right: 3px;
         vertical-align: middle;
-        /* font-size: smaller; */
     }
 
     .labelOnBtSimple {
