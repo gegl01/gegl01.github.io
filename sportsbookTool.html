@@ -1118,28 +1118,35 @@
                 Bets</button>
             <div id="popularBetsSection" class="marginTopBottom10px hide">
                 <div id="popularBetsControls">
-                    <!-- <div class="checkBoxRowToLeft">
-                        <input id="chkPrematchOnly" type="checkbox" checked class="chkInlineRight chkSbTools">
-                        <span>Prematch only (as designed)</span>
-                    </div> -->
-                    <div class="">Add detected selection or full betslip content</div>
-                    <div class="displayFlex">
-                        <button id="btAddDetectedToPopBets" onclick="setPopularBets('addDetected')"
-                            class="btSimple btEqualWidth">Add Detected</button>
-                        <button id="btAddAllToPopBets" onclick="setPopularBets('addAllFromSlip')"
-                            class="btSimple btEqualWidth">Add Full Slip</button>
+                    <div id="isPopularBetsEnabledSection" class="hide">
+                        <div id="popularBetsNotEnabledMessage" class="displayInRed hide">Popular Bets feature not
+                            enabled</div>
+                        <div id="popularPreBuiltBetsNotEnabledMessage" class="displayInRed hide">Popular Pre-Built Bets
+                            feature not enabled</div>
+                        <hr id="popularBetsHr" class="hRule">
+                        <div id="bothPopularBetsNotEnabledMessage" class="displayInRed hide">Neither Popular Bets nor
+                            Popular Pre-Built Bets feature enabled</div>
                     </div>
-                    <div class="checkBoxRowToLeft">
-                        <input id="chkPrematchOnly" type="checkbox" checked class="chkInlineRight chkSbTools">
-                        <span>Prematch only (as designed)</span>
-                    </div>
-                    <hr class="hRule">
-                    <div class="">Remove all normal or pre-built bets respectively</div>
-                    <div class="displayFlex">
-                        <button id="btRemoveAllPopBets" onclick="setPopularBets('removeAllNormal')"
-                            class="btSimple btEqualWidth">Remove Pop Normal</button>
-                        <button id="btRemoveAllPerBuilt" onclick="setPopularBets('removeAllPreBuilt')"
-                            class="btSimple btEqualWidth">Remove Pop Pre-Built</button>
+                    <div id="popularBetsButtons">
+                        <div class="">Add detected selection or full betslip content</div>
+                        <div class="displayFlex">
+                            <button id="btAddDetectedToPopBets" onclick="setPopularBets('addDetected')"
+                                class="btSimple btEqualWidth">Add Detected</button>
+                            <button id="btAddAllToPopBets" onclick="setPopularBets('addAllFromSlip')"
+                                class="btSimple btEqualWidth">Add Full Slip</button>
+                        </div>
+                        <div class="checkBoxRowToLeft">
+                            <input id="chkPrematchOnly" type="checkbox" checked class="chkInlineRight chkSbTools">
+                            <span>Prematch only (as designed)</span>
+                        </div>
+                        <hr class="hRule">
+                        <div class="">Remove all normal or pre-built bets respectively</div>
+                        <div class="displayFlex">
+                            <button id="btRemoveAllPopBets" onclick="setPopularBets('removeAllNormal')"
+                                class="btSimple btEqualWidth">Remove Pop Normal</button>
+                            <button id="btRemoveAllPerBuilt" onclick="setPopularBets('removeAllPreBuilt')"
+                                class="btSimple btEqualWidth">Remove Pop Pre-Built</button>
+                        </div>
                     </div>
                 </div>
                 <div id="popularBetsNotHomeMessage" class="displayInRed hide">Works only on Sportsbook Home</div>
