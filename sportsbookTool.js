@@ -49,11 +49,11 @@
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = document.getElementById("sportsbookTool");
+    // const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
-    const accCollection = document.getElementsByClassName("accordion");
-    const accHeadCollection = document.getElementsByClassName("accHeading");
+    const accCollection = getElementsByClassName("accordion");
+    const accHeadCollection = getElementsByClassName("accHeading");
     var versionNumber;
     var eventId, lockedEventId;
     var participants, selectedParticipantId;
@@ -84,7 +84,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.11";
+    const SB_TOOL_VERSION = "v1.6.12";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -147,14 +147,14 @@
     }
 
     function removeExistingSportsbookTool() {
-        const sbt = document.getElementById("sportsbookTool");
+        const sbt = getElementById("sportsbookTool");
         if (sbt !== null) {
             sbt.remove();
         }
     }
 
     function checkEnabledFeatures() {
-        const sportsbookToolScript = document.getElementById("sportsbookToolScript");
+        const sportsbookToolScript = getElementById("sportsbookToolScript");
         if (sportsbookToolScript == undefined) {
             return;
         }
@@ -341,22 +341,41 @@
     }
 
     function getIsSGPUsed() {
+        let config;
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
-            let marketsUsingSingleGameParlay = obgClientEnvironmentConfig.startupContext.config.sportsbookUi.betBuilder.marketsUsingSingleGameParlay;
-            let languageCode = obgClientEnvironmentConfig.startupContext.config.core.market.languageCode;
-            for (let market of marketsUsingSingleGameParlay) {
-                if (market == languageCode) {
-                    return true;
-                }
-            } return false;
+            config = obgClientEnvironmentConfig.startupContext.config;
+        } else if (IS_OBGSTARTUP_EXPOSED) {
+            config = obgStartup.config;
         } else {
-            if (BRAND_NAME == "betsafe" && CULTURE == "en-CA") {
-                return false;
-            }
-            if (CULTURE == "en-CA" || CULTURE == "en-US") {
+            return false;
+        }
+        let marketsUsingSingleGameParlay = config.sportsbookUi.betBuilder.marketsUsingSingleGameParlay;
+        let languageCode = config.core.market.languageCode;
+        for (let market of marketsUsingSingleGameParlay) {
+            if (market == languageCode) {
                 return true;
             }
         }
+        return false;
+
+        // if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
+        //     let marketsUsingSingleGameParlay = obgClientEnvironmentConfig.startupContext.config.sportsbookUi.betBuilder.marketsUsingSingleGameParlay;
+        //     let languageCode = obgClientEnvironmentConfig.startupContext.config.core.market.languageCode;
+        //     for (let market of marketsUsingSingleGameParlay) {
+        //         if (market == languageCode) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // } else {
+        //     if (BRAND_NAME == "betsafe" && CULTURE == "en-CA") {
+        //         return false;
+        //     }
+        //     if (CULTURE == "en-CA" || CULTURE == "en-US") {
+        //         return true;
+        //     }
+        // }
+        // return false;
     }
 
     function getCulture() {
@@ -504,17 +523,17 @@
     }
 
     function initHeader() {
-        const btMinimizeClosed = document.getElementById("btMinimizeClosed");
+        const btMinimizeClosed = getElementById("btMinimizeClosed");
         if (!IS_OBGSTATE_EXPOSED) {
             hide(btMinimizeClosed);
         }
-        document.getElementById("sportsbookToolVersion").innerText = SB_TOOL_VERSION;
+        getElementById("sportsbookToolVersion").innerText = SB_TOOL_VERSION;
     }
 
     function removeFeature(...features) {
         for (var feature of features) {
             try {
-                document.getElementById(feature).remove();
+                getElementById(feature).remove();
             } catch { }
         }
     }
@@ -577,13 +596,13 @@
                 );
             }
 
-            const limitedFunctionsMessage = document.getElementById("limitedFunctionsMessage");
+            const limitedFunctionsMessage = getElementById("limitedFunctionsMessage");
 
             limitedFunctionsMessage.innerText = "Features limited as " + limitedFunctionsMessageText;
         }
 
         // if (IS_B2B || ENVIRONMENT === "TEST (Local)") {
-        //     const noB2Belements = document.getElementsByClassName("noB2B");
+        //     const noB2Belements = getElementsByClassName("noB2B");
         //     for (elem of noB2Belements) {
         //         elem.classList.add("visibilityHidden");
         //     }
@@ -614,16 +633,16 @@
 
     function initContext() {
         stopPolling();
-        const obgStateAndRtSection = document.getElementById("obgStateAndRtSection");
-        const openIframeSection = document.getElementById("openIframeSection");
-        const notMatchingIframeSection = document.getElementById("notMatchingIframeSection");
-        const openIframeRow = document.getElementById("openIframeRow");
-        // const btOpenNotMatchingIframe = document.getElementById("btOpenNotMatchingIframe");
-        const btOpenMatchingIframe = document.getElementById("btOpenMatchingIframe");
-        const btOpenFullPageWithMatchingIframe = document.getElementById("btOpenFullPageWithMatchingIframe");
-        const notMatchingIframeEnvSpan = document.getElementById("notMatchingIframeEnvSpan");
-        const iframeUrlValue = document.getElementById("iframeUrlValue");
-        const postMessageRow = document.getElementById("postMessageRow");
+        const obgStateAndRtSection = getElementById("obgStateAndRtSection");
+        const openIframeSection = getElementById("openIframeSection");
+        const notMatchingIframeSection = getElementById("notMatchingIframeSection");
+        const openIframeRow = getElementById("openIframeRow");
+        // const btOpenNotMatchingIframe = getElementById("btOpenNotMatchingIframe");
+        const btOpenMatchingIframe = getElementById("btOpenMatchingIframe");
+        const btOpenFullPageWithMatchingIframe = getElementById("btOpenFullPageWithMatchingIframe");
+        const notMatchingIframeEnvSpan = getElementById("notMatchingIframeEnvSpan");
+        const iframeUrlValue = getElementById("iframeUrlValue");
+        const postMessageRow = getElementById("postMessageRow");
 
 
         if (IS_B2B_IFRAME_ONLY) {
@@ -646,17 +665,17 @@
             hide(openIframeSection);
         }
 
-        var deviceType = document.getElementById("deviceType");
+        var deviceType = getElementById("deviceType");
         if (DEVICE_TYPE === "Desktop" || DEVICE_EXPERIENCE === null) {
             deviceType.innerText = DEVICE_TYPE;
         } else {
             deviceType.innerText = DEVICE_TYPE + " " + DEVICE_EXPERIENCE;
         }
-        document.getElementById("environment").innerText = ENVIRONMENT_TO_DISPLAY;
-        document.getElementById("brandName").innerText = BRAND_NAME_WITH_LANGUAGECODE;
-        document.getElementById("B2BorB2C").innerText = " (" + B2X + ")";
-        document.getElementById("browserVersion").innerText = BROWSER_VERSION;
-        document.getElementById("obgVersion").innerText = SB_VERSION;
+        getElementById("environment").innerText = ENVIRONMENT_TO_DISPLAY;
+        getElementById("brandName").innerText = BRAND_NAME_WITH_LANGUAGECODE;
+        getElementById("B2BorB2C").innerText = " (" + B2X + ")";
+        getElementById("browserVersion").innerText = BROWSER_VERSION;
+        getElementById("obgVersion").innerText = SB_VERSION;
 
         function listenerForIframeURL() {
             iframeURL = getIframe().src;
@@ -694,7 +713,7 @@
         //     IS_BLE ? reloadPageWithSearchParams([new URLParam("sbIframeAlpha", 1)]) : reloadPageWithSearchParams([new URLParam("sbIframeTest", 1)]);
         // }
 
-        const loginState = document.getElementById("loginState");
+        const loginState = getElementById("loginState");
         intervalIdForPolling = setInterval(listenerForLoginState, POLLING_INTERVAL);
         intervalIdsForPolling.push(listenerForLoginState);
         var isUserLoggedIn, previousIsUserLoggedIn;
@@ -713,7 +732,7 @@
     }
 
     window.toggleInfo = (infoDiv) => {
-        var info = document.getElementById(infoDiv);
+        var info = getElementById(infoDiv);
         if (info.classList.contains("hide")) {
             show(info);
         } else {
@@ -811,7 +830,7 @@
     }
 
     function reloadAnimation(messageRowId) {
-        let row = document.getElementById(messageRowId);
+        let row = getElementById(messageRowId);
         displayInGreen(row);
         row.innerHTML = "Reloading...";
     }
@@ -860,7 +879,7 @@
 
     var closedAccordionsVisible = true;
     window.toggleClosedAccordionsVisibility = () => {
-        const icon = document.getElementById("iconMinimizeClosed");
+        const icon = getElementById("iconMinimizeClosed");
         if (closedAccordionsVisible) {
             closedAccordionsVisible = false;
             icon.classList.replace("iconMinimize", "iconMaximize");
@@ -880,7 +899,7 @@
     window.closePopup = () => {
         stopPolling();
         sportsbookTool.remove();
-        var sportsbookToolScript = document.getElementById("sportsbookToolScript");
+        var sportsbookToolScript = getElementById("sportsbookToolScript");
         if (sportsbookToolScript !== null) {
             sportsbookToolScript.remove();
         }
@@ -888,7 +907,7 @@
 
     var isAppWindowSmall = false;
     window.zoomInOut = () => {
-        const icon = document.getElementById("iconZoomInOut");
+        const icon = getElementById("iconZoomInOut");
         if (!isAppWindowSmall) {
             sportsbookTool.classList.add("scaledTo70percent");
             icon.classList.replace("iconZoomOut", "iconZoomIn");
@@ -925,7 +944,7 @@
     }
 
     // function initTouchDependent() {
-    //     const sportsbookToolContent = document.getElementById("sportsbookToolContent");
+    //     const sportsbookToolContent = getElementById("sportsbookToolContent");
 
     //     if (('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) ||
     //         (IS_B2B && !IS_SPORTSBOOK_IN_IFRAME && DEVICE_TYPE !== "Desktop" && !navigator.userAgentData.mobile)) {
@@ -937,7 +956,7 @@
     // }
 
     function windowMoverForTouch() {
-        var box = document.getElementById("sportsbookTool");
+        var box = getElementById("sportsbookTool");
         var diffX;
         var diffY;
 
@@ -971,9 +990,9 @@
                 pos2 = 0,
                 pos3 = 0,
                 pos4 = 0;
-            if (document.getElementById(elmnt.id + "Header")) {
+            if (getElementById(elmnt.id + "Header")) {
                 /* if present, the header is where you move the DIV from:*/
-                document.getElementById(elmnt.id + "Header").onmousedown = dragMouseDown;
+                getElementById(elmnt.id + "Header").onmousedown = dragMouseDown;
             } else {
                 /* otherwise, move the DIV from anywhere inside the DIV:*/
                 elmnt.onmousedown = dragMouseDown;
@@ -1179,9 +1198,9 @@
     }
 
     window.lockEvent = () => {
-        var checkBox = document.getElementById("chkLockEventForSbToolsEvent");
-        var detectedOrLockedRow = document.getElementById("detectedOrLockedRowForSbToolsEvent");
-        labelRow = document.getElementById("eventLabelForSbToolsEvent");
+        var checkBox = getElementById("chkLockEventForSbToolsEvent");
+        var detectedOrLockedRow = getElementById("detectedOrLockedRowForSbToolsEvent");
+        labelRow = getElementById("eventLabelForSbToolsEvent");
 
         if (checkBox.checked) {
             lockedEventId = eventId;
@@ -1246,38 +1265,38 @@
     function initSbToolsMarket(scope) {
         stopPolling();
         previousMarketId = undefined;
-        const marketStateButtons = document.getElementsByClassName("btSetMarketState");
-        const marketStateButtonsSection = document.getElementById("setMarketStateButtonsSection");
-        labelRow = document.getElementById("labelRowForSbToolsMarket");
-        const lockMarketSection = document.getElementById("lockMarketSection");
-        const marketIdField = document.getElementById("marketIdForSbToolsMarket");
-        const marketTemplateIdField = document.getElementById("marketTemplateIdForSbToolsMarket");
-        const marketTemplateTagsField = document.getElementById("marketTemplateTagsForSbToolsMarket");
-        const marketFeatures = document.getElementById("marketFeatures");
+        const marketStateButtons = getElementsByClassName("btSetMarketState");
+        const marketStateButtonsSection = getElementById("setMarketStateButtonsSection");
+        labelRow = getElementById("labelRowForSbToolsMarket");
+        const lockMarketSection = getElementById("lockMarketSection");
+        const marketIdField = getElementById("marketIdForSbToolsMarket");
+        const marketTemplateIdField = getElementById("marketTemplateIdForSbToolsMarket");
+        const marketTemplateTagsField = getElementById("marketTemplateTagsForSbToolsMarket");
+        const marketFeatures = getElementById("marketFeatures");
         var marketTemplateTags;
-        const carouselButtonsDiv = document.getElementById("carouselButtonsDiv");
-        const addToCarouselSection = document.getElementById("addToCarouselSection");
-        const addToCarouselErrorMessage = document.getElementById("addToCarouselErrorMessage");
+        const carouselButtonsDiv = getElementById("carouselButtonsDiv");
+        const addToCarouselSection = getElementById("addToCarouselSection");
+        const addToCarouselErrorMessage = getElementById("addToCarouselErrorMessage");
 
-        const isCashoutAvailableSection = document.getElementById("isCashoutAvailableSection");
-        const chkIsCashoutAvailable = document.getElementById("chkIsCashoutAvailable");
-        const isBetBuilderAvailableSection = document.getElementById("isBetBuilderAvailableSection");
-        const chkIsBetBuilderAvailable = document.getElementById("chkIsBetBuilderAvailable");
-        const isBetDistributionAvailableSection = document.getElementById("isBetDistributionAvailableSection");
-        const chkIsBetDistributionAvailable = document.getElementById("chkIsBetDistributionAvailable");
+        const isCashoutAvailableSection = getElementById("isCashoutAvailableSection");
+        const chkIsCashoutAvailable = getElementById("chkIsCashoutAvailable");
+        const isBetBuilderAvailableSection = getElementById("isBetBuilderAvailableSection");
+        const chkIsBetBuilderAvailable = getElementById("chkIsBetBuilderAvailable");
+        const isBetDistributionAvailableSection = getElementById("isBetDistributionAvailableSection");
+        const chkIsBetDistributionAvailable = getElementById("chkIsBetDistributionAvailable");
 
-        const fdHelpText = document.getElementById("fdHelpText");
-        const fdBetGroupDescription = document.getElementById("fdBetGroupDescription");
+        const fdHelpText = getElementById("fdHelpText");
+        const fdBetGroupDescription = getElementById("fdBetGroupDescription");
 
         scope === "marketLocked" ?
             intervalIdForPolling = setInterval(listenerForMarketIfMarketLocked, POLLING_INTERVAL) :
             intervalIdForPolling = setInterval(listenerForMarket, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
 
-        const eventLabelForDetectedMarket = document.getElementById("eventLabelForDetectedMarket");
-        const marketLabelForDetectedMarket = document.getElementById("marketLabelForDetectedMarket");
-        const messageForSbToolsMarket = document.getElementById("messageForSbToolsMarket");
-        const labelsForDetectedMarketAndEvent = document.getElementById("labelsForDetectedMarketAndEvent");
+        const eventLabelForDetectedMarket = getElementById("eventLabelForDetectedMarket");
+        const marketLabelForDetectedMarket = getElementById("marketLabelForDetectedMarket");
+        const messageForSbToolsMarket = getElementById("messageForSbToolsMarket");
+        const labelsForDetectedMarketAndEvent = getElementById("labelsForDetectedMarketAndEvent");
         const MAIN_LINE_MARKET_TEMPLATE_TAGS = ["118", "119", "120"];
 
 
@@ -1372,7 +1391,7 @@
             chkIsBetBuilderAvailable.checked = obgState.sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state === 1;
             chkIsBetDistributionAvailable.checked = isBetDistributionAvailable(marketId);
 
-            // const marketPropertiesSection = document.getElementById("marketPropertiesSection");
+            // const marketPropertiesSection = getElementById("marketPropertiesSection");
             // if (!marketPropertiesSection.classList.contains("hide")) {
             switch (getEventPhase(eventId)) {
                 case "Live":
@@ -1416,7 +1435,7 @@
         }
 
 
-        // const marketPropertiesSection = document.getElementById("marketPropertiesSection");
+        // const marketPropertiesSection = getElementById("marketPropertiesSection");
 
         let previousMarketStatus = null;
         function listenerForMarketIfMarketLocked() {
@@ -1523,7 +1542,7 @@
 
             createEmptyCarouselIfDoesntExist();
 
-            const addToCarouselButtonLabel = document.getElementById("addToCarouselButtonLabel")
+            const addToCarouselButtonLabel = getElementById("addToCarouselButtonLabel")
             const THREE_COLUMN_DATA_MISSING =
                 "Could not get data for 3-column layout.\nPlease remove the detected market from the betslip, then add again.";
             const MARKET_NOT_PART_OF_THREE_COLUMN =
@@ -1797,9 +1816,9 @@
     }
 
     window.lockMarket = () => {
-        const checkBox = document.getElementById("chkLockMarket");
-        const detectedOrLockedRow = document.getElementById("detectedOrLockedRowForSbToolsMarket");
-        // const labelRow = document.getElementById("labelsForDetectedMarketAndEvent");
+        const checkBox = getElementById("chkLockMarket");
+        const detectedOrLockedRow = getElementById("detectedOrLockedRowForSbToolsMarket");
+        // const labelRow = getElementById("labelsForDetectedMarketAndEvent");
         if (checkBox.checked) {
             lockedMarketId = marketId;
             detectedOrLockedRow.innerHTML = "&#128274; Locked market:";
@@ -1855,7 +1874,7 @@
             return category.metaData.style == "2";
         } else {
             let usCategoryIds = ["2", "4", "10", "19"];
-            let usCultures = ["en-US", 'es-MX', 'en-CA'];
+            let usCultures = ["en-US", "es-MX", "en-CA"];
             if (usCultures.includes(CULTURE) && usCategoryIds.includes(categoryId)) {
                 return true;
             }
@@ -1892,33 +1911,33 @@
         stopPolling();
         previousSelectionId = undefined;
 
-        labelRow = document.getElementById("labelForSbToolsSelection");
-        const selectionIdForSbToolsSelection = document.getElementById("selectionIdForSbToolsSelection");
-        const selectionFeatures = document.getElementById("selectionFeatures");
-        const eventLabelForDetectedSelection = document.getElementById("eventLabelForDetectedSelection");
-        const marketLabelForDetectedSelection = document.getElementById("marketLabelForDetectedSelection");
-        const selectionLabelForDetectedSelection = document.getElementById("selectionLabelForDetectedSelection");
-        const messageForSbToolsSelection = document.getElementById("messageForSbToolsSelection");
-        const labelsForDetectedSelectionMarketAndEvent = document.getElementById("labelsForDetectedSelectionMarketAndEvent");
-        const btResetOdds = document.getElementById("btResetOdds");
-        const initialOddsSpan = document.getElementById("initialOddsSpan");
-        const fdNewOdds = document.getElementById("fdNewOdds");
-        const selectionStateButtons = document.getElementsByClassName("btSetSelectionState");
-        const btCreatePbFromSelections = document.getElementById("btCreatePbFromSelections");
-        const btAddDetectedToPopBets = document.getElementById("btAddDetectedToPopBets");
-        const btAddAllToPopBets = document.getElementById("btAddAllToPopBets");
-        const btRemoveAllPopBets = document.getElementById("btRemoveAllPopBets");
-        const btRemoveAllPerBuilt = document.getElementById("btRemoveAllPerBuilt");
-        const popularBetsControls = document.getElementById("popularBetsControls");
-        const popularBetsButtons = document.getElementById("popularBetsButtons");
-        const popularBetsHr = document.getElementById("popularBetsHr");
-        const popularBetsNotHomeMessage = document.getElementById("popularBetsNotHomeMessage");
-        const popularBetsTooManySelectionsMessage = document.getElementById("popularBetsTooManySelectionsMessage");
-        const chkPrematchOnly = document.getElementById("chkPrematchOnly");
-        const isPopularBetsEnabledSection = document.getElementById("isPopularBetsEnabledSection");
-        const popularBetsNotEnabledMessage = document.getElementById("popularBetsNotEnabledMessage");
-        const popularPreBuiltBetsNotEnabledMessage = document.getElementById("popularPreBuiltBetsNotEnabledMessage");
-        const bothPopularBetsNotEnabledMessage = document.getElementById("bothPopularBetsNotEnabledMessage");
+        labelRow = getElementById("labelForSbToolsSelection");
+        const selectionIdForSbToolsSelection = getElementById("selectionIdForSbToolsSelection");
+        const selectionFeatures = getElementById("selectionFeatures");
+        const eventLabelForDetectedSelection = getElementById("eventLabelForDetectedSelection");
+        const marketLabelForDetectedSelection = getElementById("marketLabelForDetectedSelection");
+        const selectionLabelForDetectedSelection = getElementById("selectionLabelForDetectedSelection");
+        const messageForSbToolsSelection = getElementById("messageForSbToolsSelection");
+        const labelsForDetectedSelectionMarketAndEvent = getElementById("labelsForDetectedSelectionMarketAndEvent");
+        const btResetOdds = getElementById("btResetOdds");
+        const initialOddsSpan = getElementById("initialOddsSpan");
+        const fdNewOdds = getElementById("fdNewOdds");
+        const selectionStateButtons = getElementsByClassName("btSetSelectionState");
+        const btCreatePbFromSelections = getElementById("btCreatePbFromSelections");
+        const btAddDetectedToPopBets = getElementById("btAddDetectedToPopBets");
+        const btAddAllToPopBets = getElementById("btAddAllToPopBets");
+        const btRemoveAllPopBets = getElementById("btRemoveAllPopBets");
+        const btRemoveAllPerBuilt = getElementById("btRemoveAllPerBuilt");
+        const popularBetsControls = getElementById("popularBetsControls");
+        const popularBetsButtons = getElementById("popularBetsButtons");
+        const popularBetsHr = getElementById("popularBetsHr");
+        const popularBetsNotHomeMessage = getElementById("popularBetsNotHomeMessage");
+        const popularBetsTooManySelectionsMessage = getElementById("popularBetsTooManySelectionsMessage");
+        const chkPrematchOnly = getElementById("chkPrematchOnly");
+        const isPopularBetsEnabledSection = getElementById("isPopularBetsEnabledSection");
+        const popularBetsNotEnabledMessage = getElementById("popularBetsNotEnabledMessage");
+        const popularPreBuiltBetsNotEnabledMessage = getElementById("popularPreBuiltBetsNotEnabledMessage");
+        const bothPopularBetsNotEnabledMessage = getElementById("bothPopularBetsNotEnabledMessage");
 
 
         scope === "selectionLocked" ?
@@ -2144,27 +2163,27 @@
             fdNewOdds.value = initialOdds.toFixed(2);
         }
 
-        const fdCreatePbName = document.getElementById("fdCreatePbName");
-        const radioPbCombi = document.getElementById("radioPbCombi");
-        const disabledIfCombi = document.getElementsByClassName("disabledIfCombi");
-        const betTypeCombiHintSection = document.getElementById("betTypeCombiHintSection");
-        const radioCreatePbRealMoney = document.getElementById("radioCreatePbRealMoney");
+        const fdCreatePbName = getElementById("fdCreatePbName");
+        const radioPbCombi = getElementById("radioPbCombi");
+        const disabledIfCombi = getElementsByClassName("disabledIfCombi");
+        const betTypeCombiHintSection = getElementById("betTypeCombiHintSection");
+        const radioCreatePbRealMoney = getElementById("radioCreatePbRealMoney");
 
-        const radioCreatePbEventPrematch = document.getElementById("radioCreatePbEventPrematch");
-        const radioCreatePbEventLive = document.getElementById("radioCreatePbEventLive");
-        const radioPbGlobal = document.getElementById("radioPbGlobal");
-        const radioCreatePbPercentage = document.getElementById("radioCreatePbPercentage");
+        const radioCreatePbEventPrematch = getElementById("radioCreatePbEventPrematch");
+        const radioCreatePbEventLive = getElementById("radioCreatePbEventLive");
+        const radioPbGlobal = getElementById("radioPbGlobal");
+        const radioCreatePbPercentage = getElementById("radioCreatePbPercentage");
 
 
-        const createPbPercentageValueSecion = document.getElementById("createPbPercentageValueSecion");
-        const createPbFixedOddsValueSecion = document.getElementById("createPbFixedOddsValueSecion");
-        const fdCreatePbPercentage = document.getElementById("fdCreatePbPercentage");
-        const fdCreatePbFixed = document.getElementById("fdCreatePbFixed");
-        const fdCreatePbMinOdds = document.getElementById("fdCreatePbMinOdds");
-        const fdCreatePbMaxOdds = document.getElementById("fdCreatePbMaxOdds");
-        const fdCreatePbMinStake = document.getElementById("fdCreatePbMinStake");
-        const fdCreatePbMaxStake = document.getElementById("fdCreatePbMaxStake");
-        const chkCreatePbIsSuperBoost = document.getElementById("chkCreatePbIsSuperBoost");
+        const createPbPercentageValueSecion = getElementById("createPbPercentageValueSecion");
+        const createPbFixedOddsValueSecion = getElementById("createPbFixedOddsValueSecion");
+        const fdCreatePbPercentage = getElementById("fdCreatePbPercentage");
+        const fdCreatePbFixed = getElementById("fdCreatePbFixed");
+        const fdCreatePbMinOdds = getElementById("fdCreatePbMinOdds");
+        const fdCreatePbMaxOdds = getElementById("fdCreatePbMaxOdds");
+        const fdCreatePbMinStake = getElementById("fdCreatePbMinStake");
+        const fdCreatePbMaxStake = getElementById("fdCreatePbMaxStake");
+        const chkCreatePbIsSuperBoost = getElementById("chkCreatePbIsSuperBoost");
 
         let createPbName,
             createPbEventPhases,
@@ -2591,9 +2610,9 @@
     }
 
     window.lockSelection = () => {
-        const checkBox = document.getElementById("chkLockSelection");
-        const detectedOrLockedRow = document.getElementById("detectedOrLockedRowForSbToolsSelection");
-        // labelRow = document.getElementById("selectionLabelForSbToolsSelection");
+        const checkBox = getElementById("chkLockSelection");
+        const detectedOrLockedRow = getElementById("detectedOrLockedRowForSbToolsSelection");
+        // labelRow = getElementById("selectionLabelForSbToolsSelection");
 
         if (checkBox.checked) {
             lockedSelectionId = getLastSelectionIdFromBetslip();
@@ -2670,40 +2689,40 @@
         var categoriesObj = obgState.sportsbook.sportCatalog.offering.categories;
         var quickLinks;
         var categories, regions, competitions;
-        const categorySelector = document.getElementById("categorySelector");
-        const regionSelector = document.getElementById("regionSelector");
-        const competitionSelector = document.getElementById("competitionSelector");
+        const categorySelector = getElementById("categorySelector");
+        const regionSelector = getElementById("regionSelector");
+        const competitionSelector = getElementById("competitionSelector");
         var menuOption;
-        labelRow = document.getElementById("eventLabelForNative");
+        labelRow = getElementById("eventLabelForNative");
 
-        const btNativeOpenEvent = document.getElementById("btNativeOpenEvent");
-        const btNativeBack = document.getElementById("btNativeBack");
-        const btNativeHome = document.getElementById("btNativeHome");
-        const btNativeAz = document.getElementById("btNativeAz");
-        const btNativeLive = document.getElementById("btNativeLive");
-        const btNativeBetslip = document.getElementById("btNativeBetslip");
-        const btNativeMyBets = document.getElementById("btNativeMyBets");
-        const btNativeBetBuilder = document.getElementById("btNativeBetBuilder");
-        const btNativeBoost = document.getElementById("btNativeBoost");
-        const btNativeLiveSC = document.getElementById("btNativeLiveSC");
-        const btNativeStartingSoon = document.getElementById("btNativeStartingSoon");
-        const btNativeSettings = document.getElementById("btNativeSettings");
+        const btNativeOpenEvent = getElementById("btNativeOpenEvent");
+        const btNativeBack = getElementById("btNativeBack");
+        const btNativeHome = getElementById("btNativeHome");
+        const btNativeAz = getElementById("btNativeAz");
+        const btNativeLive = getElementById("btNativeLive");
+        const btNativeBetslip = getElementById("btNativeBetslip");
+        const btNativeMyBets = getElementById("btNativeMyBets");
+        const btNativeBetBuilder = getElementById("btNativeBetBuilder");
+        const btNativeBoost = getElementById("btNativeBoost");
+        const btNativeLiveSC = getElementById("btNativeLiveSC");
+        const btNativeStartingSoon = getElementById("btNativeStartingSoon");
+        const btNativeSettings = getElementById("btNativeSettings");
 
-        const loggedInOnly = document.getElementsByClassName("loggedInOnly");
-        const badgeNativeBetslip = document.getElementById("badgeNativeBetslip");
-        const badgeNativeBbBetslip = document.getElementById("badgeNativeBbBetslip");
-        const nativeAzSection = document.getElementById("nativeAzSection");
-        const iconBtNativeBetBuilder = document.getElementById("iconBtNativeBetBuilder");
-        const labelBtNativeBetBuilder = document.getElementById("labelBtNativeBetBuilder");
-        const nativeBetBuilderEventLabel = document.getElementById("nativeBetBuilderEventLabel");
-        const nativeBetBuilderSection = document.getElementById("nativeBetBuilderSection");
-        const nativeBetBuilderEventSelector = document.getElementById("nativeBetBuilderEventSelector");
-        const nativeBetBuilderEventsError = document.getElementById("nativeBetBuilderEventsError");
-        const nativeQuickLinksSection = document.getElementById("nativeQuickLinksSection");
+        const loggedInOnly = getElementsByClassName("loggedInOnly");
+        const badgeNativeBetslip = getElementById("badgeNativeBetslip");
+        const badgeNativeBbBetslip = getElementById("badgeNativeBbBetslip");
+        const nativeAzSection = getElementById("nativeAzSection");
+        const iconBtNativeBetBuilder = getElementById("iconBtNativeBetBuilder");
+        const labelBtNativeBetBuilder = getElementById("labelBtNativeBetBuilder");
+        const nativeBetBuilderEventLabel = getElementById("nativeBetBuilderEventLabel");
+        const nativeBetBuilderSection = getElementById("nativeBetBuilderSection");
+        const nativeBetBuilderEventSelector = getElementById("nativeBetBuilderEventSelector");
+        const nativeBetBuilderEventsError = getElementById("nativeBetBuilderEventsError");
+        const nativeQuickLinksSection = getElementById("nativeQuickLinksSection");
 
-        const quickLinkSelector = document.getElementById("quickLinkSelector");
-        const nativeErrorMessage = document.getElementById("nativeErrorMessage");
-        const btNativeToggleableCollection = document.getElementsByClassName("btNativeToggleable");
+        const quickLinkSelector = getElementById("quickLinkSelector");
+        const nativeErrorMessage = getElementById("nativeErrorMessage");
+        const btNativeToggleableCollection = getElementsByClassName("btNativeToggleable");
         var nativeRouteHistory = [];
 
         var betSlipVisibleState;
@@ -3310,7 +3329,7 @@
     }
 
     window.toggleSection = (section) => {
-        const element = document.getElementById(section);
+        const element = getElementById(section);
         element.classList.toggle("hide");
     }
 
@@ -3329,112 +3348,112 @@
     function initSbToolsEvent(scope) {
         stopPolling();
         previousEventId = undefined;
-        labelRow = document.getElementById("eventLabelForSbToolsEvent");
-        const lockEventSection = document.getElementById("lockEventSectionForSbToolsEvent");
-        const eventPhaseButtons = document.getElementsByClassName("btSetEventPhase");
+        labelRow = getElementById("eventLabelForSbToolsEvent");
+        const lockEventSection = getElementById("lockEventSectionForSbToolsEvent");
+        const eventPhaseButtons = getElementsByClassName("btSetEventPhase");
         var eventPhase;
-        // const sbEventIdForOddsManagerSection = document.getElementById("sbEventIdForOddsManagerSection");
-        const eventIdValue = document.getElementById("eventIdForEventDetails");
-        const startDateValue = document.getElementById("startDateForEventDetails");
-        const categoryForEventDetails = document.getElementById("categoryForEventDetails");
-        const regionForEventDetails = document.getElementById("regionForEventDetails");
-        const competitionForEventDetails = document.getElementById("competitionForEventDetails");
-        const categoryIdForEventDetails = document.getElementById("categoryIdForEventDetails");
-        const regionIdForEventDetails = document.getElementById("regionIdForEventDetails");
-        const competitionIdForEventDetails = document.getElementById("competitionIdForEventDetails");
+        // const sbEventIdForOddsManagerSection = getElementById("sbEventIdForOddsManagerSection");
+        const eventIdValue = getElementById("eventIdForEventDetails");
+        const startDateValue = getElementById("startDateForEventDetails");
+        const categoryForEventDetails = getElementById("categoryForEventDetails");
+        const regionForEventDetails = getElementById("regionForEventDetails");
+        const competitionForEventDetails = getElementById("competitionForEventDetails");
+        const categoryIdForEventDetails = getElementById("categoryIdForEventDetails");
+        const regionIdForEventDetails = getElementById("regionIdForEventDetails");
+        const competitionIdForEventDetails = getElementById("competitionIdForEventDetails");
 
-        const chkSuspendAllMarkets = document.getElementById("chkSuspendAllMarkets");
-        const chkLiveAddsScoreBoard = document.getElementById("chkLiveAddsScoreBoard");
-        const liveAddsScoreBoardSection = document.getElementById("liveAddsScoreBoardSection");
-        const scoreBoardSupportedMessage = document.getElementById("scoreBoardSupportedMessage");
-        const scoreBoardNotSupportedSection = document.getElementById("scoreBoardNotSupportedSection");
-        const scoreBoardNotSupportedMessage = document.getElementById("scoreBoardNotSupportedMessage");
+        const chkSuspendAllMarkets = getElementById("chkSuspendAllMarkets");
+        const chkLiveAddsScoreBoard = getElementById("chkLiveAddsScoreBoard");
+        const liveAddsScoreBoardSection = getElementById("liveAddsScoreBoardSection");
+        const scoreBoardSupportedMessage = getElementById("scoreBoardSupportedMessage");
+        const scoreBoardNotSupportedSection = getElementById("scoreBoardNotSupportedSection");
+        const scoreBoardNotSupportedMessage = getElementById("scoreBoardNotSupportedMessage");
 
-        const scoreBoardExtrasSection = document.getElementById("scoreBoardExtrasSection");
+        const scoreBoardExtrasSection = getElementById("scoreBoardExtrasSection");
 
-        const footballScoreBoardExtrasSection = document.getElementById("footballScoreBoardExtrasSection");
-        const chkAggScore = document.getElementById("chkAggScore");
-        const chkRedCardsHome = document.getElementById("chkRedCardsHome");
-        const chkRedCardsAway = document.getElementById("chkRedCardsAway");
-        const chkExtraTime = document.getElementById("chkExtraTime");
+        const footballScoreBoardExtrasSection = getElementById("footballScoreBoardExtrasSection");
+        const chkAggScore = getElementById("chkAggScore");
+        const chkRedCardsHome = getElementById("chkRedCardsHome");
+        const chkRedCardsAway = getElementById("chkRedCardsAway");
+        const chkExtraTime = getElementById("chkExtraTime");
 
-        const iceHockeyScoreBoardExtrasSection = document.getElementById("iceHockeyScoreBoardExtrasSection");
-        const radioPPHome = document.getElementById("radioPPHome");
-        const radioPP2Home = document.getElementById("radioPP2Home");
-        const radioPPAway = document.getElementById("radioPPAway");
-        const radioPP2Away = document.getElementById("radioPP2Away");
-        const radioPPNone = document.getElementById("radioPPNone");
-        const ppKeyLabelTop = document.getElementById("ppKeyLabelTop");
-        const ppKeyLabelBottom = document.getElementById("ppKeyLabelBottom");
+        const iceHockeyScoreBoardExtrasSection = getElementById("iceHockeyScoreBoardExtrasSection");
+        const radioPPHome = getElementById("radioPPHome");
+        const radioPP2Home = getElementById("radioPP2Home");
+        const radioPPAway = getElementById("radioPPAway");
+        const radioPP2Away = getElementById("radioPP2Away");
+        const radioPPNone = getElementById("radioPPNone");
+        const ppKeyLabelTop = getElementById("ppKeyLabelTop");
+        const ppKeyLabelBottom = getElementById("ppKeyLabelBottom");
 
-        const dartsScoreBoardExtrasSection = document.getElementById("dartsScoreBoardExtrasSection");
-        const chk180s = document.getElementById("chk180s");
-        const chkSetPoints = document.getElementById("chkSetPoints");
+        const dartsScoreBoardExtrasSection = getElementById("dartsScoreBoardExtrasSection");
+        const chk180s = getElementById("chk180s");
+        const chkSetPoints = getElementById("chkSetPoints");
 
-        const tennisScoreBoardExtrasSection = document.getElementById("tennisScoreBoardExtrasSection");
-        const radio5setTennis = document.getElementById("radio5setTennis");
+        const tennisScoreBoardExtrasSection = getElementById("tennisScoreBoardExtrasSection");
+        const radio5setTennis = getElementById("radio5setTennis");
 
-        // const isServerScoreBoardExtrasSection = document.getElementById("isServerScoreBoardExtrasSection");
-        // const radioServerHome = document.getElementById("radioServerHome");
-        // const radioServerAway = document.getElementById("radioServerAway");
-
-
+        // const isServerScoreBoardExtrasSection = getElementById("isServerScoreBoardExtrasSection");
+        // const radioServerHome = getElementById("radioServerHome");
+        // const radioServerAway = getElementById("radioServerAway");
 
 
-        const hasBetBuilderSection = document.getElementById("hasBetBuilderSection");
-        const chkHasBetBuilder = document.getElementById("chkHasBetBuilder");
 
-        const hasPriceBoostSection = document.getElementById("hasPriceBoostSection");
-        const chkHasPriceBoost = document.getElementById("chkHasPriceBoost");
 
-        const hasSuperBoostSection = document.getElementById("hasSuperBoostSection");
-        const chkHasSuperBoost = document.getElementById("chkHasSuperBoost");
+        const hasBetBuilderSection = getElementById("hasBetBuilderSection");
+        const chkHasBetBuilder = getElementById("chkHasBetBuilder");
 
-        const hasLiveVisualSection = document.getElementById("hasLiveVisualSection");
-        const chkHasLiveVisual = document.getElementById("chkHasLiveVisual");
+        const hasPriceBoostSection = getElementById("hasPriceBoostSection");
+        const chkHasPriceBoost = getElementById("chkHasPriceBoost");
 
-        const hasLiveStreamingSection = document.getElementById("hasLiveStreamingSection");
-        const chkHasLiveStreaming = document.getElementById("chkHasLiveStreaming");
+        const hasSuperBoostSection = getElementById("hasSuperBoostSection");
+        const chkHasSuperBoost = getElementById("chkHasSuperBoost");
 
-        const hasFastMarketsSection = document.getElementById("hasFastMarketsSection");
-        const chkHasFastMarkets = document.getElementById("chkHasFastMarkets");
+        const hasLiveVisualSection = getElementById("hasLiveVisualSection");
+        const chkHasLiveVisual = getElementById("chkHasLiveVisual");
 
-        const hasScore24StatisticsSection = document.getElementById("hasScore24StatisticsSection");
-        const chkHasScore24Statistics = document.getElementById("chkHasScore24Statistics");
+        const hasLiveStreamingSection = getElementById("hasLiveStreamingSection");
+        const chkHasLiveStreaming = getElementById("chkHasLiveStreaming");
 
-        const hasExternalStatisticsSection = document.getElementById("hasExternalStatisticsSection");
-        const chkHasExternalStatistics = document.getElementById("chkHasExternalStatistics");
+        const hasFastMarketsSection = getElementById("hasFastMarketsSection");
+        const chkHasFastMarkets = getElementById("chkHasFastMarkets");
 
-        const hasLiveStatisticsSection = document.getElementById("hasLiveStatisticsSection");
-        const chkHasLiveStatistics = document.getElementById("chkHasLiveStatistics");
+        const hasScore24StatisticsSection = getElementById("hasScore24StatisticsSection");
+        const chkHasScore24Statistics = getElementById("chkHasScore24Statistics");
 
-        const hasVarSection = document.getElementById("hasVarSection");
-        const chkHasVar = document.getElementById("chkHasVar");
+        const hasExternalStatisticsSection = getElementById("hasExternalStatisticsSection");
+        const chkHasExternalStatistics = getElementById("chkHasExternalStatistics");
+
+        const hasLiveStatisticsSection = getElementById("hasLiveStatisticsSection");
+        const chkHasLiveStatistics = getElementById("chkHasLiveStatistics");
+
+        const hasVarSection = getElementById("hasVarSection");
+        const chkHasVar = getElementById("chkHasVar");
 
         // rename event
-        const fdRenameEventLabel = document.getElementById("fdRenameEventLabel");
-        // const renameParticipantLabelSection = document.getElementById("renameParticipantLabelSection");
-        const fdRenameParticipantLabel = document.getElementById("fdRenameParticipantLabel");
-        const renameParticipantLabelRow = document.getElementById("renameParticipantLabelRow");
-        const participantSelector = document.getElementById("participantSelector");
-        const selectedParticipantIdSpan = document.getElementById("selectedParticipantIdSpan");
+        const fdRenameEventLabel = getElementById("fdRenameEventLabel");
+        // const renameParticipantLabelSection = getElementById("renameParticipantLabelSection");
+        const fdRenameParticipantLabel = getElementById("fdRenameParticipantLabel");
+        const renameParticipantLabelRow = getElementById("renameParticipantLabelRow");
+        const participantSelector = getElementById("participantSelector");
+        const selectedParticipantIdSpan = getElementById("selectedParticipantIdSpan");
 
         // carousel
-        const eventFeaturesSection = document.getElementById("eventFeaturesSection");
+        const eventFeaturesSection = getElementById("eventFeaturesSection");
 
         //scoreboard
-        const notFootballScoreBoardMessage = document.getElementById("notFootballScoreBoardMessage");
+        const notFootballScoreBoardMessage = getElementById("notFootballScoreBoardMessage");
         var itHasFootballScoreBoard;
-        const scoreBoardFeatures = document.getElementById("scoreBoardFeatures");
+        const scoreBoardFeatures = getElementById("scoreBoardFeatures");
 
         //create markets
-        const createMarketErrorSection = document.getElementById("createMarketErrorSection");
-        const createMarketFeatures = document.getElementById("createMarketFeatures");
-        const fastMarketMessage = document.getElementById("fastMarketMessage");
-        const playerPropsMessage = document.getElementById("playerPropsMessage");
-        const btCreateFastMarket = document.getElementById("btCreateFastMarket");
-        const btCreatePlayerPropsMarket = document.getElementById("btCreatePlayerPropsMarket");
-        const btCreatePlayerPropsDummyMarket = document.getElementById("btCreatePlayerPropsDummyMarket");
+        const createMarketErrorSection = getElementById("createMarketErrorSection");
+        const createMarketFeatures = getElementById("createMarketFeatures");
+        const fastMarketMessage = getElementById("fastMarketMessage");
+        const playerPropsMessage = getElementById("playerPropsMessage");
+        const btCreateFastMarket = getElementById("btCreateFastMarket");
+        const btCreatePlayerPropsMarket = getElementById("btCreatePlayerPropsMarket");
+        const btCreatePlayerPropsDummyMarket = getElementById("btCreatePlayerPropsDummyMarket");
 
 
 
@@ -4039,7 +4058,7 @@
             return false;
         }
 
-        // const eventPropertiesSection = document.getElementById("eventPropertiesSection");
+        // const eventPropertiesSection = getElementById("eventPropertiesSection");
 
         let previousEventPhase = null;
         function listenerForEventIfEventLocked() {
@@ -4567,11 +4586,11 @@
         var score;
         if (participant === "home") {
             participantId = scoreBoard.participants[0].id;
-            score = document.getElementById("homeScoreInputField").value;
+            score = getElementById("homeScoreInputField").value;
             setValues(participantId, Number(score));
         } else {
             participantId = scoreBoard.participants[1].id;
-            score = document.getElementById("awayScoreInputField").value;
+            score = getElementById("awayScoreInputField").value;
             setValues(participantId, score);
         }
 
@@ -4601,16 +4620,16 @@
         var homeId = scoreBoard.participants[0].id;
         var awayId = scoreBoard.participants[1].id;
 
-        setValues("corners", homeId, document.getElementById("homeCorners").value);
-        setValues("corners", awayId, document.getElementById("awayCorners").value);
-        setValues("substitutions", homeId, document.getElementById("homeSubstitutions").value);
-        setValues("substitutions", awayId, document.getElementById("awaySubstitutions").value);
-        setValues("yellowCards", homeId, document.getElementById("homeYellowCards").value);
-        setValues("yellowCards", awayId, document.getElementById("awayYellowCards").value);
-        setValues("redCards", homeId, document.getElementById("homeRedCards").value);
-        setValues("redCards", awayId, document.getElementById("awayRedCards").value);
-        setValues("penalties", homeId, document.getElementById("homePenalties").value);
-        setValues("penalties", awayId, document.getElementById("awayPenalties").value);
+        setValues("corners", homeId, getElementById("homeCorners").value);
+        setValues("corners", awayId, getElementById("awayCorners").value);
+        setValues("substitutions", homeId, getElementById("homeSubstitutions").value);
+        setValues("substitutions", awayId, getElementById("awaySubstitutions").value);
+        setValues("yellowCards", homeId, getElementById("homeYellowCards").value);
+        setValues("yellowCards", awayId, getElementById("awayYellowCards").value);
+        setValues("redCards", homeId, getElementById("homeRedCards").value);
+        setValues("redCards", awayId, getElementById("awayRedCards").value);
+        setValues("penalties", homeId, getElementById("homePenalties").value);
+        setValues("penalties", awayId, getElementById("awayPenalties").value);
 
         function setValues(scoreBoardItem, participantId, value) {
             let params = [eventId, participantId, Number(value)];
@@ -4637,7 +4656,7 @@
     }
 
     window.getTwitchProviderIds = () => {
-        var twitchResultSection = document.getElementById("twitchResults");
+        var twitchResultSection = getElementById("twitchResults");
         twitchResultSection.innerHTML = null;
         displayInGreen(twitchResultSection);
 
@@ -4682,7 +4701,7 @@
     }
 
     window.getPerformProviderIds = () => {
-        const performResultSection = document.getElementById("performResults");
+        const performResultSection = getElementById("performResults");
         performResultSection.innerHTML = null;
         displayInGreen(performResultSection);
 
@@ -4750,26 +4769,26 @@
         var accaMaxStake;
         previousAcca = null;
 
-        const loginToSeeAcca = document.getElementById("loginToSeeAcca");
-        const noAccaFound = document.getElementById("noAccaFound");
-        const accaDetailsLayout = document.getElementById("accaDetailsLayout");
-        const accaNameField = document.getElementById("accaNameField");
-        const accaIdField = document.getElementById("accaIdField");
-        const accaCategoriesSection = document.getElementById("accaCategoriesSection");
-        const accaCategoriesSpan = document.getElementById("accaCategoriesSpan");
-        const accaCompetitionsRow = document.getElementById("accaCompetitionsRow");
-        const accaCompetitionsSpan = document.getElementById("accaCompetitionsSpan");
-        const accaMarketTemplatesRow = document.getElementById("accaMarketTemplatesRow");
-        const accaMarketTemplatesSpan = document.getElementById("accaMarketTemplatesSpan");
-        const accaEventPhaseRow = document.getElementById("accaEventPhaseRow");
-        const accaEventPhaseSpan = document.getElementById("accaEventPhaseSpan");
-        const accaMinimumNumberOfSelectionsSpan = document.getElementById("accaMinimumNumberOfSelectionsSpan");
-        const accaSelectionOddsLimitMinSpan = document.getElementById("accaSelectionOddsLimitMinSpan");
-        const accaTotalOddsLimitMinRow = document.getElementById("accaTotalOddsLimitMinRow");
-        // const accaTotalOddsLimitMin = document.getElementById("accaTotalOddsLimitMin");
-        const accaTotalOddsLimitMinSpan = document.getElementById("accaTotalOddsLimitMinSpan");
-        const accaMinMaxStakeSpan = document.getElementById("accaMinMaxStakeSpan");
-        const accaExpiryDateSpan = document.getElementById("accaExpiryDateSpan");
+        const loginToSeeAcca = getElementById("loginToSeeAcca");
+        const noAccaFound = getElementById("noAccaFound");
+        const accaDetailsLayout = getElementById("accaDetailsLayout");
+        const accaNameField = getElementById("accaNameField");
+        const accaIdField = getElementById("accaIdField");
+        const accaCategoriesSection = getElementById("accaCategoriesSection");
+        const accaCategoriesSpan = getElementById("accaCategoriesSpan");
+        const accaCompetitionsRow = getElementById("accaCompetitionsRow");
+        const accaCompetitionsSpan = getElementById("accaCompetitionsSpan");
+        const accaMarketTemplatesRow = getElementById("accaMarketTemplatesRow");
+        const accaMarketTemplatesSpan = getElementById("accaMarketTemplatesSpan");
+        const accaEventPhaseRow = getElementById("accaEventPhaseRow");
+        const accaEventPhaseSpan = getElementById("accaEventPhaseSpan");
+        const accaMinimumNumberOfSelectionsSpan = getElementById("accaMinimumNumberOfSelectionsSpan");
+        const accaSelectionOddsLimitMinSpan = getElementById("accaSelectionOddsLimitMinSpan");
+        const accaTotalOddsLimitMinRow = getElementById("accaTotalOddsLimitMinRow");
+        // const accaTotalOddsLimitMin = getElementById("accaTotalOddsLimitMin");
+        const accaTotalOddsLimitMinSpan = getElementById("accaTotalOddsLimitMinSpan");
+        const accaMinMaxStakeSpan = getElementById("accaMinMaxStakeSpan");
+        const accaExpiryDateSpan = getElementById("accaExpiryDateSpan");
 
 
         var priceBoosts, priceBoostsArray, validPbArray, garbagePbArray;
@@ -4781,81 +4800,81 @@
         const pbCriteriaNotMetIcon = "&#128683;";
         const pbSuperBoostIcon = "&#128640;";
 
-        const noPbFound = document.getElementById("noPbFound");
-        const pbSelector = document.getElementById("pbSelector");
-        const pbLegendSection = document.getElementById("pbLegendSection");
-        const pbLegendCombi = document.getElementById("pbLegendCombi");
-        const pbLegendPersonal = document.getElementById("pbLegendPersonal");
-        const pbLegendSuperBoost = document.getElementById("pbLegendSuperBoost");
-        const pbLegendCriteriaNotMet = document.getElementById("pbLegendCriteriaNotMet");
-        const pbLegendCloseable = document.getElementById("pbLegendCloseable");
+        const noPbFound = getElementById("noPbFound");
+        const pbSelector = getElementById("pbSelector");
+        const pbLegendSection = getElementById("pbLegendSection");
+        const pbLegendCombi = getElementById("pbLegendCombi");
+        const pbLegendPersonal = getElementById("pbLegendPersonal");
+        const pbLegendSuperBoost = getElementById("pbLegendSuperBoost");
+        const pbLegendCriteriaNotMet = getElementById("pbLegendCriteriaNotMet");
+        const pbLegendCloseable = getElementById("pbLegendCloseable");
 
-        const pbDetailsLayout = document.getElementById("pbDetailsLayout");
-        const pbNumberOf = document.getElementById("pbNumberOf");
-        const pbNumberOfListed = document.getElementById("pbNumberOfListed");
-        const pbName = document.getElementById("pbName");
-        const pbIdSpan = document.getElementById("pbIdSpan");
-        const pbVisibility = document.getElementById("pbVisibility");
-        const pbType = document.getElementById("pbType");
-        const pbEventPhases = document.getElementById("pbEventPhases");
-        const pbMinMaxStake = document.getElementById("pbMinMaxStake");
-        const pbMinMaxOdds = document.getElementById("pbMinMaxOdds");
-        const pbStakeRangeDiv = document.getElementById("pbStakeRangeDiv");
-        const pbExpiryDate = document.getElementById("pbExpiryDate");
-        const pbPathToCompetition = document.getElementById("pbPathToCompetition");
-        const boostedSelectionDiv = document.getElementById("boostedSelectionDiv");
-        const eventLabelForPbDiv = document.getElementById("eventLabelForPbDiv");
-        const marketLabelForPbDiv = document.getElementById("marketLabelForPbDiv");
-        const selectionLabelForPbDiv = document.getElementById("selectionLabelForPbDiv");
-        const radioPbByName = document.getElementById("radioPbByName");
-        const radioPbByEvent = document.getElementById("radioPbByEvent");
-        const radioPbGarbage = document.getElementById("radioPbGarbage");
-        const goToEventPageRow = document.getElementById("goToEventPageRow");
-        const goToEventPageLink = document.getElementById("goToEventPageLink");
-        const addPbToCarouselRow = document.getElementById("addPbToCarouselRow");
-        const listPbByNameDiv = document.getElementById("listPbByNameDiv");
-        const listPbByEventNameDiv = document.getElementById("listPbByEventNameDiv");
+        const pbDetailsLayout = getElementById("pbDetailsLayout");
+        const pbNumberOf = getElementById("pbNumberOf");
+        const pbNumberOfListed = getElementById("pbNumberOfListed");
+        const pbName = getElementById("pbName");
+        const pbIdSpan = getElementById("pbIdSpan");
+        const pbVisibility = getElementById("pbVisibility");
+        const pbType = getElementById("pbType");
+        const pbEventPhases = getElementById("pbEventPhases");
+        const pbMinMaxStake = getElementById("pbMinMaxStake");
+        const pbMinMaxOdds = getElementById("pbMinMaxOdds");
+        const pbStakeRangeDiv = getElementById("pbStakeRangeDiv");
+        const pbExpiryDate = getElementById("pbExpiryDate");
+        const pbPathToCompetition = getElementById("pbPathToCompetition");
+        const boostedSelectionDiv = getElementById("boostedSelectionDiv");
+        const eventLabelForPbDiv = getElementById("eventLabelForPbDiv");
+        const marketLabelForPbDiv = getElementById("marketLabelForPbDiv");
+        const selectionLabelForPbDiv = getElementById("selectionLabelForPbDiv");
+        const radioPbByName = getElementById("radioPbByName");
+        const radioPbByEvent = getElementById("radioPbByEvent");
+        const radioPbGarbage = getElementById("radioPbGarbage");
+        const goToEventPageRow = getElementById("goToEventPageRow");
+        const goToEventPageLink = getElementById("goToEventPageLink");
+        const addPbToCarouselRow = getElementById("addPbToCarouselRow");
+        const listPbByNameDiv = getElementById("listPbByNameDiv");
+        const listPbByEventNameDiv = getElementById("listPbByEventNameDiv");
 
         var freeBets;
         previousFreeBets = null;
-        const freeBetNotFound = document.getElementById("freeBetNotFound");
-        const freeBetLogin = document.getElementById("freeBetLogin");
-        const freeBetSelector = document.getElementById("freeBetSelector");
-        const freeBetNumberOf = document.getElementById("freeBetNumberOf");
-        const freeBetDetailsLayout = document.getElementById("freeBetDetailsLayout");
-        const freeBetName = document.getElementById("freeBetName");
-        const freeBetIdSpan = document.getElementById("freeBetIdSpan");
-        const freeBetRestrictionsSection = document.getElementById("freeBetRestrictionsSection");
-        const freeBetPathToCompetition = document.getElementById("freeBetPathToCompetition");
-        const freeBetFurtherRestricions = document.getElementById("freeBetFurtherRestricions");
-        const freeBetType = document.getElementById("freeBetType");
-        const freeBetStake = document.getElementById("freeBetStake");
-        const freeBetBetTypes = document.getElementById("freeBetBetTypes");
-        const freeBetEventPhases = document.getElementById("freeBetEventPhases");
-        const freeBetNoOfSelectionsDiv = document.getElementById("freeBetNoOfSelectionsDiv");
-        const freeBetNoOfSelections = document.getElementById("freeBetNoOfSelections");
-        const freeBetExpiryDate = document.getElementById("freeBetExpiryDate");
+        const freeBetNotFound = getElementById("freeBetNotFound");
+        const freeBetLogin = getElementById("freeBetLogin");
+        const freeBetSelector = getElementById("freeBetSelector");
+        const freeBetNumberOf = getElementById("freeBetNumberOf");
+        const freeBetDetailsLayout = getElementById("freeBetDetailsLayout");
+        const freeBetName = getElementById("freeBetName");
+        const freeBetIdSpan = getElementById("freeBetIdSpan");
+        const freeBetRestrictionsSection = getElementById("freeBetRestrictionsSection");
+        const freeBetPathToCompetition = getElementById("freeBetPathToCompetition");
+        const freeBetFurtherRestricions = getElementById("freeBetFurtherRestricions");
+        const freeBetType = getElementById("freeBetType");
+        const freeBetStake = getElementById("freeBetStake");
+        const freeBetBetTypes = getElementById("freeBetBetTypes");
+        const freeBetEventPhases = getElementById("freeBetEventPhases");
+        const freeBetNoOfSelectionsDiv = getElementById("freeBetNoOfSelectionsDiv");
+        const freeBetNoOfSelections = getElementById("freeBetNoOfSelections");
+        const freeBetExpiryDate = getElementById("freeBetExpiryDate");
 
         var profitBoostsArray;
         previousProfitBoosts = null;
-        const profitBoostNotFound = document.getElementById("profitBoostNotFound");
-        const profitBoostLogin = document.getElementById("profitBoostLogin");
-        const profitBoostSelector = document.getElementById("profitBoostSelector");
-        const profitBoostNumberOf = document.getElementById("profitBoostNumberOf");
-        const profitBoostDetailsLayout = document.getElementById("profitBoostDetailsLayout");
-        const profitBoostName = document.getElementById("profitBoostName");
-        const profitBoostIdSpan = document.getElementById("profitBoostId");
-        const profitBoostRestrictionsSection = document.getElementById("profitBoostRestrictionsSection");
-        const profitBoostPathToCompetition = document.getElementById("profitBoostPathToCompetition");
-        const profitBoostMultiplier = document.getElementById("profitBoostMultiplier");
-        const profitBoostMaxBoostedWinningsInEuro = document.getElementById("profitBoostMaxBoostedWinningsInEuro");
-        const profitBoostStake = document.getElementById("profitBoostStake");
-        const profitBoostMinMaxOdds = document.getElementById("profitBoostMinMaxOdds");
-        const profitBoostBetTypes = document.getElementById("profitBoostBetTypes");
-        const profitBoostEventPhases = document.getElementById("profitBoostEventPhases");
-        const profitBoostNoOfSelectionsDiv = document.getElementById("profitBoostNoOfSelectionsDiv");
-        const profitBoostNoOfSelections = document.getElementById("profitBoostNoOfSelections");
-        const profitBoostExpiryDate = document.getElementById("profitBoostExpiryDate");
+        const profitBoostNotFound = getElementById("profitBoostNotFound");
+        const profitBoostLogin = getElementById("profitBoostLogin");
+        const profitBoostSelector = getElementById("profitBoostSelector");
+        const profitBoostNumberOf = getElementById("profitBoostNumberOf");
+        const profitBoostDetailsLayout = getElementById("profitBoostDetailsLayout");
+        const profitBoostName = getElementById("profitBoostName");
+        const profitBoostIdSpan = getElementById("profitBoostId");
+        const profitBoostRestrictionsSection = getElementById("profitBoostRestrictionsSection");
+        const profitBoostPathToCompetition = getElementById("profitBoostPathToCompetition");
+        const profitBoostMultiplier = getElementById("profitBoostMultiplier");
+        const profitBoostMaxBoostedWinningsInEuro = getElementById("profitBoostMaxBoostedWinningsInEuro");
+        const profitBoostStake = getElementById("profitBoostStake");
+        const profitBoostMinMaxOdds = getElementById("profitBoostMinMaxOdds");
+        const profitBoostBetTypes = getElementById("profitBoostBetTypes");
+        const profitBoostEventPhases = getElementById("profitBoostEventPhases");
+        const profitBoostNoOfSelectionsDiv = getElementById("profitBoostNoOfSelectionsDiv");
+        const profitBoostNoOfSelections = getElementById("profitBoostNoOfSelections");
+        const profitBoostExpiryDate = getElementById("profitBoostExpiryDate");
 
 
         intervalIdForPolling = setInterval(listenerForAccaDetails, POLLING_INTERVAL);
@@ -5812,21 +5831,21 @@
 
     // oldSportcatalog
     function getCategoryLabelByCategoryId(categoryId) {
-        if (getIsOldSportCatalog()) {
-            var categories = obgState.sportsbook.sportCatalog.menu.items;
-            for (let cat of categories) {
-                if (cat.id == categoryId) {
-                    return cat.label;
-                }
-            }
-        } else {
-            let categories = Object.values(getCategories());
-            for (let cat of categories) {
-                if (cat.id == categoryId) {
-                    return cat.label;
-                }
+        // if (getIsOldSportCatalog()) {
+        //     var categories = obgState.sportsbook.sportCatalog.menu.items;
+        //     for (let cat of categories) {
+        //         if (cat.id == categoryId) {
+        //             return cat.label;
+        //         }
+        //     }
+        // } else {
+        let categories = Object.values(getCategories());
+        for (let cat of categories) {
+            if (cat.id == categoryId) {
+                return cat.label;
             }
         }
+        // }
     }
 
     // oldSportcatalog
@@ -5994,9 +6013,9 @@
         }
 
         previousSegmentGuid = null;
-        const segmentGuidSpan = document.getElementById("segmentGuidSpan");
-        const segmentNameSpan = document.getElementById("segmentNameSpan");
-        const segmentLegacyIdSpan = document.getElementById("segmentLegacyIdSpan");
+        const segmentGuidSpan = getElementById("segmentGuidSpan");
+        const segmentNameSpan = getElementById("segmentNameSpan");
+        const segmentLegacyIdSpan = getElementById("segmentLegacyIdSpan");
 
         function setIntervalForSegments() {
             stopPolling();
@@ -6040,7 +6059,7 @@
 
         function populateSegmentSelector() {
             var segments = getSegments(getLegacyBrandId());
-            var segmentSelector = document.getElementById("segmentSelector");
+            var segmentSelector = getElementById("segmentSelector");
             segmentSelector.innerHTML = "";
             var option;
             for (var segment of segments) {
@@ -6091,7 +6110,7 @@
     }
 
     window.changeSegmentGuid = () => {
-        var fdSegmentGuid = document.getElementById("fdSegmentGuid");
+        var fdSegmentGuid = getElementById("fdSegmentGuid");
         var newSegmentGuid = fdSegmentGuid.value;
         obgState.sportsbook.segment.segmentGuid = newSegmentGuid;
         fdSegmentGuid.value = "";
@@ -6118,12 +6137,12 @@
 
     window.initBanners = () => {
         stopPolling();
-        const noOfSbBannersSpan = document.getElementById("noOfSbBanners");
-        const noOfCrlBannersSpan = document.getElementById("noOfCrlBanners");
-        const bannersMessage = document.getElementById("bannersMessage");
-        const bannersFeatures = document.getElementById("bannersFeatures");
-        const btCrlBannersMinus = document.getElementById("btCrlBannersMinus");
-        const btSbBannersMinus = document.getElementById("btSbBannersMinus");
+        const noOfSbBannersSpan = getElementById("noOfSbBanners");
+        const noOfCrlBannersSpan = getElementById("noOfCrlBanners");
+        const bannersMessage = getElementById("bannersMessage");
+        const bannersFeatures = getElementById("bannersFeatures");
+        const btCrlBannersMinus = getElementById("btCrlBannersMinus");
+        const btSbBannersMinus = getElementById("btSbBannersMinus");
         var noOfSbBanners, noOfCrlBanners;
         var previousNoOfSbBanners, previousNoOfCrlBanners;
 
@@ -6221,8 +6240,8 @@
         var crlBannerBgWidth;
         var crlBannerBgHeight;
         var crlBannerTarget;
-        const chkBannerOverlay = document.getElementById("chkBannerOverlay");
-        const chkBannerDiffColor = document.getElementById("chkBannerDiffColor");
+        const chkBannerOverlay = getElementById("chkBannerOverlay");
+        const chkBannerDiffColor = getElementById("chkBannerDiffColor");
         var imageOverlay = false;
         window.addCarouselBanner = () => {
             chkBannerOverlay.checked ? imageOverlay = true : imageOverlay = false;
@@ -8080,5 +8099,14 @@
             return selectedLabels;
         }
     }
+
+    function getElementById(id) {
+        return document.getElementById(id);
+    }
+
+    function getElementsByClassName(className) {
+        return document.getElementsByClassName(className);
+    }
+
 
 })();
