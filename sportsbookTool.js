@@ -5809,7 +5809,7 @@
     }
 
     function getArrayAsAlphaBeticalCommaSeparatedString(arr) {
-        return arr.sort((a, b) => (a > b) ? 1 : -1).toString().replaceAll(",", ", ");
+        return [...arr].sort((a, b) => (a > b) ? 1 : -1).toString().replaceAll(",", ", ");
     }
 
     function getArrayAsCommaSeparatedString(arr) {
@@ -5831,41 +5831,17 @@
         });
     }
 
-    // oldSportcatalog
     function getCategoryLabelByCategoryId(categoryId) {
-        // if (getIsOldSportCatalog()) {
-        //     var categories = obgState.sportsbook.sportCatalog.menu.items;
-        //     for (let cat of categories) {
-        //         if (cat.id == categoryId) {
-        //             return cat.label;
-        //         }
-        //     }
-        // } else {
         let categories = Object.values(getCategories());
         for (let cat of categories) {
             if (cat.id == categoryId) {
                 return cat.label;
             }
         }
-        // }
     }
 
-    // oldSportcatalog
+
     function getRegionLabelByRegionId(regionId) {
-        // if (getIsOldSportCatalog()) {
-        //     var categories = obgState.sportsbook.sportCatalog.menu.items;
-        //     var regions;
-        //     for (let cat of categories) {
-        //         regions = cat.items;
-        //         if (regions != undefined) {
-        //             for (reg of regions) {
-        //                 if (reg.id == regionId) {
-        //                     return reg.label;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // } else {
         var categories = Object.values(getCategories());
         var regions;
         for (let cat of categories) {
@@ -5878,30 +5854,9 @@
                 }
             }
         }
-        // }
     }
 
-    // oldSportcatalog
     function getRegionNameByCompetitionId(competitionId) {
-        // if (getIsOldSportCatalog()) {
-        //     let categories = obgState.sportsbook.sportCatalog.menu.items;
-        //     let regions, competitions;
-        //     for (let cat of categories) {
-        //         regions = cat.items;
-        //         if (regions != undefined) {
-        //             for (let reg of regions) {
-        //                 competitions = reg.items;
-        //                 if (competitions != undefined) {
-        //                     for (let comp of competitions) {
-        //                         if (comp.id == competitionId) {
-        //                             return reg.label;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // } else {
         let categories = Object.values(getCategories());
         let regions, competitions;
         for (let cat of categories) {
@@ -5919,30 +5874,9 @@
                 }
             }
         }
-        // }
     }
 
-    // oldSportcatalog
     function getCompetitionLabelByCompetitionId(competitionId) {
-        // if (getIsOldSportCatalog()) {
-        //     let categories = obgState.sportsbook.sportCatalog.menu.items;
-        //     let regions, competitions;
-        //     for (let cat of categories) {
-        //         regions = cat.items;
-        //         if (regions != undefined) {
-        //             for (let reg of regions) {
-        //                 competitions = reg.items;
-        //                 if (competitions != undefined) {
-        //                     for (let comp of competitions) {
-        //                         if (comp.id == competitionId) {
-        //                             return comp.label;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // } else {
         let categories = Object.values(getCategories());
         let regions, competitions;
         for (let cat of categories) {
@@ -5960,13 +5894,7 @@
                 }
             }
         }
-        // }
     }
-
-    // function getIsOldSportCatalog() {
-    //     return !!obgState.sportsbook.sportCatalog?.menu?.items;
-    // }
-
 
     function getBrands() {
         let brandsUrl = "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/brands.json";
