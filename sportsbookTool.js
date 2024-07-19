@@ -17,6 +17,8 @@
     const IS_OBGSTARTUP_EXPOSED = isDefined("obgStartup");
     const IS_OBGGLOBALAPPCONTEXT_EXPOSED = isDefined("obgGlobalAppContext");
     const IS_OBGSTATE_EXPOSED = isDefined("obgState");
+    const IS_OBGSTATE_XSBSTATE = isDefined("xSbState");
+    const IS_OBGSTATE_OR_XSBSTATE_EXPOSED = IS_OBGSTATE_EXPOSED || IS_OBGSTATE_XSBSTATE;
     const IS_OBGRT_EXPOSED = isDefined("obgRt");
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
     const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
@@ -85,7 +87,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.18";
+    const SB_TOOL_VERSION = "v1.6.19";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -236,13 +238,13 @@
 
     function getStaticContextId() {
         if (IS_OBGSTATE_EXPOSED) {
-            return obgState["b2b"].userContext.staticContextId;
+            return obgState.b2b.userContext.staticContextId;
         } return obgClientEnvironmentConfig.startupContext.contextId.staticContextId;
     }
 
     function getUserContextId() {
         if (IS_OBGSTATE_EXPOSED) {
-            return obgState["b2b"].userContext.userContextId;
+            return obgState.b2b.userContext.userContextId;
         } return obgClientEnvironmentConfig.startupContext.contextId.userContextId;
     }
 
