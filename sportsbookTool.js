@@ -450,6 +450,8 @@
             betssonnlb2b: "Betsson NL",
             betssonpe: "Betsson PE",
             bethard: "Bethard",
+            betsmith: "Betsmith",
+            betsolid: "Betsolid",
             firestorm: "Firestorm",
             firestormus: "Firestorm US",
             guts: "Guts",
@@ -676,7 +678,7 @@
             show(obgStateAndRtSection);
             hide(openIframeSection);
         } else {
-            if (Object.isSealed(obgState.sportsbook)){
+            if (Object.isSealed(obgState.sportsbook)) {
                 show(disableSealStoreSection);
             } else {
                 hide(disableSealStoreSection);
@@ -1788,7 +1790,6 @@
         var eventIds;
         var marketTimeFrames;
         var timeFrame;
-        // let threeColumnLayouts;
 
         for (var table of Object.values(eventTables)) {
             try {
@@ -1831,17 +1832,8 @@
             columns = Object.values(threeColumnLayouts)[i].columns;
             ids = ids.concat(columns[0].marketTemplateIds, columns[1].marketTemplateIds, columns[2].marketTemplateIds);
         }
-        // // var columns = Object.values(threeColumnLayouts)[0].columns;
-        // return columns[0].marketTemplateIds.concat(columns[1].marketTemplateIds, columns[2].marketTemplateIds);
-        // log ("marketTemplateIdsOfThreeColumnLayout: " + ids);
         return ids;
     }
-
-    // function getIsMarketTemplateIdPartOfThreeColumn(marketTemplateId) {
-    //     if (getMarketTemplateIdsOfThreeColumnLayout().includes(marketTemplateId)) {
-    //         return true;
-    //     } return false;
-    // }
 
     function getIsMarketTemplateIdPartOfThreeColumn(marketTemplateId) {
         return getMarketTemplateIdsOfThreeColumnLayout().includes(marketTemplateId);
@@ -1870,7 +1862,6 @@
     window.lockMarket = () => {
         const checkBox = getElementById("chkLockMarket");
         const detectedOrLockedRow = getElementById("detectedOrLockedRowForSbToolsMarket");
-        // const labelRow = getElementById("labelsForDetectedMarketAndEvent");
         if (checkBox.checked) {
             lockedMarketId = marketId;
             detectedOrLockedRow.innerHTML = "&#128274; Locked market:";
@@ -1922,17 +1913,20 @@
     function isCategoryInUsFormat(categoryId) {
         let category = getCategories()[categoryId];
 
-        if (category.metaData != undefined) {
-            return category.metaData.style == "2";
-        } else {
-            let usCategoryIds = ["2", "4", "10", "19"];
-            let usCultures = ["en-US", "es-MX", "en-CA"];
-            if (usCultures.includes(CULTURE) && usCategoryIds.includes(categoryId)) {
-                return true;
-            }
-            return false;
+        if (category.tags?.categoryStyle != undefined) {
+            return category.tags.categoryStyle == "2";
         }
-        // return getCategories()[categoryId].metaData.style == "2";
+
+        if (category.metaData != undefined) {
+            return category.metaData.style == "2";            
+        }
+
+        let usCategoryIds = ["2", "4", "10", "19"];
+        let usCultures = ["en-US", "es-MX", "en-CA"];
+        if (usCultures.includes(CULTURE) && usCategoryIds.includes(categoryId)) {
+            return true;
+        }
+        return false;
     }
 
 
@@ -2086,7 +2080,6 @@
                 initialOddsSpan.innerText = initialOdds.toFixed(2);
 
                 setPbName(eventLabel, marketLabel, selectionLabel);
-                // setCreatePbButtonState();
                 listenerForSelectionEvenIfLocked();
             }
         }
@@ -4364,8 +4357,8 @@
     }
 
     function getIsUserLoggedIn() {
-        var aReducer = localStorage.authReducer;
-        if (!aReducer) {
+        let authReducer = localStorage.authReducer;
+        if (!authReducer) {
             if (IS_OBGSTATE_EXPOSED) {
                 return obgState.auth.isAuthenticated;
             }
@@ -4380,7 +4373,7 @@
             }
             return false;
         }
-        return !!JSON.parse(aReducer).token;
+        return !!JSON.parse(authReducer).token;
     }
 
     function getLastMarketIdFromBetslip() {
@@ -4468,7 +4461,6 @@
         marketVersion = getMarketVersion(marketId);
         marketTemplateId = getMarketTemplateId(marketId);
 
-        ///
         let params = {
             msi: selectionId,
             o: Number(odds),
@@ -4476,10 +4468,6 @@
             mv: marketVersion,
             mti: marketTemplateId
         }
-        // if (!getIsAndreasChangeOnSelectionsStatusesDeployed()) {
-        //     delete params.mti;
-        // }
-
         obgRt.setSelectionOdds([params], marketId);
     }
 
