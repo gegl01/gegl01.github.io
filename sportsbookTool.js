@@ -23,6 +23,10 @@
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
     const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
 
+    function getState() {
+        return IS_OBGSTATE_EXPOSED ? window["obgState"] : window["xSbState"];
+    }
+
     if (!getIsItSportsbookPage()) {
         alert("You are not on a Sportsbook page.\nIf you think you are, please contact: gergely.glosz@betssongroup.com");
         return;
@@ -237,13 +241,13 @@
 
 
     function getStaticContextId() {
-        if (IS_OBGSTATE_EXPOSED) {
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             return obgState.b2b.userContext.staticContextId;
         } return obgClientEnvironmentConfig.startupContext.contextId.staticContextId;
     }
 
     function getUserContextId() {
-        if (IS_OBGSTATE_EXPOSED) {
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             return obgState.b2b.userContext.userContextId;
         } return obgClientEnvironmentConfig.startupContext.contextId.userContextId;
     }
@@ -273,7 +277,7 @@
         if (IS_NODECONTEXT_EXPOSED) {
             return nodeContext.version;
         }
-        if (IS_OBGSTATE_EXPOSED) {
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             return obgState.appContext.version;
         }
         return null;
@@ -290,19 +294,19 @@
 
     function getDeviceType() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceType; }
-        if (IS_OBGSTATE_EXPOSED) { return obgState.appContext.device.deviceType; }
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return obgState.appContext.device.deviceType; }
         if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return obgGlobalAppContext.deviceType; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceType; }
         return "couldn't get";
     }
 
     function getIsAnyEssentialObjectExposed() {
-        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED || IS_OBGSTATE_EXPOSED || IS_OBGGLOBALAPPCONTEXT_EXPOSED || IS_OBGSTARTUP_EXPOSED;
+        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED || IS_OBGSTATE_OR_XSBSTATE_EXPOSED || IS_OBGGLOBALAPPCONTEXT_EXPOSED || IS_OBGSTARTUP_EXPOSED;
     }
 
     function getDeviceExperience() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceExperience; }
-        if (IS_OBGSTATE_EXPOSED) { return obgState.appContext.device.deviceExperience; }
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return obgState.appContext.device.deviceExperience; }
         if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return obgState.appContext.device.deviceExperience; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceExperience; }
         return null;
@@ -391,7 +395,7 @@
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
             return obgClientEnvironmentConfig.startupContext.appContext.device.culture;
         }
-        if (IS_OBGSTATE_EXPOSED) {
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             return obgState.appContext.device.culture;
         }
         if (IS_OBGSTARTUP_EXPOSED) {
@@ -404,7 +408,7 @@
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
             return obgClientEnvironmentConfig.startupContext.config.core.market.languageCode;
         }
-        if (IS_OBGSTATE_EXPOSED) { return obgState.market.currentMarket.languageCode; }
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return obgState.market.currentMarket.languageCode; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.detectedMarket.code; }
         if (IS_OBGSTARTUP_EXPOSED) {
             return obgStartup.config.core.market.languageCode;
@@ -487,7 +491,7 @@
         else if (IS_OBGSTARTUP_EXPOSED) {
             brandName = obgStartup.config.appSettings.brandName.toLowerCase();
         }
-        if (brandName === "nordicbet" && IS_OBGSTATE_EXPOSED) {
+        if (brandName === "nordicbet" && IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             if (obgState?.sportsbook?.features?.arcticbet) {
                 brandName = "arcticbet";
             }
@@ -536,7 +540,7 @@
 
     function initHeader() {
         const btMinimizeClosed = getElementById("btMinimizeClosed");
-        if (!IS_OBGSTATE_EXPOSED) {
+        if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             hide(btMinimizeClosed);
         }
         getElementById("sportsbookToolVersion").innerText = SB_TOOL_VERSION;
@@ -557,7 +561,7 @@
 
         if (IS_SPORTSBOOK_IN_IFRAME) {
             limitFeatures("iframe");
-        } else if (!IS_OBGSTATE_EXPOSED) {
+        } else if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             limitFeatures("obgState");
         } else if (!IS_OBGRT_EXPOSED) {
             limitFeatures("obgRt");
@@ -640,7 +644,7 @@
     }
 
     function initBrands() {
-        if (IS_OBGSTATE_EXPOSED) {
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             brands = getBrands();
         }
     }
@@ -676,7 +680,7 @@
             hide(obgStateAndRtSection);
             intervalIdForPolling = setInterval(listenerForIframeURL, POLLING_INTERVAL);
             intervalIdsForPolling.push(intervalIdForPolling);
-        } else if (!IS_OBGSTATE_EXPOSED || !IS_OBGRT_EXPOSED) {
+        } else if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED || !IS_OBGRT_EXPOSED) {
             show(obgStateAndRtSection);
             hide(openIframeSection);
         } else {
@@ -4361,7 +4365,7 @@
     function getIsUserLoggedIn() {
         let authReducer = localStorage.authReducer;
         if (!authReducer) {
-            if (IS_OBGSTATE_EXPOSED) {
+            if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
                 return obgState.auth.isAuthenticated;
             }
             if (IS_B2B_IFRAME_ONLY) {
@@ -5967,7 +5971,6 @@
     function getSegmentGuid() {
         return segmentGuid = obgState.sportsbook.segment.segmentGuid.toLowerCase();
     }
-
 
     window.initSegments = () => {
         initSegments()
