@@ -140,7 +140,7 @@
 
     // function checkIfObgStateIsFrozen() {
     //     const obgStateFrozenMessage = getElementById("obgStateFrozenMessage");
-    //     if (Object.isFrozen(obgState.sportsbook)) {
+    //     if (Object.isFrozen(getState().sportsbook)) {
     //         show(obgStateFrozenMessage);
     //     } else { hide(obgStateFrozenMessage) };
     // }
@@ -185,7 +185,7 @@
                 return !!obgClientEnvironmentConfig.startupContext.contextId;
             } catch {
                 try {
-                    return obgState.b2b !== undefined;
+                    return getState().b2b !== undefined;
                 } catch { return false; }
             }
         }
@@ -242,13 +242,13 @@
 
     function getStaticContextId() {
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            return obgState.b2b.userContext.staticContextId;
+            return getState().b2b.userContext.staticContextId;
         } return obgClientEnvironmentConfig.startupContext.contextId.staticContextId;
     }
 
     function getUserContextId() {
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            return obgState.b2b.userContext.userContextId;
+            return getState().b2b.userContext.userContextId;
         } return obgClientEnvironmentConfig.startupContext.contextId.userContextId;
     }
 
@@ -278,14 +278,14 @@
             return nodeContext.version;
         }
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            return obgState.appContext.version;
+            return getState().appContext.version;
         }
         return null;
         // try {
         //     return obgClientEnvironmentConfig.startupContext.appContext.version;
         // } catch {
         //     try {
-        //         return obgState.appContext.version;
+        //         return getState().appContext.version;
         //     } catch {
         //         return null;
         //     }
@@ -294,7 +294,7 @@
 
     function getDeviceType() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceType; }
-        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return obgState.appContext.device.deviceType; }
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return getState().appContext.device.deviceType; }
         if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return obgGlobalAppContext.deviceType; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceType; }
         return "couldn't get";
@@ -306,8 +306,8 @@
 
     function getDeviceExperience() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceExperience; }
-        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return obgState.appContext.device.deviceExperience; }
-        if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return obgState.appContext.device.deviceExperience; }
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return getState().appContext.device.deviceExperience; }
+        if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return getState().appContext.device.deviceExperience; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceExperience; }
         return null;
     }
@@ -339,11 +339,11 @@
         if (IS_OBGSTARTUP_EXPOSED) {
             return obgStartup.config.appSettings.environment;
         }
-        return obgState.appContext.environment;
+        return getState().appContext.environment;
     }
 
     function getCurrentRouteName() {
-        return obgState.route.current.name;
+        return getState().route.current.name;
     }
 
     function getIsBleSource() {
@@ -396,7 +396,7 @@
             return obgClientEnvironmentConfig.startupContext.appContext.device.culture;
         }
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            return obgState.appContext.device.culture;
+            return getState().appContext.device.culture;
         }
         if (IS_OBGSTARTUP_EXPOSED) {
             return obgStartup.config.core.culture.defaultCultureCode;
@@ -408,7 +408,7 @@
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
             return obgClientEnvironmentConfig.startupContext.config.core.market.languageCode;
         }
-        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return obgState.market.currentMarket.languageCode; }
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return getState().market.currentMarket.languageCode; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.detectedMarket.code; }
         if (IS_OBGSTARTUP_EXPOSED) {
             return obgStartup.config.core.market.languageCode;
@@ -418,7 +418,7 @@
 
     function getAreAllSelectionsInObgState(marketSelectionIds) {
         for (let id of marketSelectionIds) {
-            if (!obgState.sportsbook.selection.selections[id]) {
+            if (!getState().sportsbook.selection.selections[id]) {
                 return false;
             }
         }
@@ -565,7 +565,7 @@
             limitFeatures("obgState");
         } else if (!IS_OBGRT_EXPOSED) {
             limitFeatures("obgRt");
-        } else if (Object.isSealed(obgState.sportsbook)) {
+        } else if (Object.isSealed(getState().sportsbook)) {
             limitFeatures("sealStore");
         }
 
@@ -684,7 +684,7 @@
             show(obgStateAndRtSection);
             hide(openIframeSection);
         } else {
-            if (Object.isSealed(obgState.sportsbook)) {
+            if (Object.isSealed(getState().sportsbook)) {
                 show(disableSealStoreSection);
             } else {
                 hide(disableSealStoreSection);
@@ -867,7 +867,7 @@
     }
 
     function getSlugByEventId(eventId) {
-        return obgState.sportsbook.event.events[eventId].slug;
+        return getState().sportsbook.event.events[eventId].slug;
     }
 
     function getSlugByRoute(route) {
@@ -1129,7 +1129,7 @@
     }
 
     function getRouteKey() {
-        return obgState.sportsbook.sportCatalog.routeKey;
+        return getState().sportsbook.sportCatalog.routeKey;
     }
 
     function getPostMessage() {
@@ -1250,7 +1250,7 @@
     }
 
     function getEventIdByMarketId(marketId) {
-        return obgState.sportsbook.eventMarket.markets[marketId].eventId;
+        return getState().sportsbook.eventMarket.markets[marketId].eventId;
     }
 
     function getEventIdBySelectionId(selectionId) {
@@ -1258,19 +1258,19 @@
     }
 
     function getSelectionsByMarketId(marketId) {
-        return obgState.sportsbook.selection.marketMap[marketId];
+        return getState().sportsbook.selection.marketMap[marketId];
     }
 
     function getEventHasBetBuilder(eventId) {
-        return !!obgState.sportsbook.event.events[eventId]?.tags?.bc_bb_available;
+        return !!getState().sportsbook.event.events[eventId]?.tags?.bc_bb_available;
     }
 
     function getMarketIdBySelectionId(selectionId) {
-        let id = obgState.sportsbook.selection.selections[selectionId].marketId;
+        let id = getState().sportsbook.selection.selections[selectionId].marketId;
         if (id != "") {
             return id;
         }
-        let marketMap = obgState.sportsbook.selection.marketMap;
+        let marketMap = getState().sportsbook.selection.marketMap;
         for (let key in marketMap) {
             if (key !== "" && marketMap[key].includes(selectionId)) {
                 return key;
@@ -1280,7 +1280,7 @@
 
     function getMarketIdByEventIdAndMarketTemplateId(eventId, marketTemplateId) {
         try {
-            return obgState.sportsbook.eventMarket.marketMap[eventId][marketTemplateId][0];
+            return getState().sportsbook.eventMarket.marketMap[eventId][marketTemplateId][0];
         } catch { return undefined; }
     }
 
@@ -1390,26 +1390,26 @@
         }
 
         function populateHelpText() {
-            fdHelpText.innerText = obgState.sportsbook.eventMarket.markets[marketId].helpText;
+            fdHelpText.innerText = getState().sportsbook.eventMarket.markets[marketId].helpText;
             fdHelpText.addEventListener("input", () => {
                 trimString(fdHelpText, 255)
             }, false);
         }
 
         function populateBetGroupDescription() {
-            fdBetGroupDescription.innerText = obgState.sportsbook.eventMarket.markets[marketId].betGroupDescription;
+            fdBetGroupDescription.innerText = getState().sportsbook.eventMarket.markets[marketId].betGroupDescription;
             fdBetGroupDescription.addEventListener("input", () => {
                 trimString(fdBetGroupDescription, 255)
             }, false);
         }
 
         window.setHelpText = () => {
-            obgState.sportsbook.eventMarket.markets[marketId].helpText = fdHelpText.textContent;
+            getState().sportsbook.eventMarket.markets[marketId].helpText = fdHelpText.textContent;
             triggerMarketChangeDetection();
         }
 
         window.setBetGroupDescription = () => {
-            obgState.sportsbook.eventMarket.markets[marketId].betGroupDescription = fdBetGroupDescription.textContent;
+            getState().sportsbook.eventMarket.markets[marketId].betGroupDescription = fdBetGroupDescription.textContent;
             triggerMarketChangeDetection();
         }
 
@@ -1418,8 +1418,8 @@
         }
 
         function initMarketPropertyCheckboxes() {
-            chkIsCashoutAvailable.checked = !!obgState.sportsbook.eventMarket.markets[marketId].isCashoutAvailable;
-            chkIsBetBuilderAvailable.checked = obgState.sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state === 1;
+            chkIsCashoutAvailable.checked = !!getState().sportsbook.eventMarket.markets[marketId].isCashoutAvailable;
+            chkIsBetBuilderAvailable.checked = getState().sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state === 1;
             chkIsBetDistributionAvailable.checked = isBetDistributionAvailable(marketId);
 
             // const marketPropertiesSection = getElementById("marketPropertiesSection");
@@ -1441,7 +1441,7 @@
             function isBetDistributionAvailable(marketId) {
                 let selections = getSelectionsByMarketId(marketId);
                 for (selection of selections) {
-                    if (obgState.sportsbook.betDistribution.statistics.selections.hasOwnProperty(selection)) {
+                    if (getState().sportsbook.betDistribution.statistics.selections.hasOwnProperty(selection)) {
                         return true;
                     }
                 } return false;
@@ -1471,7 +1471,7 @@
         let previousMarketStatus = null;
         function listenerForMarketIfMarketLocked() {
             checkIfPageIsValidToAddToCarousel();
-            let marketStatus = obgState.sportsbook.eventMarket.markets[marketId].status;
+            let marketStatus = getState().sportsbook.eventMarket.markets[marketId].status;
             if (marketStatus == previousMarketStatus) {
                 return;
             } else {
@@ -1507,13 +1507,13 @@
         }
 
         function toggleIsCashoutAvailable() {
-            obgState.sportsbook.eventMarket.markets[marketId].isCashoutAvailable = chkIsCashoutAvailable.checked ? true : false;
+            getState().sportsbook.eventMarket.markets[marketId].isCashoutAvailable = chkIsCashoutAvailable.checked ? true : false;
         }
 
         function toggleIsBetBuilderAvailable() {
             if (chkIsBetBuilderAvailable.checked) {
-                obgState.sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state = 1
-                obgState.sportsbook.eventMarket.markets[marketId].marketTemplateTags.push(133);
+                getState().sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state = 1
+                getState().sportsbook.eventMarket.markets[marketId].marketTemplateTags.push(133);
                 if (!getEventHasBetBuilder(eventId)) {
                     obgRt.setFixtureUpserted(eventId,
                         {
@@ -1523,26 +1523,26 @@
                     )
                 }
             } else {
-                obgState.sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state = 0
-                let index = obgState.sportsbook.eventMarket.markets[marketId].marketTemplateTags.indexOf(133);
+                getState().sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state = 0
+                let index = getState().sportsbook.eventMarket.markets[marketId].marketTemplateTags.indexOf(133);
                 if (index !== -1) {
-                    obgState.sportsbook.eventMarket.markets[marketId].marketTemplateTags.splice(index, 1);
+                    getState().sportsbook.eventMarket.markets[marketId].marketTemplateTags.splice(index, 1);
                 }
             }
 
-            // obgState.sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state = chkIsBetBuilderAvailable.checked ? 1 : 0;
+            // getState().sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state = chkIsBetBuilderAvailable.checked ? 1 : 0;
         }
 
         function toggleIsBetDistributionAvailable() {
-            if (!obgState.sportsbook.betDistribution) {
-                obgState.sportsbook.betDistribution = { statistics: { selections: {} } };
+            if (!getState().sportsbook.betDistribution) {
+                getState().sportsbook.betDistribution = { statistics: { selections: {} } };
             }
 
             let selections = getSelectionsByMarketId(marketId);
             let percentages = generatePercentages(selections.length);
             if (chkIsBetDistributionAvailable.checked) {
                 for (let i = 0; i < selections.length; i++) {
-                    obgState.sportsbook.betDistribution.statistics.selections[selections[i]] = {
+                    getState().sportsbook.betDistribution.statistics.selections[selections[i]] = {
                         id: selections[i],
                         betcountDistribution: getRandomInt(1, 100),
                         stakeDistribution: percentages[i]
@@ -1550,7 +1550,7 @@
                 }
             } else {
                 for (let selection of selections) {
-                    delete obgState.sportsbook.betDistribution.statistics.selections[selection];
+                    delete getState().sportsbook.betDistribution.statistics.selections[selection];
                 }
             }
 
@@ -1591,8 +1591,8 @@
                 cardBackGround = getCardBackGround();
             }
 
-            // let item = obgState.sportsbook.carousel.item;
-            let item = getDeepCopyOfObject(obgState.sportsbook.carousel.item);
+            // let item = getState().sportsbook.carousel.item;
+            let item = getDeepCopyOfObject(getState().sportsbook.carousel.item);
             console.log("item: " + JSON.stringify(item));
 
             if (item.marketToDisplay.hasOwnProperty(eventId)) {
@@ -1636,7 +1636,7 @@
                 if (threeColumnLayouts == undefined) {
                     addToCarouselErrorMessage.innerText = THREE_COLUMN_DATA_MISSING;
                     if (!carouselOrCardsDefined) {
-                        delete (obgState.sportsbook.carousel.item);
+                        delete (getState().sportsbook.carousel.item);
                     }
                     return;
                 } else if (!getIsMarketTemplateIdPartOfThreeColumn(marketTemplateId)) {
@@ -1661,7 +1661,7 @@
 
             // new due to alex
             log("item2: " + JSON.stringify(item));
-            obgState.sportsbook.carousel.item = item;
+            getState().sportsbook.carousel.item = item;
 
             addToCarouselButtonLabel.innerText = "Added"
             triggerChangeDetection(eventId, 300);
@@ -1681,7 +1681,7 @@
                 if (threeColumnLayouts == undefined) {
                     addToCarouselErrorMessage.innerText = THREE_COLUMN_DATA_MISSING;
                     if (!carouselOrCardsDefined) {
-                        delete (obgState.sportsbook.carousel.item);
+                        delete (getState().sportsbook.carousel.item);
                     }
                     return;
                 } else if (!getIsMarketTemplateIdPartOfThreeColumn(marketTemplateId)) {
@@ -1697,7 +1697,7 @@
     function createEmptyCarouselIfDoesntExist() {
         carouselOrCardsDefined = isCarouselOrCardsDefined();
         if (!carouselOrCardsDefined) {
-            obgState.sportsbook.carousel.item = {
+            getState().sportsbook.carousel.item = {
                 "skeleton": {
                     "backgrounds": {},
                     "carouselOrder": [],
@@ -1713,7 +1713,7 @@
     function getCardBackGround() {
         var bgImageWidth, bgImageHeight, bgImageUrl;
         try {
-            bgImageUrl = Object.values(obgState.sportsbook.carousel.item.skeleton.backgrounds)[0].url;
+            bgImageUrl = Object.values(getState().sportsbook.carousel.item.skeleton.backgrounds)[0].url;
         } catch {
             bgImageUrl = getGoodEnoughImageUrl();
             if (bgImageUrl == undefined) {
@@ -1747,7 +1747,7 @@
         let platformName;
         DEVICE_TYPE === "Desktop" ? platformName = "desktop" : platformName = "mobile";
         let imageUrl, lowerCaseImageUrl, goodEnoughImageUrl;
-        for (let image of Object.values(obgState.image.images.sportsbook.images)) {
+        for (let image of Object.values(getState().image.images.sportsbook.images)) {
             if (image.url) {
                 imageUrl = image.url;
                 lowerCaseImageUrl = image.url.toLowerCase();
@@ -1777,7 +1777,7 @@
     }
 
     function getThreeColumnLayouts() {
-        let tcl = obgState.sportsbook.carousel.item.skeleton.threeColumnLayouts ?? {};
+        let tcl = getState().sportsbook.carousel.item.skeleton.threeColumnLayouts ?? {};
 
         threeColumnLayouts = getThreeColumnLayoutsFromEventPage();
         if (threeColumnLayouts == undefined) {
@@ -1792,7 +1792,7 @@
     }
 
     function getThreeColumnLayoutsFromEventTables() {
-        var eventTables = obgState.sportsbook.eventTable.eventTables;
+        var eventTables = getState().sportsbook.eventTable.eventTables;
         var eventIds;
         var marketTimeFrames;
         var timeFrame;
@@ -1847,16 +1847,16 @@
 
     function getThreeColumnLayoutsFromEventPage() {
         try {
-            return obgState.sportsbook.marketListWidget.items[eventId].item.skeleton.threeColumnLayouts;
+            return getState().sportsbook.marketListWidget.items[eventId].item.skeleton.threeColumnLayouts;
         } catch { return undefined };
     }
 
     function isCarouselOrCardsDefined() {
-        return obgState.sportsbook.carousel.item !== undefined;
+        return getState().sportsbook.carousel.item !== undefined;
     }
 
     function triggerMarketChangeDetection() {
-        let state = obgState.sportsbook.eventMarket.markets[marketId].status;
+        let state = getState().sportsbook.eventMarket.markets[marketId].status;
         if (state == "Hold") {
             setMarketState("Open");
         } else {
@@ -1885,7 +1885,7 @@
     }
 
     function getEventIdFromEventPage() {
-        var items = Object.values(obgState.sportsbook.eventWidget.items);
+        var items = Object.values(getState().sportsbook.eventWidget.items);
         for (var targetItem of items) {
             if (targetItem.isActive === true) {
                 return targetItem.item.skeleton.eventId;
@@ -1902,7 +1902,7 @@
     }
 
     function getEventPageActiveTabId(eventId) {
-        return obgState.sportsbook.marketListWidget.items[eventId].marketTemplateGroupingId;
+        return getState().sportsbook.marketListWidget.items[eventId].marketTemplateGroupingId;
     }
 
 
@@ -2036,7 +2036,7 @@
                 }
             }
 
-            betslip = JSON.stringify(obgState.sportsbook.betslip);
+            betslip = JSON.stringify(getState().sportsbook.betslip);
             if (betslip === previousBetslip) {
                 return;
             } else {
@@ -2110,7 +2110,7 @@
 
         let previousSelectionStatus = null;
         function listenerForSelectionEvenIfLocked() {
-            let selectionStatus = obgState.sportsbook.selection.selections[selectionId].status;
+            let selectionStatus = getState().sportsbook.selection.selections[selectionId].status;
             if (selectionStatus == previousSelectionStatus) {
                 return;
             } else {
@@ -2178,7 +2178,7 @@
                     obgRt.setSelectionStatusVoid(...params);
                     break;
             }
-            obgState.sportsbook.selection.selections[selectionId].status = state;
+            getState().sportsbook.selection.selections[selectionId].status = state;
             listenerForSelectionEvenIfLocked();
         }
 
@@ -2422,7 +2422,7 @@
         function removeAllSelectionsFromPopularBets() {
             if (getIsPopularBetsMoreThanZero()) {
                 let eid = getFirstEventIdFromPopularBets();
-                obgState.sportsbook.popularBets = getEmptyPopularBets();
+                getState().sportsbook.popularBets = getEmptyPopularBets();
                 triggerChangeDetection(eid);
             }
         }
@@ -2430,30 +2430,30 @@
         function removeAllSelectionsFromPopularPreBuiltBets() {
             if (getIsPopularPreBuiltBetsMoreThanZero()) {
                 let eid = getFirstEventIdFromPopularPreBuiltBets();
-                obgState.sportsbook.popularPreBuiltBets = getEmptyPopularPreBuiltBets();
+                getState().sportsbook.popularPreBuiltBets = getEmptyPopularPreBuiltBets();
                 triggerChangeDetection(eid);
             }
         }
 
         function getFirstEventIdFromPopularBets() {
-            return Object.values(obgState.sportsbook.popularBets.item.selectionsById)[0].eventId;
+            return Object.values(getState().sportsbook.popularBets.item.selectionsById)[0].eventId;
         }
 
         function getFirstEventIdFromPopularPreBuiltBets() {
-            return obgState.sportsbook.popularPreBuiltBets.events[0].id;
+            return getState().sportsbook.popularPreBuiltBets.events[0].id;
         }
 
         function getIsPopularBetsMoreThanZero() {
             return (
-                obgState.sportsbook?.popularBets?.item?.selectionsById &&
-                Object.keys(obgState.sportsbook.popularBets.item.selectionsById).length > 0
+                getState().sportsbook?.popularBets?.item?.selectionsById &&
+                Object.keys(getState().sportsbook.popularBets.item.selectionsById).length > 0
             ) ?? false;
         }
 
         function getIsPopularPreBuiltBetsMoreThanZero() {
             return (
-                obgState.sportsbook?.popularPreBuiltBets?.events &&
-                obgState.sportsbook.popularPreBuiltBets.events.length > 0
+                getState().sportsbook?.popularPreBuiltBets?.events &&
+                getState().sportsbook.popularPreBuiltBets.events.length > 0
             ) ?? false;
         }
 
@@ -2480,7 +2480,7 @@
 
         function addSelectionToPopularNormalBets(eventId, marketId, selectionId) {
             let popularBets;
-            if (!obgState.sportsbook.popularBets.item) {
+            if (!getState().sportsbook.popularBets.item) {
                 popularBets = getEmptyPopularBets();
             } else {
                 popularBets = getDeepCopyOfObject(getPopularBets());
@@ -2491,19 +2491,19 @@
                 marketId: marketId,
                 isSelected: true
             }
-            obgState.sportsbook.popularBets = popularBets;
+            getState().sportsbook.popularBets = popularBets;
         }
 
         function addSelectionToPopularPreBuiltBets(eventId, selectionId) {
 
             let popularPreBuiltBets;
-            if (!obgState.sportsbook.popularPreBuiltBets.events) {
+            if (!getState().sportsbook.popularPreBuiltBets.events) {
                 popularPreBuiltBets = getEmptyPopularPreBuiltBets();
             } else {
                 popularPreBuiltBets = getDeepCopyOfObject(getPopularPreBuiltBets());
             }
 
-            let eventObject = obgState.sportsbook.event.events[eventId];
+            let eventObject = getState().sportsbook.event.events[eventId];
             let i = getIndexOfEventInPopularPreBuiltBets();
 
             if (i >= 0) {
@@ -2523,7 +2523,7 @@
                 eventObject.selectionIds = [selectionId];
                 popularPreBuiltBets.events.push(eventObject);
             }
-            obgState.sportsbook.popularPreBuiltBets = popularPreBuiltBets;
+            getState().sportsbook.popularPreBuiltBets = popularPreBuiltBets;
 
             function getIndexOfEventInPopularPreBuiltBets() {
                 return popularPreBuiltBets.events.findIndex(event => event.id === eventId);
@@ -2531,11 +2531,11 @@
         }
 
         // function addSelectionToPopularPreBuiltBets(eventId, selectionId) {
-        //     let popularPreBuiltBets = obgState.sportsbook.popularPreBuiltBets || getEmptyPopularPreBuiltBets();
+        //     let popularPreBuiltBets = getState().sportsbook.popularPreBuiltBets || getEmptyPopularPreBuiltBets();
         //     if (!popularPreBuiltBets) {
         //         popularPreBuiltBets = getDeepCopyOfObject(getPopularPreBuiltBets());
         //     }
-        //     let eventObject = obgState.sportsbook.event.events[eventId];
+        //     let eventObject = getState().sportsbook.event.events[eventId];
         //     let i = getIndexOfEventInPopularPreBuiltBets();
 
         //     if (i >= 0) {
@@ -2548,7 +2548,7 @@
         //         popularPreBuiltBets.events.push({ ...eventObject, selectionIds: [selectionId] });
         //     }
 
-        //     obgState.sportsbook.popularPreBuiltBets = popularPreBuiltBets;
+        //     getState().sportsbook.popularPreBuiltBets = popularPreBuiltBets;
 
         //     function getIndexOfEventInPopularPreBuiltBets() {
         //         return popularPreBuiltBets.events.findIndex(event => event.id === eventId);
@@ -2563,7 +2563,7 @@
 
 
         function getPopularBets() {
-            return obgState.sportsbook.popularBets;
+            return getState().sportsbook.popularBets;
         }
 
         function getEmptyPopularBets() {
@@ -2589,7 +2589,7 @@
         }
 
         function getPopularPreBuiltBets() {
-            return obgState.sportsbook.popularPreBuiltBets;
+            return getState().sportsbook.popularPreBuiltBets;
         }
     }
 
@@ -2607,15 +2607,15 @@
     }
 
     function setPbEventMap(eventId, eventPhasesArr) {
-        obgState.sportsbook.priceBoost.eventMap[eventId] = eventPhasesArr;
+        getState().sportsbook.priceBoost.eventMap[eventId] = eventPhasesArr;
     }
 
     function isSelectionPrematch(selectionId) {
-        return obgState.sportsbook.event.events[getEventIdBySelectionId(selectionId)].phase == "Prematch";
+        return getState().sportsbook.event.events[getEventIdBySelectionId(selectionId)].phase == "Prematch";
     }
 
     function setPbMarketMap(marketId, eventPhasesArr) {
-        obgState.sportsbook.priceBoost.marketMap[marketId] = eventPhasesArr;
+        getState().sportsbook.priceBoost.marketMap[marketId] = eventPhasesArr;
     }
 
     function getAmericanOdds(decimalOdds) {
@@ -2649,10 +2649,10 @@
 
     function getAllSelectionIdsFromBetslip() {
         let arr = [];
-        for (let selection of Object.values(obgState.sportsbook.betslip.selections)) {
+        for (let selection of Object.values(getState().sportsbook.betslip.selections)) {
             arr.push(selection.selectionId);
         }
-        for (let bbSelection of Object.values(obgState.sportsbook.betslip.betBuilderSelections)) {
+        for (let bbSelection of Object.values(getState().sportsbook.betslip.betBuilderSelections)) {
             for (let leg of bbSelection.selectionLegs) {
                 arr.push(leg.id);
             }
@@ -2705,7 +2705,7 @@
         }
 
         function checkSelectionInObgState(selectionId) {
-            return obgState.sportsbook.selection.selections.hasOwnProperty(selectionId) ? selectionId : null;
+            return getState().sportsbook.selection.selections.hasOwnProperty(selectionId) ? selectionId : null;
         }
     }
 
@@ -2716,28 +2716,28 @@
     function getSelectionLabel(selectionId) {
         if (selectionId === null) {
             return null;
-        } else return obgState.sportsbook.selection.selections[selectionId].label;
+        } else return getState().sportsbook.selection.selections[selectionId].label;
     }
 
 
     function isBetslipVisible() {
-        return obgState.sportsbook.betslip.isVisible;
+        return getState().sportsbook.betslip.isVisible;
     }
 
 
     function isBetBuilderBetslipVisible() {
-        return obgState.route.current.queryParams.betbuilderbetslip == 1;
+        return getState().route.current.queryParams.betbuilderbetslip == 1;
     }
 
     function getMarketTemplateTags(marketId) {
-        return obgState.sportsbook.eventMarket.markets[marketId].marketTemplateTags;
+        return getState().sportsbook.eventMarket.markets[marketId].marketTemplateTags;
     }
 
     window.initNativeApp = () => {
         stopPolling();
         previousEventId = undefined;
-        // var menu = obgState.sportsbook.sportCatalog.menu.items;
-        var categoriesObj = obgState.sportsbook.sportCatalog.offering.categories;
+        // var menu = getState().sportsbook.sportCatalog.menu.items;
+        var categoriesObj = getState().sportsbook.sportCatalog.offering.categories;
         var quickLinks;
         var categories, regions, competitions;
         const categorySelector = getElementById("categorySelector");
@@ -2793,7 +2793,7 @@
         changeNativeBetBuilderToSGPifNeeded();
 
         function getQuickLinks() {
-            return Object.values((obgState.quicklink.quicklinks)["sportsbook.quicklink-menu"]);
+            return Object.values((getState().quicklink.quicklinks)["sportsbook.quicklink-menu"]);
         }
 
         function changeNativeBetBuilderToSGPifNeeded() {
@@ -2901,7 +2901,7 @@
                     show(badgeNativeBetslip)
                 }
             }
-            slipSelectionCount = Object.values(obgState.sportsbook.betslip.selections).length;
+            slipSelectionCount = Object.values(getState().sportsbook.betslip.selections).length;
             if (slipSelectionCount == previousSlipSelectionCount) {
                 return;
             } else {
@@ -2921,7 +2921,7 @@
                     show(badgeNativeBbBetslip);
                 }
             }
-            bBslipSelectionCount = obgState.betBuilder.betslip.selectionIds.length;
+            bBslipSelectionCount = getState().betBuilder.betslip.selectionIds.length;
             if (bBslipSelectionCount == previousBbSlipSelectionCount) {
                 return;
             } else {
@@ -3067,7 +3067,7 @@
             function populateBetBuilderEvents() {
                 clearSelector(nativeBetBuilderEventSelector);
                 createHeaderOptionFor(nativeBetBuilderEventSelector);
-                betBuilderEvents = Object.values(obgState.betBuilder.event.events).sort((a, b) => (a.participants[0].label > b.participants[0].label) ? 1 : -1);
+                betBuilderEvents = Object.values(getState().betBuilder.event.events).sort((a, b) => (a.participants[0].label > b.participants[0].label) ? 1 : -1);
                 for (var event of betBuilderEvents) {
                     menuOption = document.createElement("option");
                     menuOption.text = event.participants[0].label + getSymbolBetweenParticipants(event.categoryId) + event.participants[1].label;
@@ -3077,7 +3077,7 @@
             }
 
             function listenerForNativeBetBuilderEvents() {
-                betBuilderEvents = Object.values(obgState.betBuilder.event.events);
+                betBuilderEvents = Object.values(getState().betBuilder.event.events);
                 if (betBuilderEvents.length == 0) {
                     show(nativeBetBuilderEventsError);
                 } else {
@@ -3103,7 +3103,7 @@
 
 
         window.openEventOnNative = () => {
-            routeChangeInWithPushToHistory(obgState.sportsbook.event.events[eventId].slug + "?eventId=" + eventId);
+            routeChangeInWithPushToHistory(getState().sportsbook.event.events[eventId].slug + "?eventId=" + eventId);
             for (var bt of btNativeToggleableCollection) {
                 activate(bt);
             }
@@ -3239,7 +3239,7 @@
         function getCurrentRouteObject() {
             return {
                 route: getCurrentRouteName(),
-                extUrl: obgState.route.current.externalUrl
+                extUrl: getState().route.current.externalUrl
             }
         }
 
@@ -3291,7 +3291,7 @@
             return lastEventId;
         }
         let lastMarketId = getMarketIdBySelectionId(lastSelectionId);
-        let eventMap = obgState.sportsbook.eventMarket.eventMap;
+        let eventMap = getState().sportsbook.eventMarket.eventMap;
         for (let key in eventMap) {
             if (key !== "" && eventMap[key].includes(lastMarketId)) {
                 return key;
@@ -3317,7 +3317,7 @@
     }
 
     function getCurrentPathName() {
-        return obgState.route.current.pathName;
+        return getState().route.current.pathName;
     }
 
     function getIsEventPageVisible(eventId) {
@@ -3328,55 +3328,55 @@
         if (eventId === null || eventId === undefined) {
             return null;
         }
-        return obgState.sportsbook.event.events[eventId].label;
+        return getState().sportsbook.event.events[eventId].label;
     }
 
     function getEventPhase(eventId) {
-        return obgState.sportsbook.event.events[eventId].phase;
+        return getState().sportsbook.event.events[eventId].phase;
     }
 
     function getParticipants(eventId) {
-        return obgState.sportsbook.event.events[eventId].participants;
+        return getState().sportsbook.event.events[eventId].participants;
     }
 
     function getCategoryNameByEventId(eventId) {
         if (isEventInObgState(eventId)) {
-            return obgState.sportsbook.event.events[eventId].categoryName;
+            return getState().sportsbook.event.events[eventId].categoryName;
         }
     }
 
     function getRegionNameByEventId(eventId) {
         if (isEventInObgState(eventId)) {
-            return obgState.sportsbook.event.events[eventId].regionName;
+            return getState().sportsbook.event.events[eventId].regionName;
         }
     }
 
     function getCompetitionNameByEventId(eventId) {
         if (isEventInObgState(eventId)) {
-            return obgState.sportsbook.event.events[eventId].competitionName;
+            return getState().sportsbook.event.events[eventId].competitionName;
         }
     }
 
     function getCategoryIdByEventId(eventId) {
         if (isEventInObgState(eventId)) {
-            return obgState.sportsbook.event.events[eventId].categoryId;
+            return getState().sportsbook.event.events[eventId].categoryId;
         }
     }
 
     function getRegionIdByEventId(eventId) {
         if (isEventInObgState(eventId)) {
-            return obgState.sportsbook.event.events[eventId].regionId;
+            return getState().sportsbook.event.events[eventId].regionId;
         }
     }
 
     function getCompetitionIdByEventId(eventId) {
         if (isEventInObgState(eventId)) {
-            return obgState.sportsbook.event.events[eventId].competitionId;
+            return getState().sportsbook.event.events[eventId].competitionId;
         }
     }
 
     function isEventInObgState(eventId) {
-        return obgState.sportsbook.event.events[eventId] !== undefined;
+        return getState().sportsbook.event.events[eventId] !== undefined;
     }
 
     window.toggleSection = (section) => {
@@ -3385,11 +3385,11 @@
     }
 
     function isEventTypeOutright(eventId) {
-        return obgState.sportsbook.event.events[eventId].eventType === "Outright";
+        return getState().sportsbook.event.events[eventId].eventType === "Outright";
     }
 
     function getEventHasScoreBoard(eventId) {
-        return !!obgState.sportsbook.scoreboard[eventId];
+        return !!getState().sportsbook.scoreboard[eventId];
     }
 
 
@@ -3541,7 +3541,7 @@
                 show(eventFeaturesSection, lockEventSection);
                 detectionResultText = getEventDisplayLabel(eventId);
                 eventIdValue.innerText = eventId;
-                startDateValue.innerText = getFriendlyDateFromIsoDate(obgState.sportsbook.event.events[eventId].startDate);
+                startDateValue.innerText = getFriendlyDateFromIsoDate(getState().sportsbook.event.events[eventId].startDate);
                 categoryForEventDetails.innerHTML = getCategoryNameByEventId(eventId);
                 regionForEventDetails.innerHTML = getRegionNameByEventId(eventId);
                 competitionForEventDetails.innerHTML = getCompetitionNameByEventId(eventId);
@@ -3642,7 +3642,7 @@
         }
 
         function initFootballScoreboard() {
-            scoreBoardObject = obgState.sportsbook.scoreboard;
+            scoreBoardObject = getState().sportsbook.scoreboard;
             itHasFootballScoreBoard = false;
             if (eventId === null) {
                 hide(notFootballScoreBoardMessage, lockEventSection);
@@ -3735,7 +3735,7 @@
         }
 
         window.setEventLabel = () => {
-            obgState.sportsbook.event.events[eventId].label = fdRenameEventLabel.textContent;
+            getState().sportsbook.event.events[eventId].label = fdRenameEventLabel.textContent;
             triggerChangeDetection(eventId, 100);
         }
 
@@ -3746,7 +3746,7 @@
                     index = participants.indexOf(participant);
                 }
             }
-            obgState.sportsbook.event.events[eventId].participants[index].label = fdRenameParticipantLabel.textContent;
+            getState().sportsbook.event.events[eventId].participants[index].label = fdRenameParticipantLabel.textContent;
             triggerChangeDetection(eventId, 500);
             populateParticipantSelector();
         }
@@ -3758,14 +3758,14 @@
             }
             switch (phase) {
                 case "Prematch":
-                    if (!!obgState.sportsbook.scoreboard[eventId]) {
-                        delete obgState.sportsbook.scoreboard[eventId];
+                    if (!!getState().sportsbook.scoreboard[eventId]) {
+                        delete getState().sportsbook.scoreboard[eventId];
                     }
                     obgRt.setEventPhasePrematch(eventId);
                     break;
                 case "Live":
                     if (chkLiveAddsScoreBoard.checked && !isEventTypeOutright(eventId)) {
-                        obgState.sportsbook.scoreboard[eventId] = createScoreBoard(eventId, getScoreBoardExtras(categoryId));
+                        getState().sportsbook.scoreboard[eventId] = createScoreBoard(eventId, getScoreBoardExtras(categoryId));
                     }
                     obgRt.setEventPhaseLive(eventId);
                     if (categoryId == "1") initFootballScoreboard();
@@ -3897,7 +3897,7 @@
         function toggleHasBetBuilder() {
             if (chkHasBetBuilder.checked) {
 
-                obgState.sportsbook.event.events[eventId].hasBetBuilderLink = true; // legacy bb for us brands
+                getState().sportsbook.event.events[eventId].hasBetBuilderLink = true; // legacy bb for us brands
 
                 obgRt.setFixtureUpserted(eventId,
                     {
@@ -3906,9 +3906,9 @@
                     }
                 )
             } else {
-                obgState.sportsbook.event.events[eventId].hasBetBuilderLink = false; // legacy bb for us brands
+                getState().sportsbook.event.events[eventId].hasBetBuilderLink = false; // legacy bb for us brands
 
-                delete obgState.sportsbook.event.events[eventId].tags.bc_bb_available;
+                delete getState().sportsbook.event.events[eventId].tags.bc_bb_available;
             }
         }
 
@@ -3988,57 +3988,57 @@
 
 
         function deletePriceBoost(isSuperBoost) {
-            delete obgState.sportsbook.priceBoost.eventMap[eventId];
-            delete obgState.sportsbook.priceBoost.marketMap[marketId];
-            let boosts = Object.keys(obgState.sportsbook.priceBoost.priceBoost);
+            delete getState().sportsbook.priceBoost.eventMap[eventId];
+            delete getState().sportsbook.priceBoost.marketMap[marketId];
+            let boosts = Object.keys(getState().sportsbook.priceBoost.priceBoost);
             let criteriaEntityDetails;
             for (let b of boosts) {
-                criteriaEntityDetails = obgState.sportsbook.priceBoost.priceBoost[b].criteria.criteriaEntityDetails;
+                criteriaEntityDetails = getState().sportsbook.priceBoost.priceBoost[b].criteria.criteriaEntityDetails;
                 for (let detail of criteriaEntityDetails) {
                     if (detail.eventId == eventId) {
                         if (isSuperBoost) {
-                            if (obgState.sportsbook.priceBoost.priceBoost[b].bonusData.isSuperBoost) {
-                                delete obgState.sportsbook.priceBoost.priceBoost[b];
+                            if (getState().sportsbook.priceBoost.priceBoost[b].bonusData.isSuperBoost) {
+                                delete getState().sportsbook.priceBoost.priceBoost[b];
                             }
                         } else {
-                            if (!obgState.sportsbook.priceBoost.priceBoost[b].bonusData.isSuperBoost) {
-                                delete obgState.sportsbook.priceBoost.priceBoost[b];
+                            if (!getState().sportsbook.priceBoost.priceBoost[b].bonusData.isSuperBoost) {
+                                delete getState().sportsbook.priceBoost.priceBoost[b];
                             }
                         }
                     }
                 }
             }
-            obgState.sportsbook.priceBoost.priceBoost = {
-                ...obgState.sportsbook.priceBoost.priceBoost
+            getState().sportsbook.priceBoost.priceBoost = {
+                ...getState().sportsbook.priceBoost.priceBoost
             }
         }
 
         function toggleHasLiveVisual() {
             if (chkHasLiveVisual.checked) {
-                obgState.sportsbook.event.events[eventId].hasLiveVisual = true;
+                getState().sportsbook.event.events[eventId].hasLiveVisual = true;
             } else {
-                obgState.sportsbook.event.events[eventId].hasLiveVisual = false;
+                getState().sportsbook.event.events[eventId].hasLiveVisual = false;
             }
         }
 
         function toggleHasLiveStreaming() {
             if (chkHasLiveStreaming.checked) {
-                obgState.sportsbook.event.events[eventId].hasLiveStreaming = true;
+                getState().sportsbook.event.events[eventId].hasLiveStreaming = true;
             } else {
-                obgState.sportsbook.event.events[eventId].hasLiveStreaming = false;
+                getState().sportsbook.event.events[eventId].hasLiveStreaming = false;
             }
         }
 
         function toggleHasFastMarkets() {
             if (chkHasFastMarkets.checked) {
-                obgState.sportsbook.event.events[eventId].hasFastMarkets = true;
+                getState().sportsbook.event.events[eventId].hasFastMarkets = true;
             } else {
-                obgState.sportsbook.event.events[eventId].hasFastMarkets = false;
+                getState().sportsbook.event.events[eventId].hasFastMarkets = false;
             }
         }
 
         function toggleHasPrematchStatistics(providerName, checkBox) {
-            let providers = obgState.sportsbook.event.events[eventId].prematchStatisticsProviders;
+            let providers = getState().sportsbook.event.events[eventId].prematchStatisticsProviders;
             let isChecked = checkBox.checked;
             let isScore24 = providerName == "Score24";
 
@@ -4048,9 +4048,9 @@
                     createScore24Statistics(eventId);
                 }
             } else if (!isChecked) {
-                obgState.sportsbook.event.events[eventId].prematchStatisticsProviders = providers.filter(item => item !== providerName);
+                getState().sportsbook.event.events[eventId].prematchStatisticsProviders = providers.filter(item => item !== providerName);
                 if (isScore24) {
-                    delete obgState.sportsbook.statistics[eventId];
+                    delete getState().sportsbook.statistics[eventId];
                 }
             }
         }
@@ -4058,48 +4058,48 @@
 
         function toggleHasLiveStatistics() {
             if (chkHasLiveStatistics.checked) {
-                obgState.sportsbook.event.events[eventId].hasLiveStatistics = true;
+                getState().sportsbook.event.events[eventId].hasLiveStatistics = true;
             } else {
-                obgState.sportsbook.event.events[eventId].hasLiveStatistics = false;
+                getState().sportsbook.event.events[eventId].hasLiveStatistics = false;
             }
         }
 
         function toggleVarState() {
             if (chkHasVar.checked) {
-                obgState.sportsbook.scoreboard[eventId].varState = 2;
+                getState().sportsbook.scoreboard[eventId].varState = 2;
             } else {
-                obgState.sportsbook.scoreboard[eventId].varState = 0;
+                getState().sportsbook.scoreboard[eventId].varState = 0;
             }
         }
 
         function initEventPropertyCheckboxes() {
 
-            chkHasLiveVisual.checked = obgState.sportsbook.event.events[eventId].hasLiveVisual ?? false;
+            chkHasLiveVisual.checked = getState().sportsbook.event.events[eventId].hasLiveVisual ?? false;
 
-            chkHasLiveStreaming.checked = obgState.sportsbook.event.events[eventId].hasLiveStreaming ?? false;
+            chkHasLiveStreaming.checked = getState().sportsbook.event.events[eventId].hasLiveStreaming ?? false;
 
-            chkHasFastMarkets.checked = obgState.sportsbook.event.events[eventId].hasFastMarkets ?? false;
+            chkHasFastMarkets.checked = getState().sportsbook.event.events[eventId].hasFastMarkets ?? false;
 
             chkHasPriceBoost.checked = getEventHasSingleBoost(eventId, false);
 
             chkHasSuperBoost.checked = getEventHasSingleBoost(eventId, true);
 
-            chkHasLiveStatistics.checked = obgState.sportsbook.event.events[eventId].hasLiveStatistics ?? false;
+            chkHasLiveStatistics.checked = getState().sportsbook.event.events[eventId].hasLiveStatistics ?? false;
 
-            // chkHasBetBuilder.checked = !!obgState.sportsbook.event.events[eventId]?.tags?.bc_bb_available;
+            // chkHasBetBuilder.checked = !!getState().sportsbook.event.events[eventId]?.tags?.bc_bb_available;
 
             chkHasBetBuilder.checked = getEventHasBetBuilder(eventId);
 
-            chkHasScore24Statistics.checked = obgState.sportsbook.event.events[eventId].prematchStatisticsProviders.includes("Score24");
+            chkHasScore24Statistics.checked = getState().sportsbook.event.events[eventId].prematchStatisticsProviders.includes("Score24");
 
-            chkHasExternalStatistics.checked = obgState.sportsbook.event.events[eventId].prematchStatisticsProviders.includes("BetRadar");
+            chkHasExternalStatistics.checked = getState().sportsbook.event.events[eventId].prematchStatisticsProviders.includes("BetRadar");
 
-            chkHasVar.checked = !!obgState.sportsbook.scoreboard[eventId] && obgState.sportsbook.scoreboard[eventId].varState === 2;
+            chkHasVar.checked = !!getState().sportsbook.scoreboard[eventId] && getState().sportsbook.scoreboard[eventId].varState === 2;
 
         }
 
         function getEventHasSingleBoost(eventId, isSuperBoost) {
-            for (const pb of Object.values(obgState.sportsbook.priceBoost.priceBoost)) {
+            for (const pb of Object.values(getState().sportsbook.priceBoost.priceBoost)) {
                 if (pb.criteria.criteriaEntityDetails.length === 1
                     && pb.criteria.criteriaEntityDetails[0].eventId === eventId
                     && pb.bonusData.isSuperBoost === isSuperBoost) {
@@ -4192,8 +4192,8 @@
             updateCategoryAndCompetitionForPbLobby(detail.categoryId, detail.competitionId);
         }
 
-        obgState.sportsbook.priceBoost.priceBoost = {
-            ...obgState.sportsbook.priceBoost.priceBoost, [priceBoostObj.id]: priceBoostObj
+        getState().sportsbook.priceBoost.priceBoost = {
+            ...getState().sportsbook.priceBoost.priceBoost, [priceBoostObj.id]: priceBoostObj
         }
     }
 
@@ -4201,7 +4201,7 @@
     //by Tamas Czerjak
     function updateCategoryAndCompetitionForPbLobby(categoryId, competitionId) {
 
-        let categoryObj = obgState.sportsbook.eventMarketWidget.skeleton.categories.find(cat => cat.id === categoryId);
+        let categoryObj = getState().sportsbook.eventMarketWidget.skeleton.categories.find(cat => cat.id === categoryId);
 
         if (!categoryObj) {
             let categories = getCategories();
@@ -4218,7 +4218,7 @@
         let competitionObj = categoryObj.competitions.find(comp => comp.id === competitionId);
 
         if (!competitionObj) {
-            // const { label } = obgState.sportsbook.sportCatalog.competitions[competitionId];
+            // const { label } = getState().sportsbook.sportCatalog.competitions[competitionId];
             let label = getCompetitionLabelByCompetitionId(competitionId);
             competitionObj = {
                 id: competitionId,
@@ -4227,30 +4227,30 @@
             categoryObj.competitions = [...categoryObj.competitions, competitionObj];
         }
 
-        const actualCategoryIndex = obgState.sportsbook.eventMarketWidget.skeleton.categories.findIndex(el => el.id === categoryObj.id);
+        const actualCategoryIndex = getState().sportsbook.eventMarketWidget.skeleton.categories.findIndex(el => el.id === categoryObj.id);
 
         if (actualCategoryIndex >= 0) {
-            obgState.sportsbook.eventMarketWidget.skeleton.categories.splice(actualCategoryIndex, 1, categoryObj);
+            getState().sportsbook.eventMarketWidget.skeleton.categories.splice(actualCategoryIndex, 1, categoryObj);
         } else {
-            obgState.sportsbook.eventMarketWidget.skeleton.categories = [
-                ...obgState.sportsbook.eventMarketWidget.skeleton.categories,
+            getState().sportsbook.eventMarketWidget.skeleton.categories = [
+                ...getState().sportsbook.eventMarketWidget.skeleton.categories,
                 categoryObj
             ]
         }
 
-        obgState.sportsbook.eventMarketWidget = {
-            ...obgState.sportsbook.eventMarketWidget,
+        getState().sportsbook.eventMarketWidget = {
+            ...getState().sportsbook.eventMarketWidget,
             skeleton: {
-                ...obgState.sportsbook.eventMarketWidget.skeleton
+                ...getState().sportsbook.eventMarketWidget.skeleton
             }
         };
 
-        // obgState.sportsbook.eventMarketWidget = {
-        //     ...obgState.sportsbook.eventMarketWidget,
+        // getState().sportsbook.eventMarketWidget = {
+        //     ...getState().sportsbook.eventMarketWidget,
         //     skeleton: {
-        //         ...obgState.sportsbook.eventMarketWidget.skeleton,
+        //         ...getState().sportsbook.eventMarketWidget.skeleton,
         //         categories: [
-        //             ...obgState.sportsbook.eventMarketWidget.skeleton.categories,
+        //             ...getState().sportsbook.eventMarketWidget.skeleton.categories,
         //         ]
         //     }
         // };
@@ -4271,8 +4271,8 @@
     }
 
     function getCategories() {
-        return obgState.sportsbook.sportCatalog.offering.categories;
-        // return obgState.sportsbook.sportCatalog.categories || obgState.sportsbook.sportCatalog.offering.categories;
+        return getState().sportsbook.sportCatalog.offering.categories;
+        // return getState().sportsbook.sportCatalog.categories || getState().sportsbook.sportCatalog.offering.categories;
     }
 
     window.getLegacyEventId = () => {
@@ -4351,22 +4351,22 @@
         if (marketId == null) {
             return NOT_FOUND;
         }
-        marketLabel = obgState.sportsbook.eventMarket.markets[marketId].label;
+        marketLabel = getState().sportsbook.eventMarket.markets[marketId].label;
         if (marketLabel === undefined) {
-            marketLabel = obgState.sportsbook.eventMarket.markets[marketId].marketFriendlyName;
+            marketLabel = getState().sportsbook.eventMarket.markets[marketId].marketFriendlyName;
         }
         return marketLabel;
     }
 
     function getMarketTemplateId(marketId) {
-        return obgState.sportsbook.eventMarket.markets[marketId].marketTemplateId;
+        return getState().sportsbook.eventMarket.markets[marketId].marketTemplateId;
     }
 
     function getIsUserLoggedIn() {
         let authReducer = localStorage.authReducer;
         if (!authReducer) {
             if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-                return obgState.auth.isAuthenticated;
+                return getState().auth.isAuthenticated;
             }
             if (IS_B2B_IFRAME_ONLY) {
                 if (IS_SPORTSBOOK_IN_IFRAME) {
@@ -4392,17 +4392,17 @@
     }
 
     function getFirstMarketIdOfEvent(eventId) {
-        return obgState.sportsbook.eventMarket.eventMap[eventId][0];
+        return getState().sportsbook.eventMarket.eventMap[eventId][0];
     }
 
     function getFirstSelectionIdOfMarket(marketId) {
-        let selections = obgState.sportsbook.selection.marketMap[marketId];
+        let selections = getState().sportsbook.selection.marketMap[marketId];
         for (let sel of selections) {
-            if (obgState.sportsbook.selection.selections[sel].isEnabled != false) {
+            if (getState().sportsbook.selection.selections[sel].isEnabled != false) {
                 return sel;
             }
         }
-        // return obgState.sportsbook.selection.marketMap[marketId][0];
+        // return getState().sportsbook.selection.marketMap[marketId][0];
     }
 
     window.setMarketState = (state) => {
@@ -4458,7 +4458,7 @@
     // }
 
     function getMarketVersion(marketId) {
-        return obgState.sportsbook.eventMarket.markets[marketId].marketVersion;
+        return getState().sportsbook.eventMarket.markets[marketId].marketVersion;
     }
 
     function setSelectionOdds(selectionId, odds) {
@@ -4614,20 +4614,20 @@
     }
 
     function setHasFastMarketsFlag(value) {
-        obgState.sportsbook.event.events[eventId].hasFastMarkets = value;
+        getState().sportsbook.event.events[eventId].hasFastMarkets = value;
         triggerChangeDetection(eventId, 100);
     }
 
     function getBetSlipByObgState() {
-        return obgState.sportsbook.betslip;
+        return getState().sportsbook.betslip;
     }
 
     function getUsersCurrency() {
-        return obgState.customer.customer.basicInformation.currencyCode;
+        return getState().customer.customer.basicInformation.currencyCode;
     }
 
     window.submitScore = (participant) => {
-        var scoreBoard = obgState.sportsbook.scoreboard[eventId];
+        var scoreBoard = getState().sportsbook.scoreboard[eventId];
         var participantId;
         var score;
         if (participant === "home") {
@@ -4647,8 +4647,8 @@
         }
     }
 
-    function triggerChangeDetection(eventId = Object.values(obgState.sportsbook.event.events)[0].id, delay = 0) {
-        let currentEventPhase = obgState.sportsbook.event.events[eventId].phase;
+    function triggerChangeDetection(eventId = Object.values(getState().sportsbook.event.events)[0].id, delay = 0) {
+        let currentEventPhase = getState().sportsbook.event.events[eventId].phase;
         let setEventPhase = {
             "Live": "setEventPhaseOver",
             "Prematch": "setEventPhaseOver",
@@ -4662,7 +4662,7 @@
         if (lockedEventId !== undefined) {
             eventId = lockedEventId;
         }
-        var scoreBoard = obgState.sportsbook.scoreboard[eventId];
+        var scoreBoard = getState().sportsbook.scoreboard[eventId];
         var homeId = scoreBoard.participants[0].id;
         var awayId = scoreBoard.participants[1].id;
 
@@ -4955,7 +4955,7 @@
                 hide(loginToSeeAcca);
             }
 
-            acca = obgState.sportsbook.betInsurance.selectedBetInsurance;
+            acca = getState().sportsbook.betInsurance.selectedBetInsurance;
             if (acca === previousAcca) {
                 if (acca === undefined) {
                     show(noAccaFound);
@@ -5057,7 +5057,7 @@
                 hide(profitBoostLogin);
             }
 
-            profitBoosts = obgState.sportsbook.profitBoost.profitBoost;
+            profitBoosts = getState().sportsbook.profitBoost.profitBoost;
             profitBoostsArray = Object.values(profitBoosts);
 
             if (profitBoosts == previousProfitBoosts) {
@@ -5314,7 +5314,7 @@
         window.addPbToCarouselOrCards = () => { addPbToCarouselOrCards() }
         function addPbToCarouselOrCards() {
             createEmptyCarouselIfDoesntExist();
-            var item = obgState.sportsbook.carousel.item;
+            var item = getState().sportsbook.carousel.item;
             var carouselOrder = item.skeleton.carouselOrder;
             for (let element of carouselOrder) {
                 element.sortOrder++;
@@ -5325,7 +5325,7 @@
                 type: "Boost"
             }
             item.skeleton.carouselOrder.unshift(carouselOrderElement);
-            delete obgState.sportsbook.priceBoost.priceBoost[priceBoostId];
+            delete getState().sportsbook.priceBoost.priceBoost[priceBoostId];
 
             triggerChangeDetection();
         }
@@ -5342,7 +5342,7 @@
         }
 
         function getPriceBoosts() {
-            return obgState.sportsbook.priceBoost.priceBoost;
+            return getState().sportsbook.priceBoost.priceBoost;
         }
 
         function setOptionInBonusSelector(bonusId) {
@@ -5355,19 +5355,19 @@
         }
 
         function getIsCombinationPriceBoost(pbId) {
-            return obgState.sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails.length > 1;
+            return getState().sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails.length > 1;
         }
 
         function getIsOddsOutOfRange(pbId) {
-            let minOdds = obgState.sportsbook.priceBoost.priceBoost[pbId].conditions.oddsLimit.minOdds;
-            let maxOdds = obgState.sportsbook.priceBoost.priceBoost[pbId].conditions.oddsLimit.maxOdds;
-            // let criteriaEntityDetails = obgState.sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails;
+            let minOdds = getState().sportsbook.priceBoost.priceBoost[pbId].conditions.oddsLimit.minOdds;
+            let maxOdds = getState().sportsbook.priceBoost.priceBoost[pbId].conditions.oddsLimit.maxOdds;
+            // let criteriaEntityDetails = getState().sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails;
 
             // let marketSelectionId;
             // let selectionOdds = 1;
             // for (let detail of criteriaEntityDetails) {
             //     marketSelectionId = detail.marketSelectionId;
-            //     selectionOdds *= obgState.sportsbook.selection.selections[marketSelectionId].odds;
+            //     selectionOdds *= getState().sportsbook.selection.selections[marketSelectionId].odds;
             // }
             // if (selectionOdds < minOdds || selectionOdds > maxOdds) {
             //     return true;
@@ -5381,16 +5381,16 @@
 
         function getComputedActualOddsOfBoostedSelections(pbId) {
             let computedOdds = 1;
-            let criteriaEntityDetails = obgState.sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails;
+            let criteriaEntityDetails = getState().sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails;
             for (let detail of criteriaEntityDetails) {
-                computedOdds *= obgState.sportsbook.selection.selections[detail.marketSelectionId].odds;
+                computedOdds *= getState().sportsbook.selection.selections[detail.marketSelectionId].odds;
             }
             return computedOdds;
         }
 
         function getIsEventPhaseNotMatching(pbId) {
-            let eventPhasesOfPb = obgState.sportsbook.priceBoost.priceBoost[pbId].criteria.eventPhases;
-            let criteriaEntityDetails = obgState.sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails;
+            let eventPhasesOfPb = getState().sportsbook.priceBoost.priceBoost[pbId].criteria.eventPhases;
+            let criteriaEntityDetails = getState().sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails;
             for (let detail of criteriaEntityDetails) {
                 if (!eventPhasesOfPb.includes(getEventPhase(detail.eventId))) {
                     return true;
@@ -5602,11 +5602,11 @@
         }
 
         function getEventIdByPriceBoostId(priceBoostId) {
-            return obgState.sportsbook.priceBoost.priceBoost[priceBoostId].criteria.criteriaEntityDetails[0].eventId;
+            return getState().sportsbook.priceBoost.priceBoost[priceBoostId].criteria.criteriaEntityDetails[0].eventId;
         }
 
         // function getCompetitionIdByPriceBoostId(priceBoostId) {
-        //     return obgState.sportsbook.priceBoost.priceBoost[priceBoostId].criteria.criteriaEntityDetails[0].competitionId;
+        //     return getState().sportsbook.priceBoost.priceBoost[priceBoostId].criteria.criteriaEntityDetails[0].competitionId;
         // }
 
         window.selectPb = (key) => {
@@ -5713,7 +5713,7 @@
             } else {
                 hide(freeBetLogin);
             }
-            freeBets = obgState.sportsbook.bonusStake.bonusStakes;
+            freeBets = getState().sportsbook.bonusStake.bonusStakes;
             if (freeBets === previousFreeBets) {
                 return;
             } else {
@@ -5832,7 +5832,7 @@
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
             return !!obgClientEnvironmentConfig.startupContext?.features?.[featureName];
         } else {
-            return !!obgState.sportsbook.features?.[featureName];
+            return !!getState().sportsbook.features?.[featureName];
         }
     }
 
@@ -5849,7 +5849,7 @@
     }
 
     function getSelectedOddsFormat() {
-        return obgState.sportsbook.userSettings.settings.oddsFormat;
+        return getState().sportsbook.userSettings.settings.oddsFormat;
     }
 
     function getArrayAsAlphaBeticalCommaSeparatedString(arr) {
@@ -5969,7 +5969,7 @@
     }
 
     function getSegmentGuid() {
-        return segmentGuid = obgState.sportsbook.segment.segmentGuid.toLowerCase();
+        return segmentGuid = getState().sportsbook.segment.segmentGuid.toLowerCase();
     }
 
     window.initSegments = () => {
@@ -6085,12 +6085,12 @@
     window.changeSegmentGuid = () => {
         var fdSegmentGuid = getElementById("fdSegmentGuid");
         var newSegmentGuid = fdSegmentGuid.value;
-        obgState.sportsbook.segment.segmentGuid = newSegmentGuid;
+        getState().sportsbook.segment.segmentGuid = newSegmentGuid;
         fdSegmentGuid.value = "";
     }
 
     window.setSegmentGuid = (guid) => {
-        obgState.sportsbook.segment.segmentGuid = guid;
+        getState().sportsbook.segment.segmentGuid = guid;
         log("Segment in obgState changed to: " + guid);
     }
 
@@ -6105,7 +6105,7 @@
 
     // var previousNoOfSbBanners, previousNoOfCrlBanners;
     function getIsCarouselItemDefined() {
-        return !!obgState.sportsbook.carousel.item;
+        return !!getState().sportsbook.carousel.item;
     }
 
     window.initBanners = () => {
@@ -6133,7 +6133,7 @@
             }
 
             noOfCrlBanners = getNoOfCrlBanners();
-            noOfSbBanners = obgState.sportsbook.sportsbookBanner.content.length;
+            noOfSbBanners = getState().sportsbook.sportsbookBanner.content.length;
             if (noOfSbBanners == previousNoOfSbBanners && noOfCrlBanners == previousNoOfCrlBanners) {
                 return;
             }
@@ -6147,14 +6147,14 @@
 
         function getNoOfCrlBanners() {
             var i = 0;
-            for (var page of obgState.sportsbook.carousel.item.skeleton.carouselOrder) {
+            for (var page of getState().sportsbook.carousel.item.skeleton.carouselOrder) {
                 if (page.type == "Banner") { i++ }
             }
             return i;
         }
 
         window.removeSportsbookBanner = () => {
-            obgState.sportsbook.sportsbookBanner.content.splice(0, 1);
+            getState().sportsbook.sportsbookBanner.content.splice(0, 1);
             triggerChangeDetection();
         }
 
@@ -6164,7 +6164,7 @@
         var sbBannerBgWidth;
         window.addSportsbookBanner = () => {
             chkBannerOverlay.checked ? imageOverlay = true : imageOverlay = false;
-            var banners = obgState.sportsbook.sportsbookBanner.content;
+            var banners = getState().sportsbook.sportsbookBanner.content;
 
             if (DEVICE_TYPE.includes("Mobile")) {
                 sbBannerBgFileName = "sb.banner.mobile.1024x60-";
@@ -6197,10 +6197,10 @@
                 "hasImageOverlay": imageOverlay
             }
 
-            obgState.sportsbook.sportsbookBanner.content = [];
-            obgState.sportsbook.sportsbookBanner.content.push(newBanner);
+            getState().sportsbook.sportsbookBanner.content = [];
+            getState().sportsbook.sportsbookBanner.content.push(newBanner);
             for (var banner of banners) {
-                obgState.sportsbook.sportsbookBanner.content.push(banner);
+                getState().sportsbook.sportsbookBanner.content.push(banner);
             }
             sbBannerCounter++;
             triggerChangeDetection();
@@ -6218,7 +6218,7 @@
         var imageOverlay = false;
         window.addCarouselBanner = () => {
             chkBannerOverlay.checked ? imageOverlay = true : imageOverlay = false;
-            var banners = obgState.sportsbook.carouselBanner.content;
+            var banners = getState().sportsbook.carouselBanner.content;
 
 
             if (chkBannerDiffColor.checked) {
@@ -6263,22 +6263,22 @@
                 "priorityIndex": crlBannerCounter,
                 "imageOverlay": imageOverlay
             }
-            obgState.sportsbook.carouselBanner.content = [];
-            obgState.sportsbook.carouselBanner.content.push(newBanner);
+            getState().sportsbook.carouselBanner.content = [];
+            getState().sportsbook.carouselBanner.content.push(newBanner);
             for (let banner of banners) {
-                obgState.sportsbook.carouselBanner.content.push(banner);
+                getState().sportsbook.carouselBanner.content.push(banner);
             }
 
 
             crlBannerCounter++;
-            // var nextIndexOfCarouselOrder = obgState.sportsbook.carousel.item.skeleton.carouselOrder.length;
+            // var nextIndexOfCarouselOrder = getState().sportsbook.carousel.item.skeleton.carouselOrder.length;
             // var banner = {
             //     "id": crlBannerKey,
             //     "sortOrder": nextIndexOfCarouselOrder,
             //     "type": "Banner"
             // }
-            // obgState.sportsbook.carousel.item.skeleton.carouselOrder[nextIndexOfCarouselOrder] = banner;
-            let carouselOrder = obgState.sportsbook.carousel.item.skeleton.carouselOrder;
+            // getState().sportsbook.carousel.item.skeleton.carouselOrder[nextIndexOfCarouselOrder] = banner;
+            let carouselOrder = getState().sportsbook.carousel.item.skeleton.carouselOrder;
             let banner = {
                 "id": crlBannerKey,
                 "sortOrder": 0,
@@ -6288,14 +6288,14 @@
                 carouselOrder[i].sortOrder++;
             }
             carouselOrder.unshift(banner);
-            obgState.sportsbook.carousel.item.skeleton.carouselOrder = carouselOrder;
+            getState().sportsbook.carousel.item.skeleton.carouselOrder = carouselOrder;
 
             triggerChangeDetection();
         }
 
         window.removeCarouselBanner = () => {
 
-            let carouselOrder = obgState.sportsbook.carousel.item.skeleton.carouselOrder;
+            let carouselOrder = getState().sportsbook.carousel.item.skeleton.carouselOrder;
             for (let i = 0; i < carouselOrder.length; i++) {
                 if (carouselOrder[i].type == "Banner") {
                     carouselOrder.splice(i, 1);
@@ -6306,7 +6306,7 @@
                 carouselOrder[i].sortOrder = i;
             }
 
-            obgState.sportsbook.carousel.item.skeleton.carouselOrder = carouselOrder;
+            getState().sportsbook.carousel.item.skeleton.carouselOrder = carouselOrder;
             triggerChangeDetection();
         }
     }
@@ -7902,7 +7902,7 @@
             form1.push(r.result);
         }
 
-        obgState.sportsbook.statistics = {
+        getState().sportsbook.statistics = {
             [eventId]: {
                 table: table,
                 tables: {
