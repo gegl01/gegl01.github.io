@@ -91,7 +91,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.20";
+    const SB_TOOL_VERSION = "v1.6.21";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -590,7 +590,7 @@
         function limitFeatures(limitationCause) {
             switch (limitationCause) {
                 case "obgState":
-                    limitedFunctionsMessageText = "obgState.sportsbook not exposed";
+                    limitedFunctionsMessageText = "obgState not exposed";
                     removeObgStateFeatures();
                     break;
                 case "iframe":
@@ -784,8 +784,8 @@
         reloadPageWithFeature(feature);
     }
     function reloadPageWithFeature(feature) {
-        var params = [];
-        var messageRowId;
+        let params = [];
+        let messageRowId;
         switch (feature) {
             case "disableCache":
                 params.push(new URLParam("forceNonCacheQueryString", generateGuid()));
@@ -797,7 +797,7 @@
                 break;
             case "exposeObgStateAndRt":
                 params.push(EXPOSE_OBGSTATE, EXPOSE_OBGRT);
-                if (ENVIRONMENT == "test") { params.push(TURN_SEALSTORE_OFF) };
+                disableSealStoreIfNeeded();
                 messageRowId = "obgStateAndRtRow";
                 break;
             case "disableSealStore":
@@ -807,11 +807,13 @@
             case "openMatchingIframe":
                 url = new URL(replaceEnvInIframeURL(getCleanIframeURL(iframeURL)) + getPathAndParamsFromSportsbookURL(window.location.href));
                 params.push(EXPOSE_OBGSTATE, EXPOSE_OBGRT);
+                disableSealStoreIfNeeded();
                 messageRowId = "openMatchingIframeRow";
                 break;
             case "openIframe":
                 url = new URL(getCleanIframeURL(iframeURL) + getPathAndParamsFromSportsbookURL(window.location.href));
                 params.push(EXPOSE_OBGSTATE, EXPOSE_OBGRT);
+                disableSealStoreIfNeeded();
                 messageRowId = "openIframeRow";
                 break;
             case "hostPageWithMatchingIframe":
@@ -826,6 +828,11 @@
                 params.push(new URLParam("experiments", paramValue));
                 messageRowId = "disableGeoFencingRow";
                 break;
+        }
+        function disableSealStoreIfNeeded(){
+            if (ENVIRONMENT == "test") { 
+                params.push(TURN_SEALSTORE_OFF);
+            };
         }
         reloadAnimation(messageRowId);
         reloadPageWithSearchParams(params);
@@ -906,12 +913,10 @@
         if (url == undefined) {
             url = new URL(window.location.href);
         }
-        log(url);
         for (let param of urlParams) {
             url.searchParams.delete(param.key);
             url.searchParams.append(param.key, param.value);
         }
-        log(url);
         window.open(url, "_self");
     }
 
@@ -1604,7 +1609,6 @@
 
             // let item = getState().sportsbook.carousel.item;
             let item = getDeepCopyOfObject(getState().sportsbook.carousel.item);
-            console.log("item: " + JSON.stringify(item));
 
             if (item.marketToDisplay.hasOwnProperty(eventId)) {
                 delete item.marketToDisplay[eventId];
@@ -1671,7 +1675,6 @@
             item.skeleton.carouselOrder.unshift(carouselOrderElement);
 
             // new due to alex
-            log("item2: " + JSON.stringify(item));
             getState().sportsbook.carousel.item = item;
 
             addToCarouselButtonLabel.innerText = "Added"
