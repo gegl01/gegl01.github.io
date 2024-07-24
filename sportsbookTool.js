@@ -16,15 +16,15 @@
     const IS_NODECONTEXT_EXPOSED = isDefined("nodeContext");
     const IS_OBGSTARTUP_EXPOSED = isDefined("obgStartup");
     const IS_OBGGLOBALAPPCONTEXT_EXPOSED = isDefined("obgGlobalAppContext");
-    const IS_OBGSTATE_EXPOSED = isDefined("obgState");
-    const IS_OBGSTATE_XSBSTATE = isDefined("xSbState");
-    const IS_OBGSTATE_OR_XSBSTATE_EXPOSED = IS_OBGSTATE_EXPOSED || IS_OBGSTATE_XSBSTATE;
+    const IS_OBGSTATE_EXPOSED = isDefined("obgState.sportsbook");
+    const IS_XSBSTATE_EXPOSED = isDefined("xSbState");
+    const IS_OBGSTATE_OR_XSBSTATE_EXPOSED = IS_OBGSTATE_EXPOSED || IS_XSBSTATE_EXPOSED;
     const IS_OBGRT_EXPOSED = isDefined("obgRt");
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
     const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
 
     function getState() {
-        return IS_OBGSTATE_EXPOSED ? window["obgState"] : window["xSbState"];
+        return IS_XSBSTATE_EXPOSED ? window["xSbState"] : window["obgState"];
     }
 
     if (!getIsItSportsbookPage()) {
@@ -91,7 +91,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.19";
+    const SB_TOOL_VERSION = "v1.6.20";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -191,14 +191,26 @@
         }
     }
 
+    // function isDefined(entityNameAsString) {
+    //     try {
+    //         eval(entityNameAsString);
+    //     } catch (error) {
+    //         if (error instanceof ReferenceError) {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
+
     function isDefined(entityNameAsString) {
-        try {
-            eval(entityNameAsString);
-        } catch (error) {
-            if (error instanceof ReferenceError) {
+        const parts = entityNameAsString.split('.');
+        let current = window;    
+        for (const part of parts) {
+            if (typeof current[part] === "undefined") {
                 return false;
             }
-        }
+            current = current[part];
+        }    
         return true;
     }
 
@@ -492,7 +504,7 @@
             brandName = obgStartup.config.appSettings.brandName.toLowerCase();
         }
         if (brandName === "nordicbet" && IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            if (obgState?.sportsbook?.features?.arcticbet) {
+            if (getState()?.sportsbook?.features?.arcticbet) {
                 brandName = "arcticbet";
             }
         }
@@ -578,7 +590,7 @@
         function limitFeatures(limitationCause) {
             switch (limitationCause) {
                 case "obgState":
-                    limitedFunctionsMessageText = "obgState not exposed";
+                    limitedFunctionsMessageText = "obgState.sportsbook not exposed";
                     removeObgStateFeatures();
                     break;
                 case "iframe":
@@ -785,6 +797,7 @@
                 break;
             case "exposeObgStateAndRt":
                 params.push(EXPOSE_OBGSTATE, EXPOSE_OBGRT);
+                if (ENVIRONMENT == "test") { params.push(TURN_SEALSTORE_OFF) };
                 messageRowId = "obgStateAndRtRow";
                 break;
             case "disableSealStore":
@@ -813,10 +826,6 @@
                 params.push(new URLParam("experiments", paramValue));
                 messageRowId = "disableGeoFencingRow";
                 break;
-            // case "stopCarouselAutoplay":
-            //     params.push(new URLParam("configOverride", "[(sportsbookUi.sportsbookCarousel.autoplayInterval=1000000)]"));
-            //     messageRowId = "stopCarouselAutoplayRow";
-            //     break;
         }
         reloadAnimation(messageRowId);
         reloadPageWithSearchParams(params);
@@ -897,10 +906,12 @@
         if (url == undefined) {
             url = new URL(window.location.href);
         }
-        for (var param of urlParams) {
+        log(url);
+        for (let param of urlParams) {
             url.searchParams.delete(param.key);
             url.searchParams.append(param.key, param.value);
         }
+        log(url);
         window.open(url, "_self");
     }
 
@@ -1924,7 +1935,7 @@
         }
 
         if (category.metaData != undefined) {
-            return category.metaData.style == "2";            
+            return category.metaData.style == "2";
         }
 
         let usCategoryIds = ["2", "4", "10", "19"];
