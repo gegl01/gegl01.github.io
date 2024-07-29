@@ -98,7 +98,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.22";
+    const SB_TOOL_VERSION = "v1.6.23";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -365,23 +365,20 @@
     // }
 
     function getSbEnvironment() {
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
+            return getState().appContext.environment;
+        }
+
         if (IS_MFE) {
-            if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-                return getState().appContext.environment;
-            }
             return getIframeEnv(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
         }
 
-        if (IS_B2B_IFRAME_ONLY) {
+        if (IS_B2B_IFRAME_ONLY) {            
             return obgClientEnvironmentConfig.startupContext.appContext.environment;
         }
 
         if (IS_B2B_WITH_HOST_PAGE) {
             return getIframeEnv(iframeURL);
-        }
-
-        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            return getState().appContext.environment;
         }
 
         //B2C
