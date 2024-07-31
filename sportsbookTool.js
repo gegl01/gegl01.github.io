@@ -98,7 +98,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.23";
+    const SB_TOOL_VERSION = "v1.6.24";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -373,7 +373,7 @@
             return getIframeEnv(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
         }
 
-        if (IS_B2B_IFRAME_ONLY) {            
+        if (IS_B2B_IFRAME_ONLY) {
             return obgClientEnvironmentConfig.startupContext.appContext.environment;
         }
 
@@ -973,6 +973,7 @@
             url.searchParams.delete(param.key);
             url.searchParams.append(param.key, param.value);
         }
+        log("opening: " + url);
         window.open(url, "_self");
     }
 
@@ -1494,15 +1495,17 @@
             chkIsBetBuilderAvailable.checked = getState().sportsbook.eventMarket.markets[marketId].betBuilderAvailability.state === 1;
             chkIsBetDistributionAvailable.checked = isBetDistributionAvailable(marketId);
 
-            // const marketPropertiesSection = getElementById("marketPropertiesSection");
-            // if (!marketPropertiesSection.classList.contains("hide")) {
             switch (getEventPhase(eventId)) {
                 case "Live":
                     inactivate(isBetDistributionAvailableSection);
                     activate(isCashoutAvailableSection, isBetBuilderAvailableSection);
                     break;
                 case "Prematch":
-                    activate(isCashoutAvailableSection, isBetDistributionAvailableSection, isBetBuilderAvailableSection);
+                    [2, 3].includes(getColumnLayout(marketId)) ?
+                        activate(isBetDistributionAvailableSection) :
+                        inactivate(isBetDistributionAvailableSection);
+
+                    activate(isCashoutAvailableSection, isBetBuilderAvailableSection);
                     break;
                 case "Over":
                     inactivate(isCashoutAvailableSection, isBetDistributionAvailableSection, isBetBuilderAvailableSection);
@@ -1607,12 +1610,16 @@
 
         function toggleIsBetDistributionAvailable() {
             if (!getState().sportsbook.betDistribution) {
-                getState().sportsbook.betDistribution = { statistics: { selections: {} } };
+                getState().sportsbook.betDistribution = {
+                    accordionKeys: {},
+                    statistics: { selections: {} }
+                };
             }
 
             let selections = getSelectionsByMarketId(marketId);
             let percentages = generatePercentages(selections.length);
             if (chkIsBetDistributionAvailable.checked) {
+                getState().sportsbook.betDistribution.accordionKeys[getAccordionKey(marketId)] = 1;
                 for (let i = 0; i < selections.length; i++) {
                     getState().sportsbook.betDistribution.statistics.selections[selections[i]] = {
                         id: selections[i],
@@ -1621,6 +1628,7 @@
                     }
                 }
             } else {
+                delete getState().sportsbook.betDistribution.accordionKeys[marketTemplateId];
                 for (let selection of selections) {
                     delete getState().sportsbook.betDistribution.statistics.selections[selection];
                 }
@@ -4430,6 +4438,27 @@
 
     function getMarketTemplateId(marketId) {
         return getState().sportsbook.eventMarket.markets[marketId].marketTemplateId;
+    }
+
+    function getAccordionKey(marketId) {
+        let accordionSummaries = getState().sportsbook.eventWidget.items[getEventIdByMarketId(marketId)].item.accordionSummaries;
+        for (let key in accordionSummaries) {
+            if (accordionSummaries[key].marketIds.includes(marketId)) {
+                return key;
+            }
+        }
+    }
+
+    // function getIsMarketGroupableByMarketTemplate(marketId) {
+    //     return getState().sportsbook.eventMarket.markets[marketId].isGroupableByMarketTemplate;
+    // }
+
+    // function getIsMarketHaveSiblingsWithSameTemplate(marketId) {
+    //     return getState().sportsbook.eventWidget.items[getEventIdByMarketId(marketId)].item.accordionSummaries[getMarketTemplateId(marketId)].marketIds.length > 1;
+    // }
+
+    function getColumnLayout(marketId) {
+        return getState().sportsbook.eventMarket.markets[marketId].columnLayout;
     }
 
     function getIsUserLoggedIn() {
