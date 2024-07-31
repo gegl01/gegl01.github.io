@@ -763,10 +763,11 @@
             deviceType.innerText = DEVICE_TYPE;
         } else {
             deviceType.innerText = DEVICE_TYPE + " " + DEVICE_EXPERIENCE;
-        }
+        }        
+
         getElementById("environment").innerText = ENVIRONMENT_TO_DISPLAY;
         getElementById("brandName").innerText = BRAND_NAME_WITH_LANGUAGECODE;
-        getElementById("B2BorB2C").innerText = " (" + B2X + ")";
+        document.getElementById("B2BorB2C").innerText = B2X === "B2C" ? ` (B2C - ${nodeContext.appHash})` : ` (${B2X})`;
         getElementById("browserVersion").innerText = BROWSER_VERSION;
         getElementById("obgVersion").innerText = SB_VERSION;
 
