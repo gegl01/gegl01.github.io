@@ -98,7 +98,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.24";
+    const SB_TOOL_VERSION = "v1.6.25";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -137,13 +137,13 @@
         sportsbookTool.innerHTML = htmlContent;
     }
 
-    function isUnsecureHTTP() {
-        if (location.protocol === "http:") {
-            return true
-        } else {
-            return false
-        };
-    }
+    // function isUnsecureHTTP() {
+    //     if (location.protocol === "http:") {
+    //         return true
+    //     } else {
+    //         return false
+    //     };
+    // }
 
     // function checkIfObgStateIsFrozen() {
     //     const obgStateFrozenMessage = getElementById("obgStateFrozenMessage");
@@ -763,7 +763,7 @@
             deviceType.innerText = DEVICE_TYPE;
         } else {
             deviceType.innerText = DEVICE_TYPE + " " + DEVICE_EXPERIENCE;
-        }        
+        }
 
         getElementById("environment").innerText = ENVIRONMENT_TO_DISPLAY;
         getElementById("brandName").innerText = BRAND_NAME_WITH_LANGUAGECODE;
@@ -3671,8 +3671,8 @@
 
         function initSetEventPhaseSection() {
             categoryId = getCategoryIdByEventId(eventId);
-            let categoryIdsForScoreBoard = ["1", "2", "3", "4", "8", "9", "10", "11", "17", "19", "34", "58", "60", "72", "104", "119", "138"];
-            let categoryIdsForNoScoreBoard = ["7", "26", "30", "43", "53", "116"];
+            let categoryIdsForScoreBoard = ["1", "2", "3", "4", "7", "8", "9", "10", "11", "17", "19", "34", "58", "60", "72", "104", "119", "138"];
+            let categoryIdsForNoScoreBoard = ["26", "30", "43", "53", "116"];
             let scoreBoardSampleDate = "04/2024";
             // switch (categoryId) {
             //     case "1": {
@@ -6480,6 +6480,7 @@
             case "2": return getIceHockeyScoreBoard(participants, scoreBoardExtras);
             case "3": return getHandballScoreBoard(participants);
             case "4": return getBasketBallScoreBoard(participants);
+            case "7": return getRugbyLeagueScoreBoard(participants);
             case "8": return getRugbyUnionScoreBoard(participants);
             case "9": return getVolleyBallScoreBoard(participants);
             case "10": return getAmericanFootballScoreBoard(participants);
@@ -7387,7 +7388,7 @@
             eventId: eventId,
             categoryId: 58,
             category: "Futsal",
-            currentPhase: { id: isFirstHalf ? 1 : 2, },
+            currentPhase: { id: isFirstHalf ? 1 : 2 },
             currentVarState: 0,
             isSecondLeg: false,
             matchClock: {
@@ -7600,6 +7601,60 @@
             },
             varState: 0,
             phaseCategoryId: isFirstHalf ? "1-8" : "2-8" // added manually
+        }
+        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+    }
+
+    function getRugbyLeagueScoreBoard() {
+        let isFirstHalf = getRandomBoolean();
+
+        let scoreBoard = {
+            actions: [],
+            participants: participants,
+            scorePerParticipant: {
+                [participants[0].id]: 0,
+                [participants[1].id]: 0
+            },
+            statistics: {
+                [participants[0].id]: {
+                    score: {
+                        byPhase: [
+                            { value: getRandomInt(2, 30), isActive: true },
+                            { value: isFirstHalf ? 0 : getRandomInt(2, 30), isActive: true }
+                        ],
+                        total: { value: 0, isActive: true }
+                    }
+                },
+                [participants[1].id]: {
+                    score: {
+                        byPhase: [
+                            { value: getRandomInt(2, 30), isActive: true },
+                            { value: isFirstHalf ? 0 : getRandomInt(2, 30), isActive: true }
+                        ],
+                        total: { value: 0, isActive: true }
+                    }
+                }
+            },
+            eventId: eventId,
+            categoryId: 7,
+            category: "RugbyLeague",
+            currentPhase: {
+                id: 2,
+                label: "2. īnings"
+            },
+            currentPhase: {
+                id: isFirstHalf ? 1 : 2,
+                label: getPhaseLabelWithEnLangCheck(isFirstHalf ? "1st Period" : "2nd Period")
+            },
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: 0,
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0,
+            phaseCategoryId: isFirstHalf ? "1-7" : "2-7"
         }
         return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
     }
