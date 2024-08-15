@@ -4593,6 +4593,8 @@
             return;
         }
 
+        let initialTabLabelsArr = getMarketTabLabelsOnEventPanel();
+
         switch (marketType) {
             case "playerProps":
                 createPlayerPropsMarket();
@@ -4606,17 +4608,31 @@
                 break;
         }
 
-
-        let initialNumberOfMarketTabsOnEventPanel = getMarketTabsOnEventPanel().length;
         setTimeout(function () {
             let updatedMarketTabsOnEventPanel = getMarketTabsOnEventPanel();
-            if (initialNumberOfMarketTabsOnEventPanel != updatedMarketTabsOnEventPanel.length) {
-                updatedMarketTabsOnEventPanel[updatedMarketTabsOnEventPanel.length - 1].click();
+            for (let tab of updatedMarketTabsOnEventPanel){
+                if (!initialTabLabelsArr.includes(tab.innerText)){
+                    tab.click();
+                }
             }
         }, 500);
 
+
         function getMarketTabsOnEventPanel() {
-            return document.querySelector("[test-id='pinning']").parentElement.getElementsByClassName("obg-tab-label");
+            let pinningTab = document.querySelector("[test-id='event.market.tab.pinning']"); // gen2
+            if (pinningTab == null) {
+                pinningTab = document.querySelector("[test-id='pinning']");
+            }
+            return pinningTab.parentElement.getElementsByClassName("obg-tab-label"); // gen1
+        }
+
+        function getMarketTabLabelsOnEventPanel(){
+            let tabLabelsArray = [];
+            let tabArray = getMarketTabsOnEventPanel();
+            for (let tab of tabArray){
+                tabLabelsArray.push(tab.innerText);
+            }
+            return tabLabelsArray;
         }
 
 
