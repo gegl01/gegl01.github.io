@@ -4610,8 +4610,8 @@
 
         setTimeout(function () {
             let updatedMarketTabsOnEventPanel = getMarketTabsOnEventPanel();
-            for (let tab of updatedMarketTabsOnEventPanel){
-                if (!initialTabLabelsArr.includes(tab.innerText)){
+            for (let tab of updatedMarketTabsOnEventPanel) {
+                if (!initialTabLabelsArr.includes(tab.innerText)) {
                     tab.click();
                 }
             }
@@ -4626,10 +4626,10 @@
             return pinningTab.parentElement.getElementsByClassName("obg-tab-label"); // gen1
         }
 
-        function getMarketTabLabelsOnEventPanel(){
+        function getMarketTabLabelsOnEventPanel() {
             let tabLabelsArray = [];
             let tabArray = getMarketTabsOnEventPanel();
-            for (let tab of tabArray){
+            for (let tab of tabArray) {
                 tabLabelsArray.push(tab.innerText);
             }
             return tabLabelsArray;
@@ -5118,7 +5118,7 @@
                     categoryInSportCatalog = getCategories()[categoryId];
                     if (categoryInSportCatalog != undefined) {
                         categoryName = categoryInSportCatalog.label;
-                        categoryNames.push(categoryName);
+                        if (!categoryNames.includes(categoryName)) { categoryNames.push(categoryName); }
                     }
                 }
                 accaCategoriesSpan.innerText = String(categoryNames).replaceAll(",", ", ");
