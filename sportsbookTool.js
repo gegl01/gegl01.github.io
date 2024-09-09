@@ -56,14 +56,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -1774,7 +1774,7 @@
     }
 
     function createEmptyCarouselIfDoesntExist() {
-        carouselOrCardsDefined = isCarouselOrCardsDefined();
+        carouselOrCardsDefined = getIsCarouselOrCardsDefined();
         if (!carouselOrCardsDefined) {
             getState().sportsbook.carousel.item = {
                 "skeleton": {
@@ -1930,7 +1930,7 @@
         } catch { return undefined };
     }
 
-    function isCarouselOrCardsDefined() {
+    function getIsCarouselOrCardsDefined() {
         return getState().sportsbook.carousel.item !== undefined;
     }
 
@@ -1997,6 +1997,7 @@
 
     function isCategoryInUsFormat(categoryId) {
         let category = getCategories()[categoryId];
+        log(category);
 
         if (category.tags?.categoryStyle != undefined) {
             return category.tags.categoryStyle == "2";
@@ -3366,6 +3367,7 @@
         let lastSelectionId = getLastSelectionIdFromBetslip();
         if (lastSelectionId == null) { return null };
         let lastEventId = getEventIdBySelectionId(lastSelectionId);
+        log(lastEventId);
         if (lastEventId != "") {
             return lastEventId;
         }
@@ -4387,31 +4389,32 @@
     }
 
     function displayInGreen(...elements) {
-        for (var element of elements) {
+        for (let element of elements) {
             element.classList.add("displayInGreen");
-            element.classList.remove("displayInRed");
-            element.classList.remove("displayInOrange");
+            // element.classList.remove("displayInRed");
+            // element.classList.remove("displayInOrange");
+            element.classList.remove("displayInRed", "displayInOrange");
         }
     }
 
     function displayInRed(...elements) {
-        for (var element of elements) {
+        for (let element of elements) {
             element.classList.add("displayInRed");
-            element.classList.remove("displayInGreen");
-            element.classList.remove("displayInOrange");
+            element.classList.remove("displayInGreen", "displayInOrange");
+            // element.classList.remove("displayInOrange");
         }
     }
 
     function displayInOrange(...elements) {
-        for (var element of elements) {
+        for (let element of elements) {
             element.classList.add("displayInOrange");
-            element.classList.remove("displayInGreen");
-            element.classList.remove("displayInRed");
+            element.classList.remove("displayInGreen", "displayInRed");
+            // element.classList.remove("displayInRed");
         }
     }
 
     function hide(...elements) {
-        for (var element of elements) {
+        for (let element of elements) {
             if (!element.classList.contains("hide")) {
                 element.classList.add("hide");
             }
@@ -4419,7 +4422,7 @@
     }
 
     function show(...elements) {
-        for (var element of elements) {
+        for (let element of elements) {
             if (element.classList.contains("hide")) {
                 element.classList.remove("hide");
             }
@@ -5430,8 +5433,8 @@
         window.addPbToCarouselOrCards = () => { addPbToCarouselOrCards() }
         function addPbToCarouselOrCards() {
             createEmptyCarouselIfDoesntExist();
-            var item = getState().sportsbook.carousel.item;
-            var carouselOrder = item.skeleton.carouselOrder;
+            let item = getState().sportsbook.carousel.item;
+            let carouselOrder = item.skeleton.carouselOrder;
             for (let element of carouselOrder) {
                 element.sortOrder++;
             }
