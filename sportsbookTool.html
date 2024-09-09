@@ -1703,19 +1703,19 @@
                     <div class="ico-betslip-bottom iconNativeBottomBarButton"></div>
                     <div class="labelNativeBottomBarButton">Betslip</div>
                     <div id="badgeNativeBetslip" class="badgeNative badgeNativeBetslip hide"></div>
-                    <div id="badgeNativeBbBetslip" class="badgeNative badgeNativeBbBetslip hide"></div>
+                    <!-- <div id="badgeNativeBbBetslip" class="badgeNative badgeNativeBbBetslip hide"></div> -->
                 </button>
             </div>
 
             <div id="nativeOtherSection" class="marginTopBottom10px nativeOtherButtons">
-                <button id="btNativeBetBuilder" class="btNativeOthers btNativeToggleable"
+                <!-- <button id="btNativeBetBuilder" class="btNativeOthers btNativeToggleable"
                     onclick="nativeClick('betBuilder')">
                     <div id="iconBtNativeBetBuilder" class="ico-bet-builder iconNativeOtherButton"></div>
                     <div id="labelBtNativeBetBuilder" class="labelNativeOtherButton">Bet Builder</div>
-                </button>
+                </button> -->
                 <button id="btNativeBoost" class="btNativeOthers btNativeToggleable" onclick="nativeClick('boost')">
                     <div class="ico-price-boost iconNativeOtherButton"></div>
-                    <div class="labelNativeOtherButton">Boost</div>
+                    <div class="labelNativeOtherButton">Price Boost</div>
                 </button>
                 <button id="btNativeLiveSC" class="btNativeOthers btNativeToggleable" onclick="nativeClick('lsc')">
                     <div class="ico-live-streaming iconNativeOtherButton"></div>
@@ -1763,7 +1763,7 @@
                 </div>
             </div>
 
-            <div id="nativeBetBuilderSection" class="marginTopBottom10px hide">
+            <!-- <div id="nativeBetBuilderSection" class="marginTopBottom10px hide">
                 <div class="displayFlex">
                     <span id="nativeBetBuilderEventLabel" class="width23percent">BB Event</span>
                     <select id="nativeBetBuilderEventSelector" onchange="selectBetuilderEvent(value)"
@@ -1773,7 +1773,7 @@
                 <div id="nativeBetBuilderEventsError" class="displayInRed hide">
                     Open a Bet Builder accordion on the page.
                 </div>
-            </div>
+            </div> -->
 
 
         </div>
@@ -2277,7 +2277,7 @@
 
     .nativeOtherButtons {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 
     .badgeNative {
@@ -2298,9 +2298,9 @@
         background-color: #cc8936;
     }
 
-    .badgeNativeBbBetslip {
+    /* .badgeNativeBbBetslip {
         background-color: #327bff;
-    }
+    } */
 
     .nativeDetectedEventLayout {
         display: grid;
