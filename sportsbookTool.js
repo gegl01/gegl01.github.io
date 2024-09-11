@@ -98,7 +98,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.27";
+    const SB_TOOL_VERSION = "v1.6.28";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -6957,7 +6957,7 @@
             },
             statistics: {
                 [participants[0].id]: {
-                    leftovers: { value: getRandomInt(1, 501), isActive: false },
+                    leftovers: { value: getRandomInt(1, 501), isActive: true },
                     legPoints: { value: legPointsHome, isActive: true },
                     setPoints: { value: setPointsHome, isActive: scoreBoardExtras.isSetPointsActive },
                     isServer: { value: isServer, isActive: true },
@@ -6966,7 +6966,7 @@
                     matchFormatSummary: { value: "This is the match format summary", isActive: true }
                 },
                 [participants[1].id]: {
-                    leftovers: { value: getRandomInt(1, 501), isActive: false },
+                    leftovers: { value: getRandomInt(1, 501), isActive: true },
                     legPoints: { value: legPointsAway, isActive: true },
                     setPoints: { value: setPointsAway, isActive: scoreBoardExtras.isSetPointsActive },
                     isServer: { value: !isServer, isActive: true },
