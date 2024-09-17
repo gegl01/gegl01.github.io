@@ -1040,7 +1040,7 @@
                         <span class="radioForCreatePb">
                             <input type="radio" name="radioPbPayoutMode" id="radioCreatePbRealMoney"
                                 class="vertMiddle radioSbTools" checked>
-                            <label for="radioCreatePbRealMoney" class="vertMiddle">Real Money</label>
+                            <label for="radioCreatePbRealMoney" class="vertMiddle">Real Mon.</label>
                         </span>
                         <span>
                             <input type="radio" name="radioPbPayoutMode" id="radioCreatePbBonusMoney"
@@ -1318,6 +1318,10 @@
                             <span id="pbType" class="displayInGreen"></span>
                         </div>
                         <div class="displayFlex">
+                            <span class="keyForPb">Payout:</span>
+                            <span id="pbPayoutMode" class="displayInGreen"></span>
+                        </div>
+                        <div class="displayFlex">
                             <span class="keyForPb">Event Phases:</span>
                             <span id="pbEventPhases" class="displayInGreen"></span>
                         </div>
@@ -1395,8 +1399,12 @@
                             <hr class="hRule">
                         </div>
                         <div class="displayFlex">
-                            <span class="keyForProfitBoost">Profit Boost %:</span>
-                            <span id="profitBoostMultiplier" class="displayInGreen"></span>
+
+                            <span class="keyForProfitBoost">Boost % / Payout:</span>
+                            <span class="displayInGreen">
+                                <span id="profitBoostMultiplier"></span>
+                                <span id="profitBoostPayoutMode"></span>
+                            </span>
                         </div>
                         <div class="displayFlex">
                             <span class="keyForProfitBoost">Max Winning:</span>
@@ -1575,8 +1583,11 @@
                             <hr class="hRule">
                         </div>
                         <div class="displayFlex">
-                            <span class="keyForFreeBet">Type:</span>
-                            <span id="freeBetType" class="displayInGreen"></span>
+                            <span class="keyForFreeBet">Type / Payout:</span>
+                            <span class="displayInGreen">
+                                <span id="freeBetType"></span>
+                                <span id="freeBetPayoutMode"></span>
+                            </span>
                         </div>
                         <div class="displayFlex">
                             <span class="keyForFreeBet">Stake:</span>
@@ -1669,7 +1680,8 @@
                     <div class="labelRow" id="eventLabelForNative"></div>
                 </div>
 
-                <button id="btNativeOpenEvent" class="btNative btSimple btNativeToggleable" onclick="openEventOnNative()">
+                <button id="btNativeOpenEvent" class="btNative btSimple btNativeToggleable"
+                    onclick="openEventOnNative()">
                     <div class="iconMmaximizeEvent iconSvgLarge"></div>
                     <div class="labelNativeBottomBarButton">OPEN</div>
                 </button>
@@ -1688,8 +1700,7 @@
                     <div class="labelNativeBottomBarButton">Back</div>
                 </button>
 
-                <button id="btNativeHome" class="btNative btSimple btNativeToggleable"
-                    onclick="nativeClick('home')">
+                <button id="btNativeHome" class="btNative btSimple btNativeToggleable" onclick="nativeClick('home')">
                     <div class="iconHomeBottomBar iconSvgLarge"></div>
                     <div class="labelNativeBottomBarButton">Home</div>
                 </button>
@@ -1699,8 +1710,7 @@
                     <div class="labelNativeBottomBarButton">A-Z</div>
                 </button>
 
-                <button id="btNativeLive" class="btNative btSimple btNativeToggleable"
-                    onclick="nativeClick('live')">
+                <button id="btNativeLive" class="btNative btSimple btNativeToggleable" onclick="nativeClick('live')">
                     <div class="iconLiveBetting iconSvgLarge"></div>
                     <div class="labelNativeBottomBarButton">Live</div>
                 </button>
@@ -1725,23 +1735,25 @@
                     <div id="iconBtNativeBetBuilder" class="ico-bet-builder iconNativeOtherButton"></div>
                     <div id="labelBtNativeBetBuilder" class="labelNativeOtherButton">Bet Builder</div>
                 </button> -->
-                
-                <button id="btNativeBoost" class="btNative btNativeOthers btNativeToggleable" onclick="nativeClick('boost')">
+
+                <button id="btNativeBoost" class="btNative btNativeOthers btNativeToggleable"
+                    onclick="nativeClick('boost')">
                     <div class="iconPriceBoost iconSvgLarge"></div>
                     <div class="labelNativeOtherButton">Price Boost</div>
                 </button>
-                
-                <button id="btNativeLiveSC" class="btNative btNativeOthers btNativeToggleable" onclick="nativeClick('lsc')">
+
+                <button id="btNativeLiveSC" class="btNative btNativeOthers btNativeToggleable"
+                    onclick="nativeClick('lsc')">
                     <div class="iconLiveStreaming iconSvgLarge"></div>
                     <div class="labelNativeOtherButton">LS Calendar</div>
                 </button>
-                
+
                 <button id="btNativeStartingSoon" class="btNative btNativeOthers btNativeToggleable"
                     onclick="nativeClick('startingSoon')">
                     <div class="iconStartingSoon iconSvgLarge"></div>
                     <div class="labelNativeOtherButton">Starting Soon</div>
                 </button>
-                
+
                 <button id="btNativeSettings" class="btNative btNativeOthers btNativeToggleable"
                     onclick="nativeClick('settings')">
                     <div class="iconSettings iconSvgLarge"></div>
@@ -2835,7 +2847,7 @@
         content: url('data:image/svg+xml;utf8,<svg width="18" height="18" viewBox="0 0 24 24" fill="%23444" xmlns="http://www.w3.org/2000/svg"><path d="M22 13.2499V10.7501L19.2987 10.2995C19.1106 9.48794 18.7908 8.7298 18.3622 8.04255L19.9552 5.81351L18.1879 4.04591L15.9575 5.63779C15.2702 5.21051 14.5122 4.88946 13.7004 4.70026L13.2501 2H10.7501L10.2996 4.70022C9.48911 4.88942 8.72981 5.21047 8.04257 5.63775L5.81228 4.04587L4.04472 5.81351L5.63776 8.04255C5.20924 8.72865 4.88942 9.48794 4.70138 10.2995L2 10.7501V13.2499L4.70138 13.7005C4.88942 14.5123 5.20924 15.2704 5.63776 15.9576L4.04472 18.1878L5.81224 19.9553L8.04368 18.3625C8.72981 18.7908 9.48907 19.1107 10.2996 19.2987L10.7501 22H13.2501L13.7004 19.2987C14.5109 19.1107 15.2702 18.7908 15.9576 18.3625L18.1879 19.9553L19.9552 18.1878L18.3622 15.9576C18.7908 15.2704 19.1106 14.5111 19.2987 13.7005L22 13.2499ZM12 16.9999C9.23879 16.9999 7.00005 14.7612 7.00005 12C7.00005 9.23877 9.23879 7.00004 12 7.00004C14.7613 7.00004 17 9.23877 17 12C17 14.7612 14.7614 16.9999 12 16.9999Z"></path></svg>');
     }
 
-        .iconMmaximizeEvent {
+    .iconMmaximizeEvent {
         content: url('data:image/svg+xml;utf8,<svg width="18" height="18" viewBox="0 0 24 24" fill="%23444" xmlns="http://www.w3.org/2000/svg"><path d="M10.1525 12.8402C10.4308 12.5621 10.8818 12.5621 11.1597 12.8401C11.438 13.1182 11.438 13.5692 11.1598 13.8473L6.43168 18.5756H9.46848C9.86193 18.5756 10.1807 18.8945 10.1807 19.2878C10.1807 19.6811 9.86183 20 9.46848 20H4.71224C4.3188 20 4 19.6811 4 19.2878V14.5317C4 14.1384 4.3188 13.8195 4.71224 13.8195C5.10568 13.8195 5.42448 14.1384 5.42448 14.5317V17.5683L10.1525 12.8402ZM19.2737 4C19.6748 4 19.9999 4.32503 20 4.72615V9.5755C20 9.97653 19.675 10.3017 19.2738 10.3017C18.8727 10.3017 18.5477 9.97653 18.5477 9.5755V6.47918L13.8714 11.1557C13.7295 11.2975 13.5436 11.3684 13.3578 11.3684C13.172 11.3684 12.9861 11.2975 12.8444 11.1558C12.5607 10.8722 12.5607 10.4124 12.8443 10.1288L17.5206 5.45231H14.4243C14.0232 5.45231 13.6981 5.12718 13.6981 4.72615C13.6981 4.32512 14.0232 4 14.4243 4L19.2737 4Z"></path></svg>');
     }
 
