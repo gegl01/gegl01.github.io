@@ -98,7 +98,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.31";
+    const SB_TOOL_VERSION = "v1.6.32";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -1996,8 +1996,9 @@
     }
 
     function isCategoryInUsFormat(categoryId) {
+
         let category = getCategories()[categoryId];
-        // log(category);
+
 
         if (category.tags?.categoryStyle != undefined) {
             return category.tags.categoryStyle == "2";
@@ -3390,7 +3391,7 @@
         let lastSelectionId = getLastSelectionIdFromBetslip();
         if (lastSelectionId == null) { return null };
         let lastEventId = getEventIdBySelectionId(lastSelectionId);
-        // log(lastEventId);
+
         if (lastEventId != "") {
             return lastEventId;
         }
@@ -3722,7 +3723,9 @@
         }
 
         function initUSRelatedUIChanges() {
-            swapPPHomeWithAway();
+            if (isCategoryInState("2")) {
+                swapPPHomeWithAway();
+            }
         }
 
         function swapPPHomeWithAway() {
@@ -4483,6 +4486,11 @@
     // function getIsMarketHaveSiblingsWithSameTemplate(marketId) {
     //     return getState().sportsbook.eventWidget.items[getEventIdByMarketId(marketId)].item.accordionSummaries[getMarketTemplateId(marketId)].marketIds.length > 1;
     // }
+
+    function isCategoryInState(categoryId) {
+        return getCategories()[categoryId] !== undefined;
+    }
+
 
     function getColumnLayout(marketId) {
         return getState().sportsbook.eventMarket.markets[marketId].columnLayout;
@@ -5970,7 +5978,7 @@
                 return selectedFreebet.type === "FreeBet" ? "Free Bet" : "Risk Free Bet";
             }
 
-            function getFreeBetPayoutMode(){
+            function getFreeBetPayoutMode() {
                 return selectedFreebet.bonusData.winPayoutMode === "BonusMoney" ? "Bonus Money" : "Cash Money";
             }
 
@@ -6961,7 +6969,7 @@
             legPointsAway = getRandomInt(3),
             setPointsHome = 0,
             setPointsAway = 0;
-            
+
         if (scoreBoardExtras.isSetPointsActive) {
             setPointsHome = getRandomInt(3);
             setPointsAway = getRandomInt(3);
