@@ -196,6 +196,46 @@
                         </button>
                     </div>
 
+                    <div id="landingFromLhsmContent" class="hide">
+                        <hr class="hRule">
+                        <div id="landingFromLhsmError" class="displayInRed hide">Expose obgSate/xSbSate first</div>
+
+                        <div id="landingFromLhsmNoError" class="fontSizeSmaller hide">
+                            <div class="fontBold lineHeight13px marginTopBottom10px">You should land on these pages upon clicking on the category links from LHSM >
+                                A-Z:
+                            </div>
+                            <div>
+                                <div class="marginTop5px">
+                                    <div class="marginLeft5px">
+                                        <span class="marginRight5px">Category Page</span>
+                                        <span class="displayInLightGrey">(having 2+ regions)</span>
+                                    </div>
+                                    <div id="landingOnCategoryPageList" class="landingOnPageList"></div>
+                                </div>
+                                <div class="marginTop5px">
+                                    <div class="marginLeft5px">
+                                        <span class="marginRight5px">Region Page</span>
+                                        <span class="displayInLightGrey">(having 1 region, which has 2+
+                                            competitions)</span>
+                                    </div>
+                                    <div id="landingOnRegionPageList" class="landingOnPageList">
+                                    </div>
+                                </div>
+                                <div class="marginTop5px">
+                                    <div class="marginLeft5px">
+                                        <span class="marginRight5px">Competition Page</span>
+                                        <span class="displayInLightGrey">(having 1 region, which has 1
+                                            competition)</span>
+                                    </div>
+                                    <div id="landingOnCompetitionPageList" class="landingOnPageList"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
                     <!-- <hr class="hRule">
                     <div>Config Overrides</div>
                     <select id="configOverrideSelector" onchange="selectConfigOverride(value)"
@@ -1831,6 +1871,11 @@
 </div>
 
 <style>
+    :root {
+        --sbtColorGreen: #008d90;
+    }
+
+
     #sportsbookToolContent {
         line-height: 18px;
     }
@@ -1904,7 +1949,7 @@
     .iconFbScoreBoard {
         height: 16px;
         margin-bottom: 2px;
-    }    
+    }
 
     .alignItemsCenter {
         display: flex;
@@ -1928,9 +1973,11 @@
         font-size: smaller;
     }
 
-    /* #betTypeCombiHintSection {
-        font-size: smaller;        
-    }     */
+    .landingOnPageList {
+        color: var(--sbtColorGreen);
+        line-height: 13px;
+        margin-left: 15px;
+    }
 
     #betTypeCombiHintSection span {
         display: inline-block;
@@ -1951,6 +1998,10 @@
 
     .lineHeight20px {
         line-height: 20px;
+    }
+
+    .lineHeight13px {
+        line-height: 13px;
     }
 
     .keyForPb {
@@ -2032,7 +2083,7 @@
 
     .valueForContext {
         width: 68%;
-        color: #008d90;
+        color: var(--sbtColorGreen);
     }
 
     .valueForEventDetails {
@@ -2505,12 +2556,12 @@
 
     @media (hover: hover) {
         #btMinimizeClosed:hover {
-            background: #008d90;
+            background: var(--sbtColorGreen);
         }
     }
 
     #btMinimizeClosed:active {
-        background: #008d90;
+        background: var(--sbtColorGreen);
     }
 
     .btWithBadge {
@@ -2542,7 +2593,7 @@
     }
 
     .displayInGreen {
-        color: #008d90;
+        color: var(--sbtColorGreen);
     }
 
     .displayInOrange {
@@ -2651,7 +2702,7 @@
     .chkSbTools {
         cursor: pointer;
         align-self: center;
-        accent-color: #008d90;
+        accent-color: var(--sbtColorGreen);
     }
 
     .scoreBoardExtrasDetails {
@@ -2662,7 +2713,7 @@
     .radioSbTools {
         margin-right: 3px;
         cursor: pointer;
-        accent-color: #008d90;
+        accent-color: var(--sbtColorGreen);
     }
 
     .btCopy {
@@ -2906,7 +2957,7 @@
     }
 
     .btGreen {
-        background-color: #008d90;
+        background-color: var(--sbtColorGreen);
         color: #fff;
     }
 
