@@ -201,14 +201,16 @@
                         <div id="landingFromLhsmError" class="displayInRed hide">Expose obgSate/xSbSate first</div>
 
                         <div id="landingFromLhsmNoError" class="fontSizeSmaller hide">
-                            <div class="fontBold lineHeight13px marginTopBottom10px">You should land on these pages upon clicking on the category links from LHSM >
+                            <div class="fontBold lineHeight13px marginTopBottom10px">You should land on these pages upon
+                                clicking on the category links from LHSM >
                                 A-Z:
                             </div>
                             <div>
                                 <div class="marginTop5px">
                                     <div class="marginLeft5px">
                                         <span class="marginRight5px">Category Page</span>
-                                        <span class="displayInLightGrey">(having 2+ regions and/or All Leagues* tab)</span>
+                                        <span class="displayInLightGrey">(having 2+ regions and/or All Leagues*
+                                            tab)</span>
                                     </div>
                                     <div id="landingOnCategoryPageList" class="landingOnPageList"></div>
                                 </div>
@@ -1577,6 +1579,131 @@
                 </div>
             </div>
 
+            <button onclick="toggleSection('accaBoostSection')" class="moreLess">ACCA Boost
+            </button>
+            <div id="accaBoostSection" class="hide marginTopBottom10px">
+                <div id="accaBoostNotFound" class="displayInRed">
+                    No ACCA Boost found
+                </div>
+                <div id="accaBoostLogin" class="displayInRed">Login to see your ACCA Boosts.
+                </div>
+                <div id="accaBoostDetailsLayout">
+                    <div>
+                        <span id="accaBoostNumberOf" class="displayInGreen fontBold marginRight5px"></span>
+                        <span>ACCA Boosts found</span>
+                    </div>
+                    <select id="accaBoostSelector" onchange="selectAccaBoost(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
+                    <div id="accaBoostSelectedDetails">
+                        <div>
+                            <span class="marginRight5px">Name:</span>
+                            <span id="accaBoostName" class="displayInGreen"></span>
+                        </div>
+                        <div class="itemsJustified">
+                            <div class="width95Percent displayFlex">
+                                <span class="marginRight5px">ID:</span>
+                                <span id="accaBoostId" class="displayInGreen"></span>
+                            </div>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('accaBoostId')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
+                        <div class="marginTopBottom10px itemsJustified">
+                            <div class="width95Percent itemsJustified paddingRight8px">
+                                <span>
+                                    <span>Open in</span>
+                                    <span class="sbManagerSb">sb</span>
+                                    <span class="sbManagerManager">manager</span>
+                                </span>
+                                <span class="displayInLightGrey">(aka Trading Tools)</span>
+                            </div>
+                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('accaBoost')">
+                                <img class="iconOpenInNewWindow">
+                            </button>
+                        </div>
+                        <hr class="hRule">
+                        <!-- <div id="accaBoostRestrictionsSection">
+                            Restriction paths (maximum 3 displayed here):
+                            <div id="accaBoostPathToCompetition" class="displayInGreen marginBottom10px">
+                            </div>
+                            <div id="accaBoostMultipleRestrictions" class="displayInOrange hide">
+                                Multiple restrictions are set this boost. See the details in Trading Tools.
+                            </div>
+                            <hr class="hRule">
+                        </div> -->
+
+                        <div id="accaBoostRestrictionsSection">
+                            <details>
+                                <summary class="sbtSummary">
+                                    Restriction paths
+                                </summary>
+                                <div id="accaBoostPathToCompetition"
+                                    class="displayInGreen marginBottom10px scrollableBox">
+                                </div>
+                            </details>
+                            <hr class="hRule">
+                        </div>
+
+                        <div id="accaBoostLadderSection">
+                            <details>
+                                <summary class="sbtSummary">
+                                    Acca Boost Ladder Steps
+                                </summary>
+                                <!-- <div class="displayFlex">
+                                    <span>Selection Count</span>
+                                    <span>Multiplier</span>
+                                </div> -->
+                                <div id="accaBoostLadder" class="displayInGreen marginBottom10px scrollableBox">
+                                </div>
+                            </details>
+                            <hr class="hRule">
+                        </div>
+
+                        <div>
+                            <div id="accaBoostEventPhaseRow" class="">
+                                <span class="keyForAccaBoost">Event Phase:</span>
+                                <span id="accaBoostEventPhases" class="displayInGreen"></span>
+                            </div>
+
+                            <div id="accaBoostNoOfSelectionsRow" class="">
+                                <span class="keyForAccaBoost">Number of Selections:</span>
+                                <span id="accaBoostNoOfSelections" class="displayInGreen"></span>
+                            </div>
+
+                            <div id="accaBoostMinMaxSelectionOddsRow" class="">
+                                <span class="keyForAccaBoost">Selection Odds Range:</span>
+                                <span id="accaBoostMinMaxSelectionOdds" class="displayInGreen"></span>
+                            </div>
+
+                            <div>
+                                <span class="keyForAccaBoost">Max Boosted Winning:</span>
+                                <span class="displayInGreen">
+                                    <span id="accaBoostMaxBoostedWinningsEur"></span>
+                                    <span id="accaBoostMaxBoostedWinningsOther"></span>
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="keyForAccaBoost">Boost Applied On:</span>
+                                <span id="accaBoostAppliedOn" class="displayInGreen"></span>
+                            </div>
+
+                            <div>
+                                <span class="keyForAccaBoost">Payout Mode:</span>
+                                <span id="accaBoostPayout" class="displayInGreen"></span>
+                            </div>
+
+                            <div>
+                                <span class="keyForAccaBoost">Expiry Date:</span>
+                                <span id="accaBoostExpiryDate" class="displayInGreen"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <button onclick="toggleSection('freeBetSection')" class="moreLess">Free or Risk Free Bet
             </button>
             <div id="freeBetSection" class="hide marginTop10px">
@@ -2028,6 +2155,11 @@
         width: 35%;
     }
 
+    .keyForAccaBoost {
+        display: inline-block;
+        width: 45%;
+    }
+
     .bannersRow {
         line-height: 25px;
     }
@@ -2449,6 +2581,7 @@
         margin-bottom: 1px;
     }
 
+
     #sportsbookTool {
         background-color: white;
         color: #444;
@@ -2464,6 +2597,7 @@
         font-size: 12px;
         overflow: auto
     }
+
 
     #sportsbookToolNameLeft {
         font-weight: 900;
@@ -2935,7 +3069,10 @@
         content: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23444"><path d="M 12.968113,18.923077 C 12.664546,13.993395 10.186702,11.744052 5.2432432,11.916506 v 7.006571 z m 7.493425,0 C 21.311207,18.923077 22,19.61187 22,20.461538 22,21.311207 21.311207,22 20.461538,22 H 4 C 2.8954305,22 2,21.104569 2,20 V 3.6216216 C 2,2.7260247 2.7260247,2 3.6216216,2 4.5172185,2 5.2432432,2.7260247 5.2432432,3.6216216 V 9.9172511 C 11.281817,9.7450722 14.625279,12.836748 14.970285,18.923077 Z"/></svg>');
     }
 
-
+    #accaBoostPathToCompetition div {
+        margin-bottom: 5px;
+        line-height: 14px;
+    }
 
 
 
@@ -3018,5 +3155,29 @@
     .inactivated {
         pointer-events: none;
         opacity: 40%
+    }
+
+    .sbtSummary {
+        display: list-item;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .sbtSummary {
+        display: list-item;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .scrollableBox {
+        max-height: 100px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 5px;
+    }
+
+    .accaBoostSelCount {
+        width: 135px;
+        display: inline-block;
     }
 </style>
