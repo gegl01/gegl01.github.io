@@ -98,7 +98,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.35";
+    const SB_TOOL_VERSION = "v1.6.36";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -3701,17 +3701,11 @@
 
         function initSetEventPhaseSection() {
             categoryId = getCategoryIdByEventId(eventId);
-            let categoryIdsForScoreBoard = ["1", "2", "3", "4", "7", "8", "9", "10", "11", "17", "19", "34", "39", "58", "60", "72", "104", "119", "138"];
-            let categoryIdsForNoScoreBoard = ["26", "30", "43", "53", "116"];
-            let scoreBoardSampleDate = "04/2024";
-            // switch (categoryId) {
-            //     case "1": {
-            //         scoreBoardSampleDate = "06/2024";
-            //         break;
-            //     }
-            // }
+            let categoryIdsForScoreBoard = ["1", "2", "3", "4", "7", "8", "9", "10", "11", "17", "19", "26", "34", "39", "58", "60", "72", "104", "119", "138"];
+            let categoryIdsForNoScoreBoard = ["30", "43", "53", "116"];
+
             if (categoryIdsForScoreBoard.includes(categoryId)) {
-                scoreBoardSupportedMessage.innerText = "'Live' adds scoreboard (sampled in " + scoreBoardSampleDate + ")";
+                scoreBoardSupportedMessage.innerText = "'Live' adds scoreboard";
                 show(liveAddsScoreBoardSection);
                 hide(scoreBoardNotSupportedSection);
             } else {
@@ -6826,6 +6820,7 @@
             case "11": return getTennisScoreBoard(participants, scoreBoardExtras);
             case "17": return getSnookerScoreBoard(participants)
             case "19": return getBaseballScoreBoard(participants);
+            case "26": return getCricketScoreBoard(participants);
             case "34": return getDartsScoreBoard(participants, scoreBoardExtras);
             case "39": return getWaterPoloScoreBoard(participants);
             case "58": return getFutsalScoreBoard(participants);
@@ -8087,6 +8082,58 @@
             varState: 0,
             phaseCategoryId: currentPhaseId + "-35"
         }
+    }
+
+    function getCricketScoreBoard() {
+        let currentPhaseId = getRandomInt(3, 4);
+        let homeScore = getRandomInt(300) + getRandomInt(300),
+            awayScore = getRandomInt(300);
+
+        if (currentPhaseId == 4) {
+            awayScore += getRandomInt(300);
+        }
+
+        return {
+            participants: participants,
+            scorePerParticipant: {
+                [participants[0].id]: homeScore,
+                [participants[1].id]: awayScore
+            },
+            statistics: {
+                [participants[0].id]: {
+                    totalScore: {
+                        byPhase: [],
+                        total: { value: homeScore, isActive: true }
+                    },
+                    lastInningsWicket: { value: getRandomInt(1, 10), isActive: true }
+                },
+                [participants[1].id]: {
+                    totalScore: {
+                        byPhase: [],
+                        total: { value: awayScore, isActive: true }
+                    },
+                    lastInningsWicket: { value: getRandomInt(1, 10), isActive: true }
+                }
+            },
+            eventId: eventId,
+            categoryId: 26,
+            category: "Cricket",
+            currentPhase: {
+                id: currentPhaseId,
+                label: getPhaseLabelWithEnLangCheck(getOrdinalSuffix(currentPhaseId) + " Inning")
+            },
+            currentVarState: 0,
+            isSecondLeg: false,
+            matchClock: {
+                seconds: 0,
+                minutes: 0,
+                gameClockMode: "Stopped",
+                lastDateTimeSet: lastDateTimeSet
+            },
+            varState: 0,
+            phaseCategoryId: currentPhaseId + "-26"
+        }
+
     }
 
     function getAmericanFootballScoreBoard() {
