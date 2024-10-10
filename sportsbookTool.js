@@ -56,14 +56,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -72,7 +72,7 @@
     var eventId, lockedEventId;
     var participants, selectedParticipantId;
     var participants = [];
-    var previousEventId, previousMarketId, previousSelectionId, previousAcca, previousPriceBoosts, previousFreeBets, previousProfitBoosts, previousAccaBoosts;
+    var previousEventId, previousMarketId, previousSelectionId, previousSelectedBetInsurance, previousPriceBoosts, previousFreeBets, previousProfitBoosts;
     var eventLabel; //,savedEventLabel;
     // var mockedEventPhase;
     var marketId, lockedMarketId, marketLabel, marketTemplateId, marketVersion;
@@ -82,7 +82,7 @@
     var selectionIdArray = [];
     var detectionResultText;
     var initialOdds, lockedInitialOdds;
-    var accaName, accaId, priceBoostId, freeBetId, profitBoostId, accaBoostId;
+    var accaInsName, accaInsId, priceBoostId, freeBetId, profitBoostId, accaBoostId;
     var segmentGuid, previousSegmentGuid, segmentName, segmentLegacyId;
     var intervalIdForPolling;
     var intervalIdsForPolling = [];
@@ -98,7 +98,7 @@
     var eventIdArray = [];
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.36";
+    const SB_TOOL_VERSION = "v1.6.37";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -322,7 +322,7 @@
     function getDeviceExperience() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceExperience; }
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return getState().appContext.device.deviceExperience; }
-        if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return getState().appContext.device.deviceExperience; }
+        // if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return getState().appContext.device.deviceExperience; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceExperience; }
         return null;
     }
@@ -1247,11 +1247,11 @@
             case "eventId":
                 text = eventId;
                 break;
-            case "accaName":
-                text = accaName;
+            case "accaInsName":
+                text = accaInsName;
                 break;
-            case "accaId":
-                text = accaId;
+            case "accaInsId":
+                text = accaInsId;
                 break;
             case "profitBoostId":
                 text = profitBoostId;
@@ -4953,36 +4953,8 @@
     window.initBonuses = () => {
         stopPolling();
         var usersCurrency;
-        const SEPARATOR_ARROW = "&nbsp;&#10132;&nbsp;"
-
-        var acca;
-        var accaCategoriesArray;
-        var accaSelectionOddsLimitMin;
-        var accaTotalOddsLimitMin;
-        var accaMinStake;
-        var accaMaxStake;
-        previousAcca = null;
-
-        const loginToSeeAcca = getElementById("loginToSeeAcca");
-        const noAccaFound = getElementById("noAccaFound");
-        const accaDetailsLayout = getElementById("accaDetailsLayout");
-        const accaNameField = getElementById("accaNameField");
-        const accaIdField = getElementById("accaIdField");
-        const accaCategoriesSection = getElementById("accaCategoriesSection");
-        const accaCategoriesSpan = getElementById("accaCategoriesSpan");
-        const accaCompetitionsRow = getElementById("accaCompetitionsRow");
-        const accaCompetitionsSpan = getElementById("accaCompetitionsSpan");
-        const accaMarketTemplatesRow = getElementById("accaMarketTemplatesRow");
-        const accaMarketTemplatesSpan = getElementById("accaMarketTemplatesSpan");
-        const accaEventPhaseRow = getElementById("accaEventPhaseRow");
-        const accaEventPhaseSpan = getElementById("accaEventPhaseSpan");
-        const accaMinimumNumberOfSelectionsSpan = getElementById("accaMinimumNumberOfSelectionsSpan");
-        const accaSelectionOddsLimitMinSpan = getElementById("accaSelectionOddsLimitMinSpan");
-        const accaTotalOddsLimitMinRow = getElementById("accaTotalOddsLimitMinRow");
-        const accaTotalOddsLimitMinSpan = getElementById("accaTotalOddsLimitMinSpan");
-        const accaMinMaxStakeSpan = getElementById("accaMinMaxStakeSpan");
-        const accaExpiryDateSpan = getElementById("accaExpiryDateSpan");
-
+        // const SEPARATOR_ARROW = "&nbsp;&#10132;&nbsp;"
+        const SEPARATOR_ARROW = " &#10132 "
 
         var priceBoosts, priceBoostsArray, validPbArray, garbagePbArray;
         previousPriceBoosts = null;
@@ -5052,7 +5024,7 @@
         const freeBetExpiryDate = getElementById("freeBetExpiryDate");
 
 
-        intervalIdForPolling = setInterval(listenerForAccaDetails, POLLING_INTERVAL);
+        intervalIdForPolling = setInterval(listenerForAccaInsDetails, POLLING_INTERVAL);
         intervalIdsForPolling.push(intervalIdForPolling);
 
         intervalIdForPolling = setInterval(listenerForPriceBoostDetails, POLLING_INTERVAL);
@@ -5077,110 +5049,149 @@
             hide(pbLegendCloseable);
         }
 
-        function listenerForAccaDetails() {
+
+        //////// ACCA Insurance /////////
+
+        let accaInsurances, previousAccaInsurances;
+
+        const loginToSeeAccaIns = getElementById("loginToSeeAccaIns");
+        const noAccaInsFound = getElementById("noAccaInsFound");
+        const accaInsSelector = getElementById("accaInsSelector");
+        const accaInsNumberOf = getElementById("accaInsNumberOf");
+        const accaInsDetailsLayout = getElementById("accaInsDetailsLayout");
+        const accaInsRestrictionsSection = getElementById("accaInsRestrictionsSection");
+        const accaInsRestrictionPath = getElementById("accaInsRestrictionPath");
+        const accaInsNameField = getElementById("accaInsNameField");
+        const accaInsIdField = getElementById("accaInsIdField");
+        const accaInsEventPhaseRow = getElementById("accaInsEventPhaseRow");
+        const accaInsEventPhaseValue = getElementById("accaInsEventPhaseValue");
+        const accaInsMinimumNumberOfSelectionsSpan = getElementById("accaInsMinimumNumberOfSelectionsSpan");
+        const accaInsSelectionOddsLimitMinSpan = getElementById("accaInsSelectionOddsLimitMinSpan");
+        const accaInsTotalOddsLimitMinRow = getElementById("accaInsTotalOddsLimitMinRow");
+        const accaInsTotalOddsLimitMinSpan = getElementById("accaInsTotalOddsLimitMinSpan");
+        const accaInsMinMaxStakeSpan = getElementById("accaInsMinMaxStakeSpan");
+        const accaInsExpiryDateSpan = getElementById("accaInsExpiryDateSpan");
+        const accaInsPayoutMode = getElementById("accaInsPayoutMode");
+        const accaInsMaxPayoutSpan = getElementById("accaInsMaxPayoutSpan");
+        const accaInsMaxLosingSelectionsCountSpan = getElementById("accaInsMaxLosingSelectionsCountSpan");
+
+
+        function listenerForAccaInsDetails() {
 
             if (!getIsUserLoggedIn()) {
-                show(loginToSeeAcca);
-                hide(noAccaFound, accaDetailsLayout);
+                show(loginToSeeAccaIns);
+                hide(noAccaInsFound, accaInsDetailsLayout);
                 return;
             } else {
-                hide(loginToSeeAcca);
+                hide(loginToSeeAccaIns);
             }
 
-            acca = getState().sportsbook.betInsurance.selectedBetInsurance;
-            if (acca === previousAcca) {
-                if (acca === undefined) {
-                    show(noAccaFound);
-                }
+            accaInsurances = getState().sportsbook.betInsurance.betInsurances;
+
+            if (accaInsurances == previousAccaInsurances) {
                 return;
             } else {
-                previousAcca = acca;
+                previousAccaInsurances = accaInsurances;
             }
-
-            if (acca === undefined) {
-                show(noAccaFound);
-                hide(accaDetailsLayout, loginToSeeAcca);
+            if (accaInsurances.length == 0) {
+                show(noAccaInsFound);
+                hide(accaInsDetailsLayout);
                 return;
             } else {
-                hide(loginToSeeAcca, noAccaFound);
-                show(accaDetailsLayout);
-                // accaMessage.innerText = "";
+                show(accaInsDetailsLayout);
+                hide(noAccaInsFound);
             }
-            usersCurrency = getUsersCurrency();
-            accaName = acca.name;
-            accaNameField.innerText = accaName;
-            accaId = acca.id;
-            accaIdField.innerText = accaId;
+            populateAccaInsSelector();
+        }
 
-            accaCategoriesArray = acca.criteria.criteriaEntityDetails;
-            if (accaCategoriesArray.length == 0) {
-                hide(accaCategoriesSection);
+        function populateAccaInsSelector() {
+            accaInsNumberOf.innerText = accaInsurances.length;
+            accaInsSelector.innerHTML = "";
+            let option;
+            accaInsurances = accaInsurances.sort((a, b) => a.name > b.name ? 1 : -1);
+            
+            for (let ins of accaInsurances) {
+                option = document.createElement("option");
+                option.text = ins.name;
+                option.value = ins.id;
+                accaInsSelector.appendChild(option);
+            }
+            selectAccaIns(accaInsurances[getIndexOfAccaInsuranceSelectedBySystem()].id);
+        }
+
+        function getIndexOfAccaInsuranceSelectedBySystem() {
+            return accaInsurances.findIndex(obj => obj.id === getState().sportsbook.betInsurance.selectedBetInsurance.id);
+        }
+
+        window.selectAccaIns = (value) => {
+            selectAccaIns(value);
+        }
+
+        function selectAccaIns(value) {
+            accaInsRestrictionPath.innerHTML = "";
+            let selectedAccaIns;
+            let usersCurrency = getUsersCurrency();
+            for (let ins of accaInsurances) {
+                if (value == ins.id) {
+                    selectedAccaIns = ins;
+                }
+            }
+            accaInsId = selectedAccaIns.id;
+            accaInsIdField.innerText = accaInsId;
+            accaInsNameField.innerText = selectedAccaIns.name;
+
+            handleRestrictionsSection(selectedAccaIns, accaInsRestrictionsSection, accaInsRestrictionPath);
+            handleEventPhases(selectedAccaIns, accaInsEventPhaseRow, accaInsEventPhaseValue);
+
+            accaInsMinimumNumberOfSelectionsSpan.innerText = selectedAccaIns.conditions.minimumNumberOfSelections;
+
+            let accaInsSelectionOddsLimitMin = selectedAccaIns.conditions.selectionOddsLimit.minOdds;
+            let accaInsTotalOddsLimitMin = selectedAccaIns.conditions.oddsLimit.minOdds;
+            if (accaInsTotalOddsLimitMin <= accaInsSelectionOddsLimitMin) {
+                hide(accaInsTotalOddsLimitMinRow);
             } else {
-                show(accaCategoriesSection);
-                var categoryId;
-                var categoryName;
-                var categoryInSportCatalog;
-                var categoryNames = [];
-                var competitionCriteriaExists = false;
-                var marketTemplateCriteriaExists = false;
-                for (var i = 0; i < accaCategoriesArray.length; i++) {
-                    categoryId = acca.criteria.criteriaEntityDetails[i].categoryId;
-                    if (acca.criteria.criteriaEntityDetails[i].competitionId != undefined) {
-                        competitionCriteriaExists = true;
-                    }
-                    if (acca.criteria.criteriaEntityDetails[i].marketTemplateIds != undefined) {
-                        marketTemplateCriteriaExists = true;
-                    }
-                    categoryInSportCatalog = getCategories()[categoryId];
-                    if (categoryInSportCatalog != undefined) {
-                        categoryName = categoryInSportCatalog.label;
-                        if (!categoryNames.includes(categoryName)) { categoryNames.push(categoryName); }
-                    }
-                }
-                accaCategoriesSpan.innerText = String(categoryNames).replaceAll(",", ", ");
-                if (!competitionCriteriaExists) {
-                    hide(accaCompetitionsRow);
-                } else {
-                    show(accaCompetitionsRow);
-                    accaCompetitionsSpan.innerText = "See restrictions in Trading Tools";
-                }
-                if (!marketTemplateCriteriaExists) {
-                    hide(accaMarketTemplatesRow);
-                } else {
-                    show(accaMarketTemplatesRow);
-                    accaMarketTemplatesSpan.innerText = "See restrictions in Trading Tools";
-                }
+                show(accaInsTotalOddsLimitMinRow);
+                accaInsTotalOddsLimitMinSpan.innerText = accaInsTotalOddsLimitMin.toFixed(2);
             }
+            accaInsSelectionOddsLimitMinSpan.innerText = accaInsSelectionOddsLimitMin.toFixed(2);
+            accaInsMinMaxStakeSpan.innerText =
+                getDotsIfZero(selectedAccaIns.conditions.minimumStake) +
+                " - "
+                + getDotsIfZero(selectedAccaIns.conditions.maximumStake)
+                + " " + usersCurrency;
 
-            var eventPhases = acca.criteria.eventPhases;
+            accaInsExpiryDateSpan.innerText = getFriendlyDateFromIsoDate(selectedAccaIns.expiryDate);
+            accaInsPayoutMode.innerText = getBoostPayoutMode(selectedAccaIns);
+            accaInsMaxPayoutSpan.innerText = selectedAccaIns.bonusData.maximumPayout + " " + usersCurrency;
+            accaInsMaxLosingSelectionsCountSpan.innerText = selectedAccaIns.bonusData.maximumLosingSelectionsCount;
+
+        }
+
+        //////// End of ACCA Insurance /////////
+
+        function handleEventPhases(bonus, eventPhaseRow, eventPhaseValue) {
+            let eventPhases = bonus.criteria.eventPhases;
             if (eventPhases.length > 1) {
-                hide(accaEventPhaseRow);
+                hide(eventPhaseRow);
             } else {
-                show(accaEventPhaseRow);
-                accaEventPhaseSpan.innerText = acca.criteria.eventPhases;
+                show(eventPhaseRow);
+                eventPhaseValue.innerText = eventPhases;
             }
+        }
 
-            accaMinimumNumberOfSelectionsSpan.innerText = acca.conditions.minimumNumberOfSelections;
-
-            accaSelectionOddsLimitMin = acca.conditions.selectionOddsLimit.minOdds;
-            accaTotalOddsLimitMin = acca.conditions.oddsLimit.minOdds;
-            if (accaTotalOddsLimitMin <= accaSelectionOddsLimitMin) {
-                hide(accaTotalOddsLimitMinRow);
+        function handleRestrictionsSection(bonus, restrictionSection, restrictionPath) {
+            let criteriaEntityDetails = bonus.criteria.criteriaEntityDetails;
+            if (criteriaEntityDetails.length == 0) {
+                hide(restrictionSection);
             } else {
-                show(accaTotalOddsLimitMinRow);
-                accaTotalOddsLimitMinSpan.innerText = accaTotalOddsLimitMin.toFixed(2);
+                show(restrictionSection);
+                populateRestrictionsPaths(restrictionPath, criteriaEntityDetails);
             }
-            accaSelectionOddsLimitMinSpan.innerText = accaSelectionOddsLimitMin.toFixed(2);
-
-            accaMinStake = getDotsIfZero(acca.conditions.minimumStake);
-            accaMaxStake = getDotsIfZero(acca.conditions.maximumStake);
-            accaMinMaxStakeSpan.innerText = accaMinStake + " - " + accaMaxStake + " " + usersCurrency;
-            accaExpiryDateSpan.innerText = getFriendlyDateFromIsoDate(acca.expiryDate);
         }
 
         ////////////////////////////////// PROFITBOOST ///////////////////////////////////////////
 
-        var profitBoostsArray;
+        let profitBoostsArray;
         previousProfitBoosts = null;
         const profitBoostNotFound = getElementById("profitBoostNotFound");
         const profitBoostLogin = getElementById("profitBoostLogin");
@@ -5338,8 +5349,8 @@
         ////////////////////////////////// END PROFITBOOST ///////////////////////////////////////////
 
         /////////////////ACCA BOOST /////////////////////
-        var accaBoostsArray, accaBoosts;
-        previousAccaBoosts = null;
+
+        let accaBoosts, previousAccaBoosts;
         const accaBoostNotFound = getElementById("accaBoostNotFound");
         const accaBoostLogin = getElementById("accaBoostLogin");
         const accaBoostSelector = getElementById("accaBoostSelector");
@@ -5347,9 +5358,10 @@
         const accaBoostDetailsLayout = getElementById("accaBoostDetailsLayout");
         const accaBoostName = getElementById("accaBoostName");
         const accaBoostIdSpan = getElementById("accaBoostId");
-        const accaBoostRestrictionPath = getElementById("accaBoostPathToCompetition");
+        const accaBoostRestrictionsSection = getElementById("accaBoostRestrictionsSection");
+        const accaBoostRestrictionPath = getElementById("accaBoostRestrictionPath");
         const accaBoostLadder = getElementById("accaBoostLadder");
-        const accaBoostEventPhases = getElementById("accaBoostEventPhases");
+        const accaBoostEventPhaseValue = getElementById("accaBoostEventPhaseValue");
         const accaBoostEventPhaseRow = getElementById("accaBoostEventPhaseRow");
         const accaBoostMinMaxSelectionOdds = getElementById("accaBoostMinMaxSelectionOdds");
         const accaBoostMinMaxSelectionOddsRow = getElementById("accaBoostMinMaxSelectionOddsRow");
@@ -5371,14 +5383,13 @@
             }
 
             accaBoosts = getState().sportsbook.accaBoost.accaBoosts;
-            accaBoostsArray = Object.values(accaBoosts);
 
             if (accaBoosts == previousAccaBoosts) {
                 return;
             } else {
                 previousAccaBoosts = accaBoosts;
             }
-            if (accaBoostsArray.length == 0) {
+            if (accaBoosts.length == 0) {
                 show(accaBoostNotFound);
                 hide(accaBoostDetailsLayout);
                 return;
@@ -5391,17 +5402,17 @@
         }
 
         function populateAccaBoostSelector() {
-            accaBoostNumberOf.innerText = accaBoostsArray.length;
+            accaBoostNumberOf.innerText = accaBoosts.length;
             accaBoostSelector.innerHTML = "";
             let option;
-            accaBoostsArray = accaBoostsArray.sort((a, b) => a.name > b.name ? 1 : -1);
-            for (let boost of accaBoostsArray) {
+            accaBoosts = accaBoosts.sort((a, b) => a.name > b.name ? 1 : -1);
+            for (let boost of accaBoosts) {
                 option = document.createElement("option");
                 option.text = boost.name;
                 option.value = boost.id;
                 accaBoostSelector.appendChild(option);
             }
-            selectAccaBoost(accaBoostsArray[0].id);
+            selectAccaBoost(accaBoosts[0].id);
         }
 
         window.selectAccaBoost = (value) => {
@@ -5412,7 +5423,7 @@
             accaBoostRestrictionPath.innerHTML = "";
             accaBoostLadder.innerHTML = "";
             let selectedAccaBoost;
-            for (let boost of accaBoostsArray) {
+            for (let boost of accaBoosts) {
                 if (value == boost.id) {
                     selectedAccaBoost = boost;
                 }
@@ -5421,33 +5432,18 @@
             accaBoostIdSpan.innerText = accaBoostId;
             accaBoostName.innerText = selectedAccaBoost.name;
 
-            let restrictionPathDivsArray = [];
-            let details = selectedAccaBoost.criteria.criteriaEntityDetails;
-            for (let i = details.length - 1; i >= 0; i--) {
-                let detail = details[i];
-                let div = document.createElement("div");
-                div.innerHTML = getAccaBoostRestrictionPath(detail);
-                if (div.innerHTML.includes("not offered")) {
-                    div.classList.add("displayInLightGrey");
-                    restrictionPathDivsArray.push(div); // Append to the end if "not offered"
-                } else {
-                    restrictionPathDivsArray.unshift(div); // Insert at the start otherwise
-                }
-            }
-
-            for (let div of restrictionPathDivsArray) {
-                accaBoostRestrictionPath.appendChild(div);
-            }
+            handleRestrictionsSection(selectedAccaBoost, accaBoostRestrictionsSection, accaBoostRestrictionPath);
 
             let selectionBoosts = selectedAccaBoost.bonusData.selectionBoosts;
+
             for (let s of selectionBoosts) {
 
-                let div = document.createElement("div");
+                let li = document.createElement("li");
 
                 let span1 = document.createElement("span");
                 span1.classList.add("accaBoostSelCount");
                 let span2 = document.createElement("span");
-                div.append(span1, span2);
+                li.append(span1, span2);
 
                 let selectionCount;
                 s.selectionsRangeFrom == s.selectionsRangeTo ?
@@ -5460,20 +5456,10 @@
                     + s.boostMultiplier
                     + "%";
 
-                accaBoostLadder.appendChild(div);
+                accaBoostLadder.appendChild(li);
             }
 
-
-            let eventPhases = selectedAccaBoost.criteria.eventPhases;
-            if (eventPhases.length > 1) {
-                hide(accaBoostEventPhaseRow);
-            } else {
-                show(accaBoostEventPhaseRow);
-                accaBoostEventPhases.innerText = eventPhases;
-            }
-
-
-
+            handleEventPhases(selectedAccaBoost, accaBoostEventPhaseRow, accaBoostEventPhaseValue);
 
             let minSelectionOdds = selectedAccaBoost.conditions.selectionOddsLimit.minOdds;
             let maxSelectionOdds = selectedAccaBoost.conditions.selectionOddsLimit.maxOdds;
@@ -5508,38 +5494,60 @@
             accaBoostPayout.innerText = getBoostPayoutMode(selectedAccaBoost);
 
             selectedAccaBoost.bonusData.boostBasedOn == "TotalWinAmount" ? accaBoostAppliedOn.innerText = "Total Win Amount" : accaBoostAppliedOn.innerText = "Net Win Amount";
+        }
 
-            function getAccaBoostRestrictionPath(criteriaEntityDetail) {
-                let restrictionPath, categoryName, competitionId, marketTemplateIds;
-                categoryName = getCategoryLabelByCategoryId(criteriaEntityDetail.categoryId);
-                restrictionPath = categoryName;
-                competitionId = criteriaEntityDetail.competitionId;
-
-                if (competitionId != undefined) {
-                    let competitionLabel = getCompetitionLabelByCompetitionId(competitionId);
-                    if (competitionLabel != undefined) {
-                        restrictionPath
-                            += SEPARATOR_ARROW
-                            + getRegionNameByCompetitionId(competitionId)
-                            + SEPARATOR_ARROW + competitionLabel;
-
-                        marketTemplateIds = criteriaEntityDetail.marketTemplateIds;
-
-                        if (marketTemplateIds != undefined) {
-                            restrictionPath
-                                += SEPARATOR_ARROW
-                                + " [" + getArrayAsAlphaBeticalCommaSeparatedString(marketTemplateIds) + "]";
-                        }
-                    } else {
-                        return restrictionPath
-                            += SEPARATOR_ARROW
-                            + " [Competition \"" + competitionId + "\" not offered]"
-                    }
-                    return restrictionPath;
+        function populateRestrictionsPaths(restrictionPath, criteriaEntityDetails) {
+            let restrictionPathArray = [];
+            for (let i = criteriaEntityDetails.length - 1; i >= 0; i--) {
+                let detail = criteriaEntityDetails[i];
+                let li = document.createElement("li");
+                li.innerHTML = getBoostRestrictionPath(detail);
+                if (li.innerHTML.includes("not offered")) {
+                    li.classList.add("displayInLightGrey");
+                    restrictionPathArray.push(li); // Append to the end if "not offered"
                 } else {
-                    return categoryName;
+                    restrictionPathArray.unshift(li); // Insert at the start otherwise
                 }
             }
+            for (let li of restrictionPathArray) {
+                restrictionPath.appendChild(li);
+            }
+        }
+
+        function getBoostRestrictionPath(criteriaEntityDetail) {
+            let restrictionPath, categoryName, categoryId, competitionId, marketTemplateIds;
+            categoryId = criteriaEntityDetail.categoryId;
+            categoryName = getCategoryLabelByCategoryId(categoryId);
+            if (categoryName == undefined) {
+                return "[Category \"" + categoryId + "\" not offered]"
+            }
+
+            restrictionPath = categoryName;
+            competitionId = criteriaEntityDetail.competitionId;
+
+            if (competitionId != undefined) {
+                let competitionLabel = getCompetitionLabelByCompetitionId(competitionId);
+                if (competitionLabel != undefined) {
+                    restrictionPath
+                        += SEPARATOR_ARROW
+                        + getRegionNameByCompetitionId(competitionId)
+                        + SEPARATOR_ARROW + competitionLabel;
+                } else {
+                    return restrictionPath
+                        += SEPARATOR_ARROW
+                        + " [Competition \"" + competitionId + "\" not offered]"
+                }
+                // return restrictionPath;
+            }
+
+            marketTemplateIds = criteriaEntityDetail.marketTemplateIds;
+            if (marketTemplateIds != undefined) {
+                restrictionPath
+                    += SEPARATOR_ARROW
+                    + " [" + getArrayAsAlphaBeticalCommaSeparatedString(marketTemplateIds) + "]";
+            }
+            return restrictionPath;
+
         }
 
 
@@ -6755,7 +6763,7 @@
         }
         switch (entity) {
             case "acca":
-                ttPath = "bonus/" + accaId + "?serviceInstanceId=" + serviceInstanceId;
+                ttPath = "bonus/" + accaInsId + "?serviceInstanceId=" + serviceInstanceId;
                 break;
             case "accaBoost":
                 ttPath = "bonus/" + accaBoostId + "?serviceInstanceId=" + serviceInstanceId;
@@ -6867,6 +6875,16 @@
                     yellowCards: { value: getRandomInt(4), isActive: true },
                     isSecondLeg: { value: true, isActive: true },
                     aggregateScore: { value: homeFinalScore + getRandomInt(4), isActive: true }
+
+                    // ,stoppageTime: { value: 1, isActive: true },
+                    // expectedGoals: { value: 2, isActive: true },
+                    // dangerousAttack: { value: 3, isActive: true },
+                    // shotsOnTarget: { value: 4, isActive: true },
+                    // shotsOffTarget: { value: 5, isActive: true },
+                    // totalShots: { value: 6, isActive: true },
+                    // possession: { value: 7, isActive: true },
+                    // woodwork: { value: 8, isActive: true },
+                    // goalKeeperSave: { value: 9, isActive: true }
                 },
                 [participants[1].id]: {
                     corners: { value: getRandomInt(4), isActive: true },
@@ -6877,6 +6895,16 @@
                     yellowCards: { value: getRandomInt(4), isActive: true },
                     isSecondLeg: { value: true, isActive: true },
                     aggregateScore: { value: awayFinalScore + getRandomInt(4), isActive: true }
+
+                    // ,stoppageTime: { value: 1, isActive: true },
+                    // expectedGoals: { value: 2, isActive: true },
+                    // dangerousAttack: { value: 3, isActive: true },
+                    // shotsOnTarget: { value: 4, isActive: true },
+                    // shotsOffTarget: { value: 5, isActive: true },
+                    // totalShots: { value: 6, isActive: true },
+                    // possession: { value: 7, isActive: true },
+                    // woodwork: { value: 8, isActive: true },
+                    // goalKeeperSave: { value: 9, isActive: true }
                 }
             },
             eventId: eventId,

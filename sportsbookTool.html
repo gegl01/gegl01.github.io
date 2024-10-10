@@ -1496,19 +1496,26 @@
             </button>
             <div id="accaSection" class="hide marginTopBottom10px">
                 <div id="accaMessage" class="displayInRed">
-                    <div id="loginToSeeAcca">Login to see ACCA insurance.
+                    <div id="loginToSeeAccaIns">Login to see ACCA insurance.
                     </div>
-                    <div id="noAccaFound">No active ACCA insurance found.</div>
+                    <div id="noAccaInsFound">No active ACCA insurance found.</div>
                 </div>
-                <div id="accaDetailsLayout" class="hide">
+                <div id="accaInsDetailsLayout" class="hide">
+                    <div>
+                        <span id="accaInsNumberOf" class="displayInGreen fontBold marginRight5px"></span>
+                        <span>ACCA Insurances found</span>
+                    </div>
+                    <select id="accaInsSelector" onchange="selectAccaIns(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
 
                     <div class="itemsJustified">
                         <div class="width95Percent displayFlex">
                             <span class="marginRight5px">Name:</span>
-                            <span id=accaNameField class="accaValueColumn displayInGreen"></span>
+                            <span id=accaInsNameField class="accaValueColumn displayInGreen"></span>
                         </div>
 
-                        <button class="btCopy btIcon" id="btAccaName" onclick="copyToClipboard('accaName')">
+                        <button class="btCopy btIcon" onclick="copyToClipboard('accaInsName')">
                             <img class="iconCopy">
                         </button>
                     </div>
@@ -1516,9 +1523,9 @@
                     <div class="itemsJustified">
                         <div class="width95Percent displayFlex">
                             <span class="marginRight5px">ID:</span>
-                            <span id="accaIdField" class="accaValueColumn displayInGreen"></span>
+                            <span id="accaInsIdField" class="accaValueColumn displayInGreen"></span>
                         </div>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('accaId')">
+                        <button class="btCopy btIcon" onclick="copyToClipboard('accaInsId')">
                             <img class="iconCopy">
                         </button>
                     </div>
@@ -1535,47 +1542,69 @@
                             <img class="iconOpenInNewWindow">
                         </button>
                     </div>
+
                     <hr class="hRule">
-                    <div id="accaCategoriesSection">
-                        <div id="accaCategoriesRow" class="displayFlex">
-                            <span class="marginRight5px">Categories:</span>
-                            <span id="accaCategoriesSpan" class="displayInGreen"></span>
-                        </div>
-                        <div id="accaCompetitionsRow">
-                            <span class="marginRight5px">Competitions:</span>
-                            <span id="accaCompetitionsSpan" class="displayInOrange"></span>
-                        </div>
-                        <div id="accaMarketTemplatesRow">
-                            <span class="marginRight5px">Market Templates:</span>
-                            <span id="accaMarketTemplatesSpan" class="displayInOrange"></span>
-                        </div>
+
+                    <div id="accaInsEventPhaseRow">
+                        <span class="keyForAccaIns">Event Phase:</span>
+                        <span id="accaInsEventPhaseValue" class="displayInGreen"></span>
+                    </div>
+                    <div>
+                        <span class="keyForAccaIns">Min Number of Selections:</span>
+                        <span id="accaInsMinimumNumberOfSelectionsSpan" class="displayInGreen"></span>
+                    </div>
+                    <div>
+                        <span class="keyForAccaIns">Min Selection Odds:</span>
+                        <span id="accaInsSelectionOddsLimitMinSpan" class="displayInGreen"></span>
+                    </div>
+                    <div id="accaInsTotalOddsLimitMinRow">
+                        <span class="keyForAccaIns">Min Total Odds:</span>
+                        <span id="accaInsTotalOddsLimitMinSpan" class="displayInGreen"></span>
+                    </div>
+                    <div id="accaMinMaxStakeRow">
+                        <span class="keyForAccaIns">Stake Range:</span>
+                        <span id="accaInsMinMaxStakeSpan" class="displayInGreen"></span>
+                    </div>
+
+                    <hr class="hRule">
+
+                    <div id="accaInsRestrictionsSection">
+                        <details>
+                            <summary class="sbtSummary">
+                                Restriction paths
+                            </summary>
+                            <ul id="accaInsRestrictionPath" class="displayInGreen marginBottom10px scrollableListBox">
+                            </ul>
+                        </details>
                         <hr class="hRule">
                     </div>
-                    <div id="accaEventPhaseRow">
-                        <span class="marginRight5px">Event Phase:</span>
-                        <span id="accaEventPhaseSpan" class="displayInGreen"></span>
-                    </div>
-                    <div>
-                        <span class="marginRight5px">Min Number of Selections:</span>
-                        <span id="accaMinimumNumberOfSelectionsSpan" class="displayInGreen"></span>
-                    </div>
-                    <div>
-                        <span class="marginRight5px">Min Selection Odds:</span>
-                        <span id="accaSelectionOddsLimitMinSpan" class="displayInGreen"></span>
-                    </div>
-                    <div id="accaTotalOddsLimitMinRow">
-                        <span class="marginRight5px">Min Total Odds:</span>
-                        <span id="accaTotalOddsLimitMinSpan" class="displayInGreen"></span>
-                    </div>
-                    <hr class="hRule">
-                    <div id="accaMinMaxStakeRow">
-                        <span class="marginRight5px">Stake Range:</span>
-                        <span id="accaMinMaxStakeSpan" class="displayInGreen"></span>
-                    </div>
-                    <div id="accaExpiryDateRow">
-                        <span class="marginRight5px">Expiry Date:</span>
-                        <span id="accaExpiryDateSpan" class="displayInGreen"></span>
-                    </div>
+
+                    <details>
+                        <summary class="sbtSummary marginBottom5px">More Details</summary>
+                        <div class=" marginTop5px">
+                            <div>
+                                <span class="keyForAccaIns">Payout Mode:</span>
+                                <span id="accaInsPayoutMode" class="displayInGreen"></span>
+                            </div>
+
+                            <div id="accaExpiryDateRow">
+                                <span class="keyForAccaIns">Max Losing Sel. Count:</span>
+                                <span id="accaInsMaxLosingSelectionsCountSpan" class="displayInGreen"></span>
+                            </div>
+
+                            <div id="accaExpiryDateRow">
+                                <span class="keyForAccaIns">Max Payout Per Bet:</span>
+                                <span id="accaInsMaxPayoutSpan" class="displayInGreen"></span>
+                            </div>
+
+                            <div id="accaExpiryDateRow">
+                                <span class="keyForAccaIns">Expiry Date:</span>
+                                <span id="accaInsExpiryDateSpan" class="displayInGreen"></span>
+                            </div>
+                        </div>
+
+                    </details>
+
                 </div>
             </div>
 
@@ -1595,6 +1624,7 @@
                     <select id="accaBoostSelector" onchange="selectAccaBoost(value)"
                         class="comboSbTools height20px marginBottom10px width100percent">
                     </select>
+
                     <div id="accaBoostSelectedDetails">
                         <div>
                             <span class="marginRight5px">Name:</span>
@@ -1622,83 +1652,72 @@
                                 <img class="iconOpenInNewWindow">
                             </button>
                         </div>
+
                         <hr class="hRule">
-                        <!-- <div id="accaBoostRestrictionsSection">
-                            Restriction paths (maximum 3 displayed here):
-                            <div id="accaBoostPathToCompetition" class="displayInGreen marginBottom10px">
-                            </div>
-                            <div id="accaBoostMultipleRestrictions" class="displayInOrange hide">
-                                Multiple restrictions are set this boost. See the details in Trading Tools.
-                            </div>
-                            <hr class="hRule">
-                        </div> -->
+
+                        <div id="accaBoostEventPhaseRow">
+                            <span class="keyForAccaBoost">Event Phase:</span>
+                            <span id="accaBoostEventPhaseValue" class="displayInGreen"></span>
+                        </div>
+                        <div id="accaBoostNoOfSelectionsRow">
+                            <span class="keyForAccaBoost">Number of Selections:</span>
+                            <span id="accaBoostNoOfSelections" class="displayInGreen"></span>
+                        </div>
+                        <div id="accaBoostMinMaxSelectionOddsRow">
+                            <span class="keyForAccaBoost">Selection Odds Range:</span>
+                            <span id="accaBoostMinMaxSelectionOdds" class="displayInGreen"></span>
+                        </div>
+
+                        <hr class="hRule">
 
                         <div id="accaBoostRestrictionsSection">
                             <details>
                                 <summary class="sbtSummary">
                                     Restriction paths
                                 </summary>
-                                <div id="accaBoostPathToCompetition"
-                                    class="displayInGreen marginBottom10px scrollableBox">
-                                </div>
+                                <ul id="accaBoostRestrictionPath"
+                                    class="displayInGreen marginBottom10px scrollableListBox">
+                                </ul>
                             </details>
                             <hr class="hRule">
                         </div>
 
+                        <details>
+                            <summary class="sbtSummary">More Details</summary>
+                            <div class="marginTop5px">
+                                <div>
+                                    <span class="keyForAccaBoost">Max Boosted Winning:</span>
+                                    <span class="displayInGreen">
+                                        <span id="accaBoostMaxBoostedWinningsEur"></span>
+                                        <span id="accaBoostMaxBoostedWinningsOther"></span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="keyForAccaBoost">Boost Applied On:</span>
+                                    <span id="accaBoostAppliedOn" class="displayInGreen"></span>
+                                </div>
+                                <div>
+                                    <span class="keyForAccaBoost">Payout Mode:</span>
+                                    <span id="accaBoostPayout" class="displayInGreen"></span>
+                                </div>
+                                <div>
+                                    <span class="keyForAccaBoost">Expiry Date:</span>
+                                    <span id="accaBoostExpiryDate" class="displayInGreen"></span>
+                                </div>
+                            </div>
+                        </details>
+
                         <div id="accaBoostLadderSection">
+                            <hr class="hRule">
                             <details>
                                 <summary class="sbtSummary">
                                     Acca Boost Ladder Steps
                                 </summary>
-                                <!-- <div class="displayFlex">
-                                    <span>Selection Count</span>
-                                    <span>Multiplier</span>
-                                </div> -->
-                                <div id="accaBoostLadder" class="displayInGreen marginBottom10px scrollableBox">
-                                </div>
+                                <ul id="accaBoostLadder" class="displayInGreen marginBottom10px scrollableListBox">
+                                </ul>
                             </details>
-                            <hr class="hRule">
                         </div>
 
-                        <div>
-                            <div id="accaBoostEventPhaseRow" class="">
-                                <span class="keyForAccaBoost">Event Phase:</span>
-                                <span id="accaBoostEventPhases" class="displayInGreen"></span>
-                            </div>
-
-                            <div id="accaBoostNoOfSelectionsRow" class="">
-                                <span class="keyForAccaBoost">Number of Selections:</span>
-                                <span id="accaBoostNoOfSelections" class="displayInGreen"></span>
-                            </div>
-
-                            <div id="accaBoostMinMaxSelectionOddsRow" class="">
-                                <span class="keyForAccaBoost">Selection Odds Range:</span>
-                                <span id="accaBoostMinMaxSelectionOdds" class="displayInGreen"></span>
-                            </div>
-
-                            <div>
-                                <span class="keyForAccaBoost">Max Boosted Winning:</span>
-                                <span class="displayInGreen">
-                                    <span id="accaBoostMaxBoostedWinningsEur"></span>
-                                    <span id="accaBoostMaxBoostedWinningsOther"></span>
-                                </span>
-                            </div>
-
-                            <div>
-                                <span class="keyForAccaBoost">Boost Applied On:</span>
-                                <span id="accaBoostAppliedOn" class="displayInGreen"></span>
-                            </div>
-
-                            <div>
-                                <span class="keyForAccaBoost">Payout Mode:</span>
-                                <span id="accaBoostPayout" class="displayInGreen"></span>
-                            </div>
-
-                            <div>
-                                <span class="keyForAccaBoost">Expiry Date:</span>
-                                <span id="accaBoostExpiryDate" class="displayInGreen"></span>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
@@ -2158,6 +2177,11 @@
     .keyForAccaBoost {
         display: inline-block;
         width: 45%;
+    }
+
+    .keyForAccaIns {
+        display: inline-block;
+        width: 52%;
     }
 
     .bannersRow {
@@ -3169,11 +3193,14 @@
         user-select: none;
     }
 
-    .scrollableBox {
+    .scrollableListBox {
+        margin-block: 0;
         max-height: 100px;
         overflow-y: auto;
-        border: 1px solid #ccc;
-        padding: 5px;
+        padding-left: 25px;
+        padding-bottom: 10px;
+        padding-right: 5px;
+        margin-top: 5px;
     }
 
     .accaBoostSelCount {
