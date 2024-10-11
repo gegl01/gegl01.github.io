@@ -15,7 +15,6 @@
     const IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED = isDefined("obgClientEnvironmentConfig");
     const IS_NODECONTEXT_EXPOSED = isDefined("nodeContext");
     const IS_OBGSTARTUP_EXPOSED = isDefined("obgStartup");
-    const IS_OBGGLOBALAPPCONTEXT_EXPOSED = isDefined("obgGlobalAppContext");
     const IS_OBGSTATE_EXPOSED = isDefined("obgState.sportsbook");
     const IS_XSBSTATE_EXPOSED = isDefined("xSbState");
     const IS_OBGSTATE_OR_XSBSTATE_EXPOSED = IS_OBGSTATE_EXPOSED || IS_XSBSTATE_EXPOSED;
@@ -155,8 +154,7 @@
     function getIsItSportsbookPage() {
         if (IS_OBGNAVIGATIONSUPPORTED_EXPOSED
             || IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED
-            || IS_OBGSTARTUP_EXPOSED
-            || IS_OBGGLOBALAPPCONTEXT_EXPOSED) {
+            || IS_OBGSTARTUP_EXPOSED) {
             return true;
         }
         if (IS_SPORTSBOOK_IN_IFRAME) {
@@ -310,19 +308,17 @@
     function getDeviceType() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceType; }
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return getState().appContext.device.deviceType; }
-        if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return obgGlobalAppContext.deviceType; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceType; }
         return "couldn't get";
     }
 
     function getIsAnyEssentialObjectExposed() {
-        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED || IS_OBGSTATE_OR_XSBSTATE_EXPOSED || IS_OBGGLOBALAPPCONTEXT_EXPOSED || IS_OBGSTARTUP_EXPOSED;
+        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED || IS_OBGSTATE_OR_XSBSTATE_EXPOSED || IS_OBGSTARTUP_EXPOSED;
     }
 
     function getDeviceExperience() {
         if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) { return obgClientEnvironmentConfig.startupContext.device.deviceExperience; }
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) { return getState().appContext.device.deviceExperience; }
-        // if (IS_OBGGLOBALAPPCONTEXT_EXPOSED) { return getState().appContext.device.deviceExperience; }
         if (IS_NODECONTEXT_EXPOSED) { return nodeContext.deviceExperience; }
         return null;
     }
@@ -346,23 +342,6 @@
         }
         return environmentToDisplay;
     }
-
-    // function getEnvironment() {
-    //     if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-    //         return getState().appContext.environment;
-    //     }
-    //     if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
-    //         return obgClientEnvironmentConfig.startupContext.appContext.environment;
-    //     }
-    //     if (IS_OBGSTARTUP_EXPOSED) {
-    //         return obgStartup.config.appSettings.environment;
-    //     }
-    //     return undefined;
-
-
-    //     let sbEnv = getSbEnvironment();
-    //     let hostEnv = getHostPageEnvironment();
-    // }
 
     function getSbEnvironment() {
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
@@ -5052,7 +5031,8 @@
 
         //////// ACCA Insurance /////////
 
-        let accaInsurances, previousAccaInsurances;
+        let accaInsurances, stringBetInsurance, previousStringBetInsurance;
+        let selectedAccaIns;
 
         const loginToSeeAccaIns = getElementById("loginToSeeAccaIns");
         const noAccaInsFound = getElementById("noAccaInsFound");
@@ -5086,13 +5066,16 @@
                 hide(loginToSeeAccaIns);
             }
 
-            accaInsurances = getState().sportsbook.betInsurance.betInsurances;
+            // betInsurance = getState().sportsbook.betInsurance;
+            stringBetInsurance = JSON.stringify(getState().sportsbook.betInsurance);
 
-            if (accaInsurances == previousAccaInsurances) {
+            if (stringBetInsurance == previousStringBetInsurance) {
                 return;
             } else {
-                previousAccaInsurances = accaInsurances;
+                previousStringBetInsurance = stringBetInsurance;
             }
+
+            accaInsurances = getState().sportsbook.betInsurance.betInsurances;
             if (accaInsurances.length == 0) {
                 show(noAccaInsFound);
                 hide(accaInsDetailsLayout);
@@ -5108,11 +5091,16 @@
             accaInsNumberOf.innerText = accaInsurances.length;
             accaInsSelector.innerHTML = "";
             let option;
+
             accaInsurances = accaInsurances.sort((a, b) => a.name > b.name ? 1 : -1);
-            
+
+
             for (let ins of accaInsurances) {
                 option = document.createElement("option");
-                option.text = ins.name;
+                option.innerHTML = ins.name;
+                if (ins.id == getState().sportsbook.betInsurance.selectedBetInsurance.id) {
+                    option.innerHTML += " " + "&#9989";
+                }
                 option.value = ins.id;
                 accaInsSelector.appendChild(option);
             }
@@ -5123,16 +5111,25 @@
             return accaInsurances.findIndex(obj => obj.id === getState().sportsbook.betInsurance.selectedBetInsurance.id);
         }
 
-        window.selectAccaIns = (value) => {
-            selectAccaIns(value);
+        window.applySelectedAccaIns = () => {
+            getState().sportsbook.betInsurance.selectedBetInsurance = selectedAccaIns;
+            // selectAccaIns(getState().sportsbook.betInsurance.selectedBetInsurance.id);
+            // let bonusId = getState().sportsbook.betInsurance.selectedBetInsurance.id
+            // setOptionInBonusSelector(accaInsSelector, selectedAccaIns.id);
+            selectAccaIns(selectedAccaIns.id);
+            triggerChangeDetection(getEventIdBySelectionId(getLastSelectionIdFromBetslip()));
         }
 
-        function selectAccaIns(value) {
+
+        window.selectAccaIns = (bonusId) => {
+            selectAccaIns(bonusId);
+        }
+        function selectAccaIns(bonusId) {
             accaInsRestrictionPath.innerHTML = "";
-            let selectedAccaIns;
+            setOptionInBonusSelector(accaInsSelector, bonusId);
             let usersCurrency = getUsersCurrency();
             for (let ins of accaInsurances) {
-                if (value == ins.id) {
+                if (bonusId == ins.id) {
                     selectedAccaIns = ins;
                 }
             }
@@ -5461,9 +5458,9 @@
 
             handleEventPhases(selectedAccaBoost, accaBoostEventPhaseRow, accaBoostEventPhaseValue);
 
-            let minSelectionOdds = selectedAccaBoost.conditions.selectionOddsLimit.minOdds;
-            let maxSelectionOdds = selectedAccaBoost.conditions.selectionOddsLimit.maxOdds;
-            if (minSelectionOdds == 0 && maxSelectionOdds == 0) {
+            let minSelectionOdds = selectedAccaBoost.conditions?.selectionOddsLimit?.minOdds;
+            let maxSelectionOdds = selectedAccaBoost.conditions?.selectionOddsLimit?.maxOdds;
+            if ((minSelectionOdds == 0 || minSelectionOdds == undefined) && (maxSelectionOdds == 0) || maxSelectionOdds == undefined) {
                 hide(accaBoostMinMaxSelectionOddsRow);
             } else {
                 show(accaBoostMinMaxSelectionOddsRow);
@@ -5617,7 +5614,7 @@
                 radioPbByName.checked = true;
                 listPriceBoostsBy("pbName");
             }
-            setOptionInBonusSelector(priceBoostId);
+            setOptionInBonusSelector(pbSelector, priceBoostId);
         }
 
         let currentPathName, previousCurrentPathName;
@@ -5720,14 +5717,26 @@
             return getState().sportsbook.priceBoost.priceBoost;
         }
 
-        function setOptionInBonusSelector(bonusId) {
-            for (let i = 0; i < pbSelector.options.length; i++) {
-                if (pbSelector.options[i].value == bonusId) {
-                    pbSelector.options[i].selected = true;
+        // function setOptionInBonusSelector(bonusId) {
+        //     for (let i = 0; i < pbSelector.options.length; i++) {
+        //         if (pbSelector.options[i].value == bonusId) {
+        //             pbSelector.options[i].selected = true;
+        //             return;
+        //         }
+        //     }
+        // }
+
+        function setOptionInBonusSelector(selector, optionValue) {
+            log(optionValue);
+            for (let i = 0; i < selector.options.length; i++) {
+                if (selector.options[i].value == optionValue) {
+                    selector.options[i].selected = true;
+                    log(i);
                     return;
                 }
             }
         }
+     
 
         function getIsCombinationPriceBoost(pbId) {
             return getState().sportsbook.priceBoost.priceBoost[pbId].criteria.criteriaEntityDetails.length > 1;

@@ -1501,9 +1501,15 @@
                     <div id="noAccaInsFound">No active ACCA insurance found.</div>
                 </div>
                 <div id="accaInsDetailsLayout" class="hide">
-                    <div>
-                        <span id="accaInsNumberOf" class="displayInGreen fontBold marginRight5px"></span>
-                        <span>ACCA Insurances found</span>
+                    <div class="itemsJustified">
+                        <div>
+                            <span id="accaInsNumberOf" class="displayInGreen fontBold marginRight5px"></span>
+                            <span>ACCA Insurances found</span>
+                        </div>
+                        <div>
+                            <span>Apply Selected</span>
+                            <button class="btColorFont" onclick="applySelectedAccaIns()">&#9989;</button>
+                        </div>
                     </div>
                     <select id="accaInsSelector" onchange="selectAccaIns(value)"
                         class="comboSbTools height20px marginBottom10px width100percent">
@@ -2215,11 +2221,11 @@
         flex: 1;
     }
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
         .btSimple:hover {
             background-color: #fff
         }
-    }
+    } */
 
     .btSimple:active {
         box-shadow: 0 0px #666;
@@ -2694,13 +2700,13 @@
     }
 
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
 
         #btZoomInOut:hover,
         #btMinimizeAll:hover {
             background: rgb(30, 30, 30)
         }
-    }
+    } */
 
     #btZoomInOut:active,
     #btMinimizeAll:active {
@@ -2712,11 +2718,11 @@
         background-color: #00b9bd;
     }
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
         #btMinimizeClosed:hover {
             background: var(--sbtColorGreen);
         }
-    }
+    } */
 
     #btMinimizeClosed:active {
         background: var(--sbtColorGreen);
@@ -2731,11 +2737,11 @@
         /* background: #f9a133; */
     }
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
         #btClose:hover {
             background: rgb(160, 0, 0);
         }
-    }
+    } */
 
     #btClose:active {
         background: rgb(160, 0, 0);
@@ -2783,14 +2789,14 @@
         transition: 0.4s
     }
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
 
         .moreLess:hover,
         .btNativeOthers:hover,
         .accHeading:hover {
             background-color: #ccc
         }
-    }
+    } */
 
     .moreLess:active,
     .btNativeOthers:active,
@@ -2878,6 +2884,22 @@
         min-width: 16px;
     }
 
+    .btColorFont {
+        border: none;
+        background: none;
+        cursor: pointer;
+        vertical-align: middle;
+        padding: 0;
+    }
+
+    .btColorFont:active {
+        opacity: 50%;
+    }
+
+    .btIcon:active {
+        opacity: 20%;
+    }
+
     .btIcon {
         opacity: 60%;
         border: none;
@@ -2887,11 +2909,15 @@
         padding: 0;
     }
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
         .btIcon:hover {
             opacity: 100%;
+            transform: scale(1.1);
         }
-    }
+        .btColorFont:hover {
+            transform: scale(1.2);
+        }
+    } */
 
     .btIcon:active {
         opacity: 20%;
@@ -3093,7 +3119,7 @@
         content: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23444"><path d="M 12.968113,18.923077 C 12.664546,13.993395 10.186702,11.744052 5.2432432,11.916506 v 7.006571 z m 7.493425,0 C 21.311207,18.923077 22,19.61187 22,20.461538 22,21.311207 21.311207,22 20.461538,22 H 4 C 2.8954305,22 2,21.104569 2,20 V 3.6216216 C 2,2.7260247 2.7260247,2 3.6216216,2 4.5172185,2 5.2432432,2.7260247 5.2432432,3.6216216 V 9.9172511 C 11.281817,9.7450722 14.625279,12.836748 14.970285,18.923077 Z"/></svg>');
     }
 
-    #accaBoostPathToCompetition div {
+    #accaBoostRestrictionPath li {
         margin-bottom: 5px;
         line-height: 14px;
     }
@@ -3126,6 +3152,34 @@
         .btGreen:hover {
             background-color: #00b9bd;
         }
+        .btOrange:hover {
+            background-color: #f9a133;
+        }
+        .btSimple:hover {
+            background-color: #fff
+        }
+        #btZoomInOut:hover,
+        #btMinimizeAll:hover {
+            background: rgb(30, 30, 30)
+        }
+        #btMinimizeClosed:hover {
+            background: var(--sbtColorGreen);
+        }
+        #btClose:hover {
+            background: rgb(160, 0, 0);
+        }
+        .moreLess:hover,
+        .btNativeOthers:hover,
+        .accHeading:hover {
+            background-color: #ccc
+        }
+        .btIcon:hover {
+            opacity: 100%;
+            transform: scale(1.1);
+        }
+        .btColorFont:hover {
+            transform: scale(1.2);
+        }
     }
 
     .btGreen:active {
@@ -3137,11 +3191,11 @@
         color: #fff;
     }
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
         .btOrange:hover {
             background-color: #f9a133;
         }
-    }
+    } */
 
     .btOrange:active {
         background-color: #f9a133;
