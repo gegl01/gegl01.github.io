@@ -1506,9 +1506,9 @@
                             <span id="accaInsNumberOf" class="displayInGreen fontBold marginRight5px"></span>
                             <span>ACCA Insurances found</span>
                         </div>
-                        <div>
-                            <span>Apply Selected</span>
-                            <button class="btColorFont" onclick="applySelectedAccaIns()">&#9989;</button>
+                        <div class="itemsJustifiedVertCenter">
+                            <input id="radioApplySelectedAccaIns" type="radio" class="radioSbTools" onclick="applySelectedAccaIns()">
+                            <span>Apply Selected &#129351;</span>
                         </div>
                     </div>
                     <select id="accaInsSelector" onchange="selectAccaIns(value)"
@@ -3152,34 +3152,42 @@
         .btGreen:hover {
             background-color: #00b9bd;
         }
+
         .btOrange:hover {
             background-color: #f9a133;
         }
+
         .btSimple:hover {
             background-color: #fff
         }
+
         #btZoomInOut:hover,
         #btMinimizeAll:hover {
             background: rgb(30, 30, 30)
         }
+
         #btMinimizeClosed:hover {
             background: var(--sbtColorGreen);
         }
+
         #btClose:hover {
             background: rgb(160, 0, 0);
         }
+
         .moreLess:hover,
         .btNativeOthers:hover,
         .accHeading:hover {
             background-color: #ccc
         }
+
         .btIcon:hover {
             opacity: 100%;
             transform: scale(1.1);
         }
-        .btColorFont:hover {
+
+        /* .btColorFont:hover {
             transform: scale(1.2);
-        }
+        } */
     }
 
     .btGreen:active {
