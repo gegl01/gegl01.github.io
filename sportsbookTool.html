@@ -1507,7 +1507,8 @@
                             <span>ACCA Insurances found</span>
                         </div>
                         <div class="itemsJustifiedVertCenter">
-                            <input id="radioApplySelectedAccaIns" type="radio" class="radioSbTools" onclick="applySelectedAccaIns()">
+                            <input id="radioApplySelectedAccaIns" type="radio" class="radioSbTools"
+                                onclick="applySelectedAccaIns()">
                             <span>Apply Selected &#129351;</span>
                         </div>
                     </div>
@@ -2221,11 +2222,11 @@
         flex: 1;
     }
 
-    /* @media (hover: hover) {
+    @media (hover: hover) {
         .btSimple:hover {
             background-color: #fff
         }
-    } */
+    }
 
     .btSimple:active {
         box-shadow: 0 0px #666;
@@ -2700,29 +2701,22 @@
     }
 
 
-    /* @media (hover: hover) {
-
+    @media (hover: hover) {
         #btZoomInOut:hover,
         #btMinimizeAll:hover {
             background: rgb(30, 30, 30)
         }
-    } */
-
-    #btZoomInOut:active,
-    #btMinimizeAll:active {
-        background: rgb(30, 30, 30)
     }
-
 
     #btMinimizeClosed {
         background-color: #00b9bd;
     }
 
-    /* @media (hover: hover) {
+    @media (hover: hover) {
         #btMinimizeClosed:hover {
             background: var(--sbtColorGreen);
         }
-    } */
+    }
 
     #btMinimizeClosed:active {
         background: var(--sbtColorGreen);
@@ -2734,14 +2728,13 @@
 
     #btClose {
         background: rgb(200, 100, 100);
-        /* background: #f9a133; */
     }
 
-    /* @media (hover: hover) {
+    @media (hover: hover) {
         #btClose:hover {
             background: rgb(160, 0, 0);
         }
-    } */
+    }
 
     #btClose:active {
         background: rgb(160, 0, 0);
@@ -2789,19 +2782,12 @@
         transition: 0.4s
     }
 
-    /* @media (hover: hover) {
-
+    @media (hover: hover) {
         .moreLess:hover,
         .btNativeOthers:hover,
         .accHeading:hover {
             background-color: #ccc
         }
-    } */
-
-    .moreLess:active,
-    .btNativeOthers:active,
-    .accHeading:active {
-        background-color: #ccc
     }
 
     .open .accHeading {
@@ -2892,14 +2878,6 @@
         padding: 0;
     }
 
-    .btColorFont:active {
-        opacity: 50%;
-    }
-
-    .btIcon:active {
-        opacity: 20%;
-    }
-
     .btIcon {
         opacity: 60%;
         border: none;
@@ -2909,15 +2887,12 @@
         padding: 0;
     }
 
-    /* @media (hover: hover) {
+    @media (hover: hover) {
         .btIcon:hover {
             opacity: 100%;
             transform: scale(1.1);
         }
-        .btColorFont:hover {
-            transform: scale(1.2);
-        }
-    } */
+    }
 
     .btIcon:active {
         opacity: 20%;
@@ -2928,10 +2903,9 @@
     }
 
     .iconHeader {
+        cursor: pointer;
         width: 12px;
     }
-
-
 
     .segmentKeyColumn {
         width: 35px;
@@ -3148,50 +3122,23 @@
         color: #fff;
     }
 
-    @media (hover: hover) {
-        .btGreen:hover {
-            background-color: #00b9bd;
-        }
-
-        .btOrange:hover {
-            background-color: #f9a133;
-        }
-
-        .btSimple:hover {
-            background-color: #fff
-        }
-
-        #btZoomInOut:hover,
-        #btMinimizeAll:hover {
-            background: rgb(30, 30, 30)
-        }
-
-        #btMinimizeClosed:hover {
-            background: var(--sbtColorGreen);
-        }
-
-        #btClose:hover {
-            background: rgb(160, 0, 0);
-        }
-
-        .moreLess:hover,
-        .btNativeOthers:hover,
-        .accHeading:hover {
-            background-color: #ccc
-        }
-
-        .btIcon:hover {
-            opacity: 100%;
-            transform: scale(1.1);
-        }
-
-        /* .btColorFont:hover {
-            transform: scale(1.2);
-        } */
-    }
-
     .btGreen:active {
         background-color: #00b9bd;
+    }
+
+    .btOrange:active {
+        background-color: #f9a133;
+    }
+
+    #btZoomInOut:active,
+    #btMinimizeAll:active {
+        background: rgb(30, 30, 30)
+    }
+
+    .moreLess:active,
+    .btNativeOthers:active,
+    .accHeading:active {
+        background-color: #ccc
     }
 
     .btOrange {
@@ -3204,10 +3151,6 @@
             background-color: #f9a133;
         }
     } */
-
-    .btOrange:active {
-        background-color: #f9a133;
-    }
 
     .moreLess {
         width: 100%;
