@@ -2703,6 +2703,7 @@
 
 
     @media (hover: hover) {
+
         #btZoomInOut:hover,
         #btMinimizeAll:hover {
             background: rgb(30, 30, 30)
@@ -2784,6 +2785,7 @@
     }
 
     @media (hover: hover) {
+
         .moreLess:hover,
         .btNativeOthers:hover,
         .accHeading:hover {
@@ -3114,12 +3116,15 @@
         color: #fff;
     }
 
-    .btGreen:active {
-        background-color: #00b9bd;
+
+    @media (hover: hover) {
+        .btGreen:hover {
+            background-color: #00b9bd;
+        }
     }
 
-    .btOrange:active {
-        background-color: #f9a133;
+    .btGreen:active {
+        background-color: #00b9bd;
     }
 
     #btZoomInOut:active,
@@ -3138,11 +3143,15 @@
         color: #fff;
     }
 
-    /* @media (hover: hover) {
+    @media (hover: hover) {
         .btOrange:hover {
             background-color: #f9a133;
         }
-    } */
+    }
+
+    .btOrange:active {
+        background-color: #f9a133;
+    }
 
     .moreLess {
         width: 100%;
