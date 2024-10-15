@@ -71,7 +71,7 @@
     var eventId, lockedEventId;
     var participants, selectedParticipantId;
     var participants = [];
-    var previousEventId, previousMarketId, previousSelectionId,previousPriceBoosts, previousFreeBets, previousProfitBoosts;
+    var previousEventId, previousMarketId, previousSelectionId, previousPriceBoosts, previousFreeBets, previousProfitBoosts;
     var eventLabel; //,savedEventLabel;
     // var mockedEventPhase;
     var marketId, lockedMarketId, marketLabel, marketTemplateId, marketVersion;
@@ -95,9 +95,10 @@
     var isPageValidForCarousel, previousIsPageValidForCarousel;
     var lastDateTimeSet;
     var eventIdArray = [];
+    var orderedCategories, orderedRegions, orderedCompetitions;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.38";
+    const SB_TOOL_VERSION = "v1.6.39";
     const DEVICE_TYPE = getDeviceType();
     // const IS_TOUCH_BROWSER = getIsTouchBrowser();
     const DEVICE_EXPERIENCE = getDeviceExperience();
@@ -2791,13 +2792,14 @@
         stopPolling();
         previousEventId = undefined;
         // var menu = getState().sportsbook.sportCatalog.menu.items;
-        var categoriesObj = getState().sportsbook.sportCatalog.offering.categories;
-        var quickLinks;
-        var categories, regions, competitions;
+        // let categoriesObj = getState().sportsbook.sportCatalog.offering.categories;
+        let quickLinks;
+        // let orderedCategories, orderedRegions, orderedCompetitions;
+        // orderedCategories = getArrayOrderedByProperty(Object.values(categoriesObj), "sortOrder");
         const categorySelector = getElementById("categorySelector");
         const regionSelector = getElementById("regionSelector");
         const competitionSelector = getElementById("competitionSelector");
-        var menuOption;
+        let menuOption;
         labelRow = getElementById("eventLabelForNative");
 
         const btNativeOpenEvent = getElementById("btNativeOpenEvent");
@@ -3190,8 +3192,9 @@
             // hide(nativeQuickLinksSection, nativeBetBuilderSection);
             hide(nativeQuickLinksSection);
             resetAzNavigation();
-            categories = getArrayOrderedByProperty(Object.values(categoriesObj), "lhsmOrder");
-            populateSelector(categorySelector, categories);
+            // categories = getArrayOrderedByProperty(Object.values(categoriesObj), "sortOrder");
+            orderedCategories = getArrayOrderedByProperty(Object.values(getState().sportsbook.sportCatalog.offering.categories), "sortOrder");
+            populateSelector(categorySelector, orderedCategories);
         }
 
         function resetAzNavigation() {
@@ -3205,21 +3208,21 @@
             clearSelector(regionSelector, competitionSelector);
             activate(regionSelector);
             inactivate(competitionSelector);
-            for (var category of categories) {
+            for (var category of orderedCategories) {
                 if (value == category.id) {
-                    regions = getArrayOrderedByProperty(Object.values(category.regions), "lhsmOrder");
-                    populateSelector(regionSelector, regions);
+                    orderedRegions = getArrayOrderedByProperty(Object.values(category.regions), "sortOrder");
+                    populateSelector(regionSelector, orderedRegions);
                 }
             }
         }
 
         window.selectRegion = (value) => {
             clearSelector(competitionSelector);
-            for (var region of regions) {
+            for (var region of orderedRegions) {
                 if (value == region.id) {
                     if (Object.keys(region.competitions).length != 0) {
-                        competitions = getArrayOrderedByProperty(Object.values(region.competitions), "lhsmOrder");
-                        populateSelector(competitionSelector, competitions);
+                        orderedCompetitions = getArrayOrderedByProperty(Object.values(region.competitions), "sortOrder");
+                        populateSelector(competitionSelector, orderedCompetitions);
                         activate(competitionSelector);
                     } else {
                         inactivate(competitionSelector);
@@ -3230,7 +3233,7 @@
         }
 
         window.selectCompetition = (value) => {
-            for (var competition of competitions) {
+            for (var competition of orderedCompetitions) {
                 if (value == competition.id) {
                     routeChangeIn(competition.slug);
                 }
@@ -4345,7 +4348,6 @@
 
     function getCategories() {
         return getState().sportsbook.sportCatalog.offering.categories;
-        // return getState().sportsbook.sportCatalog.categories || getState().sportsbook.sportCatalog.offering.categories;
     }
 
     window.getLegacyEventId = () => {
@@ -5267,7 +5269,6 @@
 
             if (selectedProfitBoost.criteria.criteriaEntityDetails.length > 0) {
                 show(profitBoostRestrictionsSection);
-                log("getProfitBoostPathToCompetition()" + getProfitBoostPathToCompetition());
                 profitBoostPathToCompetition.innerHTML = getProfitBoostPathToCompetition();
             } else {
                 hide(profitBoostRestrictionsSection);
@@ -5724,11 +5725,9 @@
         // }
 
         function setOptionInBonusSelector(selector, optionValue) {
-            log(optionValue);
             for (let i = 0; i < selector.options.length; i++) {
                 if (selector.options[i].value == optionValue) {
                     selector.options[i].selected = true;
-                    log(i);
                     return;
                 }
             }
@@ -6269,7 +6268,6 @@
     }
 
     function getCategoryLabelByCategoryId(categoryId) {
-        // let categories = Object.values(getCategories());
         for (let cat of Object.values(getCategories())) {
             if (cat.id == categoryId) {
                 return cat.label;
@@ -6279,7 +6277,6 @@
 
 
     function getRegionLabelByRegionId(regionId) {
-        // var categories = Object.values(getCategories());
         let regions;
         for (let cat of Object.values(getCategories())) {
             regions = Object.values(cat.regions);
@@ -6294,7 +6291,6 @@
     }
 
     function getRegionNameByCompetitionId(competitionId) {
-        // let categories = Object.values(getCategories());
         let regions, competitions;
         for (let cat of Object.values(getCategories())) {
             regions = Object.values(cat.regions);
