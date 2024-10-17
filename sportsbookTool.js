@@ -98,7 +98,7 @@
     var orderedCategories, orderedRegions, orderedCompetitions;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.40";
+    const SB_TOOL_VERSION = "v1.6.41";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -115,7 +115,7 @@
     const NOT_FOUND = "Not found.";
     // const IS_LOCALHOST_WITH_PROD = !(IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED && IS_OBGSTATE_EXPOSED);
     const POLLING_INTERVAL = 100;
-    const IS_SGP_USED = getIsSGPUsed();
+    // const IS_SGP_USED = getIsSGPUsed();
     const IS_BLE = getIsBLE();
 
     // cleanupSearchParams("configOverride");
@@ -391,25 +391,6 @@
             }
         }
         return false;
-
-        // if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
-        //     let marketsUsingSingleGameParlay = obgClientEnvironmentConfig.startupContext.config.sportsbookUi.betBuilder.marketsUsingSingleGameParlay;
-        //     let languageCode = obgClientEnvironmentConfig.startupContext.config.core.market.languageCode;
-        //     for (let market of marketsUsingSingleGameParlay) {
-        //         if (market == languageCode) {
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // } else {
-        //     if (BRAND_NAME == "betsafe" && CULTURE == "en-CA") {
-        //         return false;
-        //     }
-        //     if (CULTURE == "en-CA" || CULTURE == "en-US") {
-        //         return true;
-        //     }
-        // }
-        // return false;
     }
 
     function getCulture() {
@@ -641,6 +622,7 @@
             function removeObgRtFeatures() {
                 removeFeature(
                     "sbToolsEvent",
+                    "sbToolsBonuses",
                     "sbToolsMarket",
                     "sbToolsCreateMarket",
                     "sbToolsSelection",
