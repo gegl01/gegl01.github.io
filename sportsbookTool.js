@@ -98,7 +98,7 @@
     var orderedCategories, orderedRegions, orderedCompetitions;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.42";
+    const SB_TOOL_VERSION = "v1.6.43";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -5384,10 +5384,9 @@
             populateAccaBoostSelector();
         }
 
-        let activeBoostIndex, previousActiveBoostIndex;
+        let activeBoostIndex, previousActiveBoostIndex;        
         function listenerForActiveAccaBoostIndex() {
-            if (accaBoosts.length == 0) { return; }
-
+            if (getState().sportsbook?.accaBoost?.accaBoosts.length == 0) { return; }
             activeBoostIndex = accaBoost.activeBoostIndex;
             if (activeBoostIndex != previousActiveBoostIndex) {
                 addRemoveActiveAccaBoostIcon(activeBoostIndex);
