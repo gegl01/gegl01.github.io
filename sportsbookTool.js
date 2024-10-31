@@ -98,7 +98,7 @@
     var orderedCategories, orderedRegions, orderedCompetitions;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.43";
+    const SB_TOOL_VERSION = "v1.6.44";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -5384,7 +5384,7 @@
             populateAccaBoostSelector();
         }
 
-        let activeBoostIndex, previousActiveBoostIndex;        
+        let activeBoostIndex, previousActiveBoostIndex;
         function listenerForActiveAccaBoostIndex() {
             if (getState().sportsbook?.accaBoost?.accaBoosts.length == 0) { return; }
             activeBoostIndex = accaBoost.activeBoostIndex;
@@ -6855,6 +6855,12 @@
         let awayFinalScore = getRandomInt(4);
         let isFirstHalf = getRandomBoolean();
         let isExtraTime = scoreBoardExtras.isExtraTime;
+        let possession = getRandomInt(25, 75);
+        let totalShotsHome = getRandomInt(2, 15);
+        let totalShotsAway = getRandomInt(2, 15);
+        let totalShotsOnTargetHome = Math.ceil(totalShotsHome * getRandomInt(15, 85) / 100);
+        let totalShotsOnTargetAway = Math.ceil(totalShotsAway * getRandomInt(15, 85) / 100);
+        let stoppageTime = getRandomInt(1, 5)
 
         let matchClockMinutes = isFirstHalf
             ? (isExtraTime ? 90 + getRandomInt(2, 17) : getRandomInt(47))
@@ -6883,17 +6889,17 @@
                     substitutions: { value: getRandomInt(2), isActive: true },
                     yellowCards: { value: getRandomInt(4), isActive: true },
                     isSecondLeg: { value: true, isActive: true },
-                    aggregateScore: { value: homeFinalScore + getRandomInt(4), isActive: true }
+                    aggregateScore: { value: homeFinalScore + getRandomInt(4), isActive: true },
 
-                    // ,stoppageTime: { value: 1, isActive: true },
-                    // expectedGoals: { value: 2, isActive: true },
-                    // dangerousAttack: { value: 3, isActive: true },
-                    // shotsOnTarget: { value: 4, isActive: true },
-                    // shotsOffTarget: { value: 5, isActive: true },
-                    // totalShots: { value: 6, isActive: true },
-                    // possession: { value: 7, isActive: true },
-                    // woodwork: { value: 8, isActive: true },
-                    // goalKeeperSave: { value: 9, isActive: true }
+                    stoppageTime: { value: stoppageTime, isActive: true },
+                    expectedGoals: { value: getRandomInt(2, 10), isActive: true },
+                    dangerousAttack: { value: getRandomInt(2, 10), isActive: true },
+                    shotsOnTarget: { value: totalShotsOnTargetHome, isActive: true },
+                    shotsOffTarget: { value: totalShotsHome - totalShotsOnTargetHome, isActive: true },
+                    totalShots: { value: totalShotsHome, isActive: true },
+                    possession: { value: possession, isActive: true },
+                    woodwork: { value: getRandomInt(1, 3), isActive: true },
+                    goalKeeperSave: { value: getRandomInt(1, 5), isActive: true }
                 },
                 [participants[1].id]: {
                     corners: { value: getRandomInt(4), isActive: true },
@@ -6903,17 +6909,17 @@
                     substitutions: { value: getRandomInt(2), isActive: true },
                     yellowCards: { value: getRandomInt(4), isActive: true },
                     isSecondLeg: { value: true, isActive: true },
-                    aggregateScore: { value: awayFinalScore + getRandomInt(4), isActive: true }
+                    aggregateScore: { value: awayFinalScore + getRandomInt(4), isActive: true },
 
-                    // ,stoppageTime: { value: 1, isActive: true },
-                    // expectedGoals: { value: 2, isActive: true },
-                    // dangerousAttack: { value: 3, isActive: true },
-                    // shotsOnTarget: { value: 4, isActive: true },
-                    // shotsOffTarget: { value: 5, isActive: true },
-                    // totalShots: { value: 6, isActive: true },
-                    // possession: { value: 7, isActive: true },
-                    // woodwork: { value: 8, isActive: true },
-                    // goalKeeperSave: { value: 9, isActive: true }
+                    stoppageTime: { value: stoppageTime, isActive: true },
+                    expectedGoals: { value: getRandomInt(2, 10), isActive: true },
+                    dangerousAttack: { value: getRandomInt(2, 10), isActive: true },
+                    shotsOnTarget: { value: totalShotsOnTargetAway, isActive: true },
+                    shotsOffTarget: { value: totalShotsAway - totalShotsOnTargetAway, isActive: true },
+                    totalShots: { value: totalShotsAway, isActive: true },
+                    possession: { value: 100 - possession, isActive: true },
+                    woodwork: { value: getRandomInt(1, 3), isActive: true },
+                    goalKeeperSave: { value: getRandomInt(1, 5), isActive: true }
                 }
             },
             eventId: eventId,
