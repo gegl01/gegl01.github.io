@@ -98,7 +98,7 @@
     var orderedCategories, orderedRegions, orderedCompetitions;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.44";
+    const SB_TOOL_VERSION = "v1.6.45";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -1129,6 +1129,7 @@
             appendDeepLinkParam("betslip_marketId_" + (i + 1), selections[i].marketId);
             appendDeepLinkParam("betslip_selectionId_" + (i + 1), selections[i].selectionId);
         }
+        
         var couponType = betSlipReducer.couponType.toLowerCase();
         appendDeepLinkParam("type", couponType);
         if (couponType === "single") {
@@ -4338,7 +4339,8 @@
             segmentLegacyId = getSegmentLegacyId();
         }
         IS_BLE || getIsBleSource() ?
-            window.open("http://sbpisaobg.sportsbook-prod.use1.betsson.tech/v2/" + segmentLegacyId + "/" + LANGUAGECODE + "/event?fixturetags=" + eventId) :
+            // window.open("http://sbpisaobg.sportsbook-prod.use1.betsson.tech/v2/" + segmentLegacyId + "/" + LANGUAGECODE + "/event?fixturetags=" + eventId) :
+            window.open("http://sbpisaobgk8rob.sportsbook-prod.euc1.betsson.tech/isa/v2/" + segmentLegacyId + "/" + LANGUAGECODE + "/event?fixturetags=" + eventId) :
             window.open("http://sbqk8isaobg.sportsbook-qa-qa.euc1.betsson.tech/isa/v2/" + segmentLegacyId + "/" + LANGUAGECODE + "/event?fixturetags=" + eventId);
     }
 
