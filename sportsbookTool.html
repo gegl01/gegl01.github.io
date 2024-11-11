@@ -372,37 +372,43 @@
                         </span>
                     </div>
                     <hr class="hRule">
-                    <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
-                        <span class="width95Percent itemsJustified paddingRight8px">
-                            <span>Legacy Event ID</span>
-                            <span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span>
-                        </span>
-                        <button class="btIcon btOpenInNewWindow" onclick="getLegacyEventId()">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
-                        <span class="width95Percent itemsJustified paddingRight8px">
-                            <span>Whole ISA response</span>
-                            <span class="displayInLightGrey">el[0].sr.pbbpoe = popularity</span>
-                        </span>
-                        <button class="btIcon btOpenInNewWindow" onclick="getWholeIsaResponse()">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <div class="itemsJustified">
-                        <div class="width95Percent itemsJustified paddingRight8px">
-                            <span>
-                                <span>Open in</span>
-                                <span class="sbManagerSb">sb</span>
-                                <span class="sbManagerManager">manager</span>
-                            </span>
-                            <span class="displayInLightGrey">(aka Trading Tools)</span>
+                    <details>
+                        <summary class="sbtSummary">External Tools</summary>
+                        <div class="detailsExpanded">
+                            <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
+                                <span class="width95Percent itemsJustified paddingRight8px">
+                                    <span>Legacy Event ID</span>
+                                    <span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span>
+                                </span>
+                                <button class="btIcon btOpenInNewWindow" onclick="getLegacyEventId()">
+                                    <img class="iconOpenInNewWindow">
+                                </button>
+                            </div>
+                            <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
+                                <span class="width95Percent itemsJustified paddingRight8px">
+                                    <span>Whole ISA response</span>
+                                    <span class="displayInLightGrey">el[0].sr.pbbpoe = popularity</span>
+                                </span>
+                                <button class="btIcon btOpenInNewWindow" onclick="getWholeIsaResponse()">
+                                    <img class="iconOpenInNewWindow">
+                                </button>
+                            </div>
+                            <div class="itemsJustified">
+                                <div class="width95Percent itemsJustified paddingRight8px">
+                                    <span>
+                                        <span>Open in</span>
+                                        <span class="sbManagerSb">sb</span>
+                                        <span class="sbManagerManager">manager</span>
+                                    </span>
+                                    <span class="displayInLightGrey">(aka Trading Tools)</span>
+                                </div>
+                                <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('event')">
+                                    <img class="iconOpenInNewWindow">
+                                </button>
+                            </div>
                         </div>
-                        <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('event')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
+                    </details>
+                    <hr class="hRule">
                 </div>
 
                 <div>
@@ -1347,10 +1353,8 @@
 
                         <hr class="hRule">
                         <details>
-                            <summary class="sbtSummary">
-                                Boosted Selection
-                            </summary>
-                            <div class="marginTop5px">
+                            <summary class="sbtSummary"> Boosted Selection </summary>
+                            <div class="detailsExpanded">
                                 Path to the Competition:
                                 <div id="pbPathToCompetition" class="displayInGreen marginBottom10px marginLeft15px">
                                 </div>
@@ -1367,7 +1371,7 @@
                         <hr class="hRule">
                         <details>
                             <summary class="sbtSummary">More Details</summary>
-                            <div class="marginTop5px">
+                            <div class="detailsExpanded">
                                 <div class="displayFlex">
                                     <span class="keyForPb">Visibility:</span>
                                     <span id="pbVisibility" class="displayInGreen"></span>
@@ -1484,23 +1488,25 @@
                             </div>
                         </div>
                         <hr class="hRule">
-                        <details>                            
-                            <summary class="sbtSummary marginBottom5px">More Details</summary>
-                            <div class="displayFlex">
-                                <span class="keyForProfitBoost">Boost % / Payout:</span>
-                                <span class="displayInGreen">
-                                    <span id="profitBoostMultiplier"></span>
-                                    <span id="profitBoostPayoutMode"></span>
-                                </span>
-                            </div>
-                            <div class="displayFlex">
-                                <span class="keyForProfitBoost">Max Winning:</span>
-                                <span id="profitBoostMaxBoostedWinningsInEuro" class="displayInGreen"></span>
-                            </div>
-                            <div id="profitBoostExpiryDateDiv">
+                        <details>
+                            <summary class="sbtSummary">More Details</summary>
+                            <div class="detailsExpanded">
                                 <div class="displayFlex">
-                                    <span class="keyForProfitBoost">Expiry Date:</span>
-                                    <span id="profitBoostExpiryDate" class="displayInGreen"></span>
+                                    <span class="keyForProfitBoost">Boost % / Payout:</span>
+                                    <span class="displayInGreen">
+                                        <span id="profitBoostMultiplier"></span>
+                                        <span id="profitBoostPayoutMode"></span>
+                                    </span>
+                                </div>
+                                <div class="displayFlex">
+                                    <span class="keyForProfitBoost">Max Winning:</span>
+                                    <span id="profitBoostMaxBoostedWinningsInEuro" class="displayInGreen"></span>
+                                </div>
+                                <div id="profitBoostExpiryDateDiv">
+                                    <div class="displayFlex">
+                                        <span class="keyForProfitBoost">Expiry Date:</span>
+                                        <span id="profitBoostExpiryDate" class="displayInGreen"></span>
+                                    </div>
                                 </div>
                             </div>
                         </details>
@@ -1593,18 +1599,18 @@
 
                     <div id="accaInsRestrictionsSection">
                         <details>
-                            <summary class="sbtSummary">
-                                Restriction paths
-                            </summary>
-                            <ul id="accaInsRestrictionPath" class="displayInGreen marginBottom10px scrollableListBox">
-                            </ul>
+                            <summary class="sbtSummary"> Restriction paths </summary>
+                            <div class="detailsExpanded">
+                                <ul id="accaInsRestrictionPath" class="displayInGreen scrollableListBox">
+                                </ul>
+                            </div>
                         </details>
                         <hr class="hRule">
                     </div>
 
                     <details>
-                        <summary class="sbtSummary marginBottom5px">More Details</summary>
-                        <div class=" marginTop5px">
+                        <summary class="sbtSummary">More Details</summary>
+                        <div class="detailsExpanded">
                             <div>
                                 <span class="keyForAccaIns">Payout Mode:</span>
                                 <span id="accaInsPayoutMode" class="displayInGreen"></span>
@@ -1695,19 +1701,18 @@
 
                         <div id="accaBoostRestrictionsSection">
                             <details>
-                                <summary class="sbtSummary">
-                                    Restriction paths
-                                </summary>
-                                <ul id="accaBoostRestrictionPath"
-                                    class="displayInGreen marginBottom10px scrollableListBox">
-                                </ul>
+                                <summary class="sbtSummary"> Restriction paths </summary>
+                                <div class="detailsExpanded">
+                                    <ul id="accaBoostRestrictionPath" class="displayInGreen scrollableListBox">
+                                    </ul>
+                                </div>
                             </details>
                             <hr class="hRule">
                         </div>
 
                         <details>
                             <summary class="sbtSummary">More Details</summary>
-                            <div class="marginTop5px">
+                            <div class="detailsExpanded">
                                 <div>
                                     <span class="keyForAccaBoost">Max Boosted Winning:</span>
                                     <span class="displayInGreen">
@@ -1733,11 +1738,11 @@
                         <div id="accaBoostLadderSection">
                             <hr class="hRule">
                             <details>
-                                <summary class="sbtSummary">
-                                    Acca Boost Ladder Steps
-                                </summary>
-                                <ul id="accaBoostLadder" class="displayInGreen marginBottom10px scrollableListBox">
-                                </ul>
+                                <summary class="sbtSummary"> Acca Boost Ladder Steps </summary>
+                                <div class="detailsExpanded">
+                                    <ul id="accaBoostLadder" class="displayInGreen scrollableListBox">
+                                    </ul>
+                                </div>
                             </details>
                         </div>
 
@@ -3209,10 +3214,8 @@
         user-select: none;
     }
 
-    .sbtSummary {
-        display: list-item;
-        cursor: pointer;
-        user-select: none;
+    .detailsExpanded {
+        margin-top: 5px;
     }
 
     .scrollableListBox {
@@ -3222,7 +3225,6 @@
         padding-left: 25px;
         padding-bottom: 10px;
         padding-right: 5px;
-        margin-top: 5px;
     }
 
     .accaBoostSelCount {
