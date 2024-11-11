@@ -373,6 +373,31 @@
                     </div>
                     <hr class="hRule">
                     <details>
+                        <summary class="sbtSummary">Providers</summary>
+                        <div class="detailsExpanded">
+                            <div id="providersErrorMessage" class="displayInRed hide">Open an event page first</div>
+                            <div id="providersSection">
+                                <div>
+                                    <span class="keyForEventPageTabs">Streaming:</span>
+                                    <span id="streamingProvider" class="displayInGreen">-</span>
+                                </div>
+                                <div>
+                                    <span class="keyForEventPageTabs">Visual:</span>
+                                    <span id="visualProvider" class="displayInGreen">-</span>
+                                </div>
+                                <div>
+                                    <span class="keyForEventPageTabs">Statistics:</span>
+                                    <span id="statisticsProvider" class="displayInGreen">-</span>
+                                </div>
+                                <div>
+                                    <span class="keyForEventPageTabs">Live Statistics:</span>
+                                    <span id="liveStatisticsProvider" class="displayInGreen">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                    <hr class="hRule">
+                    <details>
                         <summary class="sbtSummary">External Tools</summary>
                         <div class="detailsExpanded">
                             <div id="sbEventIdForOddsManagerSection" class="itemsJustified">
@@ -408,7 +433,7 @@
                             </div>
                         </div>
                     </details>
-                    <hr class="hRule">
+
                 </div>
 
                 <div>
@@ -861,35 +886,41 @@
                     </div>
 
                     <hr class="hRule">
-                    <div id="openMappingForTemplateTagSection" class="itemsJustified">
-                        <span class="width95Percent">Mapping for the Template Tags</span>
-                        <button class="btIcon btOpenInNewWindow"
-                            onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <div id="sbMarketIdForOddsManagerSection" class="itemsJustified">
-                        <span class="width95Percent itemsJustified paddingRight8px">
-                            <span>Legacy Market ID</span>
-                            <span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span>
-                        </span>
-                        <button class="btIcon btOpenInNewWindow" onclick="getLegacyMarketId()">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
-                    <div class="itemsJustified">
-                        <div class="width95Percent itemsJustified paddingRight8px">
-                            <span>
-                                <span>Open in</span>
-                                <span class="sbManagerSb">sb</span>
-                                <span class="sbManagerManager">manager</span>
-                            </span>
-                            <span class="displayInLightGrey">(aka Trading Tools)</span>
+
+                    <details>
+                        <summary class="sbtSummary">External Tools</summary>
+                        <div class="detailsExpanded">
+                            <div id="openMappingForTemplateTagSection" class="itemsJustified">
+                                <span class="width95Percent">Mapping for the Template Tags</span>
+                                <button class="btIcon btOpenInNewWindow"
+                                    onclick="openStaticPageInNewWindow('MarketTemplateTag.cs')">
+                                    <img class="iconOpenInNewWindow">
+                                </button>
+                            </div>
+                            <div id="sbMarketIdForOddsManagerSection" class="itemsJustified">
+                                <span class="width95Percent itemsJustified paddingRight8px">
+                                    <span>Legacy Market ID</span>
+                                    <span class="displayInLightGrey">for ISA/Redis/SB Admin Client</span>
+                                </span>
+                                <button class="btIcon btOpenInNewWindow" onclick="getLegacyMarketId()">
+                                    <img class="iconOpenInNewWindow">
+                                </button>
+                            </div>
+                            <div class="itemsJustified">
+                                <div class="width95Percent itemsJustified paddingRight8px">
+                                    <span>
+                                        <span>Open in</span>
+                                        <span class="sbManagerSb">sb</span>
+                                        <span class="sbManagerManager">manager</span>
+                                    </span>
+                                    <span class="displayInLightGrey">(aka Trading Tools)</span>
+                                </div>
+                                <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('market')">
+                                    <img class="iconOpenInNewWindow">
+                                </button>
+                            </div>
                         </div>
-                        <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('market')">
-                            <img class="iconOpenInNewWindow">
-                        </button>
-                    </div>
+                    </details>
                 </div>
 
                 <button onclick="toggleSection('marketStatusSection')" class="moreLess">Market State</button>
@@ -2263,6 +2294,11 @@
     .keyForEventDetails,
     .width25percent {
         width: 25%;
+    }
+
+    .keyForEventPageTabs {
+        display: inline-block;
+        width: 80px;
     }
 
     .valueForContext {
