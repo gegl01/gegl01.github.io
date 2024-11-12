@@ -3649,11 +3649,12 @@
         let streams, previousStreams;
         let prematchStatisticsProviders = [];
         let previousPrematchStatisticsProviders = [];
+        let eventIdFromEventPage;
 
         function listenerForProviders() {
-            eventId = getUrlParam("eventId");
+            eventIdFromEventPage = getUrlParam("eventId");
 
-            if (!eventId?.startsWith("f-")) {
+            if (!eventIdFromEventPage?.startsWith("f-")) {
                 show(providersErrorMessage);
                 hide(providersSection);
                 return;
@@ -3662,8 +3663,8 @@
             show(providersSection);
             hide(providersErrorMessage);
 
-            streams = getState().sportsbook?.stream?.streams[eventId];
-            prematchStatisticsProviders = getState().sportsbook.event.events[eventId]?.prematchStatisticsProviders;
+            streams = getState().sportsbook?.stream?.streams[eventIdFromEventPage];
+            prematchStatisticsProviders = getState().sportsbook.event.events[eventIdFromEventPage]?.prematchStatisticsProviders;
             if (JSON.stringify(streams) !== JSON.stringify(previousStreams) || !areArraysEqual(prematchStatisticsProviders, previousPrematchStatisticsProviders)) {
                 previousStreams = streams;
                 previousPrematchStatisticsProviders = [...prematchStatisticsProviders];
@@ -3677,7 +3678,7 @@
             }
 
             function getStatisticsProviders() {
-                let prematchStatisticsProviders = getState().sportsbook.event.events[eventId]?.prematchStatisticsProviders || [];
+                let prematchStatisticsProviders = getState().sportsbook.event.events[eventIdFromEventPage]?.prematchStatisticsProviders || [];
                 let prematchStatisticsProvidersFromStreams = streams?.statistics?.provider;
 
                 if (prematchStatisticsProvidersFromStreams && !prematchStatisticsProviders.includes(prematchStatisticsProvidersFromStreams)) {
@@ -3885,7 +3886,7 @@
         window.setEventPhase = (phase) => { setEventPhase(phase); }
 
         function setEventPhase(phase) {
-            // mockedEventPhase = phase;
+            mockedEventPhase = phase;
             if (lockedEventId !== undefined) {
                 eventId = lockedEventId;
             }
