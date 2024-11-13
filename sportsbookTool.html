@@ -510,85 +510,103 @@
                         </div>
                         <div id="scoreBoardExtrasSection">
                             <hr class="hRule">
-                            <div>Scoreboard Extras</div>
-                            <div class="scoreBoardExtrasDetails">
+                            <details>
+                                <summary class="sbtSummary">Scoreboard Extras</summary>
+                                <div class="scoreBoardExtrasDetails">
 
-                                <div id="footballScoreBoardExtrasSection">
-                                    <div class="checkBoxRowToLeft">
-                                        <span class="scoreBoardExtrasKey">Red Cards</span>
-                                        <input id="chkRedCardsHome" type="checkbox" checked
-                                            class="chkInlineRight chkSbTools">
-                                        <span>Home</span>
-                                        <input id="chkRedCardsAway" type="checkbox" checked
-                                            class="marginLeft15px chkInlineRight chkSbTools">
-                                        <span>Away</span>
+                                    <div id="footballScoreBoardExtrasSection">
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Red Cards</span>
+                                            <input id="chkRedCardsHome" type="checkbox" checked
+                                                class="chkInlineRight chkSbTools">
+                                            <span>Home</span>
+                                            <input id="chkRedCardsAway" type="checkbox" checked
+                                                class="marginLeft15px chkInlineRight chkSbTools">
+                                            <span>Away</span>
+                                        </div>
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Aggregate Score</span>
+                                            <input id="chkAggScore" type="checkbox" checked
+                                                class="chkInlineRight chkSbTools">
+                                            <span>AGG</span>
+                                        </div>
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Extra Time</span>
+                                            <input id="chkExtraTime" type="checkbox" class="chkInlineRight chkSbTools">
+                                            <span>For long match phase label</span>
+                                        </div>
                                     </div>
-                                    <div class="checkBoxRowToLeft">
-                                        <span class="scoreBoardExtrasKey">Aggregate Score</span>
-                                        <input id="chkAggScore" type="checkbox" checked
-                                            class="chkInlineRight chkSbTools">
-                                        <span>AGG</span>
+
+                                    <div id="iceHockeyScoreBoardExtrasSection">
+                                        <div class="radioRowToLeft">
+                                            <span id="ppKeyLabelTop" class="scoreBoardExtrasKey">Power Play Home</span>
+                                            <input id="radioPPHome" type="radio" checked name="powerPlay"
+                                                class="radioSbTools">
+                                            <span>PP</span>
+                                            <input id="radioPP2Home" type="radio" name="powerPlay"
+                                                class="marginLeft15px radioSbTools">
+                                            <span>PP2</span>
+                                        </div>
+                                        <div class="radioRowToLeft">
+                                            <span id="ppKeyLabelBottom" class="scoreBoardExtrasKey">Power Play
+                                                Away</span>
+                                            <input id="radioPPAway" type="radio" name="powerPlay" class="radioSbTools">
+                                            <span>PP</span>
+                                            <input id="radioPP2Away" type="radio" name="powerPlay"
+                                                class="marginLeft15px chkInlineRight radioSbTools">
+                                            <span>PP2</span>
+                                        </div>
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKey">No Power Play</span>
+                                            <input id="radioPPNone" type="radio" name="powerPlay" class="radioSbTools">
+                                        </div>
                                     </div>
-                                    <div class="checkBoxRowToLeft">
-                                        <span class="scoreBoardExtrasKey">Extra Time</span>
-                                        <input id="chkExtraTime" type="checkbox" class="chkInlineRight chkSbTools">
-                                        <span>For long match phase label</span>
+
+                                    <div id="dartsScoreBoardExtrasSection">
+                                        <div class="checkBoxRowToLeft">
+                                            <input id="chkSetPoints" type="checkbox" checked
+                                                class="chkInlineRight chkSbTools">
+                                            <span>Set Points</span>
+                                            <input id="chk180s" type="checkbox" checked
+                                                class="marginLeft30px chkInlineRight chkSbTools">
+                                            <span>180s</span>
+                                        </div>
+                                    </div>
+
+                                    <div id="tennisScoreBoardExtrasSection">
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Number of Sets</span>
+                                            <input id="radio3setTennis" type="radio" checked name="tennisNumberOfSets"
+                                                class="radioSbTools">
+                                            <span>3</span>
+                                            <input id="radio5setTennis" type="radio" name="tennisNumberOfSets"
+                                                class="marginLeft15px radioSbTools">
+                                            <span>5</span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div id="iceHockeyScoreBoardExtrasSection">
-                                    <div class="radioRowToLeft">
-                                        <span id="ppKeyLabelTop" class="scoreBoardExtrasKey">Power Play Home</span>
-                                        <input id="radioPPHome" type="radio" checked name="powerPlay"
-                                            class="radioSbTools">
-                                        <span>PP</span>
-                                        <input id="radioPP2Home" type="radio" name="powerPlay"
-                                            class="marginLeft15px radioSbTools">
-                                        <span>PP2</span>
-                                    </div>
-                                    <div class="radioRowToLeft">
-                                        <span id="ppKeyLabelBottom" class="scoreBoardExtrasKey">Power Play Away</span>
-                                        <input id="radioPPAway" type="radio" name="powerPlay" class="radioSbTools">
-                                        <span>PP</span>
-                                        <input id="radioPP2Away" type="radio" name="powerPlay"
-                                            class="marginLeft15px chkInlineRight radioSbTools">
-                                        <span>PP2</span>
-                                    </div>
-                                    <div class="radioRowToLeft">
-                                        <span class="scoreBoardExtrasKey">No Power Play</span>
-                                        <input id="radioPPNone" type="radio" name="powerPlay" class="radioSbTools">
-                                    </div>
-                                </div>
-
-                                <div id="dartsScoreBoardExtrasSection">
-                                    <div class="checkBoxRowToLeft">
-                                        <input id="chkSetPoints" type="checkbox" checked
-                                            class="chkInlineRight chkSbTools">
-                                        <span>Set Points</span>
-                                        <input id="chk180s" type="checkbox" checked
-                                            class="marginLeft30px chkInlineRight chkSbTools">
-                                        <span>180s</span>
-                                    </div>
-                                </div>
-
-                                <div id="tennisScoreBoardExtrasSection">
-                                    <div class="radioRowToLeft">
-                                        <span class="scoreBoardExtrasKey">Number of Sets</span>
-                                        <input id="radio3setTennis" type="radio" checked name="tennisNumberOfSets"
-                                            class="radioSbTools">
-                                        <span>3</span>
-                                        <input id="radio5setTennis" type="radio" name="tennisNumberOfSets"
-                                            class="marginLeft15px radioSbTools">
-                                        <span>5</span>
-                                    </div>
-                                </div>
-                            </div>
-
+                            </details>
                         </div>
                         <div id="scoreBoardNotSupportedSection" class="inactivated checkBoxRowToLeft">
                             <input type="checkbox" class="chkInlineRight chkSbTools">
                             <span id="scoreBoardNotSupportedMessage"></span>
                         </div>
+
+
+                        <div id="eventStartingInOneHourSection">
+                            <hr class="hRule">
+                            <div class="itemsJustifiedVertCenter">
+                                <span>
+                                    <span class="iconStartingSoon iconSvgSmall marginRight5px"></span>
+                                    <span>Starting in 1 Hour</span>
+                                </span>
+                                <button class="btSimple btSubmit" id="btSetStartingTimeInOneHour"
+                                    onclick="setStartingTimeInOneHour()">
+                                    Set
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
