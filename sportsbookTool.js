@@ -3647,11 +3647,9 @@
 
         window.setStartingTimeInOneHour = () => {
             let now = new Date();
-            log(now.toISOString());
             now.setHours(now.getHours() + 1);
-            log(now.toISOString());
             getState().sportsbook.event.events[eventId].startDate = now.toISOString().slice(0, -5) + 'Z';
-            triggerChangeDetection(eventId);
+            triggerChangeDetection(eventId, 200);
         }
 
         let streams, previousStreams;
