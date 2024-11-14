@@ -515,25 +515,89 @@
                                 <div class="scoreBoardExtrasDetails">
 
                                     <div id="footballScoreBoardExtrasSection">
-                                        <div class="checkBoxRowToLeft">
-                                            <span class="scoreBoardExtrasKey">Red Cards</span>
-                                            <input id="chkRedCardsHome" type="checkbox" checked
-                                                class="chkInlineRight chkSbTools">
-                                            <span>Home</span>
-                                            <input id="chkRedCardsAway" type="checkbox" checked
-                                                class="marginLeft15px chkInlineRight chkSbTools">
-                                            <span>Away</span>
+
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Match Clock</span>
+                                            <input id="radioHalfTime" type="radio" class="chkInlineRight radioSbTools"
+                                                name="matchClock">
+                                            <span>Half Time</span>
+                                            <input id="radioExtraTime" type="radio"
+                                                class="marginLeft15px chkInlineRight radioSbTools" name="matchClock">
+                                            <span>Extra Time</span>
+                                            <input type="radio" class="marginLeft15px chkInlineRight radioSbTools"
+                                                name="matchClock" checked>
+                                            <span>Neither</span>
                                         </div>
+
+                                        <hr class="hRule">
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Video Asst Referee</span>
+                                            <input id="chkVar" type="checkbox"
+                                                class="chkInlineRight chkSbTools">
+                                            <span>Displayed as 'VAR'</span>
+                                        </div>
+
                                         <div class="checkBoxRowToLeft">
                                             <span class="scoreBoardExtrasKey">Aggregate Score</span>
                                             <input id="chkAggScore" type="checkbox" checked
                                                 class="chkInlineRight chkSbTools">
-                                            <span>AGG</span>
+                                            <span>Displayed as 'AGG' at some places</span>
                                         </div>
+
                                         <div class="checkBoxRowToLeft">
-                                            <span class="scoreBoardExtrasKey">Extra Time</span>
-                                            <input id="chkExtraTime" type="checkbox" class="chkInlineRight chkSbTools">
-                                            <span>For long match phase label</span>
+                                            <span class="scoreBoardExtrasKey">Stoppage Time</span>
+                                            <input id="chkStoppageTime" type="checkbox" checked
+                                                class="chkInlineRight chkSbTools">
+                                            <span>Due to Injuries etc.</span>
+                                        </div>
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Expected Goals</span>
+                                            <input id="chkExpectedGoals" type="checkbox" checked
+                                                class="chkInlineRight chkSbTools">
+                                            <span>Displayed as 'xGoals'</span>
+                                        </div>
+
+                                        <hr class="hRule">
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Red Cards 1+</span>
+                                            <input id="chkRedCardsHome" type="checkbox" checked
+                                                class="chkInlineRight chkSbTools">
+                                            <span class="width90px">Home</span>
+                                            <input id="chkRedCardsAway" type="checkbox" checked
+                                                class="chkInlineRight chkSbTools">
+                                            <span>Away</span>
+                                        </div>
+
+                                        <hr class="hRule">
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Doughnut Charts</span>
+                                            <span class="displayFlex">
+                                                <input id="chkPossession" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span class="width90px">Possession</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="chkTotalShots" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Total Shots</span>
+                                            </span>
+                                        </div>
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey"></span>
+                                            <span class="displayFlex">
+                                                <input id="chkShotsOnTarget" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span class="width90px">Shots on Target</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="chkDangerousAttacks" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Dang. Attacks</span>
+                                            </span>
                                         </div>
                                     </div>
 
@@ -2169,6 +2233,10 @@
         width: 92%;
     }
 
+    .width90px {
+        width: 90px;
+    }
+
     .iconFbScoreBoard {
         height: 16px;
         margin-bottom: 2px;
@@ -2936,6 +3004,7 @@
     .scoreBoardExtrasDetails {
         transform: scale(0.85);
         transform-origin: left;
+        width: max-content;
     }
 
     .radioSbTools {
