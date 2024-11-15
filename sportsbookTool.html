@@ -375,7 +375,10 @@
                     <details>
                         <summary class="sbtSummary">Providers</summary>
                         <div class="detailsExpanded">
-                            <div id="providersErrorMessage" class="displayInRed hide">Open an event page first</div>
+                            <div id="providersMessage" class="alignItemsCenter displayInLightGrey marginBottom10px">
+                                <span class="iconInfoCircle opacity20 marginRight5px"></span>
+                                <span>Live stream data not fetched → open a Statistics tab</span>
+                            </div>
                             <div id="providersSection">
                                 <div>
                                     <span class="keyForEventPageProviders">Streaming:</span>
@@ -533,8 +536,7 @@
 
                                         <div class="checkBoxRowToLeft">
                                             <span class="scoreBoardExtrasKey">Video Asst Referee</span>
-                                            <input id="chkVar" type="checkbox"
-                                                class="chkInlineRight chkSbTools">
+                                            <input id="chkVar" type="checkbox" class="chkInlineRight chkSbTools">
                                             <span>Displayed as 'VAR'</span>
                                         </div>
 
@@ -2402,6 +2404,12 @@
         text-overflow: ellipsis;
     }
 
+    #providersMessage {
+        transform: scale(0.9);
+        transform-origin: left;
+        width: max-content;
+    }
+
     .marginTop5px {
         margin-top: 5px;
     }
@@ -2940,6 +2948,10 @@
         background-color: #ccc
     }
 
+    .opacity20 {
+        opacity: 20%;
+    }
+
     .accContent {
         margin: 10px;
         background-color: white;
@@ -3156,6 +3168,10 @@
 
     .iconSvgSmall {
         height: 12px;
+    }
+
+    .iconSvgSmaller {
+        height: 10px;
     }
 
     .iconSvgLarge {
