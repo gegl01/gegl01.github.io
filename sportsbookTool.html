@@ -521,15 +521,42 @@
 
                                         <div class="radioRowToLeft">
                                             <span class="scoreBoardExtrasKey">Match Clock</span>
-                                            <input id="radioHalfTime" type="radio" class="chkInlineRight radioSbTools"
-                                                name="matchClock">
-                                            <span>Half Time</span>
-                                            <input id="radioExtraTime" type="radio"
-                                                class="marginLeft15px chkInlineRight radioSbTools" name="matchClock">
-                                            <span>Extra Time</span>
-                                            <input type="radio" class="marginLeft15px chkInlineRight radioSbTools"
-                                                name="matchClock" checked>
-                                            <span>Neither</span>
+                                            <span class="footballScoreBoardExtrasThreeInputs">
+                                                <input id="radioHalfTime" type="radio"
+                                                    class="radioSbTools" name="matchClock">
+                                                <span>Half Time</span>
+                                            </span>
+                                            <span class="footballScoreBoardExtrasThreeInputs">
+                                                <input id="radioExtraTime" type="radio"
+                                                    class="radioSbTools"
+                                                    name="matchClock">
+                                                <span>Extra Time</span>
+                                            </span>
+                                            <span class="footballScoreBoardExtrasThreeInputs">
+                                                <input type="radio" class="radioSbTools"
+                                                    name="matchClock" checked>
+                                                <span>Neither</span>
+                                            </span>
+                                        </div>
+
+                                        <hr class="hRule">
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Stats Counter</span>
+                                            <span class="footballScoreBoardExtrasThreeInputs">
+                                                <input id="chkCorners" type="checkbox" class="chkSbTools chkInlineRight"
+                                                    checked>
+                                                <span class="iconCorner iconFbScoreBoard"></span>
+                                            </span>
+                                            <span class="footballScoreBoardExtrasThreeInputs">
+                                                <input id="chkYellowCards" type="checkbox"
+                                                    class="chkSbTools chkInlineRight" checked>
+                                                <span class="iconYellowCard iconFbScoreBoard"></span>
+                                            </span>
+                                            <span class="footballScoreBoardExtrasThreeInputs">
+                                                <input id="chkRedCards" type="checkbox" class="chkSbTools chkInlineRight" checked>
+                                                <span class="iconRedCard iconFbScoreBoard"></span>
+                                            </span>
                                         </div>
 
                                         <hr class="hRule">
@@ -561,7 +588,7 @@
                                             <span>Displayed as 'xGoals'</span>
                                         </div>
 
-                                        <hr class="hRule">
+                                        <!-- <hr class="hRule">
                                         <div class="checkBoxRowToLeft">
                                             <span class="scoreBoardExtrasKey">Red Cards 1+</span>
                                             <input id="chkRedCardsHome" type="checkbox" checked
@@ -570,7 +597,7 @@
                                             <input id="chkRedCardsAway" type="checkbox" checked
                                                 class="chkInlineRight chkSbTools">
                                             <span>Away</span>
-                                        </div>
+                                        </div> -->
 
                                         <hr class="hRule">
 
@@ -619,7 +646,7 @@
                                             <input id="radioPPAway" type="radio" name="powerPlay" class="radioSbTools">
                                             <span>PP</span>
                                             <input id="radioPP2Away" type="radio" name="powerPlay"
-                                                class="marginLeft15px chkInlineRight radioSbTools">
+                                                class="marginLeft15px radioSbTools">
                                             <span>PP2</span>
                                         </div>
                                         <div class="radioRowToLeft">
@@ -2374,6 +2401,12 @@
         transform: translateY(1px);
     }
 
+    .footballScoreBoardExtrasThreeInputs {
+        display: flex;
+        align-items: center;
+        width: 80px;
+    }
+
     .keyForContext {
         width: 34%;
     }
@@ -2475,12 +2508,12 @@
 
     .chkInline {
         vertical-align: middle;
-        margin-left: 5px;
+        margin-left: 3px;
     }
 
     .chkInlineRight {
         vertical-align: middle;
-        margin-right: 5px;
+        margin-right: 3px;
     }
 
     #initialOddsSpan {
@@ -3020,7 +3053,8 @@
     }
 
     .radioSbTools {
-        margin-right: 3px;
+        /* margin-right: 3px; */
+        margin-right: 5px;
         cursor: pointer;
         accent-color: var(--sbtColorGreen);
     }
