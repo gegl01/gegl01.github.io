@@ -98,7 +98,7 @@
     var orderedCategories, orderedRegions, orderedCompetitions;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.54";
+    const SB_TOOL_VERSION = "v1.6.55";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -3691,27 +3691,15 @@
             triggerChangeDetection(eventId, 200);
         }
 
-        let streams, previousStreams;
+        let streams, streamsAsJson, previousStreamsAsJson;
         let prematchStatisticsProviders = [];
         let previousPrematchStatisticsProviders = [];
-        // let eventIdFromEventPage;
 
         function listenerForProviders() {
             if (!chkLockEventForSbToolsEvent.checked) {
                 eventId = getDetectedEventId();
             }
             if (eventId == null) return;
-            // let eventId = getUrlParam("eventId");
-
-            // if (!eventIdFromEventPage?.startsWith("f-")) {
-            //     show(providersErrorMessage);
-            //     hide(providersSection);
-            //     return;
-            // }
-
-
-            // show(providersSection);
-            // hide(providersErrorMessage);
 
             streams = getState().sportsbook?.stream?.streams[eventId];
             if (!streams) {
@@ -3720,10 +3708,11 @@
                 hide(providersMessage);
             }
             prematchStatisticsProviders = getState().sportsbook.event.events[eventId]?.prematchStatisticsProviders;
-            if (JSON.stringify(streams) !== JSON.stringify(previousStreams) || !areArraysEqual(prematchStatisticsProviders, previousPrematchStatisticsProviders)) {
-                previousStreams = streams;
-                previousPrematchStatisticsProviders = [...prematchStatisticsProviders];
 
+            streamsAsJson = JSON.stringify(streams);
+            if (streamsAsJson !== previousStreamsAsJson || !areArraysEqual(prematchStatisticsProviders, previousPrematchStatisticsProviders)) {
+                previousStreamsAsJson = streamsAsJson;
+                previousPrematchStatisticsProviders = [...prematchStatisticsProviders];
                 // Update UI with provider information
                 // streamingProvider.innerText = streams?.video?.provider || "-";
                 streamingProvider.innerText = getStreamingProvider();
@@ -3744,6 +3733,7 @@
 
             function getStreamingProvider() {
                 let streamProvider = streams?.video?.provider || "-";
+                log("streamProvider " + streamProvider);
 
                 if (streamProvider !== "-") {
                     const source = streams.video.source;
@@ -4004,7 +3994,7 @@
             }
             setTimeout(function () {
                 initSbToolsEvent();
-            }, 200);
+            }, 500);
 
         }
 
