@@ -522,19 +522,17 @@
                                         <div class="radioRowToLeft">
                                             <span class="scoreBoardExtrasKey">Match Clock</span>
                                             <span class="footballScoreBoardExtrasThreeInputs">
-                                                <input id="radioHalfTime" type="radio"
-                                                    class="radioSbTools" name="matchClock">
+                                                <input id="radioHalfTime" type="radio" class="radioSbTools"
+                                                    name="matchClock">
                                                 <span>Half Time</span>
                                             </span>
                                             <span class="footballScoreBoardExtrasThreeInputs">
-                                                <input id="radioExtraTime" type="radio"
-                                                    class="radioSbTools"
+                                                <input id="radioExtraTime" type="radio" class="radioSbTools"
                                                     name="matchClock">
                                                 <span>Extra Time</span>
                                             </span>
                                             <span class="footballScoreBoardExtrasThreeInputs">
-                                                <input type="radio" class="radioSbTools"
-                                                    name="matchClock" checked>
+                                                <input type="radio" class="radioSbTools" name="matchClock" checked>
                                                 <span>Neither</span>
                                             </span>
                                         </div>
@@ -554,7 +552,8 @@
                                                 <span class="iconYellowCard iconFbEventPage"></span>
                                             </span>
                                             <span class="footballScoreBoardExtrasThreeInputs">
-                                                <input id="chkRedCards" type="checkbox" class="chkSbTools chkInlineRight" checked>
+                                                <input id="chkRedCards" type="checkbox"
+                                                    class="chkSbTools chkInlineRight" checked>
                                                 <span class="iconRedCard iconFbEventPage"></span>
                                             </span>
                                         </div>
@@ -833,7 +832,8 @@
                             <hr class="hRule">
                             <div id="createFastMarketSection" class="marginTopBottom10px">
                                 Fast Market
-                                <div class="infoMessage">Football, Basketball, Tennis, Table Tennis, Ice Hockey, American Football, Squash</div>
+                                <div class="infoMessage">Football, Basketball, Tennis, Table Tennis, Ice Hockey,
+                                    American Football, Squash</div>
                                 <div class="createMarketLayout">
                                     <button class="btSimple" id="btCreateFastMarket" onclick="createMarket('fast')">
                                         <span class="iconFastMarket iconOnBtSimple iconSvgSmall"></span>
@@ -949,11 +949,15 @@
             <div id="addToCarouselSection">
                 <hr class="hRule">
                 <div id="carouselButtonsDiv">
-                    <div class="itemsJustifiedVertCenter">
-                        <span>Add market to Carousel or Cards</span>
+                    <div class="alignItemsCenter">                        
                         <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addMarketToCarouselOrCards()">
                             <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
                         </button>
+                        <span>Add market to Carousel or Cards</span>
+                    </div>
+                    <div class="checkBoxRowToLeft">
+                        <input type="checkbox" class="chkSbTools" id="chkBetPopularityBadge">
+                        <span class="marginLeft5px">with Bet Popularity badge on Competition pages</span>
                     </div>
                 </div>
                 <div id="addToCarouselErrorMessage" class="marginBottom10px displayInRed">
