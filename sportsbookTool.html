@@ -96,17 +96,29 @@
                 <div class="displayFlex">
                     <div class="keyForContext">Brand (Market):</div>
                     <div class="valueForContext itemsJustified">
-                        <div id="brandName"></div>
+                        <span id="brandName"></span>
                         <button class="btCopy btIcon" onclick="copyToClipboard('brand')">
                             <img class="iconCopy">
                         </button>
                     </div>
                 </div>
 
-                <div class="displayFlex">
+                <!-- <div class="displayFlex">
                     <div class="keyForContext">Browser:</div>
                     <div class="valueForContext itemsJustified">
                         <div id="browserVersion"></div>
+                        <button class="btCopy btIcon" onclick="copyToClipboard('browserVersion')">
+                            <img class="iconCopy">
+                        </button>
+                    </div>
+                </div> -->
+                <div class="displayFlex">
+                    <div class="keyForContext">Browser:</div>
+                    <div class="valueForContext itemsJustified">
+                        <span>
+                            <span id="browserVersion"></span>
+                            <span id="browserZoom" class="hide"></span>
+                        </span>
                         <button class="btCopy btIcon" onclick="copyToClipboard('browserVersion')">
                             <img class="iconCopy">
                         </button>
@@ -117,12 +129,24 @@
                     <div class="keyForContext">SB Version:</div>
                     <div class="valueForContext itemsJustified">
                         <div>
-                            <span id="obgVersion"></span>
+                            <span id="sbVersion"></span>
                             <span id="B2BorB2C" class="displayInLightGrey"></span>
                         </div>
-                        <button class="btCopy btIcon" onclick="copyToClipboard('obgVersion')">
+                        <button class="btCopy btIcon" onclick="copyToClipboard('sbVersion')">
                             <img class="iconCopy">
                         </button>
+                    </div>
+                </div>
+
+                <div id="userNameSection" class="hide">
+                    <div class="displayFlex hide">
+                        <div class="keyForContext">User Name:</div>
+                        <div class="valueForContext itemsJustified">
+                            <div id="userName"></div>
+                            <button class="btCopy btIcon" onclick="copyToClipboard('userName')">
+                                <img class="iconCopy">
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -334,21 +358,25 @@
             <div id="eventFeaturesSection" class="hide">
                 <button onclick="toggleSection('eventDetailsSection')" class="moreLess">Event Details</button>
                 <div id="eventDetailsSection" class="marginTopBottom10px hide">
+
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Event ID:</span>
                         <span class="valueForEventDetails itemsJustified">
                             <span id="eventIdForEventDetails" class="displayInGreen"></span>
-                            <span>
-                                <button class="btCopy btIcon" id="btCopyEventId" onclick="copyToClipboard('eventId')">
-                                    <img class="iconCopy">
-                                </button>
-                            </span>
+                            <button class="btCopy btIcon" id="btCopyEventId" onclick="copyToClipboard('eventId')">
+                                <img class="iconCopy">
+                            </button>
                         </span>
                     </div>
-                    <div class="displayFlex">
+                    <!-- <div class="displayFlex">
                         <span class="keyForEventDetails">Start Date:</span>
                         <span id="startDateForEventDetails" class="valueForEventDetails displayInGreen"></span>
                     </div>
+
+                    <div class="displayFlex">
+                        <span class="keyForEventDetails">Traded as:</span>
+                        <span id="tradedAsForEventDetails" class="valueForEventDetails displayInGreen"></span>
+                    </div> -->
 
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Category:</span>
@@ -371,6 +399,35 @@
                             <span id="competitionIdForEventDetails"></span>
                         </span>
                     </div>
+
+                    <hr class="hRule">
+                    <details>
+                        <summary class="sbtSummary">More</summary>
+                        <div class="detailsExpanded">
+                            <div id="moreEventDetailsSection">
+
+                                <div class="displayFlex">
+                                    <span class="keyForEventDetails">Start Date:</span>
+                                    <span id="startDateForEventDetails"
+                                        class="valueForEventDetails displayInGreen"></span>
+                                </div>
+
+                                <div class="displayFlex">
+                                    <span class="keyForEventDetails">Traded as:</span>
+                                    <span id="tradedAsForEventDetails"
+                                        class="valueForEventDetails displayInGreen"></span>
+                                </div>
+
+                                <div class="displayFlex">
+                                    <span class="keyForEventDetails">Is eSport:</span>
+                                    <span id="isEsportForEventDetails"
+                                        class="valueForEventDetails displayInGreen"></span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </details>
+
                     <hr class="hRule">
                     <details>
                         <summary class="sbtSummary">Providers</summary>
@@ -808,7 +865,8 @@
 
                 <div>
                     <button onclick="toggleSection('createMarketSection')" class="moreLess">
-                        Create Fast/Player Props Market
+                        <!-- Create Fast/Player Props Market -->
+                        Not working until SBEUJO-10129 gets fixed
                     </button>
 
                     <div id="createMarketSection" class="hide marginTopBottom10px">
@@ -949,7 +1007,7 @@
             <div id="addToCarouselSection">
                 <hr class="hRule">
                 <div id="carouselButtonsDiv">
-                    <div class="alignItemsCenter">                        
+                    <div class="alignItemsCenter">
                         <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addMarketToCarouselOrCards()">
                             <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
                         </button>
@@ -3325,6 +3383,10 @@
         .btGreen:hover {
             background-color: #00b9bd;
         }
+    }
+
+    #userName {
+        white-space: pre-wrap;
     }
 
     .btGreen:active {
