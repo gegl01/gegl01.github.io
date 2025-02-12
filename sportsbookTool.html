@@ -310,6 +310,12 @@
                         <span id="segmentLegacyIdSpan" class="displayInGreen"></span>
                     </div>
                 </div>
+                <div>
+                    <div class="width95Percent displayFlex">
+                        <span class="marginRight5px">Jurisdiction:</span>
+                        <span id="jurisdisctionSpan" class="displayInGreen"></span>
+                    </div>
+                </div>
             </div>
 
             <button onclick="toggleSection('segmentChangers')" class="moreLess">Set Segment</button>
@@ -1744,9 +1750,9 @@
             </button>
             <div id="accaSection" class="hide marginTopBottom10px">
                 <div id="accaMessage" class="displayInRed">
-                    <div id="loginToSeeAccaIns">Login to see ACCA insurance.
+                    <div id="loginToSeeAccaIns">Login to see ACCA Insurance.
                     </div>
-                    <div id="noAccaInsFound">No active ACCA insurance found.</div>
+                    <div id="noAccaInsFound">No active ACCA Insurance found.</div>
                 </div>
                 <div id="accaInsDetailsLayout" class="hide">
                     <div class="itemsJustified">
@@ -1861,6 +1867,16 @@
                     </details>
 
                 </div>
+                <hr class="hRule">
+                <div>
+                    <button class="btSimple btBonusCreateRemove" onclick="createMockAccaInsurance()">Create</button>
+                    <span>Create a mock ACCA Insurance</span>
+                </div>
+                <div id="removeAccaInsSection">
+                    <button class="btSimple btBonusCreateRemove" onclick="removeAccaInsurance()">Remove</button>
+                    <span>Remove selected ACCA Insurance</span>
+                </div>
+
             </div>
 
             <button onclick="toggleSection('accaBoostSection')" class="moreLess">ACCA Boost
@@ -1977,33 +1993,33 @@
                 </div>
             </div>
 
-            <button onclick="toggleSection('freeBetSection')" class="moreLess">Free or Risk Free Bet
+            <button onclick="toggleSection('bonusStakeSection')" class="moreLess">Free or Risk Free Bet
             </button>
-            <div id="freeBetSection" class="hide marginTop10px">
-                <div id="freeBetNotFound" class="displayInRed">
+            <div id="bonusStakeSection" class="hide marginTop10px">
+                <div id="bonusStakeNotFound" class="displayInRed">
                     No Free Bet found
                 </div>
-                <div id="freeBetLogin" class="displayInRed">Login to see your Free Bets.
+                <div id="bonusStakeLogin" class="displayInRed">Login to see your Free/Risk Free Bets
                 </div>
-                <div id="freeBetDetailsLayout">
+                <div id="bonusStakeDetailsLayout">
                     <div>
-                        <span id="freeBetNumberOf" class="displayInGreen fontBold marginRight5px"></span>
+                        <span id="bonusStakeNumberOf" class="displayInGreen fontBold marginRight5px"></span>
                         <span>Free or Risk Free Bets found</span>
                     </div>
-                    <select id="freeBetSelector" onchange="selectFreeBet(value)"
+                    <select id="bonusStakeSelector" onchange="selectBonusStake(value)"
                         class="comboSbTools height20px marginBottom10px width100percent">
                     </select>
-                    <div id="freeBetSelectedDetails">
+                    <div id="bonusStakeSelectedDetails">
                         <div>
                             <span class="marginRight5px">Name:</span>
-                            <span id="freeBetName" class="displayInGreen"></span>
+                            <span id="bonusStakeName" class="displayInGreen"></span>
                         </div>
                         <div class="itemsJustified">
                             <div class="width95Percent displayFlex">
                                 <span class="marginRight5px">ID:</span>
-                                <span id="freeBetIdSpan" class="displayInGreen"></span>
+                                <span id="bonusStakeIdSpan" class="displayInGreen"></span>
                             </div>
-                            <button class="btCopy btIcon" onclick="copyToClipboard('freeBetId')">
+                            <button class="btCopy btIcon" onclick="copyToClipboard('bonusStakeId')">
                                 <img class="iconCopy">
                             </button>
                         </div>
@@ -2016,53 +2032,70 @@
                                 </span>
                                 <span class="displayInLightGrey">(aka Trading Tools)</span>
                             </div>
-                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('freeBet')">
+                            <button class="btIcon btOpenInNewWindow" onclick="openInTradingTools('bonusStake')">
                                 <img class="iconOpenInNewWindow">
                             </button>
                         </div>
                         <hr class="hRule">
-                        <div id="freeBetRestrictionsSection">
+                        <div id="bonusStakeRestrictionsSection">
                             Restriction path:
-                            <div id="freeBetPathToCompetition" class="displayInGreen marginBottom10px">
+                            <div id="bonusStakePathToCompetition" class="displayInGreen marginBottom10px">
                             </div>
-                            <div id="freeBetFurtherRestricions" class="displayInOrange hide">
+                            <div id="bonusStakeFurtherRestricions" class="displayInOrange hide">
                                 Further restrictions are set on Event/Market level. See the details in Trading Tools.
                             </div>
                             <hr class="hRule">
                         </div>
                         <div class="displayFlex">
-                            <span class="keyForFreeBet">Type / Payout:</span>
+                            <span class="keyForBonusStake">Type / Payout:</span>
                             <span class="displayInGreen">
-                                <span id="freeBetType"></span>
-                                <span id="freeBetPayoutMode"></span>
+                                <span id="bonusStakeType"></span>
+                                <span id="bonusStakePayoutMode"></span>
                             </span>
                         </div>
                         <div class="displayFlex">
-                            <span class="keyForFreeBet">Stake:</span>
-                            <span id="freeBetStake" class="displayInGreen"></span>
+                            <span class="keyForBonusStake">Stake:</span>
+                            <span id="bonusStakeStake" class="displayInGreen"></span>
                         </div>
                         <div class="displayFlex">
-                            <span class="keyForFreeBet">Bet Types:</span>
-                            <span id="freeBetBetTypes" class="displayInGreen"></span>
+                            <span class="keyForBonusStake">Bet Types:</span>
+                            <span id="bonusStakeBetTypes" class="displayInGreen"></span>
                         </div>
                         <div class="displayFlex">
-                            <span class="keyForFreeBet">Event Phases:</span>
-                            <span id="freeBetEventPhases" class="displayInGreen"></span>
+                            <span class="keyForBonusStake">Event Phases:</span>
+                            <span id="bonusStakeEventPhases" class="displayInGreen"></span>
                         </div>
-                        <div id="freeBetNoOfSelectionsDiv">
+                        <div id="bonusStakeNoOfSelectionsDiv">
                             <div class="displayFlex">
-                                <span class="keyForFreeBet">No. of Selections:</span>
-                                <span id="freeBetNoOfSelections" class="displayInGreen"></span>
+                                <span class="keyForBonusStake">No. of Selections:</span>
+                                <span id="bonusStakeNoOfSelections" class="displayInGreen"></span>
                             </div>
                         </div>
-                        <div id="freeBetExpiryDateDiv">
+                        <div id="bonusStakeExpiryDateDiv">
                             <div class="displayFlex">
-                                <span class="keyForFreeBet">Expiry Date:</span>
-                                <span id="freeBetExpiryDate" class="displayInGreen"></span>
+                                <span class="keyForBonusStake">Expiry Date:</span>
+                                <span id="bonusStakeExpiryDate" class="displayInGreen"></span>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <hr class="hRule">
+                <div>
+                    <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('FreeBet')">Create
+                        FB</button>
+                    <span>Create a mock Free Bet</span>
+                </div>
+                <div>
+                    <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('RiskFreeBet')">Create
+                        RFB</button>
+                    <span>Create a mock Risk Free Bet</span>
+                </div>
+                <div id="removeBonusStakeSection" class="marginTop10px" >
+                    <button class="btSimple btBonusCreateRemove" onclick="removeBonusStake()">Remove</button>
+                    <span>Remove selected Free/Risk Free Bet</span>
+                </div>
+
             </div>
 
         </div>
@@ -2416,7 +2449,7 @@
         width: 30%;
     }
 
-    .keyForFreeBet {
+    .keyForBonusStake {
         width: 35%;
     }
 
@@ -2471,6 +2504,10 @@
         padding: 2px;
         color: #444;
         height: fit-content;
+    }
+
+    .btBonusCreateRemove {
+        width: 80px;
     }
 
     .btEqualWidth {

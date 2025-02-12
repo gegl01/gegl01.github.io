@@ -56,14 +56,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -72,7 +72,7 @@
     var eventId, lockedEventId;
     var participants, selectedParticipantId;
     var participants = [];
-    var previousEventId, previousMarketId, previousSelectionId, previousPriceBoosts, previousFreeBets, previousProfitBoosts;
+    var previousEventId, previousMarketId, previousSelectionId, previousPriceBoosts, previousBonusStakes, previousProfitBoosts;
     var eventLabel; //,savedEventLabel;
     // var mockedEventPhase;
     var marketId, lockedMarketId, marketLabel, marketTemplateId, marketVersion;
@@ -82,7 +82,7 @@
     var selectionIdArray = [];
     var detectionResultText;
     var initialOdds, lockedInitialOdds;
-    var accaInsName, accaInsId, priceBoostId, freeBetId, profitBoostId, accaBoostId;
+    var accaInsName, accaInsId, priceBoostId, bonusStakeId, profitBoostId, accaBoostId;
     var segmentGuid, previousSegmentGuid, segmentName, segmentLegacyId;
     var intervalIdForPolling;
     var intervalIdsForPolling = [];
@@ -100,7 +100,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.61";
+    const SB_TOOL_VERSION = "v1.6.62";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -1267,7 +1267,7 @@
                 text = profitBoostId;
                 break;
             case "freeBetId":
-                text = freeBetId;
+                text = bonusStakeId;
                 break;
             case "priceBoostId":
                 text = priceBoostId;
@@ -1529,7 +1529,6 @@
                     activate(isCashoutAvailableSection, isBetBuilderAvailableSection);
                     break;
                 case "Prematch":
-                    log("Prematch");
                     [2, 3].includes(getColumnLayout(marketId)) && !getMarketHasAccordionGroups(marketId) ?
                         activate(isBetDistributionAvailableSection) :
                         inactivate(isBetDistributionAvailableSection);
@@ -2094,7 +2093,7 @@
         const popularBetsControls = getElementById("popularBetsControls");
         const popularBetsButtons = getElementById("popularBetsButtons");
         const popularBetsHr = getElementById("popularBetsHr");
-        const popularBetsNotHomeMessage = getElementById("popularBetsNotHomeMessage");        
+        const popularBetsNotHomeMessage = getElementById("popularBetsNotHomeMessage");
         const popularBetsTooManySelectionsMessage = getElementById("popularBetsTooManySelectionsMessage");
         const chkPrematchOnly = getElementById("chkPrematchOnly");
         const isPopularBetsEnabledSection = getElementById("isPopularBetsEnabledSection");
@@ -2729,12 +2728,12 @@
 
         function addSelectionToBetOfTheDay(selectionIds, marketIds, eventIds) {
             betsOfTheDayCounter++;
-            const longText = chkLongBetsOfTheDayTitles.checked 
-                ? " being a long text for testing purposes. The Expectation is ellipsis truncation, no multiline display" 
+            const longText = chkLongBetsOfTheDayTitles.checked
+                ? " being a long text for testing purposes. The Expectation is ellipsis truncation, no multiline display"
                 : "";
             const analysisTitle = `SBTool Bet Analysis Title ${betsOfTheDayCounter}${longText}`;
             const previewTitle = `SBTool Preview Title ${betsOfTheDayCounter}${longText}`;
-            
+
             const bet = {
                 ambassadorImage: {
                     url: "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/backgounds/sbtool_betoftheday_transparent_" + getNextImageUrlNumber() + ".png",
@@ -2754,16 +2753,16 @@
             // getState().sportsbook.betOfTheDay.bets = getState().sportsbook.betOfTheDay.bets || [];
             getState().sportsbook.betsOfTheDay.bets.unshift(bet);
             triggerChangeDetection();
-            initBetsOfTheDay();          
+            initBetsOfTheDay();
         }
 
         function getNextImageUrlNumber() {
             const numbers = [1, 2, 3];
             const filteredNumbers = numbers.filter(n => !lastBetsOfTheDayBackgroundImageNumbers.includes(n));
-            const nextNumber = filteredNumbers[Math.floor(Math.random() * filteredNumbers.length)];        
+            const nextNumber = filteredNumbers[Math.floor(Math.random() * filteredNumbers.length)];
             // Update lastTwo to store only the last two numbers
             lastBetsOfTheDayBackgroundImageNumbers = [lastBetsOfTheDayBackgroundImageNumbers.length ? lastBetsOfTheDayBackgroundImageNumbers[1] : null, nextNumber].filter(n => n !== null);
-        
+
             return nextNumber;
         }
 
@@ -4140,13 +4139,13 @@
                     if (getEventPhase(eventId) == "Live") {
                         setEventPhase("Prematch");
                     }
-                    setTimeout(function () {
-                        if (chkLiveAddsScoreBoard.checked && !isEventTypeOutright(eventId)) {
-                            if (isCategorySupportingScoreBoard(categoryId)) {
-                                getState().sportsbook.scoreboard[eventId] = getScoreBoard(eventId, getScoreBoardExtras(categoryId));
-                            }
+                    if (chkLiveAddsScoreBoard.checked && !isEventTypeOutright(eventId)) {
+                        if (isCategorySupportingScoreBoard(categoryId)) {
+                            getState().sportsbook.scoreboard[eventId] = getScoreBoard(eventId, getScoreBoardExtras(categoryId));
                         }
-                        obgRt.setEventPhaseLive(eventId);
+                    }
+                    setTimeout(function () {
+                        obgRt.setEventPhaseLive(eventId)
                     }, 100);
                     break;
                 case "Over":
@@ -5115,7 +5114,8 @@
     }
 
     function getUsersCurrency() {
-        return getState().customer.customer.basicInformation.currencyCode;
+        return getState().customer?.customer?.basicInformation?.currencyCode
+            ?? getState().market?.currentMarket?.currency;
     }
 
     window.submitScore = (participant) => {
@@ -5345,48 +5345,34 @@
         const listPbByNameDiv = getElementById("listPbByNameDiv");
         const listPbByEventNameDiv = getElementById("listPbByEventNameDiv");
 
-        var freeBets;
-        previousFreeBets = null;
-        const freeBetNotFound = getElementById("freeBetNotFound");
-        const freeBetLogin = getElementById("freeBetLogin");
-        const freeBetSelector = getElementById("freeBetSelector");
-        const freeBetNumberOf = getElementById("freeBetNumberOf");
-        const freeBetDetailsLayout = getElementById("freeBetDetailsLayout");
-        const freeBetName = getElementById("freeBetName");
-        const freeBetIdSpan = getElementById("freeBetIdSpan");
-        const freeBetRestrictionsSection = getElementById("freeBetRestrictionsSection");
-        const freeBetPathToCompetition = getElementById("freeBetPathToCompetition");
-        const freeBetFurtherRestricions = getElementById("freeBetFurtherRestricions");
-        const freeBetType = getElementById("freeBetType");
-        const freeBetPayoutMode = getElementById("freeBetPayoutMode");
-        const freeBetStake = getElementById("freeBetStake");
-        const freeBetBetTypes = getElementById("freeBetBetTypes");
-        const freeBetEventPhases = getElementById("freeBetEventPhases");
-        const freeBetNoOfSelectionsDiv = getElementById("freeBetNoOfSelectionsDiv");
-        const freeBetNoOfSelections = getElementById("freeBetNoOfSelections");
-        const freeBetExpiryDate = getElementById("freeBetExpiryDate");
-
-        // const listeners = [
-        //     listenerForAccaInsDetails,
-        //     listenerForPriceBoostDetails,
-        //     listenerForProfitBoostDetails,
-        //     listenerForFreeBetDetails,
-        //     listenerForSelectedPriceBoost,
-        //     listenerForAddPbToCarouselOrCards,
-        //     listenerForAccaBoostDetails,
-        //     listenerForActiveAccaBoostIndex
-        // ];
-
-        // listeners.forEach(listener => {
-        //     const intervalId = setInterval(listener, POLLING_INTERVAL);
-        //     intervalIdsForPolling.push(intervalId);
-        // });
+        let bonusStakes, selectedBonusStake, stringBonusStakes, previousStringBonusStakes;
+        // previousBonusStakes = null;
+        const bonusStakeNotFound = getElementById("bonusStakeNotFound");
+        const bonusStakeLogin = getElementById("bonusStakeLogin");
+        const bonusStakeSelector = getElementById("bonusStakeSelector");
+        const bonusStakeNumberOf = getElementById("bonusStakeNumberOf");
+        const bonusStakeDetailsLayout = getElementById("bonusStakeDetailsLayout");
+        const bonusStakeName = getElementById("bonusStakeName");
+        const bonusStakeIdSpan = getElementById("bonusStakeIdSpan");
+        const bonusStakeRestrictionsSection = getElementById("bonusStakeRestrictionsSection");
+        const bonusStakePathToCompetition = getElementById("bonusStakePathToCompetition");
+        const bonusStakeFurtherRestricions = getElementById("bonusStakeFurtherRestricions");
+        const bonusStakeType = getElementById("bonusStakeType");
+        const bonusStakePayoutMode = getElementById("bonusStakePayoutMode");
+        const bonusStakeStake = getElementById("bonusStakeStake");
+        const bonusStakeBetTypes = getElementById("bonusStakeBetTypes");
+        const bonusStakeBetTypesRow = getElementById("bonusStakeBetTypesRow");
+        const bonusStakeEventPhases = getElementById("bonusStakeEventPhases");
+        const bonusStakeNoOfSelectionsDiv = getElementById("bonusStakeNoOfSelectionsDiv");
+        const bonusStakeNoOfSelections = getElementById("bonusStakeNoOfSelections");
+        const bonusStakeExpiryDate = getElementById("bonusStakeExpiryDate");
+        const removeBonusStakeSection = getElementById("removeBonusStakeSection");
 
         startPolling(
             listenerForAccaInsDetails,
             listenerForPriceBoostDetails,
             listenerForProfitBoostDetails,
-            listenerForFreeBetDetails,
+            listenerForBonusStakeDetails,
             listenerForSelectedPriceBoost,
             listenerForAddPbToCarouselOrCards,
             listenerForAccaBoostDetails,
@@ -5424,17 +5410,39 @@
         const accaInsMaxLosingSelectionsCountSpan = getElementById("accaInsMaxLosingSelectionsCountSpan");
         const radioApplySelectedAccaIns = getElementById("radioApplySelectedAccaIns");
         const applySelectedAccaInsDiv = getElementById("applySelectedAccaInsDiv");
+        const removeAccaInsSection = getElementById("removeAccaInsSection");
 
 
         function listenerForAccaInsDetails() {
 
-            if (!getIsUserLoggedIn()) {
+            // if (!getIsUserLoggedIn() || getState().sportsbook.betInsurance?.betInsurances?.length == 0) {
+            //     show(loginToSeeAccaIns);
+            //     hide(noAccaInsFound, accaInsDetailsLayout);
+            //     return;
+            // } else {
+            //     hide(loginToSeeAccaIns);
+            // }
+
+            // if (getIsUserLoggedIn() || getIsThereAnyAccaIns()) {
+            //     hide(loginToSeeAccaIns);
+            //     getIsThereAnyAccaIns() ? show(removeAccaInsSection) : hide(removeAccaInsSection);
+            // } else {                
+            //     show(loginToSeeAccaIns);
+            //     hide(noAccaInsFound, accaInsDetailsLayout);
+            //     getIsThereAnyAccaIns() ? show(removeAccaInsSection) : hide(removeAccaInsSection);
+            //     return;
+            // }
+
+            const hasAccaIns = getIsThereAnyAccaIns();
+
+            if (getIsUserLoggedIn() || hasAccaIns) {
+                hide(loginToSeeAccaIns);
+            } else {
                 show(loginToSeeAccaIns);
                 hide(noAccaInsFound, accaInsDetailsLayout);
-                return;
-            } else {
-                hide(loginToSeeAccaIns);
             }
+            hasAccaIns ? show(removeAccaInsSection) : hide(removeAccaInsSection);
+
 
             // betInsurance = getState().sportsbook.betInsurance;
             stringBetInsurance = JSON.stringify(getState().sportsbook.betInsurance);
@@ -5457,6 +5465,10 @@
             populateAccaInsSelector();
         }
 
+        function getIsThereAnyAccaIns() {
+            return getState().sportsbook.betInsurance?.betInsurances?.length > 0;
+        }
+
         function populateAccaInsSelector() {
             accaInsNumberOf.innerText = accaInsurances.length;
             accaInsSelector.innerHTML = "";
@@ -5470,9 +5482,7 @@
                 option = document.createElement("option");
                 option.innerHTML = ins.name;
 
-                // if (accaInsurances.length > 1 && getIsSelectedAccaInsApplied(ins.id)) { option.innerHTML += " " + "&#129351;"; }
                 if (accaInsurances.length > 1 && getIsSelectedAccaInsApplied(ins.id)) { option.innerHTML += CHECKMARK_ICON; }
-                // getIsSelectedAccaInsApplied
                 option.value = ins.id;
                 accaInsSelector.appendChild(option);
             }
@@ -5492,6 +5502,73 @@
 
         function getIsSelectedAccaInsApplied(bonusId) {
             return bonusId == getState().sportsbook.betInsurance.selectedBetInsurance.id
+        }
+
+        window.removeAccaInsurance = () => {
+            for (let i = 0; i < accaInsurances.length; i++) {
+                if (accaInsurances[i].id == selectedAccaIns.id) {
+                    getState().sportsbook.betInsurance.betInsurances.splice(i, 1);
+                }
+            }
+            if (getIsThereAnyAccaIns()) {
+                selectedAccaIns = getState().sportsbook.betInsurance.betInsurances[0];
+                getState().sportsbook.betInsurance.selectedBetInsurance = selectedAccaIns;
+                selectAccaIns(selectedAccaIns.id);
+            } else {
+                delete getState().sportsbook.betInsurance.selectedBetInsurance;
+            }
+            triggerChangeDetection();
+        }
+
+        window.createMockAccaInsurance = () => {
+            const id = getRandomGuid();
+            const insurance = {
+                id,
+                name: "SBTOOL Mocked Bet Insurance " + id.slice(0, 8),
+                type: "BetInsurance",
+                expiryDate: "2030-04-30T13:30:17.34Z",
+                criteria: {
+                    eventPhases: [
+                        "Prematch",
+                        "Live"
+                    ],
+                    marketTemplateIds: [],
+                    criteriaEntityDetails: []
+                },
+                conditions: {
+                    betTypes: [
+                        "Combination"
+                    ],
+                    minimumStake: 1,
+                    maximumStake: 100000,
+                    minimumNumberOfSelections: 2,
+                    oddsLimit: {
+                        maxOdds: 0,
+                        minOdds: 1.02
+                    },
+                    selectionOddsLimit: {
+                        maxOdds: 0,
+                        minOdds: 1.01
+                    },
+                    allSelectionsEligible: false,
+                    allowedBetSelectionTypes: [
+                        "Standard"
+                    ]
+                },
+                bonusData: {
+                    maximumLosingSelectionsCount: 2,
+                    isOptedInByDefault: false,
+                    maximumPayout: 100000,
+                    isSuperBoost: false,
+                    winPayoutMode: "RealMoney",
+                    boostBasedOn: 0
+                },
+                isPersonal: true
+            }
+
+            getState().sportsbook.betInsurance.betInsurances.push(insurance);
+            getState().sportsbook.betInsurance.selectedBetInsurance = insurance;
+            triggerChangeDetection();
         }
 
 
@@ -5662,7 +5739,7 @@
             profitBoostExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedProfitBoost.expiryDate);
             let noOfSelection = getNumberOfSelections();
             if (noOfSelection != undefined) {
-                show(freeBetNoOfSelectionsDiv);
+                show(bonusStakeNoOfSelectionsDiv);
                 profitBoostNoOfSelections.innerText = noOfSelection;
             } else {
                 hide(profitBoostNoOfSelectionsDiv);
@@ -6488,123 +6565,204 @@
             }
         }
 
-        function listenerForFreeBetDetails() {
-            if (!getIsUserLoggedIn()) {
-                hide(freeBetNotFound, freeBetDetailsLayout);
-                show(freeBetLogin);
-                return;
-            } else {
-                hide(freeBetLogin);
-            }
-            freeBets = getState().sportsbook.bonusStake.bonusStakes;
-            if (freeBets === previousFreeBets) {
-                return;
-            } else {
-                previousFreeBets = freeBets;
+
+        ///////////////////  FREE BET ////////////////////////
+
+        window.createMockBonusStake = (type) => {
+            const id = getRandomGuid();
+            const stake = getRandomFloat(0.1, 20, 2);
+            const bonusStake = {
+                id,
+                customerBonusId: type == "FreeBet" ? "FB-" + id : "RFB-" + id,
+                name: "SBTOOL Mocked " + type + " " + stake,
+                type,
+                expiryDate: "2030-04-30T13:30:17.34Z",
+                criteria: {
+                    eventPhases: ["Prematch", "Live"],
+                    marketTemplateIds: [],
+                    criteriaEntityDetails: []
+                },
+                conditions: {
+                    betTypes: ["Single", "Combination"],
+                    minimumStake: stake,
+                    maximumStake: stake,
+                    minimumNumberOfSelections: 1,
+                    maximumNumberOfSelections: 20,
+                    oddsLimit: {
+                        maxOdds: 0,
+                        minOdds: 0
+                    },
+                    allSelectionsEligible: true,
+                    allowedBetSelectionTypes: ["Standard", "BetBuilder"],
+                    combinedSelectionsConditions: {
+                        combinedSelectionsLimit: {},
+                        combinedSelectionsOddsLimit: {
+                            maxOdds: 0,
+                            minOdds: 0
+                        }
+                    }
+                },
+                bonusData: {
+                    stake,
+                    isOptedInByDefault: false,
+                    isSuperBoost: false,
+                    winPayoutMode: "BonusMoney",
+                    boostBasedOn: 0
+                },
+                isPersonal: true
             }
 
-            if (freeBets.length == 0) {
-                show(freeBetNotFound);
-                hide(freeBetDetailsLayout);
-                return;
-            } else {
-                show(freeBetDetailsLayout);
-                hide(freeBetNotFound);
-            }
-            populateFreeBetSelector();
+            getState().sportsbook.bonusStake.bonusStakes.unshift(bonusStake);
+            selectedBonusStake = bonusStake;
+            triggerChangeDetection();
         }
 
-        function populateFreeBetSelector() {
-            freeBetNumberOf.innerText = freeBets.length;
-            freeBetSelector.innerHTML = "";
+        window.removeBonusStake = () => {
+            bonusStakes = getState().sportsbook.bonusStake.bonusStakes;
+            for (let i = 0; i < bonusStakes.length; i++) {
+                if (bonusStakes[i].id == selectedBonusStake.id) {
+                    getState().sportsbook.bonusStake.bonusStakes.splice(i, 1);
+                }
+            }
+            if (getIsThereAnyBonusStake()) {
+                selectedBonusStake = getState().sportsbook.bonusStake.bonusStakes[0];
+                selectBonusStake(selectedBonusStake.id);
+            }
+            triggerChangeDetection();
+        }
+
+        function listenerForBonusStakeDetails() {
+            const hasBonusStake = getIsThereAnyBonusStake();
+
+            if (getIsUserLoggedIn() || hasBonusStake) {
+                hide(bonusStakeLogin);
+            } else {
+                show(bonusStakeLogin);
+                hide(bonusStakeNotFound, bonusStakeDetailsLayout);
+            }
+            hasBonusStake ? show(removeBonusStakeSection) : hide(removeBonusStakeSection);
+
+            bonusStakes = getState().sportsbook?.bonusStake?.bonusStakes;
+            stringBonusStakes = JSON.stringify(bonusStakes);
+
+            if (stringBonusStakes === previousStringBonusStakes) {
+                return;
+            } else {
+                previousStringBonusStakes = stringBonusStakes;
+            }
+
+            if (bonusStakes.length == 0) {
+                show(bonusStakeNotFound);
+                hide(bonusStakeDetailsLayout);
+                return;
+            } else {
+                show(bonusStakeDetailsLayout);
+                hide(bonusStakeNotFound);
+            }
+            populateBonusStakeSelector();
+        }
+
+        function getIsThereAnyBonusStake() {
+            return getState().sportsbook.bonusStake?.bonusStakes?.length > 0;
+        }
+
+        function populateBonusStakeSelector() {
+            bonusStakeNumberOf.innerText = bonusStakes.length;
+            bonusStakeSelector.innerHTML = "";
             var option;
             let type;
-            freeBets = freeBets.sort((a, b) => a.name > b.name ? 1 : -1);
-            for (var fb of freeBets) {
+            bonusStakes = bonusStakes.sort((a, b) => a.name > b.name ? 1 : -1);
+            for (let bs of bonusStakes) {
                 option = document.createElement("option");
-                if (fb.type == "FreeBet") {
+                if (bs.type == "FreeBet") {
                     type = " [FB]";
                 } else {
                     type = " [RFB]";
                 }
-                option.text = fb.name + type;
-                option.value = fb.id;
-                freeBetSelector.appendChild(option);
+                option.text = bs.name + type;
+                option.value = bs.id;
+                bonusStakeSelector.appendChild(option);
             }
-            selectFreeBet(freeBets[0].id);
+            // if (selectedBonusStake != undefined) {
+            //     selectBonusStake(bonusStakes[0].id);
+            // } else {
+            //     selectBonusStake(selectedBonusStake.id);
+            // }
+            if (selectedBonusStake) {
+                selectBonusStake(selectedBonusStake.id);
+                bonusStakeSelector.value = selectedBonusStake.id;
+            } else {
+                selectBonusStake(bonusStakes[0].id);
+                bonusStakeSelector.value = bonusStakes[0].id;
+            }
+
         }
 
-        window.selectFreeBet = (value) => {
-            selectFreeBet(value);
+        window.selectBonusStake = (value) => {
+            selectBonusStake(value);
         }
 
-        function selectFreeBet(value) {
-            let selectedFreebet;
-            for (let fb of freeBets) {
-                if (value == fb.id) {
-                    selectedFreebet = fb;
+        function selectBonusStake(value) {
+
+            // let selectedBonusStake;
+            for (let bs of bonusStakes) {
+                if (value == bs.id) {
+                    selectedBonusStake = bs;
                 }
             }
-            freeBetId = selectedFreebet.id;
-            freeBetIdSpan.innerText = freeBetId;
-            freeBetName.innerText = selectedFreebet.name;
+            bonusStakeId = selectedBonusStake.id;
+            bonusStakeIdSpan.innerText = bonusStakeId;
+            bonusStakeName.innerText = selectedBonusStake.name;
 
-            if (selectedFreebet.criteria.criteriaEntityDetails.length > 0) {
-                show(freeBetRestrictionsSection);
-                freeBetPathToCompetition.innerHTML = getFreeBetPathToCompetition();
+            if (selectedBonusStake.criteria.criteriaEntityDetails.length > 0) {
+                show(bonusStakeRestrictionsSection);
+                bonusStakePathToCompetition.innerHTML = getBonuStakePathToCompetition();
             } else {
-                hide(freeBetRestrictionsSection);
+                hide(bonusStakeRestrictionsSection);
             }
 
-            freeBetType.innerText = getFreeBetType();
-            // freeBetPayoutMode.innerText = " / " + getFreeBetPayoutMode();
-            freeBetPayoutMode.innerText = " / " + getBoostPayoutMode(selectedFreebet);
-            freeBetStake.innerText = selectedFreebet.conditions.minimumStake + " " + getCurrencyForBonuses();
-            freeBetBetTypes.innerText = getArrayAsCommaSeparatedString(selectedFreebet.conditions.betTypes);
-            freeBetEventPhases.innerText = getArrayAsCommaSeparatedString(selectedFreebet.criteria.eventPhases);
-            freeBetExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedFreebet.expiryDate);
+            bonusStakeType.innerText = getBonusStakeType();
+            bonusStakePayoutMode.innerText = " / " + getBoostPayoutMode(selectedBonusStake);
+            bonusStakeStake.innerText = selectedBonusStake.bonusData.stake + " " + getCurrencyForBonuses();
+
+
+            bonusStakeBetTypes.innerText = getArrayAsCommaSeparatedString(selectedBonusStake.conditions.betTypes);
+
+            bonusStakeEventPhases.innerText = getArrayAsCommaSeparatedString(selectedBonusStake.criteria.eventPhases);
+            bonusStakeExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedBonusStake.expiryDate);
             let noOfSelection = getNumberOfSelections();
             if (noOfSelection != undefined) {
-                show(freeBetNoOfSelectionsDiv);
-                freeBetNoOfSelections.innerText = noOfSelection;
+                show(bonusStakeNoOfSelectionsDiv);
+                bonusStakeNoOfSelections.innerText = noOfSelection;
             } else {
-                hide(freeBetNoOfSelectionsDiv);
+                hide(bonusStakeNoOfSelectionsDiv);
             }
 
-            function getFreeBetPathToCompetition() {
+            function getBonuStakePathToCompetition() {
                 let categoryId, categoryName, regionName, competitionId, competitionName, eventId;
 
-                categoryId = selectedFreebet.criteria.criteriaEntityDetails[0].categoryId;
+                categoryId = selectedBonusStake.criteria.criteriaEntityDetails[0].categoryId;
                 categoryName = getCategoryLabelByCategoryId(categoryId);
-                competitionId = selectedFreebet.criteria.criteriaEntityDetails[0].competitionId;
+                competitionId = selectedBonusStake.criteria.criteriaEntityDetails[0].competitionId;
                 if (competitionId != undefined) {
                     competitionName = getCompetitionLabelByCompetitionId(competitionId);
                     regionName = getRegionNameByCompetitionId(competitionId);
-                    eventId = selectedFreebet.criteria.criteriaEntityDetails[0].eventId;
-                    // if (eventId != undefined) {
-                    //     show(freeBetFurtherRestricions);
-                    // } else {
-                    //     hide(freeBetFurtherRestricions);
-                    // }
-                    eventId == undefined ? hide(freeBetFurtherRestricions) : show(freeBetFurtherRestricions);
+                    eventId = selectedBonusStake.criteria.criteriaEntityDetails[0].eventId;
+                    eventId == undefined ? hide(bonusStakeFurtherRestricions) : show(bonusStakeFurtherRestricions);
                     return categoryName + SEPARATOR_ARROW + regionName + SEPARATOR_ARROW + competitionName;
                 } else {
-                    hide(freeBetFurtherRestricions);
+                    hide(bonusStakeFurtherRestricions);
                     return categoryName;
                 }
             }
 
-            function getFreeBetType() {
-                return selectedFreebet.type === "FreeBet" ? "Free Bet" : "Risk Free Bet";
+            function getBonusStakeType() {
+                return selectedBonusStake.type === "FreeBet" ? "Free Bet" : "Risk Free Bet";
             }
 
-            // function getFreeBetPayoutMode() {
-            //     return selectedFreebet.bonusData.winPayoutMode === "BonusMoney" ? "Bonus Money" : "Cash Money";
-            // }
-
             function getNumberOfSelections() {
-                let min = getDotsIfZero(selectedFreebet.conditions.minimumNumberOfSelections);
-                let max = getDotsIfZero(selectedFreebet.conditions.maximumNumberOfSelections);
+                let min = getDotsIfZero(selectedBonusStake.conditions.minimumNumberOfSelections);
+                let max = getDotsIfZero(selectedBonusStake.conditions.maximumNumberOfSelections);
                 if (min == "..." && max == "...") {
                     return undefined;
                 }
@@ -6835,6 +6993,7 @@
         const segmentGuidSpan = getElementById("segmentGuidSpan");
         const segmentNameSpan = getElementById("segmentNameSpan");
         const segmentLegacyIdSpan = getElementById("segmentLegacyIdSpan");
+        const jurisdisctionSpan = getElementById("jurisdisctionSpan");
 
         function setIntervalForSegments() {
             stopPolling();
@@ -6847,6 +7006,7 @@
             if (previousSegmentGuid == segmentGuid) {
                 return;
             } else {
+                jurisdisctionSpan.innerText = getState()?.jurisdiction?.jurisdiction?.toUpperCase();
                 segmentGuidSpan.innerText = segmentGuid;
                 fillSegmentName();
                 fillSegmentLegacyId();
@@ -7180,8 +7340,8 @@
             case "profitBoost":
                 ttPath = "bonus/" + profitBoostId + "?serviceInstanceId=" + serviceInstanceId;
                 break;
-            case "freeBet":
-                ttPath = "bonus/" + freeBetId + "?serviceInstanceId=" + serviceInstanceId;
+            case "bonusStake":
+                ttPath = "bonus/" + bonusStakeId + "?serviceInstanceId=" + serviceInstanceId;
                 break;
             case "event":
                 ttPath = "fixture-management/fixture/" + eventId;
@@ -7216,12 +7376,16 @@
         return Math.random() < 0.5;
     }
 
-    function getRandomFloat(minOrMax, max) {
-        if (max === undefined) {
-            max = minOrMax;
-            minOrMax = 0;
-        }
-        return (Math.random() * (max - minOrMax) + minOrMax).toFixed(4);
+    // function getRandomFloat(minOrMax, max,) {
+    //     if (max === undefined) {
+    //         max = minOrMax;
+    //         minOrMax = 0;
+    //     }
+    //     return (Math.random() * (max - minOrMax) + minOrMax).toFixed();
+    // }
+
+    function getRandomFloat(min, max, decimals) {
+        return (Math.random() * (max - min) + min).toFixed(decimals);
     }
 
 
@@ -7310,7 +7474,7 @@
                     aggregateScore: { value: homeFinalScore + getRandomInt(4), isActive: scoreBoardExtras.isAggActive },
 
                     stoppageTime: { value: scoreBoardExtras.isStoppageTimeActive ? stoppageTime : 0, isActive: scoreBoardExtras.isStoppageTimeActive },
-                    expectedGoals: { value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(3) : 0, isActive: scoreBoardExtras.isExpectedGoalsActive },
+                    expectedGoals: { value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(0, 3, 4) : 0, isActive: scoreBoardExtras.isExpectedGoalsActive },
                     dangerousAttack: { value: scoreBoardExtras.isDangerousAttacksActive ? getRandomInt(2, 10) : 0, isActive: scoreBoardExtras.isDangerousAttacksActive },
                     shotsOnTarget: { value: scoreBoardExtras.isShotsOnTargetActive ? totalShotsOnTargetHome : 0, isActive: scoreBoardExtras.isShotsOnTargetActive },
                     shotsOffTarget: { value: totalShotsHome - totalShotsOnTargetHome, isActive: false },
@@ -7331,7 +7495,7 @@
                     aggregateScore: { value: awayFinalScore + getRandomInt(4), isActive: scoreBoardExtras.isAggActive },
 
                     stoppageTime: { value: scoreBoardExtras.isStoppageTimeActive ? stoppageTime : 0, isActive: scoreBoardExtras.isStoppageTimeActive },
-                    expectedGoals: { value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(3) : 0, isActive: scoreBoardExtras.isExpectedGoalsActive },
+                    expectedGoals: { value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(0, 3, 4) : 0, isActive: scoreBoardExtras.isExpectedGoalsActive },
                     dangerousAttack: { value: scoreBoardExtras.isDangerousAttacksActive ? getRandomInt(2, 10) : 0, isActive: scoreBoardExtras.isDangerousAttacksActive },
                     shotsOnTarget: { value: scoreBoardExtras.isShotsOnTargetActive ? totalShotsOnTargetAway : 0, isActive: scoreBoardExtras.isShotsOnTargetActive },
                     shotsOffTarget: { value: totalShotsAway - totalShotsOnTargetAway, isActive: false },
@@ -7372,7 +7536,7 @@
             },
             statistics: {
                 [participants[0].id]: {
-                    hitsScored: { value: getRandomInt(2), isActive: false },
+                    hitsScored: { value: getRandomInt(2), isActive: true },
                     inningRuns: {
                         byPhase: [
                             { value: getRandomInt(5), isActive: true },
@@ -7396,7 +7560,7 @@
                     outs: { value: getRandomInt(2), isActive: true }
                 },
                 [participants[1].id]: {
-                    hitsScored: { value: getRandomInt(2), isActive: false },
+                    hitsScored: { value: getRandomInt(2), isActive: true },
                     inningRuns: {
                         byPhase: [
                             { value: getRandomInt(5), isActive: true },
