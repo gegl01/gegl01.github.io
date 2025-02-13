@@ -1648,7 +1648,7 @@
                 <div id="profitBoostNotFound" class="displayInRed">
                     No Profit Boost found
                 </div>
-                <div id="profitBoostLogin" class="displayInRed">Login to see your Profit Boosts.
+                <div id="profitBoostLogin" class="displayInRed">Login to see your Profit Boosts
                 </div>
                 <div id="profitBoostDetailsLayout">
                     <div>
@@ -1713,8 +1713,8 @@
                                 <span id="profitBoostOdds" class="displayInGreen"></span>
                             </div>
                             <div id="profitBoostNoOfSelectionsDiv">
-                                    <span class="keyForProfitBoost">No. of Selections:</span>
-                                    <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
+                                <span class="keyForProfitBoost">No. of Selections:</span>
+                                <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
                             </div>
                         </div>
                         <hr class="hRule">
@@ -1861,19 +1861,21 @@
                                 <span id="accaInsExpiryDateSpan" class="displayInGreen"></span>
                             </div>
                         </div>
-
                     </details>
+                </div>
 
-                </div>
                 <hr class="hRule">
-                <div>
-                    <button class="btSimple btBonusCreateRemove" onclick="createMockAccaInsurance()">Create</button>
-                    <span>Create a fake ACCA Insurance</span>
-                </div>
-                <div id="removeAccaInsSection">
-                    <button class="btSimple btBonusCreateRemove" onclick="removeAccaInsurance()">Remove</button>
-                    <span>Remove selected ACCA Insurance</span>
-                </div>
+                <details>
+                    <summary class="sbtSummary">Create / Remove</summary>
+                    <div class="marginTop10px">
+                        <button class="btSimple btBonusCreateRemove" onclick="createMockAccaInsurance()">Create</button>
+                        <span>Create a fake ACCA Insurance</span>
+                    </div>
+                    <div id="removeAccaInsSection">
+                        <button class="btSimple btBonusCreateRemove" onclick="removeAccaInsurance()">Remove</button>
+                        <span>Remove selected ACCA Insurance</span>
+                    </div>
+                </details>
 
             </div>
 
@@ -1883,7 +1885,7 @@
                 <div id="accaBoostNotFound" class="displayInRed">
                     No ACCA Boost found
                 </div>
-                <div id="accaBoostLogin" class="displayInRed">Login to see your ACCA Boosts.
+                <div id="accaBoostLogin" class="displayInRed">Login to see your non-fake ACCA Boosts
                 </div>
                 <div id="accaBoostDetailsLayout">
                     <div>
@@ -1985,10 +1987,22 @@
                                 </div>
                             </details>
                         </div>
-
-
                     </div>
                 </div>
+
+                <hr class="hRule">
+                <details>
+                    <summary class="sbtSummary">Create / Remove</summary>
+                    <div class="marginTop10px">
+                        <button class="btSimple btBonusCreateRemove" onclick="createMockAccaBoost()">Create</button>
+                        <span>Create a fake ACCA Boost</span>
+                    </div>
+                    <div id="accaBoostRemoveSection">
+                        <button class="btSimple btBonusCreateRemove" onclick="removeAccaBoost()">Remove</button>
+                        <span>Remove selected ACCA Boost</span>
+                    </div>
+                </details>
+
             </div>
 
             <button onclick="toggleSection('bonusStakeSection')" class="moreLess">Free or Risk Free Bet
@@ -2075,20 +2089,24 @@
                 </div>
 
                 <hr class="hRule">
-                <div>
-                    <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('FreeBet')">Create
-                        FB</button>
-                    <span>Create a fake Free Bet</span>
-                </div>
-                <div>
-                    <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('RiskFreeBet')">Create
-                        RFB</button>
-                    <span>Create a fake Risk Free Bet</span>
-                </div>
-                <div id="removeBonusStakeSection" class="marginTop10px">
-                    <button class="btSimple btBonusCreateRemove" onclick="removeBonusStake()">Remove</button>
-                    <span>Remove selected Free/Risk Free Bet</span>
-                </div>
+                <details>
+                    <summary class="sbtSummary">Create / Remove</summary>
+                    <div class="marginTop10px">
+                        <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('FreeBet')">Create
+                            FB</button>
+                        <span>Create a fake Free Bet</span>
+                    </div>
+                    <div>
+                        <button class="btSimple btBonusCreateRemove"
+                            onclick="createMockBonusStake('RiskFreeBet')">Create
+                            RFB</button>
+                        <span>Create a fake Risk Free Bet</span>
+                    </div>
+                    <div id="removeBonusStakeSection" class="marginTop10px">
+                        <button class="btSimple btBonusCreateRemove" onclick="removeBonusStake()">Remove</button>
+                        <span>Remove selected Free/Risk Free Bet</span>
+                    </div>
+                </details>
 
             </div>
 

@@ -5415,25 +5415,6 @@
 
 
         function listenerForAccaInsDetails() {
-
-            // if (!getIsUserLoggedIn() || getState().sportsbook.betInsurance?.betInsurances?.length == 0) {
-            //     show(loginToSeeAccaIns);
-            //     hide(noAccaInsFound, accaInsDetailsLayout);
-            //     return;
-            // } else {
-            //     hide(loginToSeeAccaIns);
-            // }
-
-            // if (getIsUserLoggedIn() || getIsThereAnyAccaIns()) {
-            //     hide(loginToSeeAccaIns);
-            //     getIsThereAnyAccaIns() ? show(removeAccaInsSection) : hide(removeAccaInsSection);
-            // } else {                
-            //     show(loginToSeeAccaIns);
-            //     hide(noAccaInsFound, accaInsDetailsLayout);
-            //     getIsThereAnyAccaIns() ? show(removeAccaInsSection) : hide(removeAccaInsSection);
-            //     return;
-            // }
-
             const hasAccaIns = getIsThereAnyAccaIns();
 
             if (getIsUserLoggedIn() || hasAccaIns) {
@@ -5444,8 +5425,6 @@
             }
             hasAccaIns ? show(removeAccaInsSection) : hide(removeAccaInsSection);
 
-
-            // betInsurance = getState().sportsbook.betInsurance;
             stringBetInsurance = JSON.stringify(getState().sportsbook.betInsurance);
 
             if (stringBetInsurance == previousStringBetInsurance) {
@@ -5529,32 +5508,19 @@
                 type: "BetInsurance",
                 expiryDate: "2030-04-30T13:30:17.34Z",
                 criteria: {
-                    eventPhases: [
-                        "Prematch",
-                        "Live"
-                    ],
+                    eventPhases: ["Prematch", "Live"],
                     marketTemplateIds: [],
                     criteriaEntityDetails: []
                 },
                 conditions: {
-                    betTypes: [
-                        "Combination"
-                    ],
+                    betTypes: ["Combination"],
                     minimumStake: 1,
                     maximumStake: 100000,
                     minimumNumberOfSelections: 2,
-                    oddsLimit: {
-                        maxOdds: 0,
-                        minOdds: 1.02
-                    },
-                    selectionOddsLimit: {
-                        maxOdds: 0,
-                        minOdds: 1.01
-                    },
+                    oddsLimit: { maxOdds: 0, minOdds: 1.02 },
+                    selectionOddsLimit: { maxOdds: 0, minOdds: 1.01 },
                     allSelectionsEligible: false,
-                    allowedBetSelectionTypes: [
-                        "Standard"
-                    ]
+                    allowedBetSelectionTypes: ["Standard"]
                 },
                 bonusData: {
                     maximumLosingSelectionsCount: 2,
@@ -5621,7 +5587,7 @@
         //////// End of ACCA Insurance /////////
 
         function handleEventPhases(bonus, eventPhaseRow, eventPhaseValue) {
-            let eventPhases = bonus.criteria.eventPhases;
+            const eventPhases = bonus.criteria.eventPhases;
             if (eventPhases.length > 1) {
                 hide(eventPhaseRow);
             } else {
@@ -5631,12 +5597,22 @@
         }
 
         function handleRestrictionsSection(bonus, restrictionSection, restrictionPath) {
-            let criteriaEntityDetails = bonus.criteria.criteriaEntityDetails;
+            const criteriaEntityDetails = bonus.criteria.criteriaEntityDetails;
             if (criteriaEntityDetails.length == 0) {
                 hide(restrictionSection);
             } else {
                 show(restrictionSection);
                 populateRestrictionsPaths(restrictionPath, criteriaEntityDetails);
+            }
+        }
+
+        function handleBetTypes(bonus, betTypesRow, betTypesValue) {
+            const betTypes = bonus.conditions.betTypes;
+            if (betTypes.length > 1) {
+                hide(betTypesRow);
+            } else {
+                show(betTypesRow);
+                betTypesValue.innerText = betTypesValue;
             }
         }
 
@@ -5734,10 +5710,8 @@
             }
 
             profitBoostMultiplier.innerText = selectedProfitBoost.bonusData.profitBoostMultiplier + "%";
-            // profitBoostPayoutMode.innerText = " " + getProfitBoostPayoutMode();
             profitBoostPayoutMode.innerText = " " + getBoostPayoutMode(selectedProfitBoost);
             profitBoostMaxBoostedWinningsInEuro.innerText = selectedProfitBoost.bonusData.maxBoostedWinningsInEuro + " EUR";
-
 
             const minStake = selectedProfitBoost.conditions.minimumStake;
             const maxStake = selectedProfitBoost.conditions.maximumStake;
@@ -5763,16 +5737,9 @@
             } else {
                 show(profitBoostBetTypesDiv);
                 profitBoostBetTypes.innerText = betTypes;
-            } 
-            
-            const eventPhases = getArrayAsCommaSeparatedString(selectedProfitBoost.criteria.eventPhases);
-            if (eventPhases == "Prematch, Live") {
-                hide(profitBoostEventPhasesDiv);
-            } else {
-                show(profitBoostEventPhasesDiv);
-                profitBoostEventPhases.innerText = eventPhases;
             }
 
+            handleEventPhases(selectedProfitBoost, profitBoostEventPhasesDiv, profitBoostEventPhases);
 
             profitBoostExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedProfitBoost.expiryDate);
 
@@ -5862,15 +5829,18 @@
         const accaBoostAppliedOn = getElementById("accaBoostAppliedOn");
         const accaBoostMaxBoostedWinningsEur = getElementById("accaBoostMaxBoostedWinningsEur");
         const accaBoostMaxBoostedWinningsOther = getElementById("accaBoostMaxBoostedWinningsOther");
+        const accaBoostRemoveSection = getElementById("removeAccaBoostSection");
+        let selectedAccaBoost;
 
         function listenerForAccaBoostDetails() {
-            if (!getIsUserLoggedIn()) {
-                hide(accaBoostNotFound, accaBoostDetailsLayout);
-                show(accaBoostLogin);
-                return;
-            } else {
+            const hasAccaBoost = getIsThereAnyAccaBoost();
+            if (getIsUserLoggedIn() || hasAccaBoost) {
                 hide(accaBoostLogin);
+            } else {
+                show(accaBoostLogin);
+                hide(accaBoostNotFound, accaBoostDetailsLayout);
             }
+            hasAccaBoost ? show(accaBoostRemoveSection) : hide(accaBoostRemoveSection);
 
             accaBoost = getState().sportsbook.accaBoost;
             accaBoosts = accaBoost.accaBoosts;
@@ -5898,6 +5868,10 @@
             populateAccaBoostSelector();
         }
 
+        function getIsThereAnyAccaBoost() {
+            return getState().sportsbook.accaBoost?.accaBoosts?.length > 0;
+        }
+
         let activeBoostIndex, previousActiveBoostIndex;
         function listenerForActiveAccaBoostIndex() {
             if (getState().sportsbook?.accaBoost?.accaBoosts.length == 0) { return; }
@@ -5922,28 +5896,110 @@
         }
 
         function populateAccaBoostSelector() {
+
             accaBoostNumberOf.innerText = accaBoosts.length;
             accaBoostSelector.innerHTML = "";
-            let option;
-            accaBoosts = accaBoosts.sort((a, b) => a.name > b.name ? 1 : -1);
-            for (let boost of accaBoosts) {
-                option = document.createElement("option");
+        
+            // Create a sorted copy of accaBoosts without modifying the original array
+            let sortedAccaBoosts = [...accaBoosts].sort((a, b) => a.name.localeCompare(b.name));
+        
+            for (let boost of sortedAccaBoosts) {
+                let option = document.createElement("option");
                 option.text = boost.name;
                 option.value = boost.id;
                 accaBoostSelector.appendChild(option);
             }
+
+            if (selectedAccaBoost) {
+                selectAccaBoost(selectedAccaBoost.id);
+                accaBoostSelector.value = selectedAccaBoost.id;
+            } else {
+                selectAccaBoost(accaBoosts[0].id);
+                bonusStakeSelector.value = accaBoosts[0].id;
+            }
             addRemoveActiveAccaBoostIcon(accaBoost.activeBoostIndex);
-            selectAccaBoost(accaBoosts[0].id);
+        }
+
+        window.createMockAccaBoost = () => {
+            const id = getRandomGuid();
+            const mockedAccaBoost = {
+                id,
+                name: "SBTOOL Mocked Acca Boost " + id.slice(0, 8),
+                type: "AccaBoost",
+                expiryDate: "2030-04-30T13:30:17.34Z",
+                criteria: {
+                    eventPhases: ["Prematch", "Live"],
+                    marketTemplateIds: [],
+                    criteriaEntityDetails: []
+                },
+                conditions: {
+                    betTypes: ["Combination"],
+                    minimumStake: 0, maximumStake: 0,
+                    minimumNumberOfSelections: 2,
+                    oddsLimit: { maxOdds: 0, minOdds: 0 },
+                    allSelectionsEligible: true,
+                    allowedBetSelectionTypes: ["Standard"]
+                },
+                bonusData: {
+                    isOptedInByDefault: false,
+                    maxBoostedWinningsInEuro: 10000,
+                    maxBoostedWinningsInOtherCurrencies: {},
+                    isSuperBoost: false,
+                    winPayoutMode: "BonusMoney",
+                    selectionBoosts: [
+                        {
+                            selectionsRangeFrom: 2,
+                            selectionsRangeTo: 2,
+                            boostMultiplier: 20
+                        },
+                        {
+                            selectionsRangeFrom: 3,
+                            selectionsRangeTo: 3,
+                            boostMultiplier: 30
+                        },
+                        {
+                            selectionsRangeFrom: 4,
+                            selectionsRangeTo: 4,
+                            boostMultiplier: 40
+                        }
+                    ],
+                    boostBasedOn: "NetWinAmount"
+                },
+                isPersonal: true,
+                currentStep: 0
+            }
+
+            getState().sportsbook.accaBoost.accaBoosts.unshift(mockedAccaBoost);
+            selectedAccaBoost = mockedAccaBoost;
+            setActiveBoostIndex(0);
+            triggerChangeDetection();
+        }
+
+        window.removeAccaBoost = () => {
+            accaBoosts = getState().sportsbook.accaBoost.accaBoosts;
+            for (let i = 0; i < accaBoosts.length; i++) {
+                if (accaBoosts[i].id == selectedAccaBoost.id) {
+                    getState().sportsbook.accaBoost.accaBoosts.splice(i, 1);
+                }
+            }
+            if (getIsThereAnyAccaBoost()) {
+                selectedAccaBoost = getState().sportsbook.accaBoost.accaBoosts[0];
+                selectAccaBoost(selectedAccaBoost.id);
+            }
+            setActiveBoostIndex(0);
+            triggerChangeDetection();
+        }
+
+        function setActiveBoostIndex(index) {
+            getState().sportsbook.accaBoost.activeBoostIndex = index;
         }
 
         window.selectAccaBoost = (value) => {
             selectAccaBoost(value);
         }
-
         function selectAccaBoost(value) {
             accaBoostRestrictionPath.innerHTML = "";
             accaBoostLadder.innerHTML = "";
-            let selectedAccaBoost;
             for (let boost of accaBoosts) {
                 if (value == boost.id) {
                     selectedAccaBoost = boost;
@@ -6708,25 +6764,19 @@
         function populateBonusStakeSelector() {
             bonusStakeNumberOf.innerText = bonusStakes.length;
             bonusStakeSelector.innerHTML = "";
-            var option;
-            let type;
-            bonusStakes = bonusStakes.sort((a, b) => a.name > b.name ? 1 : -1);
-            for (let bs of bonusStakes) {
-                option = document.createElement("option");
-                if (bs.type == "FreeBet") {
-                    type = " [FB]";
-                } else {
-                    type = " [RFB]";
-                }
+        
+            // Create a sorted copy of bonusStakes without modifying the original array
+            let sortedBonusStakes = [...bonusStakes].sort((a, b) => a.name.localeCompare(b.name));
+        
+            for (let bs of sortedBonusStakes) {
+                let option = document.createElement("option");
+                let type = bs.type === "FreeBet" ? " [FB]" : " [RFB]";
+                
                 option.text = bs.name + type;
                 option.value = bs.id;
                 bonusStakeSelector.appendChild(option);
             }
-            // if (selectedBonusStake != undefined) {
-            //     selectBonusStake(bonusStakes[0].id);
-            // } else {
-            //     selectBonusStake(selectedBonusStake.id);
-            // }
+
             if (selectedBonusStake) {
                 selectBonusStake(selectedBonusStake.id);
                 bonusStakeSelector.value = selectedBonusStake.id;
@@ -6743,7 +6793,6 @@
 
         function selectBonusStake(value) {
 
-            // let selectedBonusStake;
             for (let bs of bonusStakes) {
                 if (value == bs.id) {
                     selectedBonusStake = bs;
@@ -6765,21 +6814,8 @@
             bonusStakeStake.innerText = selectedBonusStake.bonusData.stake + " " + getCurrencyForBonuses();
 
 
-            const betTypes = getArrayAsCommaSeparatedString(selectedBonusStake.conditions.betTypes);
-            if (betTypes == "Single, Combination") {
-                hide(bonusStakeBetTypesDiv);
-            } else {
-                show(bonusStakeBetTypesDiv);
-                bonusStakeBetTypes.innerText = betTypes;
-            }
-
-            const eventPhases = getArrayAsCommaSeparatedString(selectedBonusStake.criteria.eventPhases);
-            if (eventPhases == "Prematch, Live") {
-                hide(bonusStakeEventPhasesDiv);
-            } else {
-                show(bonusStakeEventPhasesDiv);
-                bonusStakeEventPhases.innerText = eventPhases;
-            }
+            handleBetTypes(selectedBonusStake, bonusStakeBetTypesDiv, bonusStakeBetTypes);
+            handleEventPhases(selectedBonusStake, bonusStakeEventPhasesDiv, bonusStakeEventPhases);
 
             bonusStakeExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedBonusStake.expiryDate);
             let noOfSelection = getNumberOfSelections();
