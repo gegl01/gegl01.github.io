@@ -1696,27 +1696,25 @@
                             <hr class="hRule">
                         </div>
                         <div>
-                            <div class="displayFlex">
+                            <div id="profitBoostBetTypesDiv">
                                 <span class="keyForProfitBoost">Bet Types:</span>
                                 <span id="profitBoostBetTypes" class="displayInGreen"></span>
                             </div>
-                            <div class="displayFlex">
+                            <div id="profitBoostEventPhasesDiv">
                                 <span class="keyForProfitBoost">Event Phases:</span>
                                 <span id="profitBoostEventPhases" class="displayInGreen"></span>
                             </div>
-                            <div class="displayFlex">
+                            <div id="profitBoostStakeDiv">
                                 <span class="keyForProfitBoost">Stake Range:</span>
                                 <span id="profitBoostStake" class="displayInGreen"></span>
                             </div>
-                            <div class="displayFlex">
+                            <div id="profitBoostOddsDiv">
                                 <span class="keyForProfitBoost">Odds Range:</span>
-                                <span id="profitBoostMinMaxOdds" class="displayInGreen"></span>
+                                <span id="profitBoostOdds" class="displayInGreen"></span>
                             </div>
                             <div id="profitBoostNoOfSelectionsDiv">
-                                <div class="displayFlex">
                                     <span class="keyForProfitBoost">No. of Selections:</span>
                                     <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
-                                </div>
                             </div>
                         </div>
                         <hr class="hRule">
@@ -1750,7 +1748,7 @@
             </button>
             <div id="accaSection" class="hide marginTopBottom10px">
                 <div id="accaMessage" class="displayInRed">
-                    <div id="loginToSeeAccaIns">Login to see ACCA Insurance.
+                    <div id="loginToSeeAccaIns">Login to see non-fake ACCA Insurances
                     </div>
                     <div id="noAccaInsFound">No active ACCA Insurance found.</div>
                 </div>
@@ -1870,7 +1868,7 @@
                 <hr class="hRule">
                 <div>
                     <button class="btSimple btBonusCreateRemove" onclick="createMockAccaInsurance()">Create</button>
-                    <span>Create a mock ACCA Insurance</span>
+                    <span>Create a fake ACCA Insurance</span>
                 </div>
                 <div id="removeAccaInsSection">
                     <button class="btSimple btBonusCreateRemove" onclick="removeAccaInsurance()">Remove</button>
@@ -1999,7 +1997,7 @@
                 <div id="bonusStakeNotFound" class="displayInRed">
                     No Free Bet found
                 </div>
-                <div id="bonusStakeLogin" class="displayInRed">Login to see your Free/Risk Free Bets
+                <div id="bonusStakeLogin" class="displayInRed">Login to see your non-fake Free/Risk Free Bets
                 </div>
                 <div id="bonusStakeDetailsLayout">
                     <div>
@@ -2046,36 +2044,32 @@
                             </div>
                             <hr class="hRule">
                         </div>
-                        <div class="displayFlex">
+                        <div>
                             <span class="keyForBonusStake">Type / Payout:</span>
                             <span class="displayInGreen">
                                 <span id="bonusStakeType"></span>
                                 <span id="bonusStakePayoutMode"></span>
                             </span>
                         </div>
-                        <div class="displayFlex">
+                        <div>
                             <span class="keyForBonusStake">Stake:</span>
                             <span id="bonusStakeStake" class="displayInGreen"></span>
                         </div>
-                        <div class="displayFlex">
+                        <div id="bonusStakeBetTypesDiv">
                             <span class="keyForBonusStake">Bet Types:</span>
                             <span id="bonusStakeBetTypes" class="displayInGreen"></span>
                         </div>
-                        <div class="displayFlex">
+                        <div id="bonusStakeEventPhasesDiv">
                             <span class="keyForBonusStake">Event Phases:</span>
                             <span id="bonusStakeEventPhases" class="displayInGreen"></span>
                         </div>
                         <div id="bonusStakeNoOfSelectionsDiv">
-                            <div class="displayFlex">
-                                <span class="keyForBonusStake">No. of Selections:</span>
-                                <span id="bonusStakeNoOfSelections" class="displayInGreen"></span>
-                            </div>
+                            <span class="keyForBonusStake">No. of Selections:</span>
+                            <span id="bonusStakeNoOfSelections" class="displayInGreen"></span>
                         </div>
-                        <div id="bonusStakeExpiryDateDiv">
-                            <div class="displayFlex">
-                                <span class="keyForBonusStake">Expiry Date:</span>
-                                <span id="bonusStakeExpiryDate" class="displayInGreen"></span>
-                            </div>
+                        <div>
+                            <span class="keyForBonusStake">Expiry Date:</span>
+                            <span id="bonusStakeExpiryDate" class="displayInGreen"></span>
                         </div>
                     </div>
                 </div>
@@ -2084,14 +2078,14 @@
                 <div>
                     <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('FreeBet')">Create
                         FB</button>
-                    <span>Create a mock Free Bet</span>
+                    <span>Create a fake Free Bet</span>
                 </div>
                 <div>
                     <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('RiskFreeBet')">Create
                         RFB</button>
-                    <span>Create a mock Risk Free Bet</span>
+                    <span>Create a fake Risk Free Bet</span>
                 </div>
-                <div id="removeBonusStakeSection" class="marginTop10px" >
+                <div id="removeBonusStakeSection" class="marginTop10px">
                     <button class="btSimple btBonusCreateRemove" onclick="removeBonusStake()">Remove</button>
                     <span>Remove selected Free/Risk Free Bet</span>
                 </div>
@@ -2449,8 +2443,10 @@
         width: 30%;
     }
 
+    .keyForProfitBoost,
     .keyForBonusStake {
-        width: 35%;
+        display: inline-block;
+        width: 100px;
     }
 
     .keyForCreatePb {
@@ -2465,9 +2461,9 @@
         line-height: 20px;
     }
 
-    .keyForProfitBoost {
+    /* .keyForProfitBoost {
         width: 35%;
-    }
+    } */
 
     .keyForAccaBoost {
         display: inline-block;

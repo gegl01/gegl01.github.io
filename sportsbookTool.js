@@ -5361,8 +5361,9 @@
         const bonusStakePayoutMode = getElementById("bonusStakePayoutMode");
         const bonusStakeStake = getElementById("bonusStakeStake");
         const bonusStakeBetTypes = getElementById("bonusStakeBetTypes");
-        const bonusStakeBetTypesRow = getElementById("bonusStakeBetTypesRow");
+        const bonusStakeBetTypesDiv = getElementById("bonusStakeBetTypesDiv");
         const bonusStakeEventPhases = getElementById("bonusStakeEventPhases");
+        const bonusStakeEventPhasesDiv = getElementById("bonusStakeEventPhasesDiv");
         const bonusStakeNoOfSelectionsDiv = getElementById("bonusStakeNoOfSelectionsDiv");
         const bonusStakeNoOfSelections = getElementById("bonusStakeNoOfSelections");
         const bonusStakeExpiryDate = getElementById("bonusStakeExpiryDate");
@@ -5656,9 +5657,13 @@
         const profitBoostPayoutMode = getElementById("profitBoostPayoutMode");
         const profitBoostMaxBoostedWinningsInEuro = getElementById("profitBoostMaxBoostedWinningsInEuro");
         const profitBoostStake = getElementById("profitBoostStake");
-        const profitBoostMinMaxOdds = getElementById("profitBoostMinMaxOdds");
+        const profitBoostStakeDiv = getElementById("profitBoostStakeDiv");
+        const profitBoostOdds = getElementById("profitBoostOdds");
+        const profitBoostOddsDiv = getElementById("profitBoostOddsDiv");
         const profitBoostBetTypes = getElementById("profitBoostBetTypes");
+        const profitBoostBetTypesDiv = getElementById("profitBoostBetTypesDiv");
         const profitBoostEventPhases = getElementById("profitBoostEventPhases");
+        const profitBoostEventPhasesDiv = getElementById("profitBoostEventPhasesDiv");
         const profitBoostNoOfSelectionsDiv = getElementById("profitBoostNoOfSelectionsDiv");
         const profitBoostNoOfSelections = getElementById("profitBoostNoOfSelections");
         const profitBoostExpiryDate = getElementById("profitBoostExpiryDate");
@@ -5732,14 +5737,48 @@
             // profitBoostPayoutMode.innerText = " " + getProfitBoostPayoutMode();
             profitBoostPayoutMode.innerText = " " + getBoostPayoutMode(selectedProfitBoost);
             profitBoostMaxBoostedWinningsInEuro.innerText = selectedProfitBoost.bonusData.maxBoostedWinningsInEuro + " EUR";
-            profitBoostStake.innerText = selectedProfitBoost.conditions.minimumStake + " - " + selectedProfitBoost.conditions.maximumStake + " " + getCurrencyForBonuses();
-            profitBoostMinMaxOdds.innerText = selectedProfitBoost.conditions.oddsLimit.minOdds + " - " + selectedProfitBoost.conditions.oddsLimit.maxOdds;
-            profitBoostBetTypes.innerText = getArrayAsCommaSeparatedString(selectedProfitBoost.conditions.betTypes);
-            profitBoostEventPhases.innerText = getArrayAsCommaSeparatedString(selectedProfitBoost.criteria.eventPhases);
+
+
+            const minStake = selectedProfitBoost.conditions.minimumStake;
+            const maxStake = selectedProfitBoost.conditions.maximumStake;
+            if (minStake == 0 && maxStake == 0) {
+                hide(profitBoostStakeDiv);
+            } else {
+                show(profitBoostStakeDiv);
+                profitBoostStake.innerText = minStake + " - " + maxStake + " " + getCurrencyForBonuses();
+            }
+
+            const minOdds = selectedProfitBoost.conditions.oddsLimit.minOdds;
+            const maxOdds = selectedProfitBoost.conditions.oddsLimit.maxOdds;
+            if (minOdds == 0 && maxOdds == 0) {
+                hide(profitBoostOddsDiv);
+            } else {
+                show(profitBoostOddsDiv);
+                profitBoostOdds.innerText = minOdds + " - " + maxOdds;
+            }
+
+            const betTypes = getArrayAsCommaSeparatedString(selectedProfitBoost.conditions.betTypes);
+            if (betTypes == "Single, Combination") {
+                hide(profitBoostBetTypesDiv);
+            } else {
+                show(profitBoostBetTypesDiv);
+                profitBoostBetTypes.innerText = betTypes;
+            } 
+            
+            const eventPhases = getArrayAsCommaSeparatedString(selectedProfitBoost.criteria.eventPhases);
+            if (eventPhases == "Prematch, Live") {
+                hide(profitBoostEventPhasesDiv);
+            } else {
+                show(profitBoostEventPhasesDiv);
+                profitBoostEventPhases.innerText = eventPhases;
+            }
+
+
             profitBoostExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedProfitBoost.expiryDate);
-            let noOfSelection = getNumberOfSelections();
+
+            const noOfSelection = getNumberOfSelections();
             if (noOfSelection != undefined) {
-                show(bonusStakeNoOfSelectionsDiv);
+                show(profitBoostNoOfSelectionsDiv);
                 profitBoostNoOfSelections.innerText = noOfSelection;
             } else {
                 hide(profitBoostNoOfSelectionsDiv);
@@ -5771,7 +5810,7 @@
                     eventId = selectedProfitBoost.criteria.criteriaEntityDetails[0].eventId;
                     if (eventId != undefined) {
                         if (!isEventInState(eventId)) {
-                            return pathToCompetition += SEPARATOR_ARROW + "[EVENT DATA NOT YET IN OBGSTATE]";
+                            return pathToCompetition += SEPARATOR_ARROW + "[EVENT DATA NOT YET IN THE STATE]";
                         }
                         pathToCompetition
                             += SEPARATOR_ARROW
@@ -5780,7 +5819,7 @@
                         if (marketTemplateId != undefined) {
                             marketId = getMarketIdByEventIdAndMarketTemplateId(eventId, marketTemplateId);
                             if (marketId == undefined) {
-                                return pathToCompetition += SEPARATOR_ARROW + "[MARKET DATA NOT YET IN OBGSTATE]";
+                                return pathToCompetition += SEPARATOR_ARROW + "[MARKET DATA NOT YET IN THE STATE]";
                             }
                             pathToCompetition
                                 += SEPARATOR_ARROW
@@ -6726,9 +6765,22 @@
             bonusStakeStake.innerText = selectedBonusStake.bonusData.stake + " " + getCurrencyForBonuses();
 
 
-            bonusStakeBetTypes.innerText = getArrayAsCommaSeparatedString(selectedBonusStake.conditions.betTypes);
+            const betTypes = getArrayAsCommaSeparatedString(selectedBonusStake.conditions.betTypes);
+            if (betTypes == "Single, Combination") {
+                hide(bonusStakeBetTypesDiv);
+            } else {
+                show(bonusStakeBetTypesDiv);
+                bonusStakeBetTypes.innerText = betTypes;
+            }
 
-            bonusStakeEventPhases.innerText = getArrayAsCommaSeparatedString(selectedBonusStake.criteria.eventPhases);
+            const eventPhases = getArrayAsCommaSeparatedString(selectedBonusStake.criteria.eventPhases);
+            if (eventPhases == "Prematch, Live") {
+                hide(bonusStakeEventPhasesDiv);
+            } else {
+                show(bonusStakeEventPhasesDiv);
+                bonusStakeEventPhases.innerText = eventPhases;
+            }
+
             bonusStakeExpiryDate.innerText = getFriendlyDateFromIsoDate(selectedBonusStake.expiryDate);
             let noOfSelection = getNumberOfSelections();
             if (noOfSelection != undefined) {
