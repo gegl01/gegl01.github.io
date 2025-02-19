@@ -578,10 +578,9 @@
                             <hr class="hRule">
                             <details>
                                 <summary class="sbtSummary">Scoreboard Extras</summary>
+                                <div class="displayInLightGrey marginLeft2px fontSizeSmaller">Click on 'Live' or 'New Live' button to see the changes</div>
                                 <div class="scoreBoardExtrasDetails">
-
                                     <div id="footballScoreBoardExtrasSection">
-
                                         <div class="radioRowToLeft">
                                             <span class="scoreBoardExtrasKey">Match Clock</span>
                                             <span class="footballScoreBoardExtrasThreeInputs">
@@ -1638,6 +1637,18 @@
                                 </div>
                             </div>
                         </details>
+                        <hr class="hRule">
+                        <details>
+                            <summary class="sbtSummary">Create / Remove</summary>
+                            <div id="pBremoveSection" class="marginTopBottom10px displayFlex">
+                                <button class="btSimple btEqualWidth" onclick="removePb()">Remove Selected</button>                                
+                                <button class="btSimple btEqualWidth" onclick="removePb('all')">Remove All</button>
+                            </div>
+                            <div class="alignItemsCenter displayInLightGrey">
+                                <span class="ico-info marginLeft2px"></span>
+                                <span class="marginLeft5px">Creation: go to Selection &#10132 Create Price Boost</span>
+                            </div>
+                        </details>
                     </div>
                 </div>
             </div>
@@ -2628,6 +2639,9 @@
         margin-right: 10px;
     }
 
+    .marginLeft2px {
+        margin-left: 2px;
+    }
 
     .marginLeft5px {
         margin-left: 5px;
