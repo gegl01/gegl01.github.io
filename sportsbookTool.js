@@ -100,7 +100,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.62";
+    const SB_TOOL_VERSION = "v1.6.63";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4439,14 +4439,6 @@
             function addLiveStreamVideo() {
                 const state = getState();
 
-                // Helper function to ensure nested objects exist
-                function ensureNestedObject(obj, keys) {
-                    keys.reduce((o, key) => {
-                        if (!o[key]) o[key] = {};
-                        return o[key];
-                    }, obj);
-                }
-
                 // Ensure that all nested properties are created
                 ensureNestedObject(state, ["sportsbook", "stream", "streams", eventId]);
 
@@ -4457,6 +4449,14 @@
                     requiresClientCall: false,
                     provider: "OddinGG"
                 };
+
+                // Helper function to ensure nested objects exist
+                function ensureNestedObject(obj, keys) {
+                    keys.reduce((o, key) => {
+                        if (!o[key]) o[key] = {};
+                        return o[key];
+                    }, obj);
+                }
             }
 
             function removeLiveStreamVideo() {
@@ -5149,8 +5149,7 @@
     // }
 
     function triggerChangeDetection(eventIdOrDelay, delay = 0) {
-        // let eventId;
-
+        let eventId;
         if (typeof eventIdOrDelay === "string") {
             // If the first argument is a string, treat it as eventId
             eventId = eventIdOrDelay;
@@ -6186,13 +6185,13 @@
         window.removePb = (selectedOrAll) => {
             const state = getState().sportsbook.priceBoost.priceBoost;
             const pbs = Object.values(getPriceBoosts());
-        
+
             if (selectedOrAll === "all") {
                 pbs.forEach(pb => delete state[pb.id]);
             } else if (selectedPriceBoost?.id) {
                 delete state[selectedPriceBoost.id];
             }
-        
+
             getState().sportsbook.priceBoost.priceBoost = { ...state };
             triggerChangeDetection();
         };
