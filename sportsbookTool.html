@@ -578,7 +578,8 @@
                             <hr class="hRule">
                             <details>
                                 <summary class="sbtSummary">Scoreboard Extras</summary>
-                                <div class="displayInLightGrey marginLeft2px fontSizeSmaller">Click on 'Live' or 'New Live' button to see the changes</div>
+                                <div class="displayInLightGrey marginLeft2px fontSizeSmaller">Click on 'Live' or 'New
+                                    Live' button to see the changes</div>
                                 <div class="scoreBoardExtrasDetails">
                                     <div id="footballScoreBoardExtrasSection">
                                         <div class="radioRowToLeft">
@@ -1224,7 +1225,9 @@
 
                 <button onclick="toggleSection('changeSelectionSection')" class="moreLess">Change Odds/Status</button>
                 <div id="changeSelectionSection" class="hide">
-                    <div class="newOddsLayout">
+
+
+                    <!-- <div class="newOddsLayout">
                         <span>Initial Odds:</span>
                         <span id="initialOddsSpan" class="displayInGreen"></span>
                         <button id="btResetOdds" class="btSimple btSubmit inactivated"
@@ -1233,7 +1236,33 @@
                         <input class="fdSbTools" type="number" id="fdNewOdds" min=1 step=0.01
                             oninput="validity.valid||(value='');">
                         <button class="btSimple btSubmit" onclick="setOdds()">Set</button>
+                    </div> -->
+
+                    <div class="newOddsLayout">
+                        <div class="">
+                            <span class="changeOddsKeys">Initial Odds:</span>
+                            <span id="initialOddsSpan" class="displayInGreen changeOddsValues"></span>
+                            <button id="btResetOdds" class="btSimple btSubmit inactivated"
+                                onclick="resetOdds()">Reset</button>
+                        </div>
+
+                        <div class="">
+                            <span class="changeOddsKeys">New Odds:</span>
+                            <span class="changeOddsValues">
+                                <button id="btOddsMinus" class="btPlusMinus btIcon" onclick="modifyNewOdds('minus')">
+                                    <img class="iconMinus">
+                                </button>
+                                <input class="fdSbTools" type="number" id="fdNewOdds" min=1 step=0.01
+                                    oninput="validity.valid||(value='');">
+                                <button id="btOddsPlus" class="btPlusMinus btIcon" onclick="modifyNewOdds('plus')">
+                                    <img class="iconPlus">
+                                </button>
+                            </span>
+                            <button class="btSimple btSubmit" onclick="setOdds()">Set</button>
+                        </div>
                     </div>
+
+
                     <hr class="hRule">
                     <div id="selectionStatusSection">
                         <div class="marginBottom5px">Selection Status:</div>
@@ -1636,14 +1665,14 @@
                                     </div>
                                 </div>
                             </div>
-                        </details>                        
+                        </details>
                     </div>
                 </div>
                 <hr class="hRule">
                 <details>
                     <summary class="sbtSummary">Create / Remove</summary>
                     <div id="pBremoveSection" class="marginTopBottom10px displayFlex">
-                        <button class="btSimple btEqualWidth" onclick="removePb()">Remove Selected</button>                                
+                        <button class="btSimple btEqualWidth" onclick="removePb()">Remove Selected</button>
                         <button class="btSimple btEqualWidth" onclick="removePb('all')">Remove All</button>
                     </div>
                     <div class="alignItemsCenter displayInLightGrey">
@@ -1732,7 +1761,7 @@
                                 <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
                             </div>
                         </div>
-                        
+
                         <hr class="hRule">
                         <details>
                             <summary class="sbtSummary">More Details</summary>
@@ -2687,10 +2716,6 @@
         margin-right: 3px;
     }
 
-    #initialOddsSpan {
-        margin-left: 4px;
-    }
-
     .scoreBoardExtrasKey {
         width: 110px;
     }
@@ -2921,17 +2946,53 @@
         align-items: center;
     }
 
-    .newOddsLayout {
+    /* .newOddsLayout {
         margin-top: 10px;
         align-items: center;
         display: grid;
         grid-template-rows: auto auto;
-        grid-template-columns: 25% 20% auto;
+        grid-template-columns: 25% 40% auto;
+    } */
+
+    .newOddsLayout {
+        margin-top: 10px;
     }
 
-    .newOddsKeys {
-        width: 50px;
+    #fdNewOdds {
+        margin-inline: 3px;
+        width: 60px;
+        text-align: center;
+        line-height: normal;
+        -moz-appearance: textfield;
     }
+
+    #fdNewOdds::-webkit-inner-spin-button,
+    #fdNewOdds::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Remove spinner buttons in Firefox */
+
+
+    .changeOddsKeys {
+        width: 70px;
+        display: inline-block;
+    }
+
+    .changeOddsValues {
+        width: 110px;
+        display: inline-block;
+        text-align: center;
+    }
+
+    /* .newOddsKeys {
+        width: 50px;
+    } */
+
+    /* #initialOddsSpan {
+        margin-left: 4px;
+    } */
 
     .btSubmit {
         margin-left: 5px;
