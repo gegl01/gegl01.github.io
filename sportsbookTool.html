@@ -1636,21 +1636,21 @@
                                     </div>
                                 </div>
                             </div>
-                        </details>
-                        <hr class="hRule">
-                        <details>
-                            <summary class="sbtSummary">Create / Remove</summary>
-                            <div id="pBremoveSection" class="marginTopBottom10px displayFlex">
-                                <button class="btSimple btEqualWidth" onclick="removePb()">Remove Selected</button>                                
-                                <button class="btSimple btEqualWidth" onclick="removePb('all')">Remove All</button>
-                            </div>
-                            <div class="alignItemsCenter displayInLightGrey">
-                                <span class="ico-info marginLeft2px"></span>
-                                <span class="marginLeft5px">Creation: go to Selection &#10132 Create Price Boost</span>
-                            </div>
-                        </details>
+                        </details>                        
                     </div>
                 </div>
+                <hr class="hRule">
+                <details>
+                    <summary class="sbtSummary">Create / Remove</summary>
+                    <div id="pBremoveSection" class="marginTopBottom10px displayFlex">
+                        <button class="btSimple btEqualWidth" onclick="removePb()">Remove Selected</button>                                
+                        <button class="btSimple btEqualWidth" onclick="removePb('all')">Remove All</button>
+                    </div>
+                    <div class="alignItemsCenter displayInLightGrey">
+                        <span class="ico-info marginLeft2px"></span>
+                        <span class="marginLeft5px">Creation: go to Selection &#10132 Create Price Boost</span>
+                    </div>
+                </details>
             </div>
 
             <button onclick="toggleSection('profitBoostSection')" class="moreLess">Profit Boost
@@ -1698,7 +1698,7 @@
                         </div>
                         <hr class="hRule">
                         <div id="profitBoostRestrictionsSection">
-                            Restriction path:
+                            Fixture Restrictions:
                             <div id="profitBoostPathToCompetition" class="displayInGreen marginBottom10px">
                             </div>
                             <div id="profitBoostFurtherRestricions" class="displayInOrange hide">
@@ -1710,6 +1710,10 @@
                             <div id="profitBoostBetTypesDiv">
                                 <span class="keyForProfitBoost">Bet Types:</span>
                                 <span id="profitBoostBetTypes" class="displayInGreen"></span>
+                            </div>
+                            <div id="profitBoostSelectionTypesDiv">
+                                <span class="keyForProfitBoost">Selection Types:</span>
+                                <span id="profitBoostSelectionTypes" class="displayInGreen"></span>
                             </div>
                             <div id="profitBoostEventPhasesDiv">
                                 <span class="keyForProfitBoost">Event Phases:</span>
@@ -1728,6 +1732,7 @@
                                 <span id="profitBoostNoOfSelections" class="displayInGreen"></span>
                             </div>
                         </div>
+                        
                         <hr class="hRule">
                         <details>
                             <summary class="sbtSummary">More Details</summary>
@@ -1753,6 +1758,18 @@
                         </details>
                     </div>
                 </div>
+                <hr class="hRule">
+                <details>
+                    <summary class="sbtSummary">Create / Remove</summary>
+                    <div class="marginTop10px">
+                        <button class="btSimple btBonusCreateRemove" onclick="createMockProfitBoost()">Create</button>
+                        <span>Create a fake Profit Boost</span>
+                    </div>
+                    <div id="removeProfitBoostSection">
+                        <button class="btSimple btBonusCreateRemove" onclick="removeProfitBoost()">Remove</button>
+                        <span>Remove selected Profit Boost</span>
+                    </div>
+                </details>
             </div>
 
             <button onclick="toggleSection('accaSection')" class="moreLess">ACCA Insurance
@@ -1840,7 +1857,7 @@
 
                     <div id="accaInsRestrictionsSection">
                         <details>
-                            <summary class="sbtSummary"> Restriction paths </summary>
+                            <summary class="sbtSummary">Fixture Restrictions</summary>
                             <div class="detailsExpanded">
                                 <ul id="accaInsRestrictionPath" class="displayInGreen scrollableListBox">
                                 </ul>
@@ -1954,7 +1971,7 @@
 
                         <div id="accaBoostRestrictionsSection">
                             <details>
-                                <summary class="sbtSummary"> Restriction paths </summary>
+                                <summary class="sbtSummary">Fixture Restrictions</summary>
                                 <div class="detailsExpanded">
                                     <ul id="accaBoostRestrictionPath" class="displayInGreen scrollableListBox">
                                     </ul>
@@ -2061,7 +2078,7 @@
                         </div>
                         <hr class="hRule">
                         <div id="bonusStakeRestrictionsSection">
-                            Restriction path:
+                            Fixture Restrictions:
                             <div id="bonusStakePathToCompetition" class="displayInGreen marginBottom10px">
                             </div>
                             <div id="bonusStakeFurtherRestricions" class="displayInOrange hide">
@@ -2532,7 +2549,7 @@
     }
 
     .btBonusCreateRemove {
-        width: 80px;
+        width: 75px;
         margin-right: 5px;
     }
 
