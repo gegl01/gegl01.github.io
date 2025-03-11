@@ -1252,13 +1252,13 @@
                                 <button id="btOddsMinus" class="btPlusMinus btIcon" onclick="modifyNewOdds('minus')">
                                     <img class="iconMinus">
                                 </button>
-                                <input class="fdSbTools" type="number" id="fdNewOdds" min=1 step=0.01
+                                <input class="fdSbTools" type="number" id="fdNewOdds" onfocus="toggleBtSetOdds('activate')" onblur="toggleBtSetOdds()" min=1 step=0.01
                                     oninput="validity.valid||(value='');">
                                 <button id="btOddsPlus" class="btPlusMinus btIcon" onclick="modifyNewOdds('plus')">
                                     <img class="iconPlus">
                                 </button>
                             </span>
-                            <button class="btSimple btSubmit" onclick="setOdds()">Set</button>
+                            <button id="btSetOdds" class="btSimple btSubmit inactivated" onmousedown="toggleBtSetOdds('activate')" onclick="setOdds()">Set</button>
                         </div>
                     </div>
 
