@@ -869,7 +869,7 @@
                     </div>
                 </div>
 
-                <div>
+                <div class="hide">
                     <button onclick="toggleSection('createMarketSection')" class="moreLess">
                         <!-- Create Fast/Player Props Market -->
                         Not working until SBEUJO-10129 gets fixed
@@ -1118,9 +1118,7 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Cashout, BB, Bet
-                    Distribution, Help
-                    Text</button>
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Accordion Icons, Help Text</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
                     <div id="marketCheckboxesSection">
@@ -1142,10 +1140,19 @@
                                 id="chkIsBetBuilderAvailable" class="chkSbTools">
                         </div>
 
+                        <div id="isFastMarketSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="iconFastMarket iconMockIconColumn vertMiddle iconSvgSmall"></span>
+                                <span class="iconMockLabelColumn">Fast Market (Live)</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleMarketProperty('isFastMarket')"
+                                id="chkIsFastMarket" class="chkSbTools">
+                        </div>
+
                         <div id="isBetDistributionAvailableSection" class="iconMocksRow">
                             <span class="width95Percent">
                                 <span class="iconBetTrends iconMockIconColumn vertMiddle iconSvgSmall"></span>
-                                <span class="iconMockLabelColumn">Bet Distribution</span>
+                                <span class="iconMockLabelColumn">Bet Distribution (Prematch)</span>
                             </span>
                             <input type="checkbox" onclick="toggleMarketProperty('betDistributionAvailable')"
                                 id="chkIsBetDistributionAvailable" class="chkSbTools">
@@ -1688,7 +1695,7 @@
                 <div id="profitBoostNotFound" class="displayInRed">
                     No Profit Boost found
                 </div>
-                <div id="profitBoostLogin" class="displayInRed">Login to see your Profit Boosts
+                <div id="profitBoostLogin" class="displayInRed">Login to see your non-fake Profit Boosts
                 </div>
                 <div id="profitBoostDetailsLayout">
                     <div>
