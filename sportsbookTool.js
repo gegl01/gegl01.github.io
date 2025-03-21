@@ -56,14 +56,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -1319,6 +1319,10 @@
     //     }
     // }
 
+    function replaceWhitespaceWithDash(str){
+        return str.trim().replace(/\s+/g, "-");
+    }
+    
     function getEventIdByMarketId(marketId) {
         return getState().sportsbook.eventMarket.markets[marketId].eventId;
     }
@@ -1491,12 +1495,12 @@
 
         window.setHelpText = () => {
             getState().sportsbook.eventMarket.markets[marketId].helpText = fdHelpText.textContent;
-            triggerMarketChangeDetection();
+            triggerMarketChangeDetection(marketId);
         }
 
         window.setBetGroupDescription = () => {
             getState().sportsbook.eventMarket.markets[marketId].betGroupDescription = fdBetGroupDescription.textContent;
-            triggerMarketChangeDetection();
+            triggerMarketChangeDetection(marketId);
         }
 
         function clearAddToCarouselErrorMessage() {
@@ -1593,7 +1597,7 @@
             // } else {
             //     triggerChangeDetection(eventId, 0)
             // }
-            triggerMarketChangeDetection();
+            triggerMarketChangeDetection(marketId);
         }
 
         function toggleIsCashoutAvailable() {
@@ -1602,13 +1606,13 @@
             updateAccordionSummaries("shouldShowCashoutIcon", isChecked);
         }
 
-        function toggleIsFastMarket(){
+        function toggleIsFastMarket() {
             const isChecked = chkIsFastMarket.checked;
-           
+
             getState().sportsbook.event.events[eventId].hasFastMarkets = isChecked;
             triggerChangeDetection(eventId);
-            
-            updateAccordionSummaries("shouldShowFastMarketsIcon", isChecked);    
+
+            updateAccordionSummaries("shouldShowFastMarketsIcon", isChecked);
         }
 
         function toggleIsBetBuilderAvailable() {
@@ -1989,7 +1993,7 @@
         return getState().sportsbook.carousel.item !== undefined;
     }
 
-    function triggerMarketChangeDetection() {
+    function triggerMarketChangeDetection(marketId) {
         let currentState = getState().sportsbook.eventMarket.markets[marketId].status;
         setMarketState(currentState === "Hold" ? "Open" : "Hold");
         setMarketState(currentState);
@@ -4904,10 +4908,6 @@
     }
 
 
-    // function getIsAndreasChangeOnMarketStatesDeployed() {
-    //     return (obgRt.setMarketStateOpen.length > 3)
-    // }
-
     function getMarketVersion(marketId) {
         return getState().sportsbook.eventMarket.markets[marketId].marketVersion;
     }
@@ -4928,10 +4928,6 @@
         obgRt.setSelectionOdds([params], marketId);
     }
 
-    // function getIsAndreasChangeOnSelectionsStatusesDeployed() {
-    //     return (obgRt.setSelectionStatusSuspended.length > 4)
-    // }
-
     window.createMarket = (marketType) => {
         const marketTemplateTagsArrayForPlayerPropsMarket = [14, 35, 41, 47, 53, 101, 104, 106];
         const marketTemplateTagsForFastMarket = [6, 82, 84, 85, 105, 131, 144];
@@ -4944,7 +4940,7 @@
             return;
         }
 
-        let initialTabLabelsArr = getMarketTabLabelsOnEventPanel();
+        const initialTabLabelsArr = getMarketTabLabelsOnEventPanel();
 
         switch (marketType) {
             case "playerProps":
@@ -4954,13 +4950,13 @@
                 createPlayerPropsDummyMarket();
                 break;
             case "fast":
-                createFastmarket();
+                createFastMarket();
                 setHasFastMarketsFlag(true);
                 break;
         }
 
         setTimeout(function () {
-            let updatedMarketTabsOnEventPanel = getMarketTabsOnEventPanel();
+            const updatedMarketTabsOnEventPanel = getMarketTabsOnEventPanel();
             for (let tab of updatedMarketTabsOnEventPanel) {
                 if (!initialTabLabelsArr.includes(tab.innerText)) {
                     tab.click();
@@ -4990,100 +4986,507 @@
             return tabLabelsArray;
         }
 
+        // function createPlayerPropsMarket() {
+        //     const players = ["Christiano", "Ronaldo", "NoMoreOfferAccordionDisabled", "Lionel"];
+        //     const playerPropsMarketName = "Player Props Test";
+        //     const marketTemplateId = "PPOINTS";
+        //     let marketId;
+        //     let marketIds = [];
+        //     let selectionId;
+        //     let selectionIds = [];
+        //     let selectionLabel;
+
+        //     for (let player of players) {
+        //         for (let lineValue = 0.5; lineValue <= 3.5; lineValue++) {
+        //             marketId = "m-" + eventId + "-" + player + lineValue;
+        //             marketIds.push(marketId);
+        //             obgRt.createMarket(
+        //                 eventId,
+        //                 marketId,
+        //                 marketTemplateId,
+        //                 marketTemplateTagsArrayForPlayerPropsMarket,
+        //                 playerPropsMarketName + " | " + player, //label
+        //                 "", //lineValue
+        //                 2, //columnLayout
+        //                 50, //sortOrder
+        //                 [{
+        //                     group: "PlayerProps",
+        //                     groupLevel: "0",
+        //                     groupType: 0
+        //                 }, {
+        //                     group: marketTemplateId,
+        //                     groupLevel: "1",
+        //                     groupType: 2
+        //                 }, {
+        //                     group: player,
+        //                     groupLevel: "2",
+        //                     groupType: 3
+        //                 },
+        //                 {
+        //                     groupLevel: "3",
+        //                     sort: lineValue,
+        //                     "groupType": 0
+        //                 }],
+        //                 [playerPropsMarketName, player],
+        //                 1
+        //             );
+
+        //             createSelection(true);
+        //             createSelection(false);
+
+        //             function createSelection(isOver) {
+        //                 selectionId = "s-" + marketId + (isOver ? "-Over" : "-Under");
+        //                 selectionIds.push(selectionId);
+        //                 selectionLabel = isOver ? "Over " + String(lineValue) : "Under " + String(lineValue);
+        //                 obgRt.createSelection(
+        //                     eventId,
+        //                     marketId,
+        //                     selectionId,
+        //                     selectionLabel,
+        //                     1
+        //                 );
+        //                 getState().sportsbook.selection.selections[selectionId].odds = getRandomOdds();
+        //             }
+        //         }
+        //     }
+
+        //     obgRt.createAccordion(
+        //         eventId,
+        //         "gi-757583692",
+        //         marketIds,
+        //         [marketTemplateId],
+        //         marketTemplateTagsArrayForPlayerPropsMarket,
+        //         "Player Props Test",
+        //         false,
+        //         false,
+        //         false
+        //     );
+
+        // }
+
+        // function createPlayerPropsDummyMarket() {
+        //     const playerPropsMarketName = "(Player Props Test)  Player Total Shots On Target";
+        //     for (let i = 5; i < 20; i++) {
+        //         obgRt.createMarketWithDummySelection(eventId, "m-" + eventId + "-test-" + String(i), "PLYPROP1WTSHOTON", marketTemplateTagsArrayForPlayerPropsMarket, playerPropsMarketName + " | Dummy Player - Arsenal F.C.", "", 2, 88, [{
+        //             group: "test",
+        //             sort: 1,
+        //             groupLevel: "0",
+        //             groupType: 0
+        //         }, {
+        //             group: "test",
+        //             sort: 1,
+        //             groupLevel: "1",
+        //             groupType: 2
+        //         }, {
+        //             group: "test-" + i,
+        //             sort: 1,
+        //             groupLevel: "2",
+        //             groupType: 3
+        //         }], [playerPropsMarketName, "Dummy Player - Arsenal F.C. -" + String(i - 4)]);
+        //     }
+        // }
 
         function createPlayerPropsMarket() {
-            const playerPropsMarketName = "(Player Props Test)  Player Total Shots On Target";
             const players = [
-                "Christiano Ronaldo - Juventus",
-                "Douglas Costa - Juventus",
-                "Aaron Ramsdale - Arsenal F.C.",
-                "Bukayo Saka - Arsenal F.C."
+                "Christiano Ronaldo",
+                "Kylian Mbappé",
+                "DISABLED ACCORDION",
+                "Lionel Messi",
+                "Karim Benzema",
+                "Zlatan Ibrahimović",
+                "Luis Suárez",
+                "Robert Lewandowski",
+                "Sergio Ramos"
             ];
+            const playerPropsMarketName = "Test Player Props";
+            const marketTemplateId = "PPROPSTEST";
             let marketId;
+            let marketIds = [];
             let selectionId;
             let selectionLabel;
+            let lineValue;
 
-
-            for (let i = 0; i < players.length; i++) {
-                marketId = "m-" + eventId + "-test" + String(i + 1);
-                obgRt.createMarket(eventId, marketId, "PLYPROP1WTSHOTON", marketTemplateTagsArrayForPlayerPropsMarket, playerPropsMarketName + " | " + players[i], "", 2, 88,
-                    [{
-                        group: "test",
-                        sort: 1,
-                        groupLevel: "0",
-                        groupType: 0
-                    }, {
-                        group: "test",
-                        sort: 1,
-                        groupLevel: "1",
-                        groupType: 2
-                    }, {
-                        group: "test-" + String(i + 1),
-                        sort: 1,
-                        groupLevel: "2",
-                        groupType: 3
-                    }],
-                    [playerPropsMarketName, players[i]]);
-
-                for (let j = 1; j < 5; j++) {
-                    for (let k = 1; k < 3; k++) {
-                        selectionId = "s-" + marketId + "-sel-" + String(j) + String(k);
-                        k == 1 ? selectionLabel = "Over " + String(j) + ".5" : selectionLabel = "Under " + String(j) + ".5";
-                        obgRt.createSelection(eventId, marketId, selectionId, selectionLabel, "2");
-                        setSelectionOdds(selectionId, getRandomOdds());
+            for (let player of players) {
+                if (player === "DISABLED ACCORDION") {
+                    lineValue = 0.5;
+                    createMarketForPlayer(player, lineValue);
+                } else {
+                    for (let lv = 0.5; lv <= 3.5; lv++) {
+                        lineValue = lv;
+                        createMarketForPlayer(player, lineValue);
                     }
                 }
             }
+
+            function createMarketForPlayer(player, lineValue) {
+                const noWhiteSpacePlayer = replaceWhitespaceWithDash(player)
+                marketId = `m-${eventId}-${marketTemplateId}-${noWhiteSpacePlayer}-${lineValue}`;
+                marketIds.push(marketId);
+                obgRt.createMarket(
+                    eventId,
+                    marketId,
+                    marketTemplateId,
+                    marketTemplateTagsArrayForPlayerPropsMarket,
+                    playerPropsMarketName + " | " + player,
+                    "", // lineValue
+                    2, // columnLayout
+                    50, // sortOrder
+                    [
+                        { group: "PlayerProps", groupLevel: "0", groupType: 0 },
+                        { group: marketTemplateId, groupLevel: "1", groupType: 2 },
+                        { group: noWhiteSpacePlayer, groupLevel: "2", groupType: 3 },
+                        { groupLevel: "3", sort: lineValue, "groupType": 0 }
+                    ],
+                    [playerPropsMarketName, player],
+                    1
+                );
+
+                createSelection(true);
+                createSelection(false);
+            }
+
+            function createSelection(isOver) {
+                selectionId = `s-${marketId}-${isOver ? "Over" : "Under"}`;
+                selectionLabel = `${isOver ? "Over" : "Under"} ${lineValue}`;
+                obgRt.createSelection(
+                    eventId,
+                    marketId,
+                    selectionId,
+                    selectionLabel,
+                    1
+                );
+                getState().sportsbook.selection.selections[selectionId].odds = getRandomOdds();
+            }
+
+            obgRt.createAccordion(
+                eventId,
+                "gi-" + getRandomInt(999999999),
+                marketIds,
+                [marketTemplateId],
+                marketTemplateTagsArrayForPlayerPropsMarket,
+                playerPropsMarketName,
+                false,
+                false,
+                false
+            );
         }
 
-        function createPlayerPropsDummyMarket() {
-            const playerPropsMarketName = "(Player Props Test)  Player Total Shots On Target";
-            for (let i = 5; i < 20; i++) {
-                obgRt.createMarketWithDummySelection(eventId, "m-" + eventId + "-test-" + String(i), "PLYPROP1WTSHOTON", marketTemplateTagsArrayForPlayerPropsMarket, playerPropsMarketName + " | Dummy Player - Arsenal F.C.", "", 2, 88, [{
-                    group: "test",
-                    sort: 1,
-                    groupLevel: "0",
-                    groupType: 0
-                }, {
-                    group: "test",
-                    sort: 1,
-                    groupLevel: "1",
-                    groupType: 2
-                }, {
-                    group: "test-" + i,
-                    sort: 1,
-                    groupLevel: "2",
-                    groupType: 3
-                }], [playerPropsMarketName, "Dummy Player - Arsenal F.C. -" + String(i - 4)]);
+        function createPlayerPropsDummyMarket() { //prebuilt
+            const marketTemplateId = "PCB3";
+            const marketId = "m-" + eventId + "-" + marketTemplateId + "-115308835";
+            const marketTemplateTagsForPreBuilt = [110, 111, 113, 117, 112, 116, 114, 115, 116, 117];
+            const preBuiltLabel = "Santa Fe to win,Both teams to score,Hugo Rodallega to score anytime";
+            const selectionId = "s-" + marketId + "-yes";
+
+            // injectMarket();
+            // showMarketTabBasedOnTags();
+            // createSelection();
+
+            obgRt.createMarket(
+                eventId,
+                marketId,
+                marketTemplateId,
+                marketTemplateTagsForPreBuilt,
+                "PreBuilt Combi", //label
+                "", //lineValue
+                1, //columnLayout
+                50, //sortOrder
+                [
+                    {
+                        group: "PreBuilt Bets",
+                        groupLevel: "0",
+                        sort: 10,
+                        groupType: 0
+                    }, {
+                        group: "PreBuilt Bets",
+                        groupLevel: "1",
+                        sort: 2,
+                        groupType: 2
+                    }, {
+                        group: "PreBuilt Bets",
+                        groupLevel: "2",
+                        sort: 3,
+                        groupType: 5
+                    }
+                ],
+                ["Pre-Built Combinations", preBuiltLabel],
+                1
+            ); //groupTranslations
+
+
+
+
+            createSelection();
+            getState().sportsbook.eventMarket.markets[marketId].isGroupableByMarketTemplate = true;
+            getState().sportsbook.selection.selections[selectionId].selectionTemplateId = "YES";
+            getState().sportsbook.selection.selections[selectionId].sortOrder = 1;
+            getState().sportsbook.selection.selections[selectionId].isHomeTeam = false;
+
+
+            obgRt.createAccordion(
+                eventId,
+                "gi-" + getRandomInt(999999999),
+                [marketId],
+                [marketTemplateId],
+                marketTemplateTagsForPreBuilt,
+                "Pre-Built Combinations Accordion",
+                false,
+                false,
+                false
+            );
+
+
+            function injectMarket() {
+                getState().sportsbook.eventMarket.markets[marketId] =
+                {
+                    eventId,
+                    marketTemplateId,
+                    lineValue: "",
+                    lineValueRaw: 0,
+                    status: "Open",
+                    validationRule: { code: 1, value: "NotWithinSameEvent" },
+                    deadline: "2030-03-19T23:30:00Z",
+                    isCashoutAvailable: false,
+                    columnLayout: 1,
+                    helpText: "",
+                    isGroupableByMarketTemplate: true,
+                    betGroupDescription: "",
+                    marketTemplateTags: marketTemplateTagsForPreBuilt,
+                    marketSpecifics: {
+                        groupSortBy: [
+                            {
+                                group: "PreBuilt Bets",
+                                groupLevel: "0",
+                                sort: 10,
+                                groupType: 0
+                            },
+                            {
+                                group: "PreBuilt Bets",
+                                groupLevel: "1",
+                                sort: 2,
+                                groupType: 2
+                            },
+                            {
+                                group: "PreBuilt Bets",
+                                groupLevel: "2",
+                                sort: 3,
+                                groupType: 5
+                            }
+                        ],
+                        groupLabels: {
+                            1: "Pre-Built Combinations",
+                            2: preBuiltLabel
+                        },
+                        groupTranslations: {}
+                    },
+                    sortOrder: 50,
+                    marketFriendlyName: "PreBuilt Combi",
+                    marketVersion: 1,
+                    betBuilderAvailability: {
+                        state: 0,
+                        data: {},
+                        isHomeTeam: false
+                    },
+                    id: marketId + "-PCB3-115308835",
+                    label: "PreBuilt Combi",
+                    isHomeTeam: false
+                }
+
+                const state = getState();
+                const { marketMap, marketTemplateMap, eventMap } = state.sportsbook.eventMarket;
+
+                addUniqueToArray(marketMap[eventId], marketTemplateId, marketId);
+                addUniqueToArray(marketTemplateMap, marketTemplateId, marketId);
+                addUniqueToArray(eventMap, eventId, marketId);
+            }
+
+            function showMarketTabBasedOnTags() {
+                mergeArraysWithoutElementDuplication(
+                    getState().sportsbook.eventWidget.items[eventId].item.distinctMarketTemplateTags,
+                    marketTemplateTagsForPreBuilt
+                );
+            }
+
+            function createSelection() {
+                // const selectionId = "s-" + marketId + "-yes";
+                obgRt.createSelection(
+                    eventId,
+                    marketId,
+                    selectionId,
+                    preBuiltLabel,
+                    1 // marketVersion
+                );
+                setSelectionOdds(selectionId, getRandomOdds());
             }
         }
 
-        function createFastmarket() {
-            const fastMarketTemplateId = "N5MTTI";
-            obgRt.createMarketWithDummySelection(eventId, "m-" + eventId + "-" + fastMarketTemplateId, fastMarketTemplateId, marketTemplateTagsForFastMarket, "Test Fast Market Next 1 minute (0:00 - 0:59) | A stray dog interrupted the match", 0, 2, 69, [{
-                "group": "01",
-                sort: 1,
-                "groupLevel": "0",
-                groupType: 0
-            }, {
-                "group": "00",
-                sort: 1,
-                "groupLevel": "1",
-                groupType: 2
-            }, {
-                "group": fastMarketTemplateId,
-                sort: 6,
-                "groupLevel": "2",
-                groupType: 1
-            }], ["Test Fast Market Next 1 minute (0:00 - 0:59)", "A stray dog interrupted the match"]);
-        }
+        // function createFastmarket() {
+        //     const fastMarketTemplateId = "N5MTTI";
+        //     obgRt.createMarketWithDummySelection(eventId, "m-" + eventId + "-" + fastMarketTemplateId, fastMarketTemplateId, marketTemplateTagsForFastMarket, "Test Fast Market Next 1 minute (0:00 - 0:59) | A stray dog interrupted the match", 0, 2, 69, [{
+        //         "group": "01",
+        //         sort: 1,
+        //         "groupLevel": "0",
+        //         groupType: 0
+        //     }, {
+        //         "group": "00",
+        //         sort: 1,
+        //         "groupLevel": "1",
+        //         groupType: 2
+        //     }, {
+        //         "group": fastMarketTemplateId,
+        //         sort: 6,
+        //         "groupLevel": "2",
+        //         groupType: 1
+        //     }], ["Test Fast Market Next 1 minute (0:00 - 0:59)", "A stray dog interrupted the match"]);
+        // }
 
-        function getRandomOdds() {
-            let min = 1.01;
-            let max = 10;
-            let value = (Math.random() * (max - min + 1)) + min;
-            return Number(Number.parseFloat(value).toFixed(2));
+        function createFastMarket() {
+            const marketTemplateId = "FASTMARKET";
+            const marketId = "m-" + eventId + "-" + marketTemplateId;
+            const marketLabel = "Test Fast Market";
+            // injectAccordion();
+            // showMarketTabBasedOnTags();
+            // injectMarket();
+            // injectSelection(true);
+            // injectSelection(false);
+            // triggerChangeDetection();            
+
+            obgRt.createMarket(
+                eventId,
+                marketId,
+                marketTemplateId,
+                marketTemplateTagsForFastMarket,
+                marketLabel,
+                0,
+                2
+            );
+
+            createSelection(true);
+            createSelection(false);
+            function createSelection(isHomeTeam) {
+                const selectionId = "s-" + marketId + (isHomeTeam ? "-home" : "-away");
+                const label = isHomeTeam ? participants[0].label : participants[1].label;
+                obgRt.createSelection(
+                    eventId,
+                    marketId,
+                    selectionId,
+                    label,
+                    1 // marketVersion
+                );
+                setSelectionOdds(selectionId, getRandomOdds());
+            }
+
+            obgRt.createAccordion(
+                eventId,
+                marketId,
+                [marketId],
+                [marketTemplateId],
+                marketTemplateTagsForFastMarket,
+                marketLabel,
+                false,
+                false,
+                true
+            );
+
+            // function injectAccordion() {
+            //     getState().sportsbook.eventWidget.items[eventId].item.accordionSummaries[marketTemplateId] = {
+            //         label: "Accordion Label for Fast Market",
+            //         marketTemplateIds: [marketTemplateId],
+            //         behavior: 1,
+            //         accordionGrouping: "",
+            //         marketTemplateTags: marketTemplateTagsForFastMarket,
+            //         shouldShowCashoutIcon: false,
+            //         shouldShowFastMarketsIcon: true,
+            //         shouldShowBetBuilderIcon: false,
+            //         isGroupableByMarketTemplate: false,
+            //         shouldCallBy: 2,
+            //         marketIds: [marketId],
+            //         batchSize: 0,
+            //         sortOrder: 80,
+            //         groupableId: marketId,
+            //         state: 1
+            //     }
+            // }
+
+            function showMarketTabBasedOnTags() {
+                mergeArraysWithoutElementDuplication(
+                    getState().sportsbook.eventWidget.items[eventId].item.distinctMarketTemplateTags,
+                    marketTemplateTagsForFastMarket
+                );
+            }
+
+            function injectMarket() {
+
+                getState().sportsbook.eventMarket.markets[marketId] =
+                {
+                    eventId,
+                    marketTemplateId,
+                    lineValue: "",
+                    lineValueRaw: 0,
+                    status: "Open",
+                    validationRule: { code: 1, value: "NotWithinSameEvent" },
+                    deadline: "2030-03-13T22:30:00Z",
+                    isCashoutAvailable: false,
+                    columnLayout: 2,
+                    helpText: "",
+                    isGroupableByMarketTemplate: false,
+                    betGroupDescription: "",
+                    marketTemplateTags: marketTemplateTagsForFastMarket,
+                    marketSpecifics: { groupSortBy: [], groupLabels: {}, groupTranslations: {} },
+                    sortOrder: 80,
+                    marketFriendlyName: "Market Friendly Name for Fast Market",
+                    marketVersion: 1,
+                    betBuilderAvailability: { state: 0, data: {}, isHomeTeam: false },
+                    id: marketId,
+                    label: "Market Label for Fast Market",
+                    isHomeTeam: false
+                }
+
+                const state = getState();
+                const { marketMap, marketTemplateMap, eventMap } = state.sportsbook.eventMarket;
+
+                addUniqueToArray(marketMap[eventId], marketTemplateId, marketId);
+                addUniqueToArray(marketTemplateMap, marketTemplateId, marketId);
+                addUniqueToArray(eventMap, eventId, marketId);
+            }
+
+            function injectSelection(isHomeTeam) {
+                const selectionId = "s-" + marketId + (isHomeTeam ? "-home" : "-away");
+                const participants = getParticipants(eventId);
+                const odds = getRandomOdds();
+                const label = isHomeTeam ? participants[0].label : participants[1].label;
+
+                getState().sportsbook.selection.selections[selectionId] =
+                {
+                    marketId,
+                    odds,
+                    alternateLabel: label,
+                    status: "Open",
+                    sortOrder: 1,
+                    participantId: isHomeTeam ? participants[0].id : participants[1].id,
+                    participantLabel: label,
+                    selectionTemplateId: isHomeTeam ? "HOME" : "AWAY",
+                    participant: label,
+                    marketSelectionPriceFormats: {
+                        1: odds.toString()
+                    },
+                    id: selectionId,
+                    label,
+                    isHomeTeam,
+                    marketVersion: 1,
+                    eventId,
+                }
+                addUniqueToArray(getState().sportsbook.selection.marketMap, marketId, selectionId);
+            }
+
         }
+    }
+
+    function getRandomOdds() {
+        const min = 1.01;
+        const max = 10;
+        const value = (Math.random() * (max - min + 1)) + min;
+        return Number(Number.parseFloat(value).toFixed(2));
     }
 
     function setHasFastMarketsFlag(value) {
@@ -5098,6 +5501,10 @@
     function getUsersCurrency() {
         return getState().customer?.customer?.basicInformation?.currencyCode
             ?? getState().market?.currentMarket?.currency;
+    }
+
+    function mergeArraysWithoutElementDuplication(arr1, arr2) {
+        arr1.push(...arr2.filter(item => !new Set(arr1).has(item)));
     }
 
     window.submitScore = (participant) => {
@@ -5152,6 +5559,13 @@
 
     function getSetEventPhaseNeedsMoreParam() {
         return obgRt.setEventPhaseLive.length > 1;
+    }
+
+    function addUniqueToArray(obj, key, value) {
+        obj[key] ??= []; // Ensure the array exists
+        if (!obj[key].includes(value)) {
+            obj[key].push(value); // Add only if it’s not a duplicate
+        }
     }
 
     window.submitScoreBoard = () => {
