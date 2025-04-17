@@ -871,40 +871,74 @@
 
                 <div class="">
                     <button onclick="toggleSection('createMarketSection')" class="moreLess">
-                        <!-- Create Fast/Player Props Market -->
-                        Not working until SBEUJO-10129 gets fixed
+                        Create Pre-Built/Fast/Player Props Market
                     </button>
 
                     <div id="createMarketSection" class="hide marginTopBottom10px">
                         <div id="createMarketErrorSection" class="displayInRed">
-                            Open an Event Panel.
+                            Open an Event Page/Panel
                         </div>
                         <div id="createMarketFeatures">
-                            <div id="createPlayerPropsSection" class="marginTopBottom10px">
-                                Player Props
+
+                            <select id="createMarketSelector" onchange="showCreationSectionForMarketType(value)"
+                                class="comboSbTools height20px marginBottom10px width100percent">
+                                <option value="preBuilt">Pre-Built</option>
+                                <option value="playerProps">Player Props</option>
+                                <option value="fastMarket">Fast Market</option>
+                            </select>
+
+                            <div id="createPreBuiltMarketSection">
+                                <div class="infoMessage">
+                                    <div>Dedicated Pre-Built tab created only for:</div>
+                                    <div class="marginLeft15px">Football, Basketball, Baseball, American
+                                        Football, Ice Hockey, Cricket, Rugby League, Rugby Union
+                                    </div>
+                                </div>
+                                <div class="itemsJustified marginTop10px">
+                                    <span>Number of legs</span>
+                                    <input type="range" id="preBuiltLegCountRange" min="2" max="6" class="rangeSbTools"
+                                        value="2">
+                                    <span id="preBuiltLegCount" class="displayInGreen width16px"></span>
+                                </div>
+                            </div>
+
+
+                            <div id="createPlayerPropsSection" class="hide">
                                 <div class="infoMessage">Football, Basketball, Baseball, Ice Hockey, American Football,
                                     Handball
                                 </div>
-                                <div class="createMarketLayout">
-                                    <button class="btSimple playerProps" id="btCreatePlayerPropsMarket"
-                                        onclick="createMarket('playerProps')">4 selections</button>
-                                    <div class="buttonLabelToRight" id="playerPropsMessage"></div>
-                                    <button class="btSimple playerProps" id="btCreatePlayerPropsDummyMarket"
-                                        onclick="createMarket('playerPropsDummy')">15 dummy selections</button>
+                                <div class="itemsJustified marginTop10px">
+                                    <span>Number of players</span>
+                                    <input type="range" id="playerPropsPlayerCountRange" min="1" max="12" class="rangeSbTools"
+                                        value="4">
+                                    <span id="playerPropsPlayerCount" class="displayInGreen width16px"></span>
+                                </div>
+                                <div class="marginTop10px">
+                                    <div class="alignItemsCenter">
+                                        <input type="radio" name="radioPlayerPropsGroup" value="multi" class="radioSbTools" checked>
+                                        <span>Multiple markets for all players</span>
+                                    </div>
+                                    <div class="alignItemsCenter">
+                                        <input type="radio" name="radioPlayerPropsGroup" value="single" class="radioSbTools">
+                                        <span>Single market for all players</span>
+                                    </div>
+                                    <div class="alignItemsCenter">
+                                        <input type="radio" name="radioPlayerPropsGroup" value="mixed" class="radioSbTools">
+                                        <span>Single market for one player, multiple for the rest</span>
+                                    </div>
                                 </div>
                             </div>
-                            <hr class="hRule">
-                            <div id="createFastMarketSection" class="marginTopBottom10px">
-                                Fast Market
+                            <div id="createFastMarketSection" class="hide">
                                 <div class="infoMessage">Football, Basketball, Tennis, Table Tennis, Ice Hockey,
                                     American Football, Squash</div>
-                                <div class="createMarketLayout">
-                                    <button class="btSimple" id="btCreateFastMarket" onclick="createMarket('fast')">
-                                        <span class="iconFastMarket iconOnBtSimple iconSvgSmall"></span>
-                                        <span class="labelOnBtSimple">Create</span>
-                                    </button>
-                                    <div class="buttonLabelToRight" id="fastMarketMessage"></div>
-                                </div>
+                            </div>
+                            <hr class="hRule">
+
+                            <div>
+                                <button class="btSimple paddingInline20px" id="btCreateMarket" onclick="createMarket()">
+                                    <span class="labelOnBtSimple">Create</span>
+                                </button>
+                                <span id="createMarketMessage" class="marginLeft5px"></span>
                             </div>
                         </div>
                     </div>
@@ -1118,7 +1152,8 @@
                     </div>
                 </div>
 
-                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Accordion Icons, Help Text</button>
+                <button onclick="toggleSection('marketPropertiesSection')" class="moreLess">Accordion Icons, Help
+                    Text</button>
                 <div id="marketPropertiesSection" class="marginTopBottom10px hide">
 
                     <div id="marketCheckboxesSection">
@@ -1145,8 +1180,8 @@
                                 <span class="iconFastMarket iconMockIconColumn vertMiddle iconSvgSmall"></span>
                                 <span class="iconMockLabelColumn">Fast Market (Live)</span>
                             </span>
-                            <input type="checkbox" onclick="toggleMarketProperty('isFastMarket')"
-                                id="chkIsFastMarket" class="chkSbTools">
+                            <input type="checkbox" onclick="toggleMarketProperty('isFastMarket')" id="chkIsFastMarket"
+                                class="chkSbTools">
                         </div>
 
                         <div id="isBetDistributionAvailableSection" class="iconMocksRow">
@@ -1259,13 +1294,15 @@
                                 <button id="btOddsMinus" class="btPlusMinus btIcon" onclick="modifyNewOdds('minus')">
                                     <img class="iconMinus">
                                 </button>
-                                <input class="fdSbTools" type="number" id="fdNewOdds" onfocus="toggleBtSetOdds('activate')" onblur="toggleBtSetOdds()" min=1 step=0.01
+                                <input class="fdSbTools" type="number" id="fdNewOdds"
+                                    onfocus="toggleBtSetOdds('activate')" onblur="toggleBtSetOdds()" min=1 step=0.01
                                     oninput="validity.valid||(value='');">
                                 <button id="btOddsPlus" class="btPlusMinus btIcon" onclick="modifyNewOdds('plus')">
                                     <img class="iconPlus">
                                 </button>
                             </span>
-                            <button id="btSetOdds" class="btSimple btSubmit inactivated" onmousedown="toggleBtSetOdds('activate')" onclick="setOdds()">Set</button>
+                            <button id="btSetOdds" class="btSimple btSubmit inactivated"
+                                onmousedown="toggleBtSetOdds('activate')" onclick="setOdds()">Set</button>
                         </div>
                     </div>
 
@@ -1276,14 +1313,14 @@
                         <div id="setSelectionStateButtonsSection" class="setSelectionStateLayout marginBottom10px">
                             <button class="btSimple btSetSelectionState" id="btSetSelectionStateOpen"
                                 onclick="setSelectionState('Open')">Open</button>
-                            <button class="btSimple btSetSelectionState" id="btSetSelectionStateWon"
+                            <!-- <button class="btSimple btSetSelectionState" id="btSetSelectionStateWon"
                                 onclick="setSelectionState('Won')">Won</button>
                             <button class="btSimple btSetSelectionState" id="btSetSelectionStateLost"
                                 onclick="setSelectionState('Lost')">Lost</button>
                             <button class="btSimple btSetSelectionState" id="btSetSelectionStateVoid"
-                                onclick="setSelectionState('Void')">Void</button>
+                                onclick="setSelectionState('Void')">Void</button> -->
                             <button class="btSimple btSetSelectionState" id="btSetSelectionStateSuspended"
-                                onclick="setSelectionState('Suspended')">Suspd</button>
+                                onclick="setSelectionState('Suspended')">Suspended</button>
                             <button class="btSimple btSetSelectionState" id="btSetSelectionStateSettled"
                                 onclick="setSelectionState('Settled')">Settled</button>
                         </div>
@@ -2685,6 +2722,10 @@
         margin-right: 5px;
     }
 
+    .marginRight20px {
+        margin-right: 20px;
+    }
+
     .marginRight3px {
         margin-right: 3px;
     }
@@ -2813,6 +2854,10 @@
         vertical-align: middle;
     }
 
+    .paddingInline20px{
+        padding-inline: 20px;
+    }
+
     .iconMockIconColumn {
         display: inline-block;
         text-align: center;
@@ -2901,7 +2946,7 @@
 
     .setSelectionStateLayout {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
     }
 
     .nativeBottomBarButtons {
@@ -3294,11 +3339,17 @@
     }
 
     .radioSbTools {
-        /* margin-right: 3px; */
         margin-right: 5px;
         cursor: pointer;
         accent-color: var(--sbtColorGreen);
     }
+
+    .rangeSbTools {
+        /* margin-right: 5px; */
+        cursor: pointer;
+        accent-color: var(--sbtColorGreen);
+    }
+
 
     .btCopy {
         min-width: 16px;
