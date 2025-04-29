@@ -582,7 +582,7 @@
                                     Live' button to see the changes</div>
                                 <div class="scoreBoardExtrasDetails">
                                     <div id="footballScoreBoardExtrasSection">
-                                        <div class="radioRowToLeft">
+                                        <!-- <div class="radioRowToLeft">
                                             <span class="scoreBoardExtrasKey">Match Clock</span>
                                             <span class="footballScoreBoardExtrasThreeInputs">
                                                 <input id="radioHalfTime" type="radio" class="radioSbTools"
@@ -596,6 +596,33 @@
                                             </span>
                                             <span class="footballScoreBoardExtrasThreeInputs">
                                                 <input type="radio" class="radioSbTools" name="matchClock" checked>
+                                                <span>Neither</span>
+                                            </span>
+                                        </div> -->
+
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKey">Match Clock</span>
+                                            <span class="displayFlex">
+                                                <input id="radioHalfTime" type="radio" 
+                                                    class="radioSbTools" name="matchClock">
+                                                <span class="width100px">Half Time</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="radioExtraTime" type="radio" 
+                                                    class="radioSbTools" name="matchClock">
+                                                <span>Extra Time</span>
+                                            </span>
+                                        </div>
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKey"></span>
+                                            <span class="displayFlex">
+                                                <input id="radioPenaltyShootout" type="radio" 
+                                                    class="radioSbTools" name="matchClock">
+                                                <span class="width100px">Penalty Shootout</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input type="radio" checked
+                                                    class="radioSbTools" name="matchClock">
                                                 <span>Neither</span>
                                             </span>
                                         </div>
@@ -871,7 +898,7 @@
 
                 <div class="">
                     <button onclick="toggleSection('createMarketSection')" class="moreLess">
-                        Create Pre-Built/Fast/Player Props Market
+                        Create Pre-Built / Fast / Player Props Market
                     </button>
 
                     <div id="createMarketSection" class="hide marginTopBottom10px">
@@ -1053,7 +1080,7 @@
                         </button>
                         <span>Add market to Carousel or Cards</span>
                     </div>
-                    <div class="checkBoxRowToLeft">
+                    <div id="betPopularitySection" class="checkBoxRowToLeft">
                         <input type="checkbox" class="chkSbTools" id="chkBetPopularityBadge">
                         <span class="marginLeft5px">with Bet Popularity badge on Competition pages</span>
                     </div>
@@ -2494,6 +2521,10 @@
 
     .width90px {
         width: 90px;
+    }
+
+    .width100px {
+        width: 100px;
     }
 
     .iconFbScoreBoard {
