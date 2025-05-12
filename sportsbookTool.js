@@ -58,14 +58,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -102,7 +102,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.73";
+    const SB_TOOL_VERSION = "v1.6.74";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -3663,6 +3663,27 @@
         const chkDangerousAttacks = getElementById("chkDangerousAttacks");
         const chkVar = getElementById("chkVar");
 
+
+        // basketball
+        const basketBallScoreBoardExtrasSection = getElementById("basketBallScoreBoardExtrasSection");
+        const chkFouls = getElementById("chkFouls");
+        const chkTwoPointsAttemptsTotal = getElementById("chkTwoPointsAttemptsTotal");
+        const chkTwoPointsMade = getElementById("chkTwoPointsMade");
+        const chkThreePointsAttemptsTotal = getElementById("chkThreePointsAttemptsTotal");
+        const chkThreePointsMade = getElementById("chkThreePointsMade");
+        const chkFreeThrowsTotal = getElementById("chkFreeThrowsTotal");
+        const chkFreeThrowsMade = getElementById("chkFreeThrowsMade");
+        const chkAssists = getElementById("chkAssists");
+        const chkRebounds = getElementById("chkRebounds");
+        const radioBallPossessionHome = getElementById("radioBallPossessionHome");
+        const radioBallPossessionAway = getElementById("radioBallPossessionAway");
+        const radioBallPossessionNeither = getElementById("radioBallPossessionNeither");
+        const radioBallPossessionInactive = getElementById("radioBallPossessionInactive");
+        const radioBasketHalfTime = getElementById("radioBasketHalfTime");
+        const radioBasketFullTime = getElementById("radioBasketFullTime");
+        const radioBasketOverTime = getElementById("radioBasketOverTime");
+
+        // ice hockey
         const iceHockeyScoreBoardExtrasSection = getElementById("iceHockeyScoreBoardExtrasSection");
         const radioPPHome = getElementById("radioPPHome");
         const radioPP2Home = getElementById("radioPP2Home");
@@ -4044,7 +4065,6 @@
                 }
 
                 function createSelection(isOver, lineValue) {
-                    log("lineValue: " + lineValue);
                     selectionId = `s-${marketId}-${isOver ? "Over" : "Under"}`;
                     selectionLabel = `${isOver ? "Over" : "Under"} ${lineValue}`;
                     obgRt.createSelection(
@@ -4491,6 +4511,9 @@
                         swapPPHomeWithAway();
                         showAndHide(iceHockeyScoreBoardExtrasSection);
                         break;
+                    case "4":
+                        showAndHide(basketBallScoreBoardExtrasSection);
+                        break;
                     case "11":
                         showAndHide(tennisScoreBoardExtrasSection);
                         break;
@@ -4510,7 +4533,13 @@
             }
 
             function hideExcept(sectionToKeep) {
-                const sectionsToHide = [footballScoreBoardExtrasSection, iceHockeyScoreBoardExtrasSection, tennisScoreBoardExtrasSection, dartsScoreBoardExtrasSection].filter(section => section !== sectionToKeep);
+                const sectionsToHide = [
+                    footballScoreBoardExtrasSection,
+                    basketBallScoreBoardExtrasSection,
+                    iceHockeyScoreBoardExtrasSection,
+                    tennisScoreBoardExtrasSection,
+                    dartsScoreBoardExtrasSection
+                ].filter(section => section !== sectionToKeep);
                 sectionsToHide.forEach(section => hide(section));
             }
         }
@@ -4542,6 +4571,26 @@
                         isPPAwayActive: radioPPAway.checked,
                         isPP2AwayActive: radioPP2Away.checked,
                         isPPNoneActive: radioPPNone.checked
+                    }
+                }
+                case "4": {
+                    return {
+                        isFoulsActive: chkFouls.checked,
+                        isTwoPointsAttemptsTotalActive: chkTwoPointsAttemptsTotal.checked,
+                        isTwoPointsMadeActive: chkTwoPointsMade.checked,
+                        isThreePointsAttemptsTotalActive: chkThreePointsAttemptsTotal.checked,
+                        isThreePointsMadeActive: chkThreePointsMade.checked,
+                        isFreeThrowsTotalActive: chkFreeThrowsTotal.checked,
+                        isFreeThrowsMadeActive: chkFreeThrowsMade.checked,
+                        isAssistsActive: chkAssists.checked,
+                        isReboundsActive: chkRebounds.checked,
+                        isRadioBallPossessionHomeActive: radioBallPossessionHome.checked,
+                        isRadioBallPossessionAwayActive: radioBallPossessionAway.checked,
+                        isRadioBallPossessionNeitherActive: radioBallPossessionNeither.checked,
+                        isRadioBallPossessionInactive: radioBallPossessionInactive.checked,
+                        isHalfTimeActive: radioBasketHalfTime.checked,
+                        isFullTimeActive: radioBasketFullTime.checked,
+                        isOverTimeActive: radioBasketOverTime.checked
                     }
                 }
                 case "11": {
@@ -7814,7 +7863,7 @@
             case "1": return getFootballScoreBoard(participants, scoreBoardExtras);
             case "2": return getIceHockeyScoreBoard(participants, scoreBoardExtras);
             case "3": return getHandballScoreBoard(participants);
-            case "4": return getBasketBallScoreBoard(participants);
+            case "4": return getBasketBallScoreBoard(participants, scoreBoardExtras);
             case "7": return getRugbyLeagueScoreBoard(participants);
             case "8": return getRugbyUnionScoreBoard(participants);
             case "9": return getVolleyBallScoreBoard(participants);
@@ -8028,7 +8077,8 @@
             varState: 0,
             phaseCategoryId: "8-19"
         }
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        return getScoreBoardWithFinalScores(scoreBoard);
     }
 
     function getIceHockeyScoreBoard(participants, scoreBoardExtras) {
@@ -8099,7 +8149,8 @@
             phaseCategoryId: "2-2"
         }
 
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        return getScoreBoardWithFinalScores(scoreBoard);
     }
 
     function getTennisScoreBoard(participants, scoreBoardExtras) {
@@ -8224,67 +8275,296 @@
 
     }
 
-    function getBasketBallScoreBoard(participants) {
-        let scoreBoard = {
+    function getBasketBallScoreBoard(participants, scoreBoardExtras) {
+
+        const { isHalfTimeActive, isFullTimeActive, isOverTimeActive } = scoreBoardExtras;
+
+        let currentPhase = {
+            id: 3,
+            label: "3rd Quarter",
+            minutes: getRandomInt(59),
+            seconds: getRandomInt(1, 11),
+            clockMode: "RunningDown"
+        };
+
+        if (isHalfTimeActive) {
+            currentPhase = { id: 17, label: "Halftime", minutes: 0, seconds: 0, clockMode: "Stopped" };
+        } else if (isFullTimeActive) {
+            currentPhase = { id: 11, label: "Fulltime", minutes: 0, seconds: 0, clockMode: "Stopped" };
+        } else if (isOverTimeActive) {
+            currentPhase = { id: 12, label: "Overtime", minutes: getRandomInt(1, 4), seconds: getRandomInt(59), clockMode: "RunningDown" };
+        }
+
+        const {
+            id: currentPhaseId,
+            label: currentPhaseLabel,
+            minutes: matchClockMinutes,
+            seconds: matchClockSeconds,
+            clockMode: gameClockMode
+        } = currentPhase;
+
+        const phaseCategoryId = `${currentPhaseId}-4`;
+
+        const scoreHomeP1 = getRandomInt(10, 50);
+        const scoreHomeP2 = getRandomInt(10, 50);
+        const scoreHomeP3 = isHalfTimeActive ? 0 : getRandomInt(10, 50)
+        const scoreHomeP4 = isFullTimeActive || isOverTimeActive ? getRandomInt(10, 50) : 0;
+        const scoreHomeP5 = isOverTimeActive ? getRandomInt(2, 20) : 0;
+        const scoreHomeHt = scoreHomeP1 + scoreHomeP2;
+        const scoreHomeFt = scoreHomeHt + scoreHomeP3 + scoreHomeP4;
+        const scoreHomeCurrent = scoreHomeFt + scoreHomeP5;
+        const throwStatsHome = generateBasketballStats(scoreHomeCurrent);
+
+        const scoreAwayP1 = getRandomInt(10, 50);
+        const scoreAwayP2 = getRandomInt(10, 50);
+        const scoreAwayP3 = isHalfTimeActive ? 0 : getRandomInt(10, 50)
+        const scoreAwayP4 = isFullTimeActive || isOverTimeActive ? getRandomInt(10, 50) : 0;
+        const scoreAwayP5 = isOverTimeActive ? getRandomInt(2, 20) : 0;
+        const scoreAwayHt = scoreAwayP1 + scoreAwayP2;
+        const scoreAwayFt = scoreAwayHt + scoreAwayP3 + scoreAwayP4;
+        const scoreAwayCurrent = scoreAwayFt + scoreAwayP5;
+        const throwStatsAway = generateBasketballStats(scoreAwayCurrent);
+
+        return {
             actions: [],
             participants,
             scorePerParticipant: {
-                [participants[0].id]: 0,
-                [participants[1].id]: 0
+                [participants[0].id]: scoreHomeCurrent,
+                [participants[1].id]: scoreAwayCurrent
             },
             statistics: {
                 [participants[0].id]: {
                     score: {
                         byPhase: [
-                            { value: getRandomInt(10, 50), isActive: true },
-                            { value: getRandomInt(10, 50), isActive: true },
-                            { value: getRandomInt(10, 50), isActive: true },
-                            { value: 0, isActive: true },
+                            { value: scoreHomeP1, isActive: true },
+                            { value: scoreHomeP2, isActive: true },
+                            { value: scoreHomeP3, isActive: true },
+                            { value: scoreHomeP4, isActive: true },
+                            { value: scoreHomeP5, isActive: isOverTimeActive },
                             { value: 0, isActive: false },
-                            { value: 0, isActive: false },
-                            { value: 0, isActive: false },
+                            { value: 0, isActive: false }
                         ],
-                        total: {
-                            value: 0,
-                            isActive: true
-                        }
+                        total: { value: scoreHomeCurrent, isActive: true }
+                    },
+                    fouls: {
+                        value: scoreBoardExtras.isFoulsActive ? getRandomInt(1, 10) : 0,
+                        isActive: scoreBoardExtras.isFoulsActive
+                    },
+                    twoPointsAttemptsTotal: {
+                        value: scoreBoardExtras.isTwoPointsAttemptsTotalActive ? throwStatsHome.twoPointsAttemptsTotal : 0,
+                        isActive: scoreBoardExtras.isTwoPointsAttemptsTotalActive
+                    },
+                    twoPointsMade: {
+                        value: scoreBoardExtras.isTwoPointsMadeActive ? throwStatsHome.twoPointsMade : 0,
+                        isActive: scoreBoardExtras.isTwoPointsMadeActive
+                    },
+                    threePointsAttemptsTotals: {
+                        value: scoreBoardExtras.isThreePointsAttemptsTotalActive ? throwStatsHome.threePointsAttemptsTotals : 0,
+                        isActive: scoreBoardExtras.isThreePointsAttemptsTotalActive
+                    },
+                    threePointsMade: {
+                        value: scoreBoardExtras.isThreePointsMadeActive ? throwStatsHome.threePointsMade : 0,
+                        isActive: scoreBoardExtras.isThreePointsMadeActive
+                    },
+                    freeThrowsTotal: {
+                        value: scoreBoardExtras.isFreeThrowsTotalActive ? throwStatsHome.freeThrowsTotal : 0,
+                        isActive: scoreBoardExtras.isFreeThrowsTotalActive
+                    },
+                    freeThrowsMade: {
+                        value: scoreBoardExtras.isFreeThrowsMadeActive ? throwStatsHome.freeThrowsMade : 0,
+                        isActive: scoreBoardExtras.isFreeThrowsMadeActive
+                    },
+                    assists: {
+                        value: scoreBoardExtras.isAssistsActive ? getRandomInt(1, Math.floor(scoreHomeCurrent / 3)) : 0,
+                        isActive: scoreBoardExtras.isAssistsActive
+                    },
+                    rebounds: {
+                        value: scoreBoardExtras.isReboundsActive ? getRandomInt(1, Math.floor(scoreHomeCurrent / 3)) : 0,
+                        isActive: scoreBoardExtras.isReboundsActive
+                    },
+                    ballPossession: {
+                        value: scoreBoardExtras.isRadioBallPossessionHomeActive,
+                        isActive: scoreBoardExtras.isRadioBallPossessionHomeActive || !scoreBoardExtras.isRadioBallPossessionInactive
+                    },
+                    halfTimeScore: {
+                        value: scoreHomeHt,
+                        isActive: true
+                    },
+                    fullTimeScore: {
+                        value: isFullTimeActive ? scoreHomeFt : 0,
+                        isActive: true
                     }
                 },
                 [participants[1].id]: {
                     score: {
                         byPhase: [
-                            { value: getRandomInt(10, 50), isActive: true },
-                            { value: getRandomInt(10, 50), isActive: true },
-                            { value: getRandomInt(10, 50), isActive: true },
-                            { value: 0, isActive: true },
+                            { value: scoreAwayP1, isActive: true },
+                            { value: scoreAwayP2, isActive: true },
+                            { value: scoreAwayP3, isActive: true },
+                            { value: scoreAwayP4, isActive: true },
+                            { value: scoreAwayP5, isActive: isOverTimeActive },
                             { value: 0, isActive: false },
-                            { value: 0, isActive: false },
-                            { value: 0, isActive: false },
+                            { value: 0, isActive: false }
                         ],
-                        total: {
-                            value: 0,
-                            isActive: true
-                        }
+                        total: { value: scoreAwayCurrent, isActive: true }
+                    },
+                    fouls: {
+                        value: scoreBoardExtras.isFoulsActive ? getRandomInt(1, 10) : 0,
+                        isActive: scoreBoardExtras.isFoulsActive
+                    },
+                    twoPointsAttemptsTotal: {
+                        value: scoreBoardExtras.isTwoPointsAttemptsTotalActive ? throwStatsAway.twoPointsAttemptsTotal : 0,
+                        isActive: scoreBoardExtras.isTwoPointsAttemptsTotalActive
+                    },
+                    twoPointsMade: {
+                        value: scoreBoardExtras.isTwoPointsMadeActive ? throwStatsAway.twoPointsMade : 0,
+                        isActive: scoreBoardExtras.isTwoPointsMadeActive
+                    },
+                    threePointsAttemptsTotals: {
+                        value: scoreBoardExtras.isThreePointsAttemptsTotalActive ? throwStatsAway.threePointsAttemptsTotals : 0,
+                        isActive: scoreBoardExtras.isThreePointsAttemptsTotalActive
+                    },
+                    threePointsMade: {
+                        value: scoreBoardExtras.isThreePointsMadeActive ? throwStatsAway.threePointsMade : 0,
+                        isActive: scoreBoardExtras.isThreePointsMadeActive
+                    },
+                    freeThrowsTotal: {
+                        value: scoreBoardExtras.isFreeThrowsTotalActive ? throwStatsAway.freeThrowsTotal : 0,
+                        isActive: scoreBoardExtras.isFreeThrowsTotalActive
+                    },
+                    freeThrowsMade: {
+                        value: scoreBoardExtras.isFreeThrowsMadeActive ? throwStatsAway.freeThrowsMade : 0,
+                        isActive: scoreBoardExtras.isFreeThrowsMadeActive
+                    },
+                    assists: {
+                        value: scoreBoardExtras.isAssistsActive ? getRandomInt(1, Math.floor(scoreAwayCurrent / 3)) : 0,
+                        isActive: scoreBoardExtras.isAssistsActive
+                    },
+                    rebounds: {
+                        value: scoreBoardExtras.isReboundsActive ? getRandomInt(1, Math.floor(scoreAwayCurrent / 3)) : 0,
+                        isActive: scoreBoardExtras.isReboundsActive
+                    },
+                    ballPossession: {
+                        value: scoreBoardExtras.isRadioBallPossessionAwayActive,
+                        isActive: scoreBoardExtras.isRadioBallPossessionAwayActive || !scoreBoardExtras.isRadioBallPossessionInactive
+                    },
+                    halfTimeScore: {
+                        value: scoreAwayHt,
+                        isActive: true
+                    },
+                    fullTimeScore: {
+                        value: isFullTimeActive ? scoreAwayFt : 0,
+                        isActive: true
                     }
                 }
             },
             eventId,
             categoryId: 4,
             category: "Basketball",
-            currentPhase: { id: 3, label: getPhaseLabelWithEnLangCheck("3rd Quarter") },
+            currentPhase: { id: currentPhaseId, label: getPhaseLabelWithEnLangCheck(currentPhaseLabel) },
             currentVarState: 0,
             isSecondLeg: false,
             matchClock: {
-                seconds: getRandomInt(59),
-                minutes: getRandomInt(1, 11),
-                gameClockMode: "RunningDown",
+                seconds: matchClockSeconds,
+                minutes: matchClockMinutes,
+                gameClockMode: gameClockMode,
                 lastDateTimeSet
             },
             varState: 0,
-            phaseCategoryId: "3-4"
+            phaseCategoryId: phaseCategoryId
         }
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard);  
+
+        function generateBasketballStats(totalScore) {
+            let twoPointsMade, threePointsMade, freeThrowsMade, calculatedScore;
+
+            do {
+                // Generate made shots within reasonable basketball ranges
+                twoPointsMade = getRandomInt(15, 35);
+                threePointsMade = getRandomInt(5, 15);
+
+                const usedScore = 2 * twoPointsMade + 3 * threePointsMade;
+                freeThrowsMade = totalScore - usedScore;
+                calculatedScore = usedScore + freeThrowsMade;
+            } while (freeThrowsMade < 0 || freeThrowsMade > 30 || calculatedScore !== totalScore);
+
+            // Attempts are always >= made
+            const twoPointsAttemptsTotal = twoPointsMade + getRandomInt(2, 10);
+            const threePointsAttemptsTotals = threePointsMade + getRandomInt(2, 6);
+            const freeThrowsTotal = freeThrowsMade + getRandomInt(0, 3);
+
+            return {
+                twoPointsAttemptsTotal,
+                twoPointsMade,
+                threePointsAttemptsTotals,
+                threePointsMade,
+                freeThrowsTotal,
+                freeThrowsMade
+            };
+        }
     }
+
+    // function getBasketBallScoreBoard(participants) {
+    //     let scoreBoard = {
+    //         actions: [],
+    //         participants,
+    //         scorePerParticipant: {
+    //             [participants[0].id]: 0,
+    //             [participants[1].id]: 0
+    //         },
+    // statistics: {
+    //     [participants[0].id]: {
+    //         score: {
+    //             byPhase: [
+    //                 { value: getRandomInt(10, 50), isActive: true },
+    //                 { value: getRandomInt(10, 50), isActive: true },
+    //                 { value: getRandomInt(10, 50), isActive: true },
+    //                 { value: 0, isActive: true },
+    //                 { value: 0, isActive: false },
+    //                 { value: 0, isActive: false },
+    //                 { value: 0, isActive: false },
+    //             ],
+    //             total: {
+    //                 value: 0,
+    //                 isActive: true
+    //             }
+    //         }
+    //     },
+    //     [participants[1].id]: {
+    //         score: {
+    //             byPhase: [
+    //                 { value: getRandomInt(10, 50), isActive: true },
+    //                 { value: getRandomInt(10, 50), isActive: true },
+    //                 { value: getRandomInt(10, 50), isActive: true },
+    //                 { value: 0, isActive: true },
+    //                 { value: 0, isActive: false },
+    //                 { value: 0, isActive: false },
+    //                 { value: 0, isActive: false },
+    //             ],
+    //             total: {
+    //                 value: 0,
+    //                 isActive: true
+    //             }
+    //         }
+    //     }
+    // },
+    //         eventId,
+    //         categoryId: 4,
+    //         category: "Basketball",
+    //         currentPhase: { id: 3, label: getPhaseLabelWithEnLangCheck("3rd Quarter") },
+    //         currentVarState: 0,
+    //         isSecondLeg: false,
+    //         matchClock: {
+    //             seconds: getRandomInt(59),
+    //             minutes: getRandomInt(1, 11),
+    //             gameClockMode: "RunningDown",
+    //             lastDateTimeSet
+    //         },
+    //         varState: 0,
+    //         phaseCategoryId: "3-4"
+    //     }
+    //     return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+    // }
 
     function getDartsScoreBoard(participants, scoreBoardExtras) {
         let legPointsHome = getRandomInt(3),
@@ -8698,7 +8978,8 @@
             varState: 0,
             phaseCategoryId: isFirstHalf ? "1-3" : "2-3" //added manually
         }
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        return getScoreBoardWithFinalScores(scoreBoard);
     }
 
     function getWaterPoloScoreBoard() {
@@ -8844,7 +9125,8 @@
             phaseCategoryId: isFirstHalf ? "1-58" : "2-58"
 
         }
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        return getScoreBoardWithFinalScores(scoreBoard);
     }
 
     function getSquashScoreBoard() {
@@ -9045,7 +9327,8 @@
             varState: 0,
             phaseCategoryId: isFirstHalf ? "1-8" : "2-8" // added manually
         }
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        return getScoreBoardWithFinalScores(scoreBoard);
     }
 
     function getRugbyLeagueScoreBoard() {
@@ -9099,7 +9382,8 @@
             varState: 0,
             phaseCategoryId: isFirstHalf ? "1-7" : "2-7"
         }
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        return getScoreBoardWithFinalScores(scoreBoard);
     }
 
     function getSnookerScoreBoard() {
@@ -9251,26 +9535,50 @@
             varState: 0,
             phaseCategoryId: "3-10" // added manually
         }
-        return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        // return getScoreBoardWithFinalScores(scoreBoard, participants, categoryId);
+        return getScoreBoardWithFinalScores(scoreBoard);
     }
 
-    function getScoreBoardWithFinalScores(scoreBoard, participants, categoryId) {
-        let homeFinalScore = getFinalScore(0);
-        let awayFinalScore = getFinalScore(1);
+    function getScoreBoardWithFinalScores(scoreBoard) {
+
+        const categoryId = scoreBoard.categoryId;
+        const participants = scoreBoard.participants;
+        const homeFinalScore = getFinalScore(0);
+        const awayFinalScore = getFinalScore(1);
 
         scoreBoard.scorePerParticipant[participants[0].id] = homeFinalScore;
         scoreBoard.scorePerParticipant[participants[1].id] = awayFinalScore;
 
-        let statKey = categoryId === "19" ? "inningRuns" : "score";
+        const statKey = categoryId === 19 ? "inningRuns" : "score";
         scoreBoard.statistics[participants[0].id][statKey].total.value = homeFinalScore;
         scoreBoard.statistics[participants[1].id][statKey].total.value = awayFinalScore;
 
         function getFinalScore(index) {
-            let byPhase = categoryId === "19" ? scoreBoard.statistics[participants[index].id].inningRuns.byPhase : scoreBoard.statistics[participants[index].id].score.byPhase;
+            const byPhase = categoryId === 19 ?
+                scoreBoard.statistics[participants[index].id].inningRuns.byPhase :
+                scoreBoard.statistics[participants[index].id].score.byPhase;
             return byPhase.reduce((total, currentValue) => total + currentValue.value, 0);
         }
         return scoreBoard;
     }
+
+    // function getScoreBoardWithFinalScores(scoreBoard, participants, categoryId) {
+    //     let homeFinalScore = getFinalScore(0);
+    //     let awayFinalScore = getFinalScore(1);
+
+    //     scoreBoard.scorePerParticipant[participants[0].id] = homeFinalScore;
+    //     scoreBoard.scorePerParticipant[participants[1].id] = awayFinalScore;
+
+    //     let statKey = categoryId === "19" ? "inningRuns" : "score";
+    //     scoreBoard.statistics[participants[0].id][statKey].total.value = homeFinalScore;
+    //     scoreBoard.statistics[participants[1].id][statKey].total.value = awayFinalScore;
+
+    //     function getFinalScore(index) {
+    //         let byPhase = categoryId === "19" ? scoreBoard.statistics[participants[index].id].inningRuns.byPhase : scoreBoard.statistics[participants[index].id].score.byPhase;
+    //         return byPhase.reduce((total, currentValue) => total + currentValue.value, 0);
+    //     }
+    //     return scoreBoard;
+    // }
 
     function getPhaseLabelWithEnLangCheck(phaseLabel) {
         return LANGUAGECODE == "en" ? phaseLabel : phaseLabel + " (English)";

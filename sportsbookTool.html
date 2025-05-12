@@ -577,52 +577,36 @@
                         <div id="scoreBoardExtrasSection">
                             <hr class="hRule">
                             <details>
-                                <summary class="sbtSummary">Scoreboard Extras</summary>
+                                <summary class="sbtSummary">Scoreboard Details</summary>
                                 <div class="displayInLightGrey marginLeft2px fontSizeSmaller">Click on 'Live' or 'New
                                     Live' button to see the changes</div>
                                 <div class="scoreBoardExtrasDetails">
+
                                     <div id="footballScoreBoardExtrasSection">
-                                        <!-- <div class="radioRowToLeft">
-                                            <span class="scoreBoardExtrasKey">Match Clock</span>
-                                            <span class="footballScoreBoardExtrasThreeInputs">
-                                                <input id="radioHalfTime" type="radio" class="radioSbTools"
-                                                    name="matchClock">
-                                                <span>Half Time</span>
-                                            </span>
-                                            <span class="footballScoreBoardExtrasThreeInputs">
-                                                <input id="radioExtraTime" type="radio" class="radioSbTools"
-                                                    name="matchClock">
-                                                <span>Extra Time</span>
-                                            </span>
-                                            <span class="footballScoreBoardExtrasThreeInputs">
-                                                <input type="radio" class="radioSbTools" name="matchClock" checked>
-                                                <span>Neither</span>
-                                            </span>
-                                        </div> -->
 
                                         <div class="radioRowToLeft">
                                             <span class="scoreBoardExtrasKey">Match Clock</span>
                                             <span class="displayFlex">
-                                                <input id="radioHalfTime" type="radio" 
-                                                    class="radioSbTools" name="matchClock">
-                                                <span class="width100px">Half Time</span>
+                                                <input id="radioHalfTime" type="radio" class="radioSbTools"
+                                                    name="matchClockFootball">
+                                                <span class="width100px">Halftime</span>
                                             </span>
                                             <span class="displayFlex">
-                                                <input id="radioExtraTime" type="radio" 
-                                                    class="radioSbTools" name="matchClock">
+                                                <input id="radioExtraTime" type="radio" class="radioSbTools"
+                                                    name="matchClockFootball">
                                                 <span>Extra Time</span>
                                             </span>
                                         </div>
                                         <div class="radioRowToLeft">
                                             <span class="scoreBoardExtrasKey"></span>
                                             <span class="displayFlex">
-                                                <input id="radioPenaltyShootout" type="radio" 
-                                                    class="radioSbTools" name="matchClock">
+                                                <input id="radioPenaltyShootout" type="radio" class="radioSbTools"
+                                                    name="matchClockFootball">
                                                 <span class="width100px">Penalty Shootout</span>
                                             </span>
                                             <span class="displayFlex">
-                                                <input type="radio" checked
-                                                    class="radioSbTools" name="matchClock">
+                                                <input type="radio" checked class="radioSbTools"
+                                                    name="matchClockFootball">
                                                 <span>Neither</span>
                                             </span>
                                         </div>
@@ -717,7 +701,137 @@
                                                 <span>Dang. Attacks</span>
                                             </span>
                                         </div>
+
                                     </div>
+
+                                    <div id="basketBallScoreBoardExtrasSection">
+
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall">Ball Possess.</span>
+                                            <span class="displayFlex width90px">
+                                                <input id="radioBallPossessionHome" type="radio" checked
+                                                    class="radioSbTools" name="ballPossessionBasketBall">
+                                                <span>Home</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="radioBallPossessionAway" type="radio" class="radioSbTools"
+                                                    name="ballPossessionBasketBall">
+                                                <span>Away</span>
+                                            </span>
+                                        </div>
+
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall"></span>
+                                            <span class="displayFlex width90px">
+                                                <input id="radioBallPossessionNeither" type="radio" class="radioSbTools"
+                                                    name="ballPossessionBasketBall">
+                                                <span>Neither</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="radioBallPossessionInactive" type="radio"
+                                                    class="radioSbTools" name="ballPossessionBasketBall">
+                                                <span>Incative</span>
+                                            </span>
+                                        </div>
+
+
+                                        <hr class="hRule">
+
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall">Match Clock</span>
+                                            <span class="displayFlex width90px">
+                                                <input id="radioBasketHalfTime" type="radio" class="radioSbTools"
+                                                    name="matchClockBasketBall">
+                                                <span>HalfTime</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input type="radio" checked class="radioSbTools"
+                                                    name="matchClockBasketBall">
+                                                <span>3rd Quarter</span>
+                                            </span>
+
+                                        </div>
+                                        <div class="radioRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall"></span>
+                                            <span class="displayFlex width90px">
+                                                <input id="radioBasketFullTime" type="radio" class="radioSbTools"
+                                                    name="matchClockBasketBall">
+                                                <span>Fulltime</span>
+                                            </span>                                            
+                                            <span class="displayFlex">
+                                                <input id="radioBasketOverTime" type="radio" class="radioSbTools"
+                                                    name="matchClockBasketBall">
+                                                <span>Overtime</span>
+                                            </span>
+
+                                        </div>
+
+                                        <hr class="hRule">
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall">Two Points</span>
+                                            <span class="displayFlex width90px">
+                                                <input id="chkTwoPointsAttemptsTotal" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Attempted</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="chkTwoPointsMade" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Made</span>
+                                            </span>
+                                        </div>
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall">Three Points</span>
+                                            <span class="displayFlex width90px">
+                                                <input id="chkThreePointsAttemptsTotal" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Attempted</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="chkThreePointsMade" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Made</span>
+                                            </span>
+                                        </div>
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall">Free Throws</span>
+                                            <span class="displayFlex width90px">
+                                                <input id="chkFreeThrowsTotal" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Attempted</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="chkFreeThrowsMade" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Made</span>
+                                            </span>
+                                        </div>
+
+                                        <hr class="hRule">
+
+                                        <div class="checkBoxRowToLeft">
+                                            <span class="scoreBoardExtrasKeyBasketBall">Other Stats</span>
+                                            <span class="displayFlex width90px">
+                                                <input id="chkAssists" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Assists</span>
+                                            </span>
+                                            <span class="displayFlex width90px">
+                                                <input id="chkRebounds" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Rebounds</span>
+                                            </span>
+                                            <span class="displayFlex">
+                                                <input id="chkFouls" type="checkbox" checked
+                                                    class="chkInlineRight chkSbTools">
+                                                <span>Fouls</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- </div> -->
 
                                     <div id="iceHockeyScoreBoardExtrasSection">
                                         <div class="radioRowToLeft">
@@ -936,21 +1050,24 @@
                                 </div>
                                 <div class="itemsJustified marginTop10px">
                                     <span>Number of players</span>
-                                    <input type="range" id="playerPropsPlayerCountRange" min="1" max="12" class="rangeSbTools"
-                                        value="4">
+                                    <input type="range" id="playerPropsPlayerCountRange" min="1" max="12"
+                                        class="rangeSbTools" value="4">
                                     <span id="playerPropsPlayerCount" class="displayInGreen width16px"></span>
                                 </div>
                                 <div class="marginTop10px">
                                     <div class="alignItemsCenter">
-                                        <input type="radio" name="radioPlayerPropsGroup" value="multi" class="radioSbTools" checked>
+                                        <input type="radio" name="radioPlayerPropsGroup" value="multi"
+                                            class="radioSbTools" checked>
                                         <span>Multiple markets for all players</span>
                                     </div>
                                     <div class="alignItemsCenter">
-                                        <input type="radio" name="radioPlayerPropsGroup" value="single" class="radioSbTools">
+                                        <input type="radio" name="radioPlayerPropsGroup" value="single"
+                                            class="radioSbTools">
                                         <span>Single market for all players</span>
                                     </div>
                                     <div class="alignItemsCenter">
-                                        <input type="radio" name="radioPlayerPropsGroup" value="mixed" class="radioSbTools">
+                                        <input type="radio" name="radioPlayerPropsGroup" value="mixed"
+                                            class="radioSbTools">
                                         <span>Single market for one player, multiple for the rest</span>
                                     </div>
                                 </div>
@@ -2523,6 +2640,10 @@
         width: 90px;
     }
 
+    .width80px {
+        width: 80px;
+    }
+
     .width100px {
         width: 100px;
     }
@@ -2796,7 +2917,11 @@
     }
 
     .scoreBoardExtrasKey {
-        width: 110px;
+        min-width: 110px;
+    }
+
+    .scoreBoardExtrasKeyBasketBall {
+        min-width: 95px;
     }
 
     .labelRow {
@@ -2885,7 +3010,7 @@
         vertical-align: middle;
     }
 
-    .paddingInline20px{
+    .paddingInline20px {
         padding-inline: 20px;
     }
 
