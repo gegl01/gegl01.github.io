@@ -102,7 +102,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.76";
+    const SB_TOOL_VERSION = "v1.6.77";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -8466,8 +8466,8 @@
                         value: isTwoPointsMadeActive ? throwStatsHome.twoPointsMade : 0,
                         isActive: isTwoPointsMadeActive
                     },
-                    threePointsAttemptsTotals: {
-                        value: isThreePointsAttemptsTotalActive ? throwStatsHome.threePointsAttemptsTotals : 0,
+                    threePointsAttemptsTotal: {
+                        value: isThreePointsAttemptsTotalActive ? throwStatsHome.threePointsAttemptsTotal : 0,
                         isActive: isThreePointsAttemptsTotalActive
                     },
                     threePointsMade: {
@@ -8528,8 +8528,8 @@
                         value: isTwoPointsMadeActive ? throwStatsAway.twoPointsMade : 0,
                         isActive: isTwoPointsMadeActive
                     },
-                    threePointsAttemptsTotals: {
-                        value: isThreePointsAttemptsTotalActive ? throwStatsAway.threePointsAttemptsTotals : 0,
+                    threePointsAttemptsTotal: {
+                        value: isThreePointsAttemptsTotalActive ? throwStatsAway.threePointsAttemptsTotal : 0,
                         isActive: isThreePointsAttemptsTotalActive
                     },
                     threePointsMade: {
@@ -8608,7 +8608,7 @@
                 return {
                     twoPointsAttemptsTotal: twoPointsMade + getRandomInt(0, 6),
                     twoPointsMade: twoPointsMade,
-                    threePointsAttemptsTotals: threePointsMade + getRandomInt(0, 5),
+                    threePointsAttemptsTotal: threePointsMade + getRandomInt(0, 5),
                     threePointsMade: threePointsMade,
                     freeThrowsTotal: freeThrowsMade + getRandomInt(0, 3),
                     freeThrowsMade: freeThrowsMade
@@ -8619,7 +8619,7 @@
             return {
                 twoPointsAttemptsTotal: 0,
                 twoPointsMade: 0,
-                threePointsAttemptsTotals: 0,
+                threePointsAttemptsTotal: 0,
                 threePointsMade: 0,
                 freeThrowsTotal: totalScore,
                 freeThrowsMade: totalScore
