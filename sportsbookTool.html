@@ -214,6 +214,7 @@
                         <hr class="hRule">
                         <details>
                             <summary class="sbtSummary">Wallet</summary>
+                            <div id="sealStoreWalletMessage" class="marginTopBottom5px displayInGray hide">Disable sealStore first to make changes</div>
                             <div id="walletFunctionsSection">
                             </div>
                         </details>
@@ -409,12 +410,6 @@
                                 </div>
 
                                 <div class="displayFlex">
-                                    <span class="keyForEventDetails">Popularity:</span>
-                                    <span id="popularityForEventDetails"
-                                        class="valueForEventDetails displayInGreen"></span>
-                                </div>
-
-                                <div class="displayFlex">
                                     <span class="keyForEventDetails">Traded as:</span>
                                     <span id="tradedAsForEventDetails"
                                         class="valueForEventDetails displayInGreen"></span>
@@ -424,6 +419,14 @@
                                     <span class="keyForEventDetails">Is eSport:</span>
                                     <span id="isEsportForEventDetails"
                                         class="valueForEventDetails displayInGreen"></span>
+                                </div>
+
+                                <div class="alignItemsCenter">
+                                    <span class="keyForEventDetails">Popularity:</span>
+                                    <!-- <span id="popularityForEventDetails"
+                                        class="valueForEventDetails displayInGreen"></span> -->
+                                    <input id="fdEventPopularity" type="number" class="fdSbTools width23percent marginRight2px" min="0" step="1" oninput="validity.valid||(value='');">
+                                    <button class="btSimple btSet" onclick="setEventPopularity()">Set</button>
                                 </div>
 
                             </div>
@@ -2636,7 +2639,7 @@
         margin-right: 2px;
     }
 
-    .btWalletSet {
+    .btSet {
         width: 40px;
     }
 
