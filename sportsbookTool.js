@@ -102,7 +102,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.80";
+    const SB_TOOL_VERSION = "v1.6.81";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -5292,16 +5292,36 @@
     }
 
     function setSelectionOdds(selectionId, odds) {
-        marketId = getMarketIdBySelectionId(selectionId);
-        const params = [{
-            msi: selectionId,
-            o: +odds,
-            ei: getEventIdBySelectionId(selectionId),
-            mv: getMarketVersion(marketId),
-            mti: getMarketTemplateId(marketId)
-        }];
+        if (obgRt.setSelectionOdds.length == 2) {
+            marketId = getMarketIdBySelectionId(selectionId);
+            const params = [{
+                msi: selectionId,
+                o: +odds,
+                ei: getEventIdBySelectionId(selectionId),
+                mv: getMarketVersion(marketId),
+                mti: getMarketTemplateId(marketId)
+            }];
 
-        obgRt.setSelectionOdds(params, marketId);
+            obgRt.setSelectionOdds(params, marketId);
+        } else { // andrea naudi change
+            marketId = getMarketIdBySelectionId(selectionId);
+            const eventId = getEventIdBySelectionId(selectionId);
+            const marketTemplateId = getMarketTemplateId(marketId);
+            obgRt.setSelectionOdds(
+                marketId,
+                {
+                    [selectionId]: {
+                        of: {
+                            1: +odds
+                        }
+                    }
+                },
+                eventId,
+                marketTemplateId
+            );
+        }
+
+
     }
 
     function getRandomOdds() {
