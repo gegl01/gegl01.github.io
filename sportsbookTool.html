@@ -214,7 +214,9 @@
                         <hr class="hRule">
                         <details>
                             <summary class="sbtSummary">Wallet</summary>
-                            <div id="sealStoreWalletMessage" class="marginTopBottom5px fontSizeSmaller displayInGray hide">Disable sealStore first to make changes</div>
+                            <div id="sealStoreWalletMessage"
+                                class="marginTopBottom5px fontSizeSmaller displayInGray hide">Disable sealStore first to
+                                make changes</div>
                             <div id="walletFunctionsSection">
                             </div>
                         </details>
@@ -365,15 +367,6 @@
                             </button>
                         </span>
                     </div>
-                    <!-- <div class="displayFlex">
-                        <span class="keyForEventDetails">Start Date:</span>
-                        <span id="startDateForEventDetails" class="valueForEventDetails displayInGreen"></span>
-                    </div>
-
-                    <div class="displayFlex">
-                        <span class="keyForEventDetails">Traded as:</span>
-                        <span id="tradedAsForEventDetails" class="valueForEventDetails displayInGreen"></span>
-                    </div> -->
 
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Category:</span>
@@ -395,6 +388,11 @@
                             <span id="competitionForEventDetails"></span>
                             <span id="competitionIdForEventDetails"></span>
                         </span>
+                    </div>
+
+                    <div id="actualSubCategoryIdRow" class="itemsJustified marginTopBottom10px hide">
+                        <span class="">Actual SubCategory ID:</span>
+                        <span id="actualSubCategoryIdForEventDetails" class="displayInGreen">[1212]</span>
                     </div>
 
                     <hr class="hRule">
@@ -423,9 +421,9 @@
 
                                 <div class="alignItemsCenter">
                                     <span class="keyForEventDetails">Popularity:</span>
-                                    <!-- <span id="popularityForEventDetails"
-                                        class="valueForEventDetails displayInGreen"></span> -->
-                                    <input id="fdEventPopularity" type="number" class="fdSbTools width23percent marginRight2px" min="0" step="1" oninput="validity.valid||(value='');">
+                                    <input id="fdEventPopularity" type="number"
+                                        class="fdSbTools width23percent marginRight2px" min="0" step="1"
+                                        oninput="validity.valid||(value='');">
                                     <button class="btSimple btSet" onclick="setEventPopularity()">Set</button>
                                 </div>
 
@@ -1057,7 +1055,8 @@
                                     <span id="preBuiltLegCount" class="displayInGreen width16px"></span>
                                 </div>
                                 <div class="checkBoxRowToLeft">
-                                    <input type="checkbox" class="chkInlineRight chkSbTools" id="chkLongPrebuiltLegLabels">
+                                    <input type="checkbox" class="chkInlineRight chkSbTools"
+                                        id="chkLongPrebuiltLegLabels">
                                     <span class="marginTop5px">At least one long leg label</span>
                                 </div>
                             </div>
@@ -1240,7 +1239,7 @@
                     <hr class="hRule">
                     <div class="itemsJustified">
                         <span class="width95Percent displayFlex">
-                            <span class="width48percent">Template ID:</span>
+                            <span class="keyForMarketDetails">Template ID:</span>
                             <span id="marketTemplateIdForSbToolsMarket"
                                 class="labelRow width100percent displayInGreen"></span>
                         </span>
@@ -1251,13 +1250,22 @@
 
                     <div class="itemsJustified">
                         <span class="width95Percent displayFlex">
-                            <span class="width48percent noWrap">Template Tags:</span>
+                            <span class="keyForMarketDetails">Template Tags:</span>
                             <span id="marketTemplateTagsForSbToolsMarket"
                                 class="labelRow width100percent displayInGreen"></span>
                         </span>
                         <button class="btCopy btIcon" onclick="copyToClipboard('marketTemplateTags')">
                             <img class="iconCopy">
                         </button>
+                    </div>
+
+                    <div class="itemsJustified">
+                        <span class="width95Percent displayFlex">
+                        <span class="keyForMarketDetails">Validation Rule:</span>
+                            <span id="validationRuleValue" class = "labelRow width100percent displayInGreen"></span>
+                            
+                        </span>
+                        <span class="displayInGreen" id="validationRuleCode"></span>
                     </div>
 
                     <hr class="hRule">
@@ -2648,10 +2656,6 @@
         width: 100%;
     }
 
-    .width48percent {
-        width: 48%;
-    }
-
     .width75percent {
         width: 75%;
     }
@@ -3120,8 +3124,9 @@
         padding: 5px;
     }
 
-    .width48percent {
-        width: 48%;
+    .keyForMarketDetails {
+        min-width: 90px;
+        white-space: nowrap;
     }
 
     .keyColumnForExtras {
