@@ -21,6 +21,9 @@
     const IS_OBGRT_EXPOSED = isDefined("obgRt");
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
     const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
+    // if (IS_SPORTSBOOK_IN_IFRAME) {
+    //     isSportsbookInIframeWithoutObgTools
+    // }
     const IS_B2B_IFRAME_ONLY = getIsB2BIframeOnly();
     const IS_B2B_WITH_HOST_PAGE = IS_SPORTSBOOK_IN_IFRAME && !IS_B2B_IFRAME_ONLY;
     const IS_MFE = getIsMFE();
@@ -42,13 +45,13 @@
     }
 
     if (isSportsbookInIframeWithoutObgTools) {
-        if (confirm("Sportsbook is in iframe so Sportsbook Tool does not work from here.\nDo you want to open the iframe itself?")) {
+        log("isSportsbookInIframeWithoutObgTools");
+        const message = "Sportsbook is in iframe so Sportsbook Tool does not work from here.\nDo you want to open the iframe itself?";
+        if (confirm(message)) {
             url = new URL(iframeURL);
             reloadPageWithSearchParams([EXPOSE_OBGSTATE, EXPOSE_OBGRT]);
-            return;
-        } else {
-            return;
         }
+        return;
     }
 
     if (!getIsAnyEssentialObjectExposed()) {
@@ -102,7 +105,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.82";
+    const SB_TOOL_VERSION = "v1.6.83";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -199,8 +202,9 @@
     }
 
     function getIsSportsbookInIframe() {
-        if (!!getIframe()) {
-            iframeURL = getIframe().src;
+        const iframe = getIframe();
+        if (!!iframe) {
+            iframeURL = iframe.src;
             return true;
         }
         return false;
@@ -209,11 +213,40 @@
     function getIframe() {
         let iframes = document.body.getElementsByTagName("iframe");
         for (let iframe of iframes) {
-            if (iframe.src.includes("playground") && iframe.src.includes("/stc-")) {
+            if (iframeContainsValidSrc(iframe)) {
                 return iframe;
             }
         }
+        return findIframeContainingUrl(document);
     }
+
+    function iframeContainsValidSrc(iframe) {
+        return iframe.src.includes("playground") && iframe.src.includes("/stc-");
+
+    }
+
+    function findIframeContainingUrl(node) {
+        if (node.nodeName.toLowerCase() === 'iframe') {
+            if (iframeContainsValidSrc(node)) {
+                return node;
+            }
+        }
+
+        // Search regular child nodes
+        for (const child of node.children || []) {
+            const result = findIframeContainingUrl(child);
+            if (result) return result;
+        }
+
+        // If the node is an element with shadow root, search inside it too
+        if (node.shadowRoot) {
+            const result = findIframeContainingUrl(node.shadowRoot);
+            if (result) return result;
+        }
+
+        return null;
+    }
+
 
     function getIframeEnv(url) {
         if (url.includes(".alpha.")) return "alpha";
