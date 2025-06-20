@@ -61,14 +61,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -3928,7 +3928,7 @@
         function getTradedAs() {
             const prematch = getIsTagPresent("sb-traded-prematch");
             const live = getIsTagPresent("sb-traded-live");
-        
+
             if (prematch && live) return "Prematch & Live";
             if (prematch) return "Prematch only";
             if (live) return "Live only";
@@ -4506,7 +4506,8 @@
         }
 
         window.selectParticipant = (value) => {
-            for (var participant of participants) {
+            log(value);
+            for (let participant of participants) {
                 if (value == participant.id) {
                     fdRenameParticipantLabel.innerText = participant.label;
                     selectedParticipantId = participant.id;
@@ -4521,8 +4522,8 @@
         }
 
         window.setParticipantLabel = () => {
-            var index;
-            for (var participant of participants) {
+            let index;
+            for (let participant of participants) {
                 if (participant.id == selectedParticipantId) {
                     index = participants.indexOf(participant);
                 }
@@ -4530,6 +4531,49 @@
             getState().sportsbook.event.events[eventId].participants[index].label = fdRenameParticipantLabel.textContent;
             triggerChangeDetection(eventId, 500);
             populateParticipantSelector();
+        }
+
+        window.setParticipantLogo = (logoType) => {
+            let index;
+            for (let participant of participants) {
+                if (participant.id == selectedParticipantId) {
+                    index = participants.indexOf(participant);
+                    log(index);
+                }
+            }
+
+            let logo;
+            switch (logoType) {
+                case "logo":
+                    logo =
+                    {
+                        type: 0,
+                        url: "https://sb-imageapi.qa.bpsgameserver.com/bgr/BetsafeOntario/Sportsbook/neutral/image/2022/11/f6af0395b21746cfac49f5a1b4a3bcd2.svg",
+                        colours: []
+                    }
+                    break;
+                case "flag":
+                    logo =
+                    {
+                        type: 1,
+                        url: "https://sb-imageapi.qa.bpsgameserver.com/common/Common/Sportsbook/neutral/image/2024/04/flags.CH_v3.svg",
+                        colours: []
+                    }
+                    break;
+                case "jersey":
+                    logo =
+                    {
+                        type: 2,
+                        url: "https://imageapi.bpsgameserver1.com/v3/bgr/Common/Sportsbook/neutral/image/2024/09/participants-jerseys.football-stripes-v.svg",
+                        colours: [
+                            getRandomColor(),
+                            getRandomColor()
+                        ]
+                    }
+                    break;
+            }
+            getState().sportsbook.event.events[eventId].participants[index].logo = logo;
+            triggerChangeDetection(eventId, 500);
         }
 
 
@@ -8034,6 +8078,17 @@
         window.open(url)
     }
 
+    function getRandomColor() {
+        const randomColor = Math.floor(Math.random() * 0xFFFFFF);
+        return `#${randomColor.toString(16).padStart(6, '0')}`;
+    }
+
+    function getRandomFootballJersey() {
+        const patterns = ["chequered", "collar", "line-d", "line-h", "line-v", "sleeve", "split", "split-sleeve", "stripes-h", "stripes-v"];
+        const selectedPattern = patterns[getRandomInt(patterns.length)];
+        return null;        
+    }
+
     function getRandomInt(minOrMax, max) {
         if (max === undefined) {
             max = minOrMax;
@@ -9240,26 +9295,11 @@
                 [participants[0].id]: {
                     score: {
                         byPhase: [
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: 0,
-                                isActive: false
-                            }
+                            { value: getRandomInt(6), isActive: true },
+                            { value: getRandomInt(6), isActive: true },
+                            { value: getRandomInt(6), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false }
                         ],
                         total: { value: homeFinalScore, isActive: true }
                     },
@@ -9268,26 +9308,11 @@
                 [participants[1].id]: {
                     score: {
                         byPhase: [
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: getRandomInt(6),
-                                isActive: true
-                            },
-                            {
-                                value: 0,
-                                isActive: false
-                            }
+                            { value: getRandomInt(6), isActive: true },
+                            { value: getRandomInt(6), isActive: true },
+                            { value: getRandomInt(6), isActive: true },
+                            { value: 0, isActive: true },
+                            { value: 0, isActive: false }
                         ],
                         total: { value: awayFinalScore, isActive: true }
                     },

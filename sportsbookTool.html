@@ -525,7 +525,34 @@
                             </div>
                         </div>
 
-                        <div class="marginTop10px">Label:
+                        <div id="participantLogoSection" class="">
+                            <div class="itemsJustified">
+                                <span class="displayFlex">
+                                    <input id="radioJersey" type="radio" class="radioSbTools" name="participantLogo"
+                                        onclick="setParticipantLogo('jersey')">
+                                    <span class="">Jersey</span>
+                                </span>
+                                <span class="displayFlex">
+                                    <input id="radioParticipantLogoNationalFlag" type="radio" class="radioSbTools"
+                                        name="participantLogo" onclick="setParticipantLogo('flag')">
+                                    <span class="">Flag</span>
+                                </span>
+                                <span class="displayFlex">
+                                    <input id="radioParticipantLogoTeamLogo" type="radio" class="radioSbTools"
+                                        name="participantLogo" onclick="setParticipantLogo('logo')">
+                                    <span class="">Logo</span>
+                                </span>
+                                <span class="displayFlex">
+                                    <input id="radioParticipantLogoNothing" type="radio" class="radioSbTools"
+                                        name="participantLogo" onclick="setParticipantLogo('nothing')">
+                                    <span class="">Nothing</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr class="hRule">
+
+                        <div class="marginTop10px">Event Label:
                             <span class="accordionHint">displayed for Outrights, Boosts Page</span>
                         </div>
                         <div class="itemsJustified">
@@ -1260,9 +1287,9 @@
 
                     <div class="itemsJustified">
                         <span class="width95Percent displayFlex">
-                        <span class="keyForMarketDetails">Validation Rule:</span>
-                            <span id="validationRuleValue" class = "labelRow width100percent displayInGreen"></span>
-                            
+                            <span class="keyForMarketDetails">Validation Rule:</span>
+                            <span id="validationRuleValue" class="labelRow width100percent displayInGreen"></span>
+
                         </span>
                         <span class="displayInGreen" id="validationRuleCode"></span>
                     </div>
