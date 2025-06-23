@@ -525,29 +525,38 @@
                             </div>
                         </div>
 
-                        <div id="participantLogoSection" class="">
-                            <div class="itemsJustified">
-                                <span class="displayFlex">
-                                    <input id="radioJersey" type="radio" class="radioSbTools" name="participantLogo"
+                        <div id="participantLogoSection">
+
+                            <span class="alignItemsCenter minWidth40Percent">
+                                <input id="chkParticipantLogoForAll" type="checkbox" class="chkSbTools marginRight5px" checked>
+                                <span>All participants</span>
+                            </span>
+
+                            <span class="displayFlex">
+                                <span class="alignItemsCenter">
+                                    <input id="radioParticipantLogoJersey" type="radio" class="radioSbTools" name="participantLogo"
                                         onclick="setParticipantLogo('jersey')">
-                                    <span class="">Jersey</span>
+                                    <span class="marginRight5px">Jersey</span>
                                 </span>
-                                <span class="displayFlex">
+
+                                <span class="alignItemsCenter">
                                     <input id="radioParticipantLogoNationalFlag" type="radio" class="radioSbTools"
                                         name="participantLogo" onclick="setParticipantLogo('flag')">
-                                    <span class="">Flag</span>
+                                    <span class="marginRight5px">Flag</span>
                                 </span>
-                                <span class="displayFlex">
+
+                                <span class="alignItemsCenter">
                                     <input id="radioParticipantLogoTeamLogo" type="radio" class="radioSbTools"
                                         name="participantLogo" onclick="setParticipantLogo('logo')">
-                                    <span class="">Logo</span>
+                                    <span class="marginRight5px">Logo</span>
                                 </span>
-                                <span class="displayFlex">
+
+                                <span class="alignItemsCenter">
                                     <input id="radioParticipantLogoNothing" type="radio" class="radioSbTools"
                                         name="participantLogo" onclick="setParticipantLogo('nothing')">
-                                    <span class="">Nothing</span>
+                                    <span class="marginRight5px">Nothing</span>
                                 </span>
-                            </div>
+                            </span>
                         </div>
 
                         <hr class="hRule">
@@ -2732,8 +2741,38 @@
         align-items: center;
     }
 
+    #participantLogoSection{
+        transform: scale(0.85);
+        transform-origin: left center;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* #participantLogoSection {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    } */
+
+    /* #participantLogoRadioGroup {
+        display: flex;
+        gap: 0.5rem;
+    } */
+
+    /* .scaled {
+        transform: scale(0.85);
+        transform-origin: left center;
+        margin-right: 0.5rem;
+    } */
+
+
     .vertMiddle {
         vertical-align: middle;
+    }
+
+    .minWidth40Percent{
+        min-width: 40%;
     }
 
     .keyColumnForBanners {
