@@ -105,7 +105,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.85";
+    const SB_TOOL_VERSION = "v1.6.86";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4566,7 +4566,7 @@
                 const categoryId = getCategoryIdByEventId(eventId);
                 const regionId = getRegionIdByEventId(eventId);
                 const competitionId = getCompetitionIdByEventId(eventId);
-            
+
                 getState().sportsbook.sportCatalog.offering.categories[categoryId]
                     .regions[regionId]
                     .competitions[competitionId]
@@ -4599,7 +4599,6 @@
                         url,
                         colours: config.colours()
                     };
-                    log("image URL: " + url);
                     participantsList[i].logo = logo;
                 }
             }
@@ -5485,8 +5484,20 @@
             ?? getState().market?.currentMarket?.currency;
     }
 
-    function mergeArraysWithoutElementDuplication(arr1, arr2) {
-        arr1.push(...arr2.filter(item => !new Set(arr1).has(item)));
+    function getMergedArrayWithoutDuplicates(...arrays) {
+        const result = [];
+        const seen = new Set();
+
+        for (const arr of arrays) {
+            for (const item of arr) {
+                if (!seen.has(item)) {
+                    seen.add(item);
+                    result.push(item);
+                }
+            }
+        }
+
+        return result;
     }
 
     window.submitScore = (participant) => {
@@ -5523,8 +5534,10 @@
 
         let currentEventPhase = getState().sportsbook.event.events[eventId].phase;
         const setPhaseMap = {
-            "Live": "setEventPhaseOver",
-            "Prematch": "setEventPhaseOver",
+            // "Live": "setEventPhaseOver",
+            // "Prematch": "setEventPhaseOver",
+            "Live": "setEventPhasePrematch",
+            "Prematch": "setEventPhaseLive",
             "Over": "setEventPhasePrematch"
         };
 
@@ -5538,6 +5551,11 @@
             setTimeout(() => obgRt["setEventPhase" + currentEventPhase](eventId), delay);
         }
     }
+
+    // function triggerChangeDetection(eventId, delay = 0){
+    //     log("upserted");
+    //     obgRt.setFixtureUpserted(eventId);
+    // }
 
     function getSetEventPhaseNeedsMoreParam() {
         return obgRt.setEventPhaseLive.length > 1;
@@ -8114,11 +8132,74 @@
     }
 
     function getRandomFootballJerseyUrl() {
+        if (IS_MFE || IS_B2B_IFRAME_ONLY) {
+            const designs = [
+                {
+                    id: "chequered",
+                    pathDiff: `<g id="g" fill="var(--jersey-colour-2,#888)"><path d="M35.46,23.79l-.13-2.82.18-1.66c.21.36,1.1,1.94,1.11,1.95l7.54-4.49c-2.34-7.67-6.48-11.16-6.48-11.16l-7.52-3.34-6.16,6.06v15.45h11.46Z" /><path d="M12.54,23.79l-.93,19.45s12.38,2.07,12.38,2.07v-21.51s-11.46,0-11.46,0Z" />`,
+                    href: "g"
+                },
+                {
+                    id: "line-h",
+                    pathDiff: `<g id="h" fill="var(--jersey-colour-2,#888)"><polygon points="36.28 14.38 11.72 14.38 12.5 19.31 12.68 20.97 12.54 23.96 35.46 23.96 35.32 20.97 35.5 19.31 36.28 14.38" />`,
+                    href: "h"
+                },
+                {
+                    id: "collar",
+                    pathDiff: `<g id="c" fill="var(--jersey-colour-2,#888)"><path d="M3.85,16.77l7.54,4.49s.9-1.59,1.11-1.95l-7.98-4.53c-.24.63-.47,1.29-.68,1.99Z" /><path d="M44.15,16.77l-7.54,4.49s-.9-1.59-1.11-1.95l7.98-4.53c.24.63.47,1.29.68,1.99Z" /><polygon points="32.25 3.21 30.16 2.28 24 8.34 17.84 2.28 15.75 3.21 24 11.33 32.25 3.21" />`,
+                    href: "c"
+                },
+                {
+                    id: "line-d",
+                    pathDiff: `<g id="i" fill="var(--jersey-colour-2,#888)"><polygon points="37.67 5.62 35.64 4.69 12.1 32.16 11.62 43.24 13.99 43.65 35.87 16.95 37.67 5.62" />`,
+                    href: "i"
+                },
+                {
+                    id: "line-v",
+                    pathDiff: `<g id="j" fill="var(--jersey-colour-2,#888)"><path d="M24,8.34l-4.79-4.71v40.89c2.56.42,4.79.79,4.79.79,0,0,2.22-.37,4.79-.79V3.63l-4.79,4.71Z" />`,
+                    href: "j"
+                },
+                {
+                    id: "sleeve",
+                    pathDiff: `<g id="d" fill="var(--jersey-colour-2,#888)"><path d="M12.5,19.31c-.21.36-1.1,1.94-1.11,1.95l-7.54-4.49c2.34-7.67,6.48-11.16,6.48-11.16l2.17,13.69Z" /><path d="M35.5,19.31c.21.36,1.1,1.94,1.11,1.95l7.54-4.49c-2.34-7.67-6.48-11.16-6.48-11.16l-2.17,13.69Z" />`,
+                    href: "d"
+                },
+                {
+                    id: "split",
+                    pathDiff: `<g id="e" fill="var(--jersey-colour-2,#888)"><path d="M24,45.31s-12.35-2.04-12.38-2.07l1.06-22.27-.18-1.66c-.21.36-1.1,1.94-1.11,1.95l-7.54-4.49c2.34-7.67,6.48-11.16,6.48-11.16l7.52-3.34,6.16,6.06v36.97Z" />`,
+                    href: "e"
+                },
+                {
+                    id: "split-sleeve",
+                    pathDiff: `<g id="f" fill="var(--jersey-colour-2,#888)"><path d="M24,45.31s-12.35-2.04-12.38-2.07l1.06-22.27-.18-1.66-2.17-13.69,7.52-3.34,6.16,6.06v36.97Z" /><path d="M35.5,19.31c.21.36,1.1,1.94,1.11,1.95l7.54-4.49c-2.34-7.67-6.48-11.16-6.48-11.16l-2.17,13.69Z" />`,
+                    href: "f"
+                },
+                {
+                    id: "stripes-h",
+                    pathDiff: `<g id="k" fill="var(--jersey-colour-2,#888)"><polygon points="12.39 26.98 35.61 26.98 35.35 21.51 12.65 21.51 12.39 26.98" /><polygon points="11.98 16.04 36.02 16.04 36.89 10.57 11.11 10.57 11.98 16.04" /><polygon points="17.84 2.28 11.48 5.1 20.71 5.1 17.84 2.28" /><polygon points="27.29 5.1 36.52 5.1 30.16 2.28 27.29 5.1" /><polygon points="11.87 37.92 36.13 37.92 35.87 32.45 12.13 32.45 11.87 37.92" /><path d="M24,45.31s8.71-1.44,11.52-1.91H12.48c2.81.48,11.52,1.91,11.52,1.91Z" />`,
+                    href: "k"
+                },
+                {
+                    id: "stripes-v",
+                    pathDiff: `<g id="l" fill="var(--jersey-colour-2,#888)"><path d="M24,8.34l-2.73-2.69v39.21c1.59.26,2.73.45,2.73.45,0,0,1.14-.19,2.73-.45V5.65l-2.73,2.69Z" /><path d="M32.2,43.95c2.29-.38,4.17-.7,4.18-.71l-1.06-22.27.18-1.66,2.17-13.69-5.47-2.43v40.76Z" /><path d="M10.33,5.62l2.17,13.69.18,1.66-1.06,22.27s1.89.33,4.18.71V3.19l-5.47,2.43Z" />`,
+                    href: "l"
+                }
+            ]
+
+            const randomDesign = designs[getRandomInt(designs.length - 1)];
+            const svg = `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><g id="b1"><path d="M24,47l-13.9-2.63,1.3-21.54-9.32-5.36c1.58-7.05,7.29-12.99,7.29-12.99l8.8-3.47,5.83,5.1,5.83-5.1,8.8,3.47s5.71,5.93,7.29,12.99l-9.32,5.36,1.3,21.54-13.9,2.63Z" fill="#0000004d" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66c.21.36,1.1,1.94,1.11,1.95l7.54-4.49c-2.34-7.67-6.48-11.16-6.48-11.16l-7.52-3.34-6.16,6.06-6.16-6.06-7.52,3.34s-4.14,3.48-6.48,11.16l7.54,4.49s.9-1.59,1.11-1.95l.18,1.66-1.06,22.27s12.38,2.07,12.38,2.07Z" fill="var(--jersey-colour-1,#888)" /></g><g id="b2" fill="#00000033"><path d="M11.39,21.26s.55-.79,1.11-1.95l-1.74-10.97.63,12.92Z" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66,1.74-10.97-10.4,29.04-2.84,7.93Z"/></g>${randomDesign.pathDiff}</g></defs><g id="${randomDesign.id}"><use href="#b1" /><use href="#${randomDesign.href}" /><use href="#b2" /></g></svg>`
+            return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
+        }
+
         const patterns = ["chequered", "collar", "line-d", "line-h", "line-v", "sleeve", "split", "split-sleeve", "stripes-h", "stripes-v"];
         const index = getRandomInt(patterns.length - 1);
         const selectedPattern = patterns[index];
         return "https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/participantlogos/colouredjerseys/participants-jerseys.football-" + selectedPattern + ".svg";
     }
+
+
+
+
 
     function getRandomNationalFlagUrl() {
         const countries = ["AR_v3",
