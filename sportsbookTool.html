@@ -426,7 +426,6 @@
                                         oninput="validity.valid||(value='');">
                                     <button class="btSimple btSet" onclick="setEventPopularity()">Set</button>
                                 </div>
-
                             </div>
                         </div>
                     </details>
@@ -528,14 +527,15 @@
                         <div id="participantLogoSection">
 
                             <span class="alignItemsCenter minWidth40Percent">
-                                <input id="chkParticipantLogoForAll" type="checkbox" class="chkSbTools marginRight5px" checked>
+                                <input id="chkParticipantLogoForAll" type="checkbox" class="chkSbTools marginRight5px"
+                                    checked>
                                 <span>All participants</span>
                             </span>
 
                             <span class="displayFlex">
                                 <span class="alignItemsCenter">
-                                    <input id="radioParticipantLogoJersey" type="radio" class="radioSbTools" name="participantLogo"
-                                        onclick="setParticipantLogo('jersey')">
+                                    <input id="radioParticipantLogoJersey" type="radio" class="radioSbTools"
+                                        name="participantLogo" onclick="setParticipantLogo('jersey')">
                                     <span class="marginRight5px">Jersey</span>
                                 </span>
 
@@ -1294,14 +1294,31 @@
                         </button>
                     </div>
 
-                    <div class="itemsJustified">
-                        <span class="width95Percent displayFlex">
-                            <span class="keyForMarketDetails">Validation Rule:</span>
-                            <span id="validationRuleValue" class="labelRow width100percent displayInGreen"></span>
+                    <hr class="hRule">
+                    <details>
+                        <summary class="sbtSummary">More</summary>
+                        <div class="detailsExpanded">
 
-                        </span>
-                        <span class="displayInGreen" id="validationRuleCode"></span>
-                    </div>
+                            <div class="displayFlex">
+                                <span class="keyForMarketDetails">Deadline:</span>
+                                <span id="deadlineValue" class="displayInGreen"></span>
+                            </div>
+                            
+                            <div class="itemsJustified">
+                                <span class="width95Percent displayFlex">
+                                    <span class="keyForMarketDetails">Validation Rule:</span>
+                                    <span id="validationRuleValue" class="width100percent displayInGreen"></span>        
+                                </span>
+                                <span class="displayInGreen" id="validationRuleCode"></span>
+                            </div>
+
+                            <div class="displayFlex">
+                                <span class="keyForMarketDetails">Groupable:</span>
+                                <span id="groupableValue" class="displayInGreen"></span>
+                            </div>
+
+                        </div>
+                    </details>
 
                     <hr class="hRule">
 
@@ -2741,7 +2758,7 @@
         align-items: center;
     }
 
-    #participantLogoSection{
+    #participantLogoSection {
         transform: scale(0.85);
         transform-origin: left center;
         display: flex;
@@ -2771,7 +2788,7 @@
         vertical-align: middle;
     }
 
-    .minWidth40Percent{
+    .minWidth40Percent {
         min-width: 40%;
     }
 
@@ -3397,6 +3414,7 @@
         /* background-color: #2e3541; */
         background: #1c3448;
         color: #ddd;
+        user-select: none;
     }
 
     #sportsbookToolHeaderTitle {
