@@ -345,8 +345,10 @@
 
             <div class="detectedEntitySection">
                 <div id="detectedOrLockedRowForSbToolsEvent">Detected event:</div>
-                <button class="btInfo btIcon" onclick="toggleInfo('sbToolsEventInfo')"><img
-                        class="iconInfoCircle"></button>
+                <!-- <button class="btInfo btIcon" onclick="toggleInfo('sbToolsEventInfo')"><img
+                        class="iconInfoCircle"></button> -->
+                <div></div>
+
                 <div class="labelRow" id="eventLabelForSbToolsEvent"></div>
                 <div id="lockEventSectionForSbToolsEvent" class="lockSection hide">
                     Lock <input type="checkbox" id="chkLockEventForSbToolsEvent" class="chkLock chkSbTools"
@@ -366,6 +368,11 @@
                                 <img class="iconCopy">
                             </button>
                         </span>
+                    </div>
+
+                    <div class="displayFlex">
+                        <span class="keyForEventDetails">Event Type:</span>
+                        <span id="eventTypeForEventDetails" class="displayInGreen"></span>
                     </div>
 
                     <div class="displayFlex">
@@ -390,9 +397,10 @@
                         </span>
                     </div>
 
+
                     <div id="actualSubCategoryIdRow" class="itemsJustified marginTopBottom10px hide">
                         <span class="">Actual SubCategory ID:</span>
-                        <span id="actualSubCategoryIdForEventDetails" class="displayInGreen">[1212]</span>
+                        <span id="actualSubCategoryIdForEventDetails" class="displayInGreen"></span>
                     </div>
 
                     <hr class="hRule">
@@ -581,7 +589,6 @@
                         <div id="setEventPhaseButtonsLayout">
                             <button id="btSetEventPhaseLive" class="btSimple btSetEventPhase"
                                 onclick="setEventPhase('Live')">
-                                <!-- <span class="ico-live-betting iconOnBtSimple"></span> -->
                                 <span class="iconLiveBetting iconOnBtSimple iconSvgSmall"></span>
                                 <span id="setEventPhaseLiveBtLabel" class="labelOnBtSimple">Live</span>
                             </button>
@@ -596,11 +603,6 @@
                                 <span class="labelOnBtSimple">Over</span>
                             </button>
                         </div>
-
-                        <!-- <div class="checkBoxRowToLeft">
-                            <input type="checkbox" class="chkInlineRight chkSbTools" id="chkSuspendAllMarkets">
-                            <span>'Over' suspends all markets</span>
-                        </div> -->
 
                         <div id="liveAddsScoreBoardSection" class="checkBoxRowToLeft">
                             <input type="checkbox" checked class="chkInlineRight chkSbTools" id="chkLiveAddsScoreBoard"
@@ -693,17 +695,6 @@
                                                 class="chkInlineRight chkSbTools">
                                             <span>Displayed as 'xGoals'</span>
                                         </div>
-
-                                        <!-- <hr class="hRule">
-                                        <div class="checkBoxRowToLeft">
-                                            <span class="scoreBoardExtrasKey">Red Cards 1+</span>
-                                            <input id="chkRedCardsHome" type="checkbox" checked
-                                                class="chkInlineRight chkSbTools">
-                                            <span class="width90px">Home</span>
-                                            <input id="chkRedCardsAway" type="checkbox" checked
-                                                class="chkInlineRight chkSbTools">
-                                            <span>Away</span>
-                                        </div> -->
 
                                         <hr class="hRule">
 
@@ -1205,14 +1196,14 @@
                 </div>
 
 
-                <div id="sbToolsEventInfo" class="hide">
+                <!-- <div id="sbToolsEventInfo" class="hide">
                     <hr class="hRule">
                     <img class="iconInfoSymbol">Event detection order:
                     <ol class="infoList">
                         <li>Open event panel</li>
                         <li>Last selection from betslip</li>
                     </ol>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -1225,8 +1216,9 @@
         <div class="accContent">
             <div class="detectedEntitySection">
                 <div id="detectedOrLockedRowForSbToolsMarket">Detected market:</div>
-                <button class="btInfo btIcon" onclick="toggleInfo('sbToolsMarketInfo')"><img
-                        class="iconInfoCircle"></button>
+                <!-- <button class="btInfo btIcon" onclick="toggleInfo('sbToolsMarketInfo')"><img
+                        class="iconInfoCircle"></button> -->
+                <div></div>
                 <div class="labelRow" id="labelRowForSbToolsMarket">
                     <div class="hide" id="messageForSbToolsMarket"></div>
                     <div id="labelsForDetectedMarketAndEvent">
@@ -1303,11 +1295,11 @@
                                 <span class="keyForMarketDetails">Deadline:</span>
                                 <span id="deadlineValue" class="displayInGreen"></span>
                             </div>
-                            
+
                             <div class="itemsJustified">
                                 <span class="width95Percent displayFlex">
                                     <span class="keyForMarketDetails">Validation Rule:</span>
-                                    <span id="validationRuleValue" class="width100percent displayInGreen"></span>        
+                                    <span id="validationRuleValue" class="width100percent displayInGreen"></span>
                                 </span>
                                 <span class="displayInGreen" id="validationRuleCode"></span>
                             </div>
@@ -1445,10 +1437,10 @@
                 </div>
             </div>
 
-            <div id="sbToolsMarketInfo" class="hide">
+            <!-- <div id="sbToolsMarketInfo" class="hide">
                 <hr class="hRule">
                 <img class="iconInfoSymbol">Market detection: parent market of the last selection from betslip.
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -1460,8 +1452,9 @@
         <div class="accContent">
             <div class="detectedEntitySection">
                 <div id="detectedOrLockedRowForSbToolsSelection">Detected selection:</div>
-                <button class="btInfo btIcon" onclick="toggleInfo('sbToolsSelectionInfo')"><img
-                        class="iconInfoCircle"></button>
+                <!-- <button class="btInfo btIcon" onclick="toggleInfo('sbToolsSelectionInfo')"><img
+                        class="iconInfoCircle"></button> -->
+                <div></div>
                 <div class="labelRow" id="labelForSbToolsSelection">
                     <div class="hide" id="messageForSbToolsSelection"></div>
                     <div id="labelsForDetectedSelectionMarketAndEvent">
@@ -1762,10 +1755,10 @@
 
 
         </div>
-        <div id="sbToolsSelectionInfo" class="hide">
+        <!-- <div id="sbToolsSelectionInfo" class="hide">
             <hr class="hRule">
             <img class="iconInfoSymbol"> Selection detection: Last selection from betslip
-        </div>
+        </div> -->
     </div>
 
     <div id="sbToolsBonuses" class="accordion closed">
@@ -3065,10 +3058,10 @@
         align-self: start;
     }
 
-    .infoList {
+    /* .infoList {
         margin: 3px;
         padding-inline-start: 25px;
-    }
+    } */
 
     .detectedEntitySection {
         display: grid;
@@ -3865,7 +3858,6 @@
 
 
     .btInfo {
-        /* width: 16px; */
         justify-self: end;
     }
 
@@ -3881,6 +3873,7 @@
         margin-right: 5px;
     }
 
+    .labelGreen,
     .btGreen {
         background-color: var(--sbtColorGreen);
         color: #fff;
