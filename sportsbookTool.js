@@ -60,14 +60,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -1439,7 +1439,7 @@
 
     function initSbToolsMarket(scope) {
         stopPolling();
-        previousMarketId = undefined;
+        // previousMarketId = undefined;
         const marketStateButtons = getElementsByClassName("btSetMarketState");
         const marketStateButtonsSection = getElementById("setMarketStateButtonsSection");
         labelRow = getElementById("labelRowForSbToolsMarket");
@@ -1447,12 +1447,13 @@
         const marketIdField = getElementById("marketIdForSbToolsMarket");
         const marketTemplateIdField = getElementById("marketTemplateIdForSbToolsMarket");
         const marketTemplateTagsField = getElementById("marketTemplateTagsForSbToolsMarket");
+        const fdAddMarketTemplateTag = getElementById("fdAddMarketTemplateTag");
         const validationRuleValue = getElementById("validationRuleValue");
         const validationRuleCode = getElementById("validationRuleCode");
         const deadlineValue = getElementById("deadlineValue");
         const groupableValue = getElementById("groupableValue");
         const marketFeatures = getElementById("marketFeatures");
-        var marketTemplateTags;
+        let marketTemplateTags;
         const carouselButtonsDiv = getElementById("carouselButtonsDiv");
         const betPopularitySection = getElementById("betPopularitySection");
         const addToCarouselSection = getElementById("addToCarouselSection");
@@ -1486,18 +1487,24 @@
         const chkBetPopularityBadge = getElementById("chkBetPopularityBadge");
 
 
+        let marketAsJson;
+        let previousMarketAsJson = undefined;
         function listenerForMarket() {
             marketId = getLastMarketIdFromBetslip();
-            if (marketId === previousMarketId) {
+            log("marketId: " + marketId);
+            marketAsJson = JSON.stringify(getState().sportsbook.eventMarket.markets[marketId]);
+
+            if (marketAsJson === previousMarketAsJson) {
                 if (marketId !== null) {
                     listenerForMarketEvenIfMarketLocked();
                 }
                 return;
             } else {
-                previousMarketId = marketId;
+                previousMarketAsJson = marketAsJson;
                 clearAddToCarouselErrorMessage();
             }
 
+            log("marketId: " + marketId);
             if (marketId === null) {
                 displayInRed(labelRow);
                 show(messageForSbToolsMarket);
@@ -1506,7 +1513,7 @@
             } else {
                 show(marketFeatures, lockMarketSection, labelsForDetectedMarketAndEvent, addToCarouselSection);
                 hide(messageForSbToolsMarket);
-                previousMarketId = marketId;
+                // previousMarketAsJsonString = marketAsJsonString;
                 eventLabelForDetectedMarket.innerText = getEventDisplayLabel(getLastEventIdFromBetslip());
                 marketLabelForDetectedMarket.innerHTML = "&boxur;&HorizontalLine; " + getMarketLabel(marketId);
                 displayInGreen(labelRow);
@@ -1883,6 +1890,18 @@
             setTimeout(function () {
                 addToCarouselButtonLabel.innerText = "Add";
             }, 200);
+        }
+
+        window.addMarketTemplateTag = () => {            
+            let marketTags = [...marketTemplateTags];
+            marketTags.push(Number(fdAddMarketTemplateTag.value));
+            obgRt.updateMarketTags(
+                marketId,
+                marketTags,
+                eventId,
+                marketTemplateId
+            );
+            initSbToolsMarket();
         }
 
         function handleThreeColumnIfNeeded() {
@@ -3708,11 +3727,28 @@
         return !!getState().sportsbook.scoreboard[eventId];
     }
 
+    function getCategoryIconURLByCategoryId(categoryId) {
+        return getIconURLByIcontag(getState().sportsbook.sportCatalog.offering?.categories[categoryId]?.iconTag);
+    }
+
+    function getRegionIconURLByRegionId(regionId) {
+        const mapping = getState().sportsbook?.mappings?.mappings?.regionIdFlagMapping;
+        return getFlagURLByIcontag(mapping?.[regionId] ?? mapping?.["1"]);
+    }
+
+    function getIconURLByIcontag(iconTag) {
+        return getState()?.image?.images?.sportsbook?.icons[iconTag]?.url;
+    }
+
+    function getFlagURLByIcontag(iconTag) {
+        return getState()?.image?.images?.sportsbook?.flags[iconTag]?.url;
+    }
 
     window.initSbToolsEvent = () => {
         initSbToolsEvent();
     }
     const separatePenalties = getConfig()?.sportsbook?.scoreboard?.separatePenalties;
+    const competitionIconUrl = getIconURLByIcontag("ico-tournament");
     function initSbToolsEvent(scope) {
         stopPolling();
         previousEventId = undefined;
@@ -3730,8 +3766,14 @@
         const tradedAsForEventDetails = getElementById("tradedAsForEventDetails");
         const isEsportForEventDetails = getElementById("isEsportForEventDetails");
         const eventTypeForEventDetails = getElementById("eventTypeForEventDetails");
+        const categoryIconForEventDetails = getElementById("categoryIconForEventDetails");
         const categoryForEventDetails = getElementById("categoryForEventDetails");
+        const regionIconForEventDetails = getElementById("regionIconForEventDetails");
+
         const regionForEventDetails = getElementById("regionForEventDetails");
+
+        const competitionIconForEventDetails = getElementById("competitionIconForEventDetails");
+
         const competitionForEventDetails = getElementById("competitionForEventDetails");
         const categoryIdForEventDetails = getElementById("categoryIdForEventDetails");
         const regionIdForEventDetails = getElementById("regionIdForEventDetails");
@@ -3961,12 +4003,27 @@
                 tradedAsForEventDetails.innerHTML = getTradedAs();
                 isEsportForEventDetails.innerHTML = getIsEsport();
                 eventTypeForEventDetails.innerText = isEventTypeOutright(eventId) ? "Outright" : "Match";
+
+                //category
+                const categoryId = getCategoryIdByEventId(eventId);
+                const categoryIconUrl = getCategoryIconURLByCategoryId(categoryId);
+                categoryIconForEventDetails.style.maskImage = `url("${categoryIconUrl}")`;
+                categoryIconForEventDetails.style.webkitMaskImage = `url("${categoryIconUrl}")`;
                 categoryForEventDetails.innerHTML = getCategoryNameByEventId(eventId);
+                categoryIdForEventDetails.innerHTML = "[" + categoryId + "]";
+
+                //region
+                const regionId = getRegionIdByEventId(eventId);
+                regionIconForEventDetails.src = getRegionIconURLByRegionId(regionId);
                 regionForEventDetails.innerHTML = getRegionNameByEventId(eventId);
+                regionIdForEventDetails.innerHTML = "[" + regionId + "]";
+
+
+                //competition
                 competitionForEventDetails.innerHTML = getCompetitionNameByEventId(eventId);
-                categoryIdForEventDetails.innerHTML = "[" + getCategoryIdByEventId(eventId) + "]";
-                regionIdForEventDetails.innerHTML = "[" + getRegionIdByEventId(eventId) + "]";
                 competitionId = getCompetitionIdByEventId(eventId);
+                competitionIconForEventDetails.style.maskImage = `url("${competitionIconUrl}")`;
+                competitionIconForEventDetails.style.webkitMaskImage = `url("${competitionIconUrl}")`;
                 competitionIdForEventDetails.innerHTML = "[" + competitionId + "]";
 
                 const actualSubCatId = getActualSubCategoryId(eventId);
@@ -4013,7 +4070,6 @@
         // }
 
         window.submitRtScoreBoardUpdate = () => {
-            // const separatePenalties = getConfig()?.sportsbook?.scoreboard?.separatePenalties;
             const categoryId = getCategoryIdByEventId(eventId);
             const homeScore = Number(fdRtScoreHome.value);
             const awayScore = Number(fdRtScoreAway.value);
@@ -4033,16 +4089,21 @@
 
             if (categoryId == "1") {
                 statistics[homeParticipantId].redCards.value = Number(fdRtRedCardsHome.value);
-                statistics[homeParticipantId].goalsScored.value = homeScore;
                 statistics[awayParticipantId].redCards.value = Number(fdRtRedCardsAway.value);
-                statistics[awayParticipantId].goalsScored.value = awayScore;
-                if (separatePenalties) {
-                    statistics[homeParticipantId].goalsScoredExceptPenaltyPhase.value = homeScore;
-                    statistics[awayParticipantId].goalsScoredExceptPenaltyPhase.value = awayScore;
-                    statistics[homeParticipantId].goalsScoredOnPenaltyPhase.value = homePenaltyScore;
-                    statistics[awayParticipantId].goalsScoredOnPenaltyPhase.value = awayPenaltyScore;
-                }
 
+                statistics[homeParticipantId].goalsScored.value =
+                    separatePenalties ? 666 : homeScore;
+                statistics[awayParticipantId].goalsScored.value =
+                    separatePenalties ? 666 : awayScore;
+
+
+                statistics[homeParticipantId].goalsScoredExceptPenaltyPhase.value =
+                    separatePenalties ? homeScore : 666;
+                statistics[awayParticipantId].goalsScoredExceptPenaltyPhase.value =
+                    separatePenalties ? awayScore : 666;
+
+                statistics[homeParticipantId].goalsScoredOnPenaltyPhase.value = homePenaltyScore;
+                statistics[awayParticipantId].goalsScoredOnPenaltyPhase.value = awayPenaltyScore;
             };
 
             if (categoryId == "26") {
@@ -4626,7 +4687,6 @@
         // }
 
         function populateParticipantId(participantId) {
-            log("populateParticipantId:" + participantId);
             if (participantId == undefined) {
                 participantId = participants[0].id;
             }
@@ -4670,8 +4730,6 @@
             for (let option of options) {
                 participantSelector.appendChild(option);
             }
-
-            log(options[0].value);
             selectParticipant(options[0].value);
         }
 
@@ -4784,7 +4842,6 @@
 
         window.selectParticipant = (value) => { selectParticipant(value) }
         function selectParticipant(value) {
-            log(value);
             for (let participant of participants) {
                 if (value == participant.id) {
                     fdRenameParticipantLabel.innerText = participant.label;
@@ -5724,8 +5781,6 @@
                 marketTemplateId
             );
         }
-
-
     }
 
     function getRandomOdds() {

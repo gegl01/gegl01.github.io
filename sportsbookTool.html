@@ -370,7 +370,7 @@
                         </span>
                     </div>
 
-                    <div class="displayFlex">
+                    <div class="displayFlex marginBottom10px">
                         <span class="keyForEventDetails">Event Type:</span>
                         <span id="eventTypeForEventDetails" class="displayInGreen"></span>
                     </div>
@@ -378,21 +378,32 @@
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Category:</span>
                         <span class="valueForEventDetails itemsJustified displayInGreen">
-                            <span id="categoryForEventDetails"></span>
+                            <span class="alignItemsCenter">
+                                <span id="categoryIconForEventDetails" class="iconMask">
+                                </span>
+                                <span id="categoryForEventDetails"></span>
+                            </span>
                             <span id="categoryIdForEventDetails"></span>
                         </span>
                     </div>
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Region:</span>
                         <span class="valueForEventDetails itemsJustified displayInGreen">
-                            <span id="regionForEventDetails"></span>
+                            <span class="alignItemsCenter">
+                                <img id="regionIconForEventDetails" class="nationalFlag">
+                                <span id="regionForEventDetails"></span>
+                            </span>
                             <span id="regionIdForEventDetails"></span>
                         </span>
                     </div>
                     <div class="displayFlex">
                         <span class="keyForEventDetails">Competition:</span>
                         <span class="valueForEventDetails itemsJustified displayInGreen">
-                            <span id="competitionForEventDetails"></span>
+                            <span class="alignItemsCenter">
+                                <span id="competitionIconForEventDetails" class="iconMask">
+                                </span>
+                                <span id="competitionForEventDetails"></span>
+                            </span>
                             <span id="competitionIdForEventDetails"></span>
                         </span>
                     </div>
@@ -1422,6 +1433,14 @@
                         <button class="btCopy btIcon" onclick="copyToClipboard('marketTemplateTags')">
                             <img class="iconCopy">
                         </button>
+                    </div>
+
+                    <div class="alignItemsCenter">
+                        <span class="keyForMarketDetails">Add Tag:</span>
+                        <input id="fdAddMarketTemplateTag" type="number"
+                            class="fdSbTools width17percent marginRight2px noSpinners" min="0" step="1"
+                            oninput="validity.valid||(value='');">
+                        <button class="btSimple btSet" onclick="addMarketTemplateTag()">Add</button>
                     </div>
 
                     <hr class="hRule">
@@ -4152,8 +4171,25 @@
         width: 42%;
     }
 
-    /* #scoreBoardRtInnerSection{
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
-    } */
+    .iconMask {
+        min-width: 12px;
+        min-height: 12px;
+        margin-right: 5px;
+        background-color: var(--sbtColorGreen);
+        mask-repeat: no-repeat;
+        -webkit-mask-repeat: no-repeat;
+        mask-size: contain;
+        -webkit-mask-size: contain;
+        display: inline-block;
+        align-self: flex-start;
+        margin-top: 3px;
+    }
+
+    .nationalFlag {
+        min-width: 12px;
+        min-height: 12px;
+        max-width: 12px;
+        max-height: 12px;
+        margin-right: 5px;
+    }
 </style>
