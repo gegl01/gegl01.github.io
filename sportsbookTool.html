@@ -943,6 +943,18 @@
                             <details>
                                 <summary class="sbtSummary">Real Time Scoreborad Updates</summary>
 
+                                <div id="separateFootballPenaltiesConfigSection">
+                                    <div class="marginTop10px rtFootball hide">
+                                        <div class="checkBoxRowToLeft scaledTo85Percent marginLeft5px">
+                                            <input type="checkbox" class="chkInlineRight chkSbTools"
+                                                id="chkSeparatePenaltiesConfig"
+                                                onclick="toggleSeparatePenaltiesConfig()">
+                                            <span>Football Penalty Separation Enabled by Config</span>
+                                        </div>
+                                        <hr class="hRule">
+                                    </div>
+                                </div>
+
                                 <div id="scoreBoardRtInnerSection">
 
                                     <div id="rtScoreBoardFlex">
@@ -1435,12 +1447,15 @@
                         </button>
                     </div>
 
-                    <div class="alignItemsCenter">
-                        <span class="keyForMarketDetails">Add Tag:</span>
-                        <input id="fdAddMarketTemplateTag" type="number"
-                            class="fdSbTools width17percent marginRight2px noSpinners" min="0" step="1"
-                            oninput="validity.valid||(value='');">
-                        <button class="btSimple btSet" onclick="addMarketTemplateTag()">Add</button>
+                    <div class="alignItemsCenter marginBottom5px">
+                        <span class="keyForMarketDetails">Update T. Tags:</span>
+                        <button class="btPlusMinus btIcon btMinus marginRight2px"
+                            onclick="updateMarketTemplateTags('remove')"><img class="iconMinus"></button>
+                        <input id="fdAddMarketTemplateTag" type="number" class="fdSbTools width17percent noSpinners"
+                            min="1" oninput="validity.valid||(value='');">
+                        <button class="btPlusMinus btIcon btPlus marginLeft2px"
+                            onclick="updateMarketTemplateTags('add')"><img class="iconPlus"></button>
+
                     </div>
 
                     <hr class="hRule">
@@ -2840,7 +2855,6 @@
         width: 40px;
     }
 
-
     .width100percent {
         width: 100%;
     }
@@ -2914,12 +2928,10 @@
         gap: 0.5rem;
     } */
 
-    /* .scaled {
+    .scaledTo85Percent {
         transform: scale(0.85);
         transform-origin: left center;
-        margin-right: 0.5rem;
-    } */
-
+    }
 
     .vertMiddle {
         vertical-align: middle;
