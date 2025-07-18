@@ -105,7 +105,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.90";
+    const SB_TOOL_VERSION = "v1.6.91";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4116,7 +4116,7 @@
             };
 
             if (categoryId == "1") {
-                if (isSeparatePenaltiesEnabled) cretatePropertiesIfNeeded();
+                createPropertiesIfNeeded();
 
                 statistics[homeParticipantId].redCards.value = Number(fdRtRedCardsHome.value);
                 statistics[awayParticipantId].redCards.value = Number(fdRtRedCardsAway.value);
@@ -4143,7 +4143,7 @@
                 statistics[awayParticipantId].lastInningsWicket.value = fdRtLastInnWicketAway.value;
             }
 
-            function cretatePropertiesIfNeeded() {
+            function createPropertiesIfNeeded() {
                 let propertyExisted = true
                 if (!statistics[homeParticipantId].goalsScoredExceptPenaltyPhase) {
                     statistics[homeParticipantId].goalsScoredExceptPenaltyPhase = {};
@@ -4161,7 +4161,10 @@
                     statistics[awayParticipantId].goalsScoredOnPenaltyPhase = {};
                     propertyExisted = false;
                 }
-                propertyExisted ? hide(penaltyPropertiesMissingMessage) : show(penaltyPropertiesMissingMessage);
+
+                if (isSeparatePenaltiesEnabled) {
+                    propertyExisted ? hide(penaltyPropertiesMissingMessage) : show(penaltyPropertiesMissingMessage);
+                }
             }
 
             obgRt.injectMessage(
@@ -4267,21 +4270,21 @@
             function getStreamingProvider() {
                 let provider = streams?.video?.provider || "-";
                 const source = streams?.video?.source;
-            
+
                 if (provider !== "-" && source) {
                     const labels = {
                         "youtube.com": "Youtube",
                         "twitch.tv": "Twitch",
                         "kick.com": "Kick"
                     };
-            
+
                     for (const [urlPart, label] of Object.entries(labels)) {
                         if (source.includes(urlPart)) {
                             provider += ` [source: ${label}]`;
                             break;
                         }
                     }
-                }            
+                }
                 return provider;
             }
         }
