@@ -627,7 +627,7 @@
                         <div id="scoreBoardExtrasSection">
                             <hr class="hRule">
                             <details>
-                                <summary class="sbtSummary">Scoreboard Details</summary>
+                                <summary class="sbtSummary">Details of Scoreboard to be created</summary>
                                 <div class="displayInLightGrey marginLeft2px fontSizeSmaller">Click on 'Live' or 'New
                                     Live' button to see the changes</div>
                                 <div class="scoreBoardExtrasDetails">
@@ -1074,10 +1074,12 @@
 
                                     <div id="penaltyPropertiesMissingMessage" class="displayInRed fontSizeSmaller marginLeft5px hide">Penalty properties not sent by API, thus created by SB Tool</div>
 
-                                    <div class="">
-                                        <button class="btSimple btSubmit" id="btSubmitRtScoreboardGrid"
-                                            onclick="submitRtScoreBoardUpdate()">
-                                            Set
+                                    <div class="displayFlex marginTop10px">
+                                        <button class="btSimple btEqualWidth" onclick="logScoreBoardToConsole()">
+                                            Log to Console
+                                        </button>
+                                        <button class="btSimple btGreen btEqualWidth" onclick="submitRtScoreBoardUpdate()">
+                                            Submit
                                         </button>
                                     </div>
                                 </div>
