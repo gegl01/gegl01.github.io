@@ -989,33 +989,6 @@
                                             </div>
                                         </div>
 
-                                        <div class="rtFootball">
-                                            <div class="rtScoreBoardRow">
-                                                <div class="keyForRtScoreboard">
-                                                    <span class="iconRedCard iconSvgSmall marginRight2px"></span>
-                                                    <span>Red Cards</span>
-                                                </div>
-                                                <div class="spinnerGroup">
-                                                    <button class="btPlusMinus btIcon btMinus"><img
-                                                            class="iconMinus"></button>
-                                                    <input id="fdRtRedCardsHome"
-                                                        class="fdSbTools noSpinners fdScoreBoardNumeric" type="number"
-                                                        min=0 max=9 oninput="validity.valid||(value='');">
-                                                    <button class="btPlusMinus btIcon btPlus"><img
-                                                            class="iconPlus"></button>
-                                                </div>
-                                                <div class="spinnerGroup">
-                                                    <button class="btPlusMinus btIcon btMinus"><img
-                                                            class="iconMinus"></button>
-                                                    <input id="fdRtRedCardsAway"
-                                                        class="fdSbTools noSpinners fdScoreBoardNumeric" type="number"
-                                                        min=0 max=9 oninput="validity.valid||(value='');">
-                                                    <button class="btPlusMinus btIcon btPlus"><img
-                                                            class="iconPlus"></button>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                         <div id="footballRtPenaltyScoreRow" class="rtFootball">
                                             <div class="rtScoreBoardRow">
                                                 <div class="keyForRtScoreboard">
@@ -1037,6 +1010,33 @@
                                                     <input id="fdRtPenaltyScoreAway"
                                                         class="fdSbTools noSpinners fdScoreBoardNumeric" type="number"
                                                         min=0 oninput="validity.valid||(value='');">
+                                                    <button class="btPlusMinus btIcon btPlus"><img
+                                                            class="iconPlus"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="rtFootball">
+                                            <div class="rtScoreBoardRow">
+                                                <div class="keyForRtScoreboard">
+                                                    <span class="iconRedCard iconSvgSmall marginRight2px"></span>
+                                                    <span>Red Cards</span>
+                                                </div>
+                                                <div class="spinnerGroup">
+                                                    <button class="btPlusMinus btIcon btMinus"><img
+                                                            class="iconMinus"></button>
+                                                    <input id="fdRtRedCardsHome"
+                                                        class="fdSbTools noSpinners fdScoreBoardNumeric" type="number"
+                                                        min=0 max=9 oninput="validity.valid||(value='');">
+                                                    <button class="btPlusMinus btIcon btPlus"><img
+                                                            class="iconPlus"></button>
+                                                </div>
+                                                <div class="spinnerGroup">
+                                                    <button class="btPlusMinus btIcon btMinus"><img
+                                                            class="iconMinus"></button>
+                                                    <input id="fdRtRedCardsAway"
+                                                        class="fdSbTools noSpinners fdScoreBoardNumeric" type="number"
+                                                        min=0 max=9 oninput="validity.valid||(value='');">
                                                     <button class="btPlusMinus btIcon btPlus"><img
                                                             class="iconPlus"></button>
                                                 </div>
@@ -2595,6 +2595,21 @@
                             RFB</button>
                         <span>Create a fake Risk Free Bet</span>
                     </div>
+
+                    <!-- <div class="displayFlex">
+                        <span class="keyForCreatePb">Payout Mode:</span>
+                        <span class="radioForCreatePb">
+                            <input type="radio" name="radioBonusStakePayoutMode" id="radioBonusStakeRealMoney"
+                                class="vertMiddle radioSbTools" checked>
+                            <label for="radioBonusStakePayoutMode" class="vertMiddle">Real Mon.</label>
+                        </span>
+                        <span>
+                            <input type="radio" name="radioBonusStakePayoutMode" id="radioBonusStakeBonusMoney"
+                                class="vertMiddle radioSbTools">
+                            <label for="radioBonusStakePayoutMode">Bonus Money</label>
+                        </span>
+                    </div> -->
+
                     <div id="removeBonusStakeSection" class="marginTop10px">
                         <button class="btSimple btBonusCreateRemove" onclick="removeBonusStake()">Remove</button>
                         <span>Remove selected Free/Risk Free Bet</span>
