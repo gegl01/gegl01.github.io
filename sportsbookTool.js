@@ -8,9 +8,9 @@
             this.value = value;
         }
     }
-    const EXPOSE_OBGRT = new URLParam("exposeObgRt", "1");
-    const EXPOSE_OBGSTATE = new URLParam("exposeObgState", "1");
-    const TURN_SEALSTORE_OFF = new URLParam("sealStore", "0");
+    const EXPOSE_OBGRT = new URLParam("exposeObgRt", "true");
+    const EXPOSE_OBGSTATE = new URLParam("exposeObgState", "true");
+    const TURN_SEALSTORE_OFF = new URLParam("sealStore", "false");
 
     const IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED = isDefined("obgClientEnvironmentConfig");
     const IS_NODECONTEXT_EXPOSED = isDefined("nodeContext");
@@ -29,6 +29,7 @@
     const IS_MFE = getIsMFE();
     let shadowRoot;
     if (IS_MFE) shadowRoot = document.querySelector("sb-xp-sportsbook-app").shadowRoot;
+    
     const POLLING_INTERVAL = 100;
 
     function getState() {
@@ -60,14 +61,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -105,7 +106,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.94";
+    const SB_TOOL_VERSION = "v1.6.95";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -443,7 +444,7 @@
     }
 
     function getBrandFriendlyName(brandName) {
-        let brands = {
+        const brands = {
             arcticbet: "Arcticbet",
             b10: "B10",
             bets10: "Bets10",
@@ -489,7 +490,8 @@
             rexbet: "Rexbet",
             rizk: "Rizk",
             sandbox: "Sandbox",
-            spelklubben: "Spelklubben"
+            spelklubben: "Spelklubben",
+            spino: "Spino"
         }
         if (brands[brandName] == undefined) {
             return brandName;
@@ -3963,6 +3965,10 @@
         const fdRtLastInnWicketAway = getElementById("fdRtLastInnWicketAway");
         const footballRtPenaltyScoreRow = getElementById("footballRtPenaltyScoreRow");
 
+        const gamePhaseUpdateSection = getElementById("gamePhaseUpdateSection");
+        const fdGamePhaseId = getElementById("fdGamePhaseId");
+        const fdGamePhaseLabel = getElementById("fdGamePhaseLabel");
+
 
 
         scope === "eventLocked" ? startPolling(listenerForEventIfEventLocked) : startPolling(listenerForEvent);
@@ -4100,6 +4106,14 @@
             console.log(ballLine);
         }
 
+        window.submitGamePhase = () => {
+            const gamePhase = {
+                id: fdGamePhaseId.value,
+                label: fdGamePhaseLabel.value
+            }
+            obgRt.setGamePhase(eventId, gamePhase);
+        }
+
         window.submitRtScoreBoardUpdate = () => {
             const categoryId = getCategoryIdByEventId(eventId);
             const scoreBoard = getState().sportsbook.scoreboard[eventId];
@@ -4114,27 +4128,10 @@
             let statistics = scoreBoard.statistics;
             const varState = scoreBoard?.varState ?? 0;
 
-
-            // const scorePerParticipant = {
-            //     [homeParticipantId]:
-            //         categoryId == "1" && isSeparatePenaltiesEnabled ?
-            //             getRandomInt(500, 599) : homeScore,
-            //     [awayParticipantId]: categoryId == "1" && isSeparatePenaltiesEnabled ? getRandomInt(500, 599) : awayScore
-            // };
-
             let scorePerParticipant = {
                 [homeParticipantId]: homeScore,
                 [awayParticipantId]: awayScore
             };
-
-            // const scorePerParticipant = {
-            //     [homeParticipantId]:
-            //         categoryId == "1" && isSeparatePenaltiesEnabled ?
-            //             homeScore + Number(fdRtPenaltyScoreHome.value) : homeScore,
-            //     [awayParticipantId]:
-            //         categoryId == "1" && isSeparatePenaltiesEnabled ?
-            //             awayScore + Number(fdRtPenaltyScoreHome.value) : awayScore
-            // };
 
             switch (categoryId) {
                 case "1": { //football 
@@ -4150,11 +4147,6 @@
 
                     statistics[homeParticipantId].redCards.value = Number(fdRtRedCardsHome.value);
                     statistics[awayParticipantId].redCards.value = Number(fdRtRedCardsAway.value);
-
-                    // statistics[homeParticipantId].goalsScored.value =
-                    //     isSeparatePenaltiesEnabled ? getRandomInt(600, 699) : homeScore;
-                    // statistics[awayParticipantId].goalsScored.value =
-                    //     isSeparatePenaltiesEnabled ? getRandomInt(600, 699) : awayScore;
 
                     statistics[homeParticipantId].goalsScored.value = homeGoalScored;
                     statistics[awayParticipantId].goalsScored.value = awayGoalScored;
@@ -4217,6 +4209,15 @@
                 case "19": { // baseball
                     statistics[homeParticipantId].inningRuns.total.value = homeScore;
                     statistics[awayParticipantId].inningRuns.total.value = awayScore;
+                    break;
+                }
+                case "34": { // darts
+                    scorePerParticipant = {
+                        [homeParticipantId]: 0,
+                        [awayParticipantId]: 0
+                    };
+                    statistics[homeParticipantId].leftovers.value = homeScore;
+                    statistics[awayParticipantId].leftovers.value = awayScore;
                     break;
                 }
             }
@@ -4898,12 +4899,24 @@
             fdRtScoreAway.value = scoreBoard.scorePerParticipant[awayParticipantId];
 
             const cricketRows = Array.from(document.getElementsByClassName("rtCricket"));
+
+
             if (categoryId == "26") { //cricket
                 show(cricketRows);
                 fdRtLastInnWicketHome.value = scoreBoard.statistics[homeParticipantId]?.lastInningsWicket?.value;
                 fdRtLastInnWicketAway.value = scoreBoard.statistics[awayParticipantId]?.lastInningsWicket?.value;
             } else {
                 hide(cricketRows);
+            }
+
+            if (categoryId == "34") { //darts
+                fdRtScoreHome.value = scoreBoard.statistics[homeParticipantId]?.leftovers.value;
+                fdRtScoreAway.value = scoreBoard.statistics[awayParticipantId]?.leftovers.value;
+            }
+
+            if (categoryId == "19") { //baseball
+                fdRtScoreHome.value = scoreBoard.statistics[homeParticipantId]?.inningRuns.total.value;
+                fdRtScoreAway.value = scoreBoard.statistics[awayParticipantId]?.inningRuns.total.value;
             }
 
             const footballRows = Array.from(document.getElementsByClassName("rtFootball"));
@@ -4924,23 +4937,14 @@
                 } else {
                     hide(footballRtPenaltyScoreRow);
                 }
-
-
-                // if (separatePenalties){
-                //     activate(footballRtPenaltyScoreRow);
-                //     if (isPenaltyPhase) {
-                //         activate(footballRtPenaltyScoreRow);
-                //     } else {
-                //         inactivate(footballRtPenaltyScoreRow);
-                //     }
-                // } else {
-                //     inactivate(footballRtPenaltyScoreRow);
-                // }
-
-
             } else {
                 hide(footballRows);
             }
+
+            !!obgRt.setGamePhase ? show(gamePhaseUpdateSection) : hide(gamePhaseUpdateSection);
+            fdGamePhaseLabel.value = scoreBoard?.currentPhase?.label;
+            fdGamePhaseId.value = scoreBoard?.currentPhase?.id;
+
         }
 
         function populateEventLabel() {
