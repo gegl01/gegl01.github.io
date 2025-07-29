@@ -20,17 +20,20 @@
     const IS_XSBSTATE_EXPOSED = isDefined("xSbState");
     const IS_OBGSTATE_OR_XSBSTATE_EXPOSED = IS_OBGSTATE_EXPOSED || IS_XSBSTATE_EXPOSED;
     const IS_OBGRT_EXPOSED = isDefined("obgRt");
+    const IS_PAGECONTEXTDATA_EXPOSED = isDefined("pageContextData");
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
-    const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
+
     // if (IS_SPORTSBOOK_IN_IFRAME) {
     //     isSportsbookInIframeWithoutObgTools
     // }
     let shadowRoot;
     const IS_B2B_IFRAME_ONLY = getIsB2BIframeOnly();
-    const IS_B2B_WITH_HOST_PAGE = IS_SPORTSBOOK_IN_IFRAME && !IS_B2B_IFRAME_ONLY;
+
     const IS_MFE_ALONE = getIsMfeAlone();
     const IS_FABRIC_WITH_MFE = getIsFabricWithMfe();
     const IS_FABRIC_WITH_IFRAME = getIsFabricWithIframe();
+    const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
+    const IS_B2B_WITH_HOST_PAGE = IS_SPORTSBOOK_IN_IFRAME && !IS_B2B_IFRAME_ONLY;
 
 
     if (IS_MFE_ALONE) shadowRoot = document.querySelector("sb-xp-sportsbook-app").shadowRoot;
@@ -41,7 +44,25 @@
         return IS_XSBSTATE_EXPOSED ? window["xSbState"] : window["obgState"];
     }
 
-    if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && (IS_FABRIC_WITH_MFE || IS_FABRIC_WITH_IFRAME)) {
+    // if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && (IS_FABRIC_WITH_MFE || IS_FABRIC_WITH_IFRAME)) {
+    //     const message = "Tool doesn't work as obgState is not available.\nWant to enable it?";
+    //     if (confirm(message)) {
+    //         if (IS_FABRIC_WITH_IFRAME) url = new URL(iframeURL);
+    //         reloadPageWithURLParams([EXPOSE_OBGSTATE, EXPOSE_OBGRT]);
+    //     }
+    //     return;
+    // }
+
+    // if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && ((IS_FABRIC_WITH_MFE || IS_FABRIC_WITH_IFRAME) && (!IS_SBMFESSTARTUPCONTEXT_EXPOSED && !IS_PAGECONTEXTDATA_EXPOSED))) {
+    //     const message = "Tool doesn't work as obgState is not available.\nWant to enable it?";
+    //     if (confirm(message)) {
+    //         if (IS_FABRIC_WITH_IFRAME) url = new URL(iframeURL);
+    //         reloadPageWithURLParams([EXPOSE_OBGSTATE, EXPOSE_OBGRT]);
+    //     }
+    //     return;
+    // }
+
+    if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && !IS_SBMFESSTARTUPCONTEXT_EXPOSED && !IS_PAGECONTEXTDATA_EXPOSED && !IS_B2B_WITH_HOST_PAGE && !IS_OBGSTARTUP_EXPOSED) {
         const message = "Tool doesn't work as obgState is not available.\nWant to enable it?";
         if (confirm(message)) {
             if (IS_FABRIC_WITH_IFRAME) url = new URL(iframeURL);
@@ -49,6 +70,7 @@
         }
         return;
     }
+
 
     function getIsMfeAlone() {
         return document.getElementsByTagName("obg-sportsbook-mfe-container").length > 0;
@@ -160,7 +182,10 @@
     function getIsItSportsbookPage() {
         if (IS_OBGNAVIGATIONSUPPORTED_EXPOSED ||
             IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED ||
-            IS_OBGSTARTUP_EXPOSED) {
+            IS_OBGSTARTUP_EXPOSED ||
+            IS_PAGECONTEXTDATA_EXPOSED ||
+            IS_SBMFESSTARTUPCONTEXT_EXPOSED
+        ) {
             return true;
         }
         if (IS_SPORTSBOOK_IN_IFRAME) {
@@ -226,6 +251,7 @@
 
     function getIframe() {
         let iframes = document.body.getElementsByTagName("iframe");
+
         for (let iframe of iframes) {
             if (iframeContainsValidSrc(iframe)) {
                 return iframe;
@@ -298,7 +324,7 @@
     }
 
 
-    function getIframeEnv(url) {
+    function getEnvByURL(url) {
         if (url.includes(".alpha.")) return "alpha";
         if (url.includes(".test.")) return "test";
         if (url.includes(".qa.")) return "qa";
@@ -313,7 +339,7 @@
     // }
 
     function getTechnology() {
-        if (IS_MFE_ALONE) return ` (mFE)`;        
+        if (IS_MFE_ALONE) return ` (mFE)`;
         if (IS_FABRIC_WITH_MFE) return ` (Fabric + mFE)`;
         if (IS_FABRIC_WITH_IFRAME) return ` (Fabric + iFrame)`;
         if (IS_B2B_IFRAME_ONLY || IS_SPORTSBOOK_IN_IFRAME) return ` (B2B)`;
@@ -336,7 +362,7 @@
         }
         versionNumber = getSbVersionNumber();
         if (versionNumber == null) {
-            if (IS_MFE_ALONE) {
+            if (IS_MFE_ALONE || IS_FABRIC_WITH_MFE) {
                 return "Expose xSbState to get it";
             }
             return "Data not available";
@@ -369,11 +395,17 @@
                     ? getState().appContext.device.deviceType
                     : IS_NODECONTEXT_EXPOSED
                         ? nodeContext.deviceType
-                        : "couldn't get";
+                        : IS_PAGECONTEXTDATA_EXPOSED
+                            ? pageContextData?.userContext?.device
+                            : "couldn't get";
     }
 
     function getIsAnyEssentialObjectExposed() {
-        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED || IS_OBGSTATE_OR_XSBSTATE_EXPOSED || IS_OBGSTARTUP_EXPOSED;
+        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED
+            || IS_OBGSTATE_OR_XSBSTATE_EXPOSED
+            || IS_OBGSTARTUP_EXPOSED
+            || IS_SBMFESSTARTUPCONTEXT_EXPOSED
+            || IS_PAGECONTEXTDATA_EXPOSED;
     }
 
     function getDeviceExperience() {
@@ -410,7 +442,13 @@
         }
 
         if (IS_MFE_ALONE) {
-            return getIframeEnv(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
+            return getEnvByURL(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
+        }
+
+        if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
+            const sr = findShadowRootContaining("sb-xp-sportsbook", node = document);
+            const baseUrl = sr.querySelector("sb-xp-sportsbook")?.getAttribute('sb-api-base-url');
+            return getEnvByURL(baseUrl);
         }
 
         if (IS_B2B_IFRAME_ONLY) {
@@ -418,7 +456,7 @@
         }
 
         if (IS_B2B_WITH_HOST_PAGE) {
-            return getIframeEnv(iframeURL);
+            return getEnvByURL(iframeURL);
         }
 
         //B2C
@@ -436,6 +474,11 @@
         // if (IS_MFE) {
         //     return obgStartup.config.appSettings.environment;
         // }
+        if (IS_PAGECONTEXTDATA_EXPOSED) {
+            let env = pageContextData?.appContext?.environment;
+            if (env == "production") env = "prod";
+            return env;
+        }
         return obgStartup.config.appSettings.environment;
     }
 
@@ -492,7 +535,9 @@
                         ? obgStartup.config.core.market.languageCode
                         : IS_SBMFESSTARTUPCONTEXT_EXPOSED
                             ? sbMfeStartupContext.config.core.market.languageCode
-                            : null;
+                            : IS_PAGECONTEXTDATA_EXPOSED
+                                ? pageContextData?.appContext?.locale
+                                : null;
     }
 
     function getAreAllSelectionsInObgState(marketSelectionIds) {
@@ -572,7 +617,9 @@
                     ? obgStartup.config.appSettings.brandName.toLowerCase()
                     : IS_SBMFESSTARTUPCONTEXT_EXPOSED
                         ? sbMfeStartupContext.brandName.toLowerCase()
-                        : "localhost";
+                        : IS_PAGECONTEXTDATA_EXPOSED
+                            ? pageContextData?.appContext?.brandName.toLowerCase()
+                            : "localhost";
 
         return (brandName === "nordicbet" && IS_OBGSTATE_OR_XSBSTATE_EXPOSED && getState()?.sportsbook?.features?.arcticbet)
             ? "arcticbet"
@@ -751,7 +798,7 @@
         const obgStateAndRtSection = getElementById("obgStateAndRtSection");
         const disableSealStoreSection = getElementById("disableSealStoreSection");
         const openIframeSection = getElementById("openIframeSection");
-        const notMatchingIframeSection = getElementById("notMatchingIframeSection");
+        const mismatchingSbSection = getElementById("mismatchingSbSection");
         const openIframeRow = getElementById("openIframeRow");
         // const btOpenNotMatchingIframe = getElementById("btOpenNotMatchingIframe");
         const btOpenMatchingIframe = getElementById("btOpenMatchingIframe");
@@ -797,17 +844,6 @@
 
         getElementById("environment").innerText = ENVIRONMENT_TO_DISPLAY;
         getElementById("brandName").innerText = BRAND_NAME_WITH_LANGUAGECODE;
-        // const technology =
-        //     IS_FABRIC_WITH_MFE
-        //         ? ` (Fabric + mFE)`
-        //         : IS_FABRIC_WITH_IFRAME
-        //             ? ` (Fabric + iFrame)`
-        //             : IS_MFE_ALONE
-        //                 ? ` (iFrame + mFE)`
-        //                 : B2X === "B2C"
-        //                     ? ` (B2C - ${nodeContext.appHash})`
-        //                     : ` (${B2X})`;
-        // document.getElementById("B2BorB2C").innerText = B2X === "B2C" ? ` (B2C - ${nodeContext.appHash})` : ` (${B2X})`;
         document.getElementById("B2BorB2C").innerText = getTechnology();
         getElementById("browserVersion").innerText = BROWSER_VERSION;
         getElementById("sbVersion").innerText = SB_VERSION;
@@ -834,13 +870,13 @@
             // let iframeEnv = getIframeEnv(iframeURL);
             if (SB_ENVIRONMENT != hostEnv) {
                 hide(openIframeRow);
-                show(notMatchingIframeSection);
+                show(mismatchingSbSection);
                 btOpenMatchingIframe.innerText = hostEnv.toUpperCase() + " iframe";
                 btOpenFullPageWithMatchingIframe.innerText = hostEnv.toUpperCase() + " full";
-                notMatchingIframeEnvSpan.innerText = " " + SB_ENVIRONMENT.toUpperCase() + " ";
+                notMatchingIframeEnvSpan.innerText = " " + SB_ENVIRONMENT.toUpperCase() + " ";            
             } else {
                 show(openIframeRow);
-                hide(notMatchingIframeSection);
+                hide(mismatchingSbSection);
             }
         };
 
@@ -948,7 +984,7 @@
         let messageRowId;
         switch (feature) {
             case "disableSSR":
-                params.push(new URLParam("ssr", 0));
+                params.push(new URLParam("ssr", false));
                 messageRowId = "disableSSRRow";
                 break;
             case "exposeObgStateAndRt":
@@ -1055,7 +1091,7 @@
     }
 
     function replaceEnvInIframeURL(iframeURL) {
-        let iframeEnv = getIframeEnv(iframeURL);
+        let iframeEnv = getEnvByURL(iframeURL);
         if (iframeEnv == "prod") {
             return iframeURL.replace("-cf.", "-cf.alpha.");
         }
@@ -5848,24 +5884,59 @@
         return getState().sportsbook.eventMarket.markets[marketId].columnLayout;
     }
 
+    // function getIsUserLoggedIn() {
+    //     const authReducer = localStorage.authReducer;
+    //     const authSession = localStorage.authSession;
+        
+    //     if (!authReducer && !authSession) {
+    //         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
+    //             return getState().auth.isAuthenticated;
+    //         }
+    //         if (IS_B2B_IFRAME_ONLY) {
+    //             if (IS_SPORTSBOOK_IN_IFRAME) {
+    //                 return iframeURL.includes("/ctx");
+    //             }
+    //             if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
+    //                 return obgClientEnvironmentConfig.startupContext.contextId.userContextId.includes("ctx");
+    //             }
+    //             return window.location.href.includes("/ctx");
+    //         }
+    //         return false;
+    //     }
+    //     if (!!authReducer) return !!JSON.parse(authReducer).token;
+    //     if (!!authSession) return !!JSON.parse(authSession).sessionToken;
+
+    // }
+
+
     function getIsUserLoggedIn() {
-        let authReducer = localStorage.authReducer;
-        if (!authReducer) {
-            if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-                return getState().auth.isAuthenticated;
-            }
-            if (IS_B2B_IFRAME_ONLY) {
-                if (IS_SPORTSBOOK_IN_IFRAME) {
-                    return iframeURL.includes("/ctx");
-                }
-                if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
-                    return obgClientEnvironmentConfig.startupContext.contextId.userContextId.includes("ctx");
-                }
-                return window.location.href.includes("/ctx");
-            }
-            return false;
+        const { authReducer, authSession } = localStorage;
+    
+        if (authReducer) {
+            return !!JSON.parse(authReducer).token;
         }
-        return !!JSON.parse(authReducer).token;
+    
+        if (authSession) {
+            return !!JSON.parse(authSession).sessionToken;
+        }
+    
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
+            return getState().auth.isAuthenticated;
+        }
+    
+        if (IS_B2B_IFRAME_ONLY) {
+            if (IS_SPORTSBOOK_IN_IFRAME) {
+                return iframeURL.includes("/ctx");
+            }
+    
+            if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
+                return obgClientEnvironmentConfig.startupContext.contextId.userContextId.includes("ctx");
+            }
+    
+            return window.location.href.includes("/ctx");
+        }
+    
+        return false;
     }
 
     function getLastMarketIdFromBetslip() {
@@ -6092,49 +6163,6 @@
             obj[key].push(value); // Add only if it’s not a duplicate
         }
     }
-
-    // window.submitScoreBoard = () => {
-    //     if (lockedEventId !== undefined) {
-    //         eventId = lockedEventId;
-    //     }
-    //     let scoreBoard = getState().sportsbook.scoreboard[eventId];
-    //     let homeId = scoreBoard.participants[0].id;
-    //     let awayId = scoreBoard.participants[1].id;
-
-    //     setValues("corners", homeId, getElementById("homeCorners").value);
-    //     setValues("corners", awayId, getElementById("awayCorners").value);
-    //     setValues("substitutions", homeId, getElementById("homeSubstitutions").value);
-    //     setValues("substitutions", awayId, getElementById("awaySubstitutions").value);
-    //     setValues("yellowCards", homeId, getElementById("homeYellowCards").value);
-    //     setValues("yellowCards", awayId, getElementById("awayYellowCards").value);
-    //     setValues("redCards", homeId, getElementById("homeRedCards").value);
-    //     setValues("redCards", awayId, getElementById("awayRedCards").value);
-    //     setValues("penalties", homeId, getElementById("homePenalties").value);
-    //     setValues("penalties", awayId, getElementById("awayPenalties").value);
-
-    //     function setValues(scoreBoardItem, participantId, value) {
-    //         let params = [eventId, participantId, Number(value)];
-    //         if (value !== "") {
-    //             switch (scoreBoardItem) {
-    //                 case "corners":
-    //                     obgRt.setFootballParticipantCorners(...params);
-    //                     break;
-    //                 case "substitutions":
-    //                     obgRt.setFootballParticipantSubstitutions(...params);
-    //                     break;
-    //                 case "yellowCards":
-    //                     obgRt.setFootballParticipantYellowCards(...params);
-    //                     break;
-    //                 case "redCards":
-    //                     obgRt.setFootballParticipantRedCards(...params);
-    //                     break;
-    //                 case "penalties":
-    //                     obgRt.setFootballParticipantPenalties(...params);
-    //                     break;
-    //             }
-    //         }
-    //     }
-    // }
 
     window.getTwitchProviderIds = () => {
         var twitchResultSection = getElementById("twitchResults");
