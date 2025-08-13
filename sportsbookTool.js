@@ -8,6 +8,7 @@
             this.value = value;
         }
     }
+
     const EXPOSE_OBGRT = new URLParam("exposeObgRt", "true");
     const EXPOSE_OBGSTATE = new URLParam("exposeObgState", "true");
     const TURN_SEALSTORE_OFF = new URLParam("sealStore", "false");
@@ -62,7 +63,7 @@
     //     return;
     // }
 
-    if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && !IS_SBMFESSTARTUPCONTEXT_EXPOSED && !IS_PAGECONTEXTDATA_EXPOSED && !IS_B2B_WITH_HOST_PAGE && !IS_OBGSTARTUP_EXPOSED) {
+    if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && !IS_SBMFESSTARTUPCONTEXT_EXPOSED && !IS_PAGECONTEXTDATA_EXPOSED && !IS_B2B_WITH_HOST_PAGE && !IS_OBGSTARTUP_EXPOSED && !IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
         const message = "Tool doesn't work as obgState is not available.\nWant to enable it?";
         if (confirm(message)) {
             if (IS_FABRIC_WITH_IFRAME) url = new URL(iframeURL);
@@ -142,7 +143,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.95";
+    const SB_TOOL_VERSION = "v1.6.99";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -626,9 +627,14 @@
             : brandName;
     }
 
-    function log(content) {
-        console.log("SPORTSBOOKTOOL SAYS: " + content);
+    function log(data) {
+        cleanLog("SPORTSBOOKTOOL SAYS: " + data);
     }
+
+    function cleanLog(data) {
+        IS_OBGSTARTUP_EXPOSED ? console.debug(data) : console.log(data);
+    }
+
 
     function getBrowserVersion() {
         var nVer = navigator.appVersion;
@@ -2436,8 +2442,6 @@
                 previousBetslip = betslip;
             }
 
-
-
             selectionId = getLastSelectionIdFromBetslip();
 
             if (selectionId === previousSelectionId) {
@@ -2467,7 +2471,13 @@
                 marketLabel = getMarketLabel(getLastMarketIdFromBetslip());
                 initialOdds = getInitialOddsFromBetslip(selectionId);
 
-                fdNewOdds.value = initialOdds.toFixed(2);
+                let odds;
+                initialOdds
+                    ? odds = initialOdds.toFixed(2)
+                    : odds = getSelectionOdds(selectionId).toFixed(2);
+                fdNewOdds.value = odds;
+                initialOddsSpan.innerText = odds;
+
                 displayInGreen(labelRow);
                 show(selectionFeatures, lockSelectionSection, labelsForDetectedSelectionMarketAndEvent);
                 hide(messageForSbToolsSelection);
@@ -2475,8 +2485,6 @@
                 marketLabelForDetectedSelection.innerHTML = "&boxur;&HorizontalLine; " + marketLabel;
                 selectionLabelForDetectedSelection.innerHTML = "&boxur;&HorizontalLine; " + selectionLabel;
                 selectionIdForSbToolsSelection.innerHTML = selectionId;
-                initialOddsSpan.innerText = initialOdds.toFixed(2);
-
                 setPbName(eventLabel, marketLabel, selectionLabel);
                 listenerForSelectionEvenIfLocked();
             }
@@ -2600,7 +2608,7 @@
             inactivate(btSetOdds);
         }
         function setOdds() {
-            let newOdds = fdNewOdds.value;
+            let newOdds = Number(fdNewOdds.value).toFixed(2);
             if (newOdds != initialOdds) {
                 activate(btResetOdds);
             } else {
@@ -2617,6 +2625,7 @@
                 fdNewOdds.value = initialOdds.toFixed(2);
             }
             setSelectionOdds(selectionId, newOdds);
+            fdNewOdds.value = newOdds;
         }
 
 
@@ -2628,7 +2637,7 @@
             if (lockedInitialOdds != undefined) {
                 initialOdds = lockedInitialOdds;
             }
-            setSelectionOdds(selectionId, initialOdds);
+            setSelectionOdds(selectionId, initialOdds.toFixed(2));
             fdNewOdds.value = initialOdds.toFixed(2);
         }
 
@@ -3217,7 +3226,7 @@
     }
 
     function getInitialOddsFromBetslip(selectionId) {
-        return getState().sportsbook.betslip.initialOdds[selectionId];
+        return getState().sportsbook.betslip?.initialOdds[selectionId];
     }
 
     function getSelectionLabel(selectionId) {
@@ -3229,6 +3238,10 @@
 
     function isBetslipVisible() {
         return getState().sportsbook.betslip.isVisible;
+    }
+
+    function getSelectionOdds(selectionId) {
+        return getState().sportsbook.selection.selections[selectionId].odds;
     }
 
 
@@ -3889,7 +3902,6 @@
     const competitionIconUrl = getIconURLByIcontag("ico-tournament");
     function initSbToolsEvent(scope) {
         stopPolling();
-        // previousEventId = undefined;
         previousEventAsJson = undefined;
         labelRow = getElementById("eventLabelForSbToolsEvent");
         const lockEventSection = getElementById("lockEventSectionForSbToolsEvent");
@@ -4184,7 +4196,7 @@
                 // initFootballScoreboard();
                 initCreateMarkets();
                 initParticipantLogoSection();
-                if (getEventHasScoreBoard(eventId)) {
+                if (getEventHasScoreBoard(eventId) && getIsEventLive(eventId)) {
                     show(scoreBoardRtSection);
                     initRealTimeScoreBoardUpdates();
                 } else {
@@ -4205,16 +4217,19 @@
         }
 
         window.logScoreBoardToConsole = () => {
-            let scoreBoard = { ...getState().sportsbook.scoreboard[eventId] };
-            let participants = scoreBoard.participants.slice().sort((a, b) => a.side - b.side);
-            let label = `SCOREBOARD of "${participants[0].label} - ${participants[1].label}"`;
-            let ballLine = "⚽".repeat(Math.round(label.length / 2.4));
+            logScoreBoardToConsole();
+        }
+        function logScoreBoardToConsole() {
+            const scoreBoard = { ...getState().sportsbook.scoreboard[eventId] };
+            const participants = scoreBoard.participants.slice().sort((a, b) => a.side - b.side);
+            const label = `SCOREBOARD of "${participants[0].label} - ${participants[1].label}"`;
+            const ballLine = "⚽".repeat(Math.round(label.length / 2.4));
 
-            console.log(ballLine);
+            cleanLog(ballLine);
             console.groupCollapsed(label);
-            console.log(scoreBoard);
+            cleanLog(scoreBoard);
             console.groupEnd();
-            console.log(ballLine);
+            cleanLog(ballLine);
         }
 
         window.submitGamePhase = () => {
@@ -4235,18 +4250,13 @@
             const homeParticipantId = scoreBoard.participants[0].id;
             const awayParticipantId = scoreBoard.participants[1].id;
 
-
             let statistics = scoreBoard.statistics;
-            // const varState = scoreBoard?.varState ?? 0;
             const varState = chkRtScoreBoardVar.checked ? 2 : 0;
 
             let scorePerParticipant = {
                 [homeParticipantId]: homeScore,
                 [awayParticipantId]: awayScore
             };
-
-
-            scoreBoard.varState
 
             switch (categoryId) {
                 case "1": { //football 
@@ -4348,6 +4358,9 @@
                     }
                 }
             );
+            setTimeout(function () {
+                logScoreBoardToConsole();
+            }, 200);
         }
 
 
@@ -4995,7 +5008,7 @@
                 return;
             }
             previousScoreBoardAsJSON = scoreBoardAsJSON;
-            if (scoreBoardAsJSON) initRealTimeScoreBoardUpdates();
+            if (scoreBoardAsJSON && getIsEventLive(eventId)) initRealTimeScoreBoardUpdates();
         }
 
         function initRealTimeScoreBoardUpdates() {
@@ -5185,6 +5198,7 @@
                             obgRt.setEventPhaseLive(eventId, competitionId, categoryId) :
                             obgRt.setEventPhaseLive(eventId);
                     }, 200);
+                    logScoreBoardToConsole();
                     break;
                 case "Over":
                     needsMoreParams ?
@@ -5958,11 +5972,13 @@
         if (lockedMarketId !== undefined) {
             marketId = lockedMarketId;
         }
-        eventId = getEventIdByMarketId(marketId);
-        marketTemplateId = getMarketTemplateId(marketId);
-        marketVersion = getMarketVersion(marketId);
 
-        let params = [marketId, eventId, marketTemplateId, marketVersion];
+        const params = [
+            marketId,
+            getEventIdByMarketId(marketId),
+            getMarketTemplateId(marketId),
+            getMarketVersion(marketId)
+        ];
 
         switch (state) {
             case "Suspended":
@@ -5985,38 +6001,26 @@
 
 
     function getMarketVersion(marketId) {
-        return getState().sportsbook.eventMarket.markets[marketId].marketVersion;
+        return getState().sportsbook.eventMarket.markets[marketId]?.marketVersion;
     }
 
     function setSelectionOdds(selectionId, odds) {
-        if (obgRt.setSelectionOdds.length == 2) {
-            marketId = getMarketIdBySelectionId(selectionId);
-            const params = [{
-                msi: selectionId,
-                o: +odds,
-                ei: getEventIdBySelectionId(selectionId),
-                mv: getMarketVersion(marketId),
-                mti: getMarketTemplateId(marketId)
-            }];
-
-            obgRt.setSelectionOdds(params, marketId);
-        } else { // andrea naudi change
-            marketId = getMarketIdBySelectionId(selectionId);
-            const eventId = getEventIdBySelectionId(selectionId);
-            const marketTemplateId = getMarketTemplateId(marketId);
-            obgRt.setSelectionOdds(
-                marketId,
-                {
-                    [selectionId]: {
-                        of: {
-                            1: +odds
-                        }
+        marketId = getMarketIdBySelectionId(selectionId);
+        const eventId = getEventIdBySelectionId(selectionId);
+        const marketTemplateId = getMarketTemplateId(marketId);
+        obgRt.setSelectionOdds(
+            marketId,
+            {
+                [selectionId]: {
+                    of: {
+                        1: odds
                     }
-                },
-                eventId,
-                marketTemplateId
-            );
-        }
+                }
+            },
+            eventId,
+            marketTemplateId
+        );
+
     }
 
     function getRandomOdds() {
@@ -8904,207 +8908,158 @@
             },
             statistics: {
                 [participants[0].id]: {
-                    corners: {
-                        value: scoreBoardExtras.isCornersActive ? getRandomInt(4) : 0, isActive: scoreBoardExtras.isCornersActive
-                    },
-                    goalsScored: {
-                        value: homeGoalScored,
-                        isActive: false
-                    },
-                    // goalsScoredExceptPenaltyPhase: {
-                    //     value: isSeparatePenaltiesEnabled ? homeScore : getRandomInt(700, 799),
-                    //     isActive: true
-                    // },
-                    goalsScoredExceptPenaltyPhase: {
-                        value: homeScore,
-                        isActive: true
-                    },
-                    // goalsScoredOnPenaltyPhase: {
-                    //     value: isPenaltyShootout ? getRandomInt(3) : 0,
-                    //     isActive: true
-                    // },
-                    goalsScoredOnPenaltyPhase: {
-                        value: homePenaltyScore,
-                        isActive: true
-                    },
-                    penaltyShots: {
-                        value: getRandomInt(4),
-                        isActive: true
-                    },
-                    redCards: {
-                        value: scoreBoardExtras.isRedCardsActive ? getRandomInt(1, 2) : 0, isActive: scoreBoardExtras.isRedCardsActive
-                    },
-                    substitutions: {
-                        value: getRandomInt(2),
-                        isActive: true
-                    },
-                    yellowCards: {
-                        value: scoreBoardExtras.isYellowCardsActive ? getRandomInt(1, 2) : 0,
-                        isActive: scoreBoardExtras.isYellowCardsActive
-                    },
-                    isSecondLeg: {
-                        value: scoreBoardExtras.isAggActive, isActive: scoreBoardExtras.isAggActive
-                    },
                     aggregateScore: {
                         value: homeScore + getRandomInt(4), isActive: scoreBoardExtras.isAggActive
                     },
-                    stoppageTime: {
-                        value: scoreBoardExtras.isStoppageTimeActive ? stoppageTime : 0,
-                        isActive: scoreBoardExtras.isStoppageTimeActive
-                    },
-                    expectedGoals: {
-                        value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(0, 3, 4) : 0,
-                        isActive: scoreBoardExtras.isExpectedGoalsActive
+                    corners: {
+                        value: scoreBoardExtras.isCornersActive ? getRandomInt(4) : 0, isActive: scoreBoardExtras.isCornersActive
                     },
                     dangerousAttack: {
                         value: scoreBoardExtras.isDangerousAttacksActive ? getRandomInt(2, 10) : 0,
                         isActive: scoreBoardExtras.isDangerousAttacksActive
                     },
-                    shotsOnTarget: {
-                        value: scoreBoardExtras.isShotsOnTargetActive ? totalShotsOnTargetHome : 0,
-                        isActive: scoreBoardExtras.isShotsOnTargetActive
+                    expectedGoals: {
+                        value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(0, 3, 4) : 0,
+                        isActive: scoreBoardExtras.isExpectedGoalsActive
                     },
-                    shotsOffTarget: {
-                        value: totalShotsHome - totalShotsOnTargetHome,
+                    goalKeeperSave: {
+                        value: getRandomInt(1, 5),
                         isActive: false
                     },
-                    totalShots: {
-                        value: scoreBoardExtras.isTotalShotsActive ? totalShotsHome : 0,
-                        isActive: scoreBoardExtras.isTotalShotsActive
+                    goalsScored: {
+                        value: homeGoalScored,
+                        isActive: false
+                    },
+                    goalsScoredExceptPenaltyPhase: {
+                        value: homeScore,
+                        isActive: true
+                    },
+                    goalsScoredOnPenaltyPhase: {
+                        value: homePenaltyScore,
+                        isActive: true
+                    },
+                    isSecondLeg: {
+                        value: scoreBoardExtras.isAggActive, isActive: scoreBoardExtras.isAggActive
+                    },
+                    penaltyShots: {
+                        value: getRandomInt(4),
+                        isActive: true
                     },
                     possession: {
                         value: scoreBoardExtras.isPossessionActive ? possession : 0,
                         isActive: scoreBoardExtras.isPossessionActive
                     },
-                    woodwork:
-                    {
+                    redCards: {
+                        value: scoreBoardExtras.isRedCardsActive ? getRandomInt(1, 2) : 0, isActive: scoreBoardExtras.isRedCardsActive
+                    },
+                    shotsOffTarget: {
+                        value: totalShotsHome - totalShotsOnTargetHome,
+                        isActive: false
+                    },
+                    shotsOnTarget: {
+                        value: scoreBoardExtras.isShotsOnTargetActive ? totalShotsOnTargetHome : 0,
+                        isActive: scoreBoardExtras.isShotsOnTargetActive
+                    },
+                    stoppageTime: {
+                        value: scoreBoardExtras.isStoppageTimeActive ? stoppageTime : 0,
+                        isActive: scoreBoardExtras.isStoppageTimeActive
+                    },
+                    substitutions: {
+                        value: getRandomInt(2),
+                        isActive: true
+                    },
+                    totalShots: {
+                        value: scoreBoardExtras.isTotalShotsActive ? totalShotsHome : 0,
+                        isActive: scoreBoardExtras.isTotalShotsActive
+                    },
+                    woodwork: {
                         value: getRandomInt(1, 3),
                         isActive: false
                     },
-                    goalKeeperSave:
-                    {
-                        value: getRandomInt(1, 5),
-                        isActive: false
-                    },
-                    goalsScored:
-                    {
-                        value: homeScore,
-                        isActive: true
+                    yellowCards: {
+                        value: scoreBoardExtras.isYellowCardsActive ? getRandomInt(1, 2) : 0,
+                        isActive: scoreBoardExtras.isYellowCardsActive
                     }
                 },
                 [participants[1].id]: {
-                    corners:
-                    {
+                    aggregateScore: {
+                        value: awayScore + getRandomInt(4),
+                        isActive: scoreBoardExtras.isAggActive
+                    },
+                    corners: {
                         value: scoreBoardExtras.isCornersActive ? getRandomInt(4) : 0,
                         isActive: scoreBoardExtras.isCornersActive
                     },
-                    // goalsScored:
-                    // {
-                    //     value: isSeparatePenaltiesEnabled ? 666 : awayScore,
-                    //     isActive: false
-                    // },
-                    goalsScored:
-                    {
+                    dangerousAttack: {
+                        value: scoreBoardExtras.isDangerousAttacksActive ? getRandomInt(2, 10) : 0,
+                        isActive: scoreBoardExtras.isDangerousAttacksActive
+                    },
+                    expectedGoals: {
+                        value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(0, 3, 4) : 0,
+                        isActive: scoreBoardExtras.isExpectedGoalsActive
+                    },
+                    goalKeeperSave: {
+                        value: getRandomInt(1, 5),
+                        isActive: false
+                    },
+                    goalsScored: {
                         value: awayGoalScored,
                         isActive: false
                     },
-                    // goalsScoredExceptPenaltyPhase: {
-                    //     value: isSeparatePenaltiesEnabled ? awayScore : getRandomInt(700, 799),
-                    //     isActive: true
-                    // },
                     goalsScoredExceptPenaltyPhase: {
                         value: awayScore,
                         isActive: true
                     },
-                    // goalsScoredOnPenaltyPhase: {
-                    //     value: isPenaltyShootout ? getRandomInt(3) : 0,
-                    //     isActive: true
-                    // },
                     goalsScoredOnPenaltyPhase: {
                         value: awayPenaltyScore,
                         isActive: true
                     },
-                    penaltyShots:
-                    {
-                        value: getRandomInt(4),
-                        isActive: true
-                    },
-                    redCards:
-                    {
-                        value: scoreBoardExtras.isRedCardsActive ? getRandomInt(1, 2) : 0,
-                        isActive: scoreBoardExtras.isRedCardsActive
-                    },
-                    substitutions:
-                    {
-                        value: getRandomInt(2),
-                        isActive: true
-                    },
-                    yellowCards:
-                    {
-                        value: scoreBoardExtras.isYellowCardsActive ? getRandomInt(1, 2) : 0,
-                        isActive: scoreBoardExtras.isYellowCardsActive
-                    },
-                    isSecondLeg:
-                    {
+                    isSecondLeg: {
                         value: scoreBoardExtras.isAggActive,
                         isActive: scoreBoardExtras.isAggActive
                     },
-                    aggregateScore:
-                    {
-                        value: awayScore + getRandomInt(4),
-                        isActive: scoreBoardExtras.isAggActive
+                    penaltyShots: {
+                        value: getRandomInt(4),
+                        isActive: true
                     },
-                    stoppageTime:
-                    {
-                        value: scoreBoardExtras.isStoppageTimeActive ? stoppageTime : 0,
-                        isActive: scoreBoardExtras.isStoppageTimeActive
-                    },
-                    expectedGoals:
-                    {
-                        value: scoreBoardExtras.isExpectedGoalsActive ? getRandomFloat(0, 3, 4) : 0,
-                        isActive: scoreBoardExtras.isExpectedGoalsActive
-                    },
-                    dangerousAttack:
-                    {
-                        value: scoreBoardExtras.isDangerousAttacksActive ? getRandomInt(2, 10) : 0,
-                        isActive: scoreBoardExtras.isDangerousAttacksActive
-                    },
-                    shotsOnTarget:
-                    {
-                        value: scoreBoardExtras.isShotsOnTargetActive ? totalShotsOnTargetAway : 0,
-                        isActive: scoreBoardExtras.isShotsOnTargetActive
-                    },
-                    shotsOffTarget:
-                    {
-                        value: totalShotsAway - totalShotsOnTargetAway,
-                        isActive: false
-                    },
-                    totalShots:
-                    {
-                        value: scoreBoardExtras.isTotalShotsActive ? totalShotsAway : 0,
-                        isActive: scoreBoardExtras.isTotalShotsActive
-                    },
-                    possession:
-                    {
+                    possession: {
                         value: scoreBoardExtras.isPossessionActive ? 100 - possession : 0,
                         isActive: scoreBoardExtras.isPossessionActive
                     },
-                    woodwork:
-                    {
+                    redCards: {
+                        value: scoreBoardExtras.isRedCardsActive ? getRandomInt(1, 2) : 0,
+                        isActive: scoreBoardExtras.isRedCardsActive
+                    },
+                    shotsOffTarget: {
+                        value: totalShotsAway - totalShotsOnTargetAway,
+                        isActive: false
+                    },
+                    shotsOnTarget: {
+                        value: scoreBoardExtras.isShotsOnTargetActive ? totalShotsOnTargetAway : 0,
+                        isActive: scoreBoardExtras.isShotsOnTargetActive
+                    },
+                    stoppageTime: {
+                        value: scoreBoardExtras.isStoppageTimeActive ? stoppageTime : 0,
+                        isActive: scoreBoardExtras.isStoppageTimeActive
+                    },
+                    substitutions: {
+                        value: getRandomInt(2),
+                        isActive: true
+                    },
+                    totalShots: {
+                        value: scoreBoardExtras.isTotalShotsActive ? totalShotsAway : 0,
+                        isActive: scoreBoardExtras.isTotalShotsActive
+                    },
+                    woodwork: {
                         value: getRandomInt(1, 3),
                         isActive: false
                     },
-                    goalKeeperSave:
-                    {
-                        value: getRandomInt(1, 5),
-                        isActive: false
-                    },
-                    goalsScored:
-                    {
-                        value: awayScore,
-                        isActive: true
+                    yellowCards: {
+                        value: scoreBoardExtras.isYellowCardsActive ? getRandomInt(1, 2) : 0,
+                        isActive: scoreBoardExtras.isYellowCardsActive
                     }
                 }
+
             },
             eventId,
             categoryId: 1,
