@@ -36,6 +36,10 @@
     const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
     const IS_B2B_WITH_HOST_PAGE = IS_SPORTSBOOK_IN_IFRAME && !IS_B2B_IFRAME_ONLY;
 
+    const MARKET_TEMPLATE_TAGS_FOR_PLAYER_PROPS = [14, 35, 41, 47, 53, 101, 104, 106, 135, 143];
+    const MARKET_TEMPLATE_TAGS_FOR_FAST_MARKET = [6, 82, 84, 85, 105, 131, 144, 160];
+    const MARKET_TEMPLATE_TAGS_FOR_PREBUILT = [152];
+
 
     if (IS_MFE_ALONE) shadowRoot = document.querySelector("sb-xp-sportsbook-app").shadowRoot;
 
@@ -98,14 +102,14 @@
 
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -118,7 +122,7 @@
     var marketAsJson, previousMarketAsJson;
     var eventLabel; //,savedEventLabel;
     // var mockedEventPhase;
-    var marketId, lockedMarketId, marketLabel, marketTemplateId, marketVersion;
+    var marketId, lockedMarketId, marketLabel, marketTemplateId;
     var marketTemplateTagsToDisplay;
     var categoryId, competitionId;
     var selectionId, lockedSelectionId, selectionLabel;
@@ -1487,6 +1491,74 @@
     //         activateAllAccordions();
     //     }
     // }
+
+
+    function getLoadedMarketIdsOnEventPage(eventId) {
+        const accordionSummaries = getState().sportsbook.eventWidget.items[eventId]?.item?.accordionSummaries;
+        if (!accordionSummaries) return []; // return empty array if not ready yet
+
+        return Object.keys(accordionSummaries)
+            .filter(key => accordionSummaries[key]?.state === 1)
+            .flatMap(key => accordionSummaries[key].marketIds || []);
+    }
+
+    // function getMarketAccordionCount(eventId) {
+    //     const accordionSummaries = getState().sportsbook.eventWidget.items[eventId]?.item?.accordionSummaries;
+    //     const count = accordionSummaries ? Object.keys(accordionSummaries).length : undefined;
+    //     return count;
+    // }
+
+    // function getMarketCount(eventId){
+    //     return getState().sportsbook.event.events[eventId].marketCount;
+    // }
+
+    function getIsCategoryPrebuiltEligible(categoryId) {
+        const marketTemplateGroupings = Object.values(getState().sportsbook.eventPageSchema.categoryTabs[categoryId].marketTemplateGroupings);
+        for (const grouping of marketTemplateGroupings) {
+            if (grouping.marketTemplateTag == 152) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    function getCategoriesWithMarketTabOnEventPage(marketTemplateIds) {
+        const categoryTabs = getState().sportsbook.eventPageSchema.categoryTabs;
+        const result = [];
+
+        for (const [key, value] of Object.entries(categoryTabs)) {
+            if (!value || !Array.isArray(value.marketTemplateGroupings)) continue;
+
+            const hasTag = value.marketTemplateGroupings.some(
+                grouping => marketTemplateIds.includes(grouping.marketTemplateTag)
+            );
+
+            if (hasTag) result.push(key);
+        }
+        return result;
+    }
+
+    function getLoadedMarketIdsWithDistinctTemplateId(loadedMarketIds) {
+        const marketTemplateIds = [];
+        const marketIds = [];
+        for (let marketId of loadedMarketIds) {
+            let marketTemplateId = getMarketTemplateId(marketId);
+            if (!marketTemplateIds.includes(marketTemplateId) && !marketTemplateId.includes("PCX")) {
+                marketTemplateIds.push(marketTemplateId);
+                marketIds.push(marketId);
+            }
+        }
+        return marketIds;
+    }
+
+    function getCategoryNamesByCategoryIds(categoryIds) {
+        const result = [];
+        for (const id of categoryIds) {
+            result.push(getCategoryLabelByCategoryId(id));
+        }
+        return getArrayAsAlphaBeticalCommaSeparatedString(result);
+    }
 
     function replaceWhitespaceWithDash(str) {
         return str.trim().replace(/\s+/g, "-");
@@ -3883,6 +3955,7 @@
     }
 
     function getIconURLByIcontag(iconTag) {
+        log("getIconURLByIcontag called with " + iconTag);
         const icons = getState()?.image?.images?.sportsbook?.icons;
         return icons?.[iconTag]?.url ?? icons?.[convertToAscii(iconTag)]?.url;
     }
@@ -4061,9 +4134,17 @@
         const createMarketSelector = getElementById("createMarketSelector");
         const createMarketMessage = getElementById("createMarketMessage");
         const createPreBuiltMarketSection = getElementById("createPreBuiltMarketSection");
+        const preBuiltCategories = getElementById("preBuiltCategories");
         const createFastMarketSection = getElementById("createFastMarketSection");
+        const fastMarketCategories = getElementById("fastMarketCategories");
+
         const createPlayerPropsSection = getElementById("createPlayerPropsSection");
+        const playerPropsCategories = getElementById("playerPropsCategories");
+
         const btCreateMarket = getElementById("btCreateMarket");
+
+        const preBuiltLegCountRangeSlider = getElementById("preBuiltLegCountRangeSlider");
+        const preBuiltLegCountValueSpan = getElementById("preBuiltLegCountValueSpan");
 
         //providers
         const providersMessage = getElementById("providersMessage");
@@ -4486,8 +4567,6 @@
 
         window.createMarket = () => {
             const marketType = createMarketSelector.value;
-            const marketTemplateTagsArrayForPlayerPropsMarket = [14, 35, 41, 47, 53, 101, 104, 106];
-            const marketTemplateTagsForFastMarket = [6, 82, 84, 85, 105, 131, 144, 160];
             if (getIsEventPageVisible(eventId)) {
                 show(createMarketFeatures);
                 hide(createMarketErrorSection);
@@ -4497,52 +4576,49 @@
                 return;
             }
 
-            const initialTabLabelsArr = getMarketTabLabelsOnEventPanel();
+            let tagsArray;
             switch (marketType) {
                 case "playerProps":
                     createPlayerPropsMarket();
+                    tagsArray = MARKET_TEMPLATE_TAGS_FOR_PLAYER_PROPS;
                     break;
                 case "preBuilt":
                     createPreBuiltMarket();
+                    tagsArray = MARKET_TEMPLATE_TAGS_FOR_PREBUILT;
                     break;
                 case "fastMarket":
                     createFastMarket();
+                    tagsArray = MARKET_TEMPLATE_TAGS_FOR_FAST_MARKET;
                     setHasFastMarketsFlag(true);
                     break;
             }
 
+
             setTimeout(function () {
-                const updatedMarketTabsOnEventPanel = getMarketTabsOnEventPanel();
-                for (let tab of updatedMarketTabsOnEventPanel) {
-                    if (!initialTabLabelsArr.includes(tab.innerText)) {
-                        tab.click();
-                    }
-                }
+                const categoryId = getCategoryIdByEventId(eventId);
+                const tabLabel = getTabLabel(categoryId, tagsArray);
+                clickOnTab(tabLabel);
             }, 500);
 
-
-            // function getMarketTabsOnEventPanel() {
-            //     const root = IS_MFE_ALONE ? shadowRoot : document;
-            //     const tab = root.querySelector("[test-id='event.market.tab.4']");
-            //     return tab?.parentElement?.getElementsByClassName("obg-tab-label") || [];
-            // }
-
-            function getMarketTabsOnEventPanel() {
-                const root = !!shadowRoot ? shadowRoot : document;
-                const tab = root.querySelector("[test-id='event.market.tab.4']");
-                return tab?.parentElement?.getElementsByClassName("obg-tab-label") || [];
-            }
-
-
-            function getMarketTabLabelsOnEventPanel() {
-                let tabLabelsArray = [];
-                let tabArray = getMarketTabsOnEventPanel();
-                for (let tab of tabArray) {
-                    tabLabelsArray.push(tab.innerText);
+            function getTabLabel(categoryId, tagsArray) {
+                const marketTemplateGroupings = Object.values(getState().sportsbook.eventPageSchema.categoryTabs[categoryId].marketTemplateGroupings);
+                for (const g of marketTemplateGroupings) {
+                    if (tagsArray.includes(g.marketTemplateTag)) {
+                        return g.label;
+                    }
                 }
-                return tabLabelsArray;
             }
 
+            function clickOnTab(tabLabel) {
+                const root = !!shadowRoot ? shadowRoot : document;
+                const tabs = root.querySelectorAll("obg-tab-label");
+                for (const tab of tabs) {
+                    if (tab.textContent.includes(tabLabel)) {
+                        tab.click();
+                        break;
+                    }
+                }
+            }
 
             function createPlayerPropsMarket() {
 
@@ -4578,7 +4654,7 @@
                         eventId,
                         marketId,
                         marketTemplateId,
-                        marketTemplateTagsArrayForPlayerPropsMarket,
+                        MARKET_TEMPLATE_TAGS_FOR_PLAYER_PROPS,
                         playerPropsMarketName + " | " + player,
                         "", // lineValue
                         2, // columnLayout
@@ -4615,7 +4691,7 @@
                     "gi-" + getRandomInt(999999999),
                     marketIds,
                     [marketTemplateId],
-                    marketTemplateTagsArrayForPlayerPropsMarket,
+                    MARKET_TEMPLATE_TAGS_FOR_PLAYER_PROPS,
                     playerPropsMarketName,
                     false,
                     false,
@@ -4623,14 +4699,127 @@
                 );
             }
 
-            function createPreBuiltMarket() { //prebuilt
-                const legCount = Number(getElementById("preBuiltLegCountRange").value);
+
+            function createPreBuiltMarket() {
+                const legCount = Number(getElementById("preBuiltLegCountRangeSlider").value);
+                const loadedMarketIds = getLoadedMarketIdsOnEventPage(eventId);
+                const loadedMarketIdsWithDistinctTemplate = getLoadedMarketIdsWithDistinctTemplateId(loadedMarketIds);
+                const selectedPreBuiltLegSelectionIds = getRandomElementsFromArray(getPossiblePreBuiltLegSelectionIds(loadedMarketIdsWithDistinctTemplate), legCount);
+                const marketId = "m-FAKE-PREBUILT-MARKET-BY-SBTOOL-" + getRandomInt(10000);
+                const marketTemplateId = "PCX0" + legCount;
+                const label = "PreBuilt Combi";
+                const lineValue = "";
+                const columnLayout = 1;
+                const sortOrder = "50";
+                const preBuiltLabel = getJointPreBuiltLabel();
+                const groupLabels = [
+                    "Pre-Built Combinations",
+                    preBuiltLabel
+                ];
+                const group = "PreBuilt Bets";
+                const selectionId = "s-" + marketId + "-yes";
+
+                obgRt.createMarket(
+                    eventId,
+                    marketId,
+                    marketTemplateId,
+                    MARKET_TEMPLATE_TAGS_FOR_PREBUILT,
+                    label,
+                    lineValue,
+                    columnLayout,
+                    sortOrder,
+                    [{
+                        group,
+                        groupLevel: "0",
+                        sort: 10,
+                        groupType: 0
+                    }, {
+                        group,
+                        groupLevel: "1",
+                        sort: 2,
+                        groupType: 2
+                    }, {
+                        group,
+                        groupLevel: "2",
+                        sort: 3,
+                        groupType: 5
+                    }],
+                    groupLabels,
+                    1
+                );
+
+                createOriginSelections();
+                createSelection();
+                obgRt.createAccordion(
+                    eventId,
+                    marketId, //=groupableId
+                    [marketId],
+                    [marketTemplateId],
+                    MARKET_TEMPLATE_TAGS_FOR_PREBUILT,
+                    "Pre-Built Combinations Accordion",
+                    false,
+                    false,
+                    false
+                );
+
+                function createSelection() {
+                    obgRt.createSelection(
+                        eventId,
+                        marketId,
+                        selectionId,
+                        preBuiltLabel,
+                        1 // marketVersion
+                    );
+                    setSelectionOdds(selectionId, getRandomOdds());
+                }
+
+                function getPossiblePreBuiltLegSelectionIds(marketIdsOfLoadedMarkets) {
+                    const legSelectionIds = [];
+                    for (let marketId of marketIdsOfLoadedMarkets) {
+                        legSelectionIds.push(getSelectionsByMarketId(marketId)[0]);
+                    }
+                    return legSelectionIds;
+                }
+
+                function getJointPreBuiltLabel() {
+                    let jointLabelArr = [];
+                    for (let i = 0; i < legCount; i++) {
+                        jointLabelArr.push(getSingleLegLabel(selectedPreBuiltLegSelectionIds[i]));
+                    }
+
+                    function getSingleLegLabel(selectionId) {
+                        const selectionLabel = getSelectionLabel(selectionId);
+                        const marketLabel = getMarketLabel(getMarketIdBySelectionId(selectionId));
+                        return marketLabel + " - " + selectionLabel;
+                    }
+                    
+                    return jointLabelArr.join(",");
+                }
+
+                function createOriginSelections() {
+                    const market = getState().sportsbook.eventMarket.markets[marketId];
+                    market.originSelections ??= {};
+
+                    for (const selectionId of selectedPreBuiltLegSelectionIds) {
+                        const legMarketId = getMarketIdBySelectionId(selectionId);
+                        market.originSelections[selectionId] = {
+                            marketId: legMarketId,
+                            marketLabel: getMarketLabel(legMarketId),
+                            selectionId,
+                            selectionLabel: getSelectionLabel(selectionId),
+                        };
+                    }
+                }
+
+                log("NEW MARKET ID: \n" + marketId);
+            }
+
+            function createPreBuiltMarketOld() { //prebuilt
+                const legCount = Number(getElementById("preBuiltLegCountRangeSlider").value);
                 const toScoreWhen = [" to Score Anytime", " to Score First Goal", " to Score Last Goal"];
 
                 const marketTemplateId = "PCB" + legCount;
                 const marketId = "m-" + eventId + "-" + marketTemplateId + "-" + getRandomInt(999999999).toString();
-                // const marketId = "m-" + eventId + "-" + marketTemplateId + "-1234567";
-                const marketTemplateTagsForPreBuilt = [110, 111, 113, 117, 112, 116, 114, 115, 116, 117];
                 const [player1, player2, player3] = getRandomElementsFromArray(examplePlayerNames, 3);
                 const [when1, when2, when3] = getRandomElementsFromArray(toScoreWhen, 3);
                 let possiblePreBuiltLabels = [
@@ -4648,7 +4837,7 @@
                         randomLegs[i] += " - But this is a longer text to test prebuilt leg labels spreading into multiple lines";
                     }
                 }
-                // const preBuiltLabel = getRandomElementsFromArray(possiblePreBuiltLabels, legCount).join(",");
+
                 const preBuiltLabel = randomLegs.join(",");
                 const selectionId = "s-" + marketId + "-yes";
                 const group = "PreBuilt Bets";
@@ -4657,7 +4846,7 @@
                     eventId,
                     marketId,
                     marketTemplateId,
-                    marketTemplateTagsForPreBuilt,
+                    MARKET_TEMPLATE_TAGS_FOR_PREBUILT,
                     "PreBuilt Combi", //label
                     "", //lineValue
                     1, //columnLayout
@@ -4688,10 +4877,10 @@
 
                 obgRt.createAccordion(
                     eventId,
-                    marketId, //groupableId
+                    marketId, //=groupableId
                     [marketId],
                     [marketTemplateId],
-                    marketTemplateTagsForPreBuilt,
+                    MARKET_TEMPLATE_TAGS_FOR_PREBUILT,
                     "Pre-Built Combinations Accordion",
                     false,
                     false,
@@ -4720,7 +4909,7 @@
                     eventId,
                     marketId,
                     marketTemplateId,
-                    marketTemplateTagsForFastMarket,
+                    MARKET_TEMPLATE_TAGS_FOR_FAST_MARKET,
                     marketLabel,
                     0,
                     2
@@ -4746,7 +4935,7 @@
                     marketId,
                     [marketId],
                     [marketTemplateId],
-                    marketTemplateTagsForFastMarket,
+                    MARKET_TEMPLATE_TAGS_FOR_FAST_MARKET,
                     marketLabel,
                     false,
                     false,
@@ -4754,7 +4943,6 @@
                 );
             }
         }
-
 
 
         // function initCreateFastMarketSection(categoryId) {
@@ -4814,16 +5002,18 @@
         function initCreatePlayerPropsMarketSection() {
             show(createPlayerPropsSection);
             hide(createFastMarketSection, createPreBuiltMarketSection);
-            let categoryIdsPlayerPropsMarket = ["1", "2", "3", "4", "10", "19"];
-            if (categoryIdsPlayerPropsMarket.includes(categoryId)) {
-                activate(btCreateMarket);
+
+            const allowedCategoryIds = getCategoriesWithMarketTabOnEventPage(MARKET_TEMPLATE_TAGS_FOR_PLAYER_PROPS);
+
+            playerPropsCategories.innerText = getCategoryNamesByCategoryIds(allowedCategoryIds);
+
+            if (allowedCategoryIds.includes(categoryId)) {
+                activate(btCreateMarket, createPlayerPropsSection);
                 createMarketMessage.innerText = null;
             } else {
-                // marketTemplateTagsArray = undefined;
                 displayInRed(createMarketMessage);
                 createMarketMessage.innerText = "Not for this category";
-                // inactivate(btCreatePlayerPropsMarket, btCreatePlayerPropsDummyMarket);
-                inactivate(btCreateMarket);
+                inactivate(btCreateMarket, createPlayerPropsSection);
             }
 
             playerPropsPlayerCount.textContent = playerPropsPlayerCountRange.value;
@@ -4836,40 +5026,67 @@
         function initCreateFastMarketSection() {
             show(createFastMarketSection);
             hide(createPlayerPropsSection, createPreBuiltMarketSection);
+            const allowedCategoryIds = getCategoriesWithMarketTabOnEventPage(MARKET_TEMPLATE_TAGS_FOR_FAST_MARKET);
 
-            const allowedCategories = ["1", "2", "4", "10", "19", "11", "104", "138"];
+            fastMarketCategories.innerText = getCategoryNamesByCategoryIds(allowedCategoryIds);
+
             const isLiveEvent = getEventPhase(eventId) === "Live";
             let message = "";
 
             if (!isLiveEvent) {
                 message = "For Live events only";
-            } else if (!allowedCategories.includes(categoryId)) {
+            } else if (!allowedCategoryIds.includes(categoryId)) {
                 message = "Not for this category";
             } else {
-                activate(btCreateMarket);
+                activate(btCreateMarket, createFastMarketSection);
                 createMarketMessage.innerText = null;
                 return; // Exit early if the fast market is activated
             }
 
-            marketTemplateTagsArrayForFastMarket = undefined;
             displayInRed(createMarketMessage);
             createMarketMessage.innerText = message;
-            inactivate(btCreateMarket);
+            inactivate(btCreateMarket, createFastMarketSection);
         }
 
         function initCreatePreBuiltMarketSection() {
+            const allowedCategoryIds = getCategoriesWithMarketTabOnEventPage(MARKET_TEMPLATE_TAGS_FOR_PREBUILT);
+            preBuiltCategories.innerText = getCategoryNamesByCategoryIds(allowedCategoryIds);
+
             show(createPreBuiltMarketSection);
             hide(createFastMarketSection, createPlayerPropsSection);
-            activate(btCreateMarket);
 
-            const rangeInput = getElementById("preBuiltLegCountRange");
-            const rangeValue = getElementById("preBuiltLegCount");
 
-            rangeValue.textContent = rangeInput.value;
+            if (!allowedCategoryIds.includes(categoryId)) {
+                inactivate(btCreateMarket, createPreBuiltMarketSection);
+                createMarketMessage.innerText = "Not for this category";
+            } else {
+                createMarketMessage.innerText = null;
+                activate(btCreateMarket, createPreBuiltMarketSection);
+                initPrebuiltControls();
+            }
 
-            rangeInput.addEventListener("input", () => {
-                rangeValue.textContent = rangeInput.value;
-            });
+            function initPrebuiltControls() {
+                inactivate(btCreateMarket, createPreBuiltMarketSection);
+                setTimeout(function () {
+                    const loadedMarketIds = getLoadedMarketIdsOnEventPage(eventId);
+                    const loadedMarketIdsWithDistinctTemplate = getLoadedMarketIdsWithDistinctTemplateId(loadedMarketIds);
+
+                    const possibleLegCount = loadedMarketIdsWithDistinctTemplate.length;
+                    if (possibleLegCount < 2) {
+                        // inactivate(btCreateMarket, createPreBuiltMarketSection);
+                        createMarketMessage.innerText = "Event should have 2+ markets";
+                    } else {
+                        createMarketMessage.innerText = null;
+                        activate(btCreateMarket, createPreBuiltMarketSection);
+                    }
+
+                    preBuiltLegCountRangeSlider.max = possibleLegCount;
+                    preBuiltLegCountValueSpan.textContent = preBuiltLegCountRangeSlider.value;
+                    preBuiltLegCountRangeSlider.addEventListener("input", () => {
+                        preBuiltLegCountValueSpan.textContent = preBuiltLegCountRangeSlider.value;
+                    });
+                }, 3000);                
+            }
         }
 
         // function initFootballScoreboard() {

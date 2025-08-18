@@ -1292,28 +1292,20 @@
                             </select>
 
                             <div id="createPreBuiltMarketSection">
-                                <div class="infoMessage">
-                                    <div>Dedicated Pre-Built tab created only for:</div>
-                                    <div class="marginLeft15px">Football, Basketball, Baseball, American
-                                        Football, Ice Hockey, Cricket, Rugby League, Rugby Union
-                                    </div>
+                                <div id="preBuiltCategories" class="infoMessage">
+
                                 </div>
                                 <div class="itemsJustified marginTop10px">
                                     <span>Number of legs</span>
-                                    <input type="range" id="preBuiltLegCountRange" min="2" max="6" class="rangeSbTools"
-                                        value="3">
-                                    <span id="preBuiltLegCount" class="displayInGreen width16px"></span>
+                                    <input type="range" id="preBuiltLegCountRangeSlider" min="2" max="8"
+                                        class="rangeSbTools" value="3">
+                                    <span id="preBuiltLegCountValueSpan" class="displayInGreen width16px"></span>
                                 </div>
-                                <div class="checkBoxRowToLeft">
-                                    <input type="checkbox" class="chkInlineRight chkSbTools"
-                                        id="chkLongPrebuiltLegLabels">
-                                    <span class="marginTop5px">At least one long leg label</span>
-                                </div>
+
                             </div>
 
                             <div id="createPlayerPropsSection" class="hide">
-                                <div class="infoMessage">Football, Basketball, Baseball, Ice Hockey, American Football,
-                                    Handball
+                                <div id="playerPropsCategories" class="infoMessage">
                                 </div>
                                 <div class="itemsJustified marginTop10px">
                                     <span>Number of players</span>
@@ -1340,9 +1332,7 @@
                                 </div>
                             </div>
                             <div id="createFastMarketSection" class="hide">
-                                <div class="infoMessage">Football, Basketball, Baseball, Tennis, Table Tennis, Ice
-                                    Hockey,
-                                    American Football, Squash</div>
+                                <div id="fastMarketCategories" class="infoMessage"></div>
                             </div>
                             <hr class="hRule">
 
@@ -1350,85 +1340,12 @@
                                 <button class="btSimple paddingInline20px" id="btCreateMarket" onclick="createMarket()">
                                     <span class="labelOnBtSimple">Create</span>
                                 </button>
-                                <span id="createMarketMessage" class="marginLeft5px"></span>
+                                <span id="createMarketMessage" class="marginLeft5px displayInRed"></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- <div>
-                    <button onclick="toggleSection('footballScoreBoardSection')" class="moreLess">Football
-                        Scoreboard (RealTime Test)</button>
-                    <div id="footballScoreBoardSection" class="marginTopBottom10px hide">
-                        <div id="notFootballScoreBoardMessage" class="hide displayInRed">
-                            No Football Scoreboard found for this event.
-                        </div>
-
-                        <div id="scoreBoardFeatures" class="hide">
-                            <div id="scoreBoardScores" class="scoreLayout">
-                                <div id="homeScoreLabel" class="alignItemsCenter">
-                                    <span class="iconScore iconSvgSmall marginRight2px"></span>
-                                    <span>Home Score</span>
-                                </div>
-                                <input class="fdSbTools fdScoreBoardNumeric" type="number" min=0
-                                    oninput="validity.valid||(value='');" id="homeScoreInputField">
-                                <button id="btSubmitHomeScore" class="btSubmit btSimple"
-                                    onclick="submitScore('home')">Set</button>
-                                <div id="awayScoreLabel" class="alignItemsCenter">
-                                    <span class="iconScore iconSvgSmall marginRight2px"></span>
-                                    <span>Away Score</span>
-                                </div>
-                                <input class="fdSbTools fdScoreBoardNumeric" type="number" min=0
-                                    oninput="validity.valid||(value='');" id="awayScoreInputField">
-                                <button id="btSubmitHomeScore" class="btSubmit btSimple"
-                                    onclick="submitScore('away')">Set</button>
-                                </button>
-                            </div>
-                            <div id="scoreBoardDetails">
-                                <div class="scoreBoardLayout">
-                                    <div class="iconCorner iconFbScoreBoard"></div>
-                                    <div class="iconSubstitution iconFbScoreBoard"></div>
-                                    <div class="iconYellowCard iconFbScoreBoard"></div>
-                                    <div class="iconRedCard iconFbScoreBoard"></div>
-                                    <div class="iconPenalty iconFbScoreBoard"></div>
-
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeCorners" min=0
-                                        oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeSubstitutions"
-                                        min=0 oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeYellowCards"
-                                        min=0 oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homeRedCards" min=0
-                                        oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="homePenalties" min=0
-                                        oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayCorners" min=0
-                                        oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awaySubstitutions"
-                                        min=0 oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayYellowCards"
-                                        min=0 oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayRedCards" min=0
-                                        oninput="validity.valid||(value='');">
-                                    <input class="fdSbTools fdScoreBoardNumeric" type="number" id="awayPenalties" min=0
-                                        oninput="validity.valid||(value='');">
-                                </div>
-                                <button id="submitScoreBoard" class="btSubmit btSimple"
-                                    onclick="submitScoreBoard()">Set</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-
-                <!-- <div id="sbToolsEventInfo" class="hide">
-                    <hr class="hRule">
-                    <img class="iconInfoSymbol">Event detection order:
-                    <ol class="infoList">
-                        <li>Open event panel</li>
-                        <li>Last selection from betslip</li>
-                    </ol>
-                </div> -->
             </div>
         </div>
     </div>
@@ -1441,8 +1358,6 @@
         <div class="accContent">
             <div class="detectedEntitySection">
                 <div id="detectedOrLockedRowForSbToolsMarket">Detected market:</div>
-                <!-- <button class="btInfo btIcon" onclick="toggleInfo('sbToolsMarketInfo')"><img
-                        class="iconInfoCircle"></button> -->
                 <div></div>
                 <div class="labelRow" id="labelRowForSbToolsMarket">
                     <div class="hide" id="messageForSbToolsMarket"></div>
