@@ -148,7 +148,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.100";
+    const SB_TOOL_VERSION = "v1.6.102";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4704,7 +4704,7 @@
                 const loadedMarketIdsWithDistinctTemplate = getLoadedMarketIdsWithDistinctTemplateId(loadedMarketIds);
                 const selectedPreBuiltLegSelectionIds = getRandomElementsFromArray(getPossiblePreBuiltLegSelectionIds(loadedMarketIdsWithDistinctTemplate), legCount);
                 const marketId = "m-FAKE-PREBUILT-MARKET-BY-SBTOOL-" + getRandomInt(10000);
-                const marketTemplateId = "PCX0" + legCount;
+                const marketTemplateId = legCount < 9 ? "PCX0" + legCount : "PCX" + legCount;
                 const label = "PreBuilt Combi";
                 const lineValue = "";
                 const columnLayout = 1;
@@ -5720,13 +5720,6 @@
             }
         }
 
-        // function toggleVarState() {
-        //     if (chkHasVar.checked) {
-        //         getState().sportsbook.scoreboard[eventId].varState = 2;
-        //     } else {
-        //         getState().sportsbook.scoreboard[eventId].varState = 0;
-        //     }
-        // }
 
         function initEventPropertyCheckboxes() {
 
@@ -5734,23 +5727,15 @@
 
             chkHasLiveStreaming.checked = getState().sportsbook.event.events[eventId].hasLiveStreaming ?? false;
 
-            // chkHasFastMarkets.checked = getState().sportsbook.event.events[eventId].hasFastMarkets ?? false;
-
             chkHasPriceBoost.checked = getEventHasSingleBoost(eventId, false);
 
             chkHasSuperBoost.checked = getEventHasSingleBoost(eventId, true);
 
             chkHasLiveStatistics.checked = getState().sportsbook.event.events[eventId].hasLiveStatistics ?? false;
 
-            // chkHasBetBuilder.checked = !!getState().sportsbook.event.events[eventId]?.tags?.bc_bb_available;
-
-            // chkHasBetBuilder.checked = getEventHasBetBuilder(eventId);
-
             chkHasScore24Statistics.checked = getState().sportsbook.event.events[eventId].prematchStatisticsProviders.includes("Score24");
 
             chkHasExternalStatistics.checked = getState().sportsbook.event.events[eventId].prematchStatisticsProviders.includes("BetRadar");
-
-            // chkHasVar.checked = !!getState().sportsbook.scoreboard[eventId] && getState().sportsbook.scoreboard[eventId].varState === 2;
 
         }
 
@@ -5957,8 +5942,6 @@
     function displayInGreen(...elements) {
         for (let element of elements) {
             element.classList.add("displayInGreen");
-            // element.classList.remove("displayInRed");
-            // element.classList.remove("displayInOrange");
             element.classList.remove("displayInRed", "displayInOrange");
         }
     }
@@ -5967,7 +5950,6 @@
         for (let element of elements) {
             element.classList.add("displayInRed");
             element.classList.remove("displayInGreen", "displayInOrange");
-            // element.classList.remove("displayInOrange");
         }
     }
 
@@ -5975,7 +5957,6 @@
         for (let element of elements) {
             element.classList.add("displayInOrange");
             element.classList.remove("displayInGreen", "displayInRed");
-            // element.classList.remove("displayInRed");
         }
     }
 
@@ -6031,14 +6012,6 @@
         return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
     }
 
-    // function getIsMarketGroupableByMarketTemplate(marketId) {
-    //     return getState().sportsbook.eventMarket.markets[marketId].isGroupableByMarketTemplate;
-    // }
-
-    // function getIsMarketHaveSiblingsWithSameTemplate(marketId) {
-    //     return getState().sportsbook.eventWidget.items[getEventIdByMarketId(marketId)].item.accordionSummaries[getMarketTemplateId(marketId)].marketIds.length > 1;
-    // }
-
     function isCategoryInState(categoryId) {
         return getCategories()[categoryId] !== undefined;
     }
@@ -6047,8 +6020,6 @@
     function getColumnLayout(marketId) {
         return getState().sportsbook.eventMarket.markets[marketId].columnLayout;
     }
-
-
 
     function getIsUserLoggedIn() {
         const { authReducer, authSession } = localStorage;
@@ -6069,14 +6040,11 @@
             if (IS_SPORTSBOOK_IN_IFRAME) {
                 return iframeURL.includes("/ctx");
             }
-
             if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
                 return obgClientEnvironmentConfig.startupContext.contextId.userContextId.includes("ctx");
             }
-
             return window.location.href.includes("/ctx");
         }
-
         return false;
     }
 
@@ -6107,15 +6075,13 @@
         setMarketState(state);
     }
 
+    function getCommonElements(arr1, arr2) {
+        const set2 = new Set(arr2); // Fast lookup
+        return arr1.filter(item => set2.has(item));
+    }
+
     function isMarketPreBuilt(marketId) {
-        const preBuiltMarketTemplateIds = ["PCB2", "PCB3", "PCB4", "PCB5"];
-        const preBuiltMarketTemplateTags = [110, 111, 112, 113, 114, 115, 116, 117];
-
-        return (preBuiltMarketTemplateIds.includes(getMarketTemplateId(marketId)) || hasCommonElement(getMarketTemplateTags(marketId), preBuiltMarketTemplateTags));
-
-        function hasCommonElement(marketTemplateTags, preBuiltMarketTemplateTags) {
-            return marketTemplateTags.some(element => preBuiltMarketTemplateTags.includes(element));
-        }
+        return getCommonElements(MARKET_TEMPLATE_TAGS_FOR_PREBUILT, getMarketTemplateTags(marketId)).length > 0;
     }
 
     function setMarketState(state) {
@@ -8758,15 +8724,14 @@
 
 
     window.openInTradingTools = (entity) => {
-        var serviceInstanceId = "a541c52d-f9c9-429e-80ac-79019ec525e6";
-        var ttBaseUrl;
-        var ttPath;
-        IS_BLE ?
-            ttBaseUrl = "https://tradingtools.ble.local/" :
-            ttBaseUrl = "https://tradingtools.qa.bde.local/";
-        if (isBonusSystemUs()) {
-            serviceInstanceId = "3f31b226-2fcc-4497-a40a-2f958c205a13"
-        }
+        const serviceInstanceId = isBonusSystemUs()
+            ? "3f31b226-2fcc-4497-a40a-2f958c205a13"
+            : "a541c52d-f9c9-429e-80ac-79019ec525e6";
+        const ttBaseUrl = IS_BLE
+            ? "https://tradingtools.ble.local/"
+            : "https://tradingtools.qa.bde.local/";
+
+        let ttPath;
         switch (entity) {
             case "acca":
                 ttPath = "bonus/" + accaInsId + "?serviceInstanceId=" + serviceInstanceId;
@@ -8784,10 +8749,10 @@
                 ttPath = "bonus/" + bonusStakeId + "?serviceInstanceId=" + serviceInstanceId;
                 break;
             case "event":
-                ttPath = "fixture-management/fixture/" + eventId;
+                ttPath = "fixture-management/fixture-v2/" + eventId;
                 break;
             case "market":
-                ttPath = "fixture-management/fixture/" + eventId + "/market/" + marketId;
+                ttPath = "fixture-management/fixture-v2/" + eventId + "/market/" + marketId;
                 break;
         }
         window.open(ttBaseUrl + ttPath);
