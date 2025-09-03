@@ -148,7 +148,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.102";
+    const SB_TOOL_VERSION = "v1.6.104";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -293,11 +293,23 @@
         return null;
     }
 
+    // function getIsFabricWithMfe() {
+    //     const sr = findShadowRootContaining('link[href*="playground.net/"]');
+    //     if (sr) shadowRoot = sr;
+    //     return !!sr;
+    // }
+
     function getIsFabricWithMfe() {
-        const sr = findShadowRootContaining('link[href*="playground.net/"]');
+        const sr = findShadowRootContaining("obg-m-sportsbook-layout-container") ||  findShadowRootContaining("mat-sidenav-container");
         if (sr) shadowRoot = sr;
         return !!sr;
     }
+
+    // function getIsFabricWithMfe() {
+    //     const sr = findShadowRootContaining("gaming-sportsbook-mfe");
+    //     if (sr) shadowRoot = sr;
+    //     return !!sr;
+    // }
 
     function getIsFabricWithIframe() {
         const sr = findShadowRootContaining('iframe[src*="playground.net/"]');
@@ -349,7 +361,8 @@
         if (IS_FABRIC_WITH_MFE) return ` (Fabric + mFE)`;
         if (IS_FABRIC_WITH_IFRAME) return ` (Fabric + iFrame)`;
         if (IS_B2B_IFRAME_ONLY || IS_SPORTSBOOK_IN_IFRAME) return ` (B2B)`;
-        return ` (B2C - ${nodeContext.appHash})`;
+        if (IS_NODECONTEXT_EXPOSED) return ` (B2C - ${nodeContext.appHash})`;
+        return null;        
     }
 
     function getStaticContextId() {
@@ -474,12 +487,6 @@
     }
 
     function getHostPageEnvironment() {
-        // if (IS_B2B_WITH_HOST_PAGE) {
-        //     return obgClientEnvironmentConfig.startupContext.appContext.environment;
-        // }
-        // if (IS_MFE) {
-        //     return obgStartup.config.appSettings.environment;
-        // }
         if (IS_PAGECONTEXTDATA_EXPOSED) {
             let env = pageContextData?.appContext?.environment;
             if (env == "production") env = "prod";
@@ -874,10 +881,8 @@
         }
 
         function handleIfIframeEnvNotMatching() {
-            let hostEnv = getHostPageEnvironment();
-
-            // let iframeEnv = getIframeEnv(iframeURL);
-            if (SB_ENVIRONMENT != hostEnv) {
+            const hostEnv = getHostPageEnvironment();
+            if (SB_ENVIRONMENT != hostEnv && BRAND_NAME != "spino") { //spino uses "staging" as env
                 hide(openIframeRow);
                 show(mismatchingSbSection);
                 btOpenMatchingIframe.innerText = hostEnv.toUpperCase() + " iframe";
