@@ -148,7 +148,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.104";
+    const SB_TOOL_VERSION = "v1.6.105";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -300,7 +300,7 @@
     // }
 
     function getIsFabricWithMfe() {
-        const sr = findShadowRootContaining("obg-m-sportsbook-layout-container") ||  findShadowRootContaining("mat-sidenav-container");
+        const sr = findShadowRootContaining("obg-m-sportsbook-layout-container") || findShadowRootContaining("mat-sidenav-container");
         if (sr) shadowRoot = sr;
         return !!sr;
     }
@@ -362,7 +362,7 @@
         if (IS_FABRIC_WITH_IFRAME) return ` (Fabric + iFrame)`;
         if (IS_B2B_IFRAME_ONLY || IS_SPORTSBOOK_IN_IFRAME) return ` (B2B)`;
         if (IS_NODECONTEXT_EXPOSED) return ` (B2C - ${nodeContext.appHash})`;
-        return null;        
+        return null;
     }
 
     function getStaticContextId() {
@@ -916,19 +916,20 @@
             hide(walletSection);
         }
 
-        var isUserLoggedIn, previousIsUserLoggedIn;
+        let isUserLoggedIn, previousIsUserLoggedIn;
         function listenerForLoginState() {
             isUserLoggedIn = getIsUserLoggedIn();
             if (isUserLoggedIn == previousIsUserLoggedIn) {
                 return;
             }
             previousIsUserLoggedIn = isUserLoggedIn;
+            loginState.innerText = isUserLoggedIn ? " / Logged In" : " / Logged Out";
 
-            if (isUserLoggedIn) {
-                loginState.innerText = " / Logged In";
-            } else {
-                loginState.innerText = " / Logged Out";
-            }
+            // if (isUserLoggedIn) {
+            //     loginState.innerText = " / Logged In";
+            // } else {
+            //     loginState.innerText = " / Logged Out";
+            // }
         }
 
         function listenerForUserName() {
@@ -1516,15 +1517,15 @@
     //     return getState().sportsbook.event.events[eventId].marketCount;
     // }
 
-    function getIsCategoryPrebuiltEligible(categoryId) {
-        const marketTemplateGroupings = Object.values(getState().sportsbook.eventPageSchema.categoryTabs[categoryId].marketTemplateGroupings);
-        for (const grouping of marketTemplateGroupings) {
-            if (grouping.marketTemplateTag == 152) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // function getIsCategoryPrebuiltEligible(categoryId) {
+    //     const marketTemplateGroupings = Object.values(getState().sportsbook.eventPageSchema.categoryTabs[categoryId].marketTemplateGroupings);
+    //     for (const grouping of marketTemplateGroupings) {
+    //         if (grouping.marketTemplateTag == 152) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
 
     function getCategoriesWithMarketTabOnEventPage(marketTemplateIds) {
@@ -1548,9 +1549,11 @@
         const marketIds = [];
         for (let marketId of loadedMarketIds) {
             let marketTemplateId = getMarketTemplateId(marketId);
-            if (!marketTemplateIds.includes(marketTemplateId) && !marketTemplateId.includes("PCX")) {
-                marketTemplateIds.push(marketTemplateId);
-                marketIds.push(marketId);
+            if (marketTemplateId) {
+                if (!marketTemplateIds.includes(marketTemplateId) && !marketTemplateId.includes("PCX")) {
+                    marketTemplateIds.push(marketTemplateId);
+                    marketIds.push(marketId);
+                }
             }
         }
         return marketIds;
@@ -5985,18 +5988,13 @@
     }
 
     function getMarketLabel(marketId) {
-        if (marketId == null) {
-            return NOT_FOUND;
-        }
-        marketLabel = getState().sportsbook.eventMarket.markets[marketId].label;
-        if (marketLabel === undefined) {
-            marketLabel = getState().sportsbook.eventMarket.markets[marketId].marketFriendlyName;
-        }
-        return marketLabel;
+        if (marketId == null) return NOT_FOUND;
+        const market = getState().sportsbook.eventMarket.markets[marketId];
+        return market?.label ?? market?.marketFriendlyName;
     }
 
     function getMarketTemplateId(marketId) {
-        return getState().sportsbook.eventMarket.markets[marketId].marketTemplateId;
+        return getState().sportsbook.eventMarket?.markets[marketId]?.marketTemplateId;
     }
 
     function getValidationRule(marketId) {
@@ -8378,14 +8376,19 @@
         }
     }
 
-
-
-
-
+    // function getSegmentGuid() {
+    //     return segmentGuid = getState().sportsbook.segment.segmentGuid.toLowerCase();
+    // }
 
     function getSegmentGuid() {
-        return segmentGuid = getState().sportsbook.segment.segmentGuid.toLowerCase();
+        const segmentId = IS_SBMFESSTARTUPCONTEXT_EXPOSED
+            ? sbMfeStartupContext.userContext.contextInformation.segmentId
+            : IS_B2B_IFRAME_ONLY
+                ? getState().b2b.userContext.contextInformation.segmentId
+                : getState().sportsbook.segment.segmentGuid;
+        return segmentId.toLowerCase();
     }
+
 
     window.initSegments = () => {
         initSegments()
