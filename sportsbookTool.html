@@ -1313,6 +1313,22 @@
                                         class="rangeSbTools" value="4">
                                     <span id="playerPropsPlayerCount" class="displayInGreen width16px"></span>
                                 </div>
+                                <div class="displayFlex">
+                                    <span>Number of selections per market
+                                    </span>
+                                    <span class="alignItemsCenter">
+                                        <span class="alignItemsCenter marginLeft15px">
+                                            <input id="radioOneSelectionsPerMarket" type="radio" class="radioSbTools"
+                                                name="radioPlayerPropsSelectionCount" checked>
+                                            1
+                                        </span>
+                                        <span class="alignItemsCenter marginLeft15px">
+                                            <input type="radio" class="radioSbTools"
+                                                name="radioPlayerPropsSelectionCount">
+                                            2
+                                        </span>
+                                    </span>
+                                </div>
                                 <div class="marginTop10px">
                                     <div class="alignItemsCenter">
                                         <input type="radio" name="radioPlayerPropsGroup" value="multi"
@@ -1646,14 +1662,14 @@
                     </div> -->
 
                     <div class="newOddsLayout">
-                        <div>
+                        <div class="alignItemsCenter">
                             <span class="changeOddsKeys">Initial Odds:</span>
                             <span id="initialOddsSpan" class="displayInGreen changeOddsValues"></span>
                             <button id="btResetOdds" class="btSimple btSubmit inactivated"
                                 onclick="resetOdds()">Reset</button>
                         </div>
 
-                        <div>
+                        <div class="alignItemsCenter">
                             <span class="changeOddsKeys">New Odds:</span>
                             <span class="changeOddsValues">
                                 <button id="btOddsMinus" class="btPlusMinus btIcon" onclick="modifyNewOdds('minus')">
@@ -3466,7 +3482,7 @@
     }
 
     .changeOddsValues {
-        width: 110px;
+        min-width: 120px;
         display: inline-block;
         text-align: center;
     }
@@ -3775,6 +3791,7 @@
 
     .radioSbTools {
         margin-right: 3px;
+        margin-top: 0;
         cursor: pointer;
         accent-color: var(--sbtColorGreen);
     }
