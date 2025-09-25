@@ -1711,132 +1711,133 @@
                 <button onclick="toggleSection('createPriceBoostSection')" class="moreLess">Create Price Boost</button>
                 <div id="createPriceBoostSection" class="marginTopBottom10px hide">
 
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Name:</span>
-                        <input class="fdSbTools flex1" id="fdCreatePbName" value="">
-                    </div>
-
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Bet Type:</span>
-
-                        <span class="radioForCreatePb">
-                            <input type="radio" name="radioPbBetType" id="radioPbSingle" class="vertMiddle radioSbTools"
-                                checked onclick="selectRadioForPbBetType('single')">
-                            <label for="radioPbSingle">Single</label>
-                        </span>
-
-                        <span>
-                            <input type="radio" name="radioPbBetType" id="radioPbCombi" class="vertMiddle radioSbTools"
-                                onclick="selectRadioForPbBetType('combi')">
-                            <label for="radioPbCombi">Combination</label>
-                        </span>
-                    </div>
-
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Event Phase:</span>
-
-                        <span class="radioForCreatePb">
-                            <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventPrematch"
-                                class="vertMiddle radioSbTools">
-                            <label for="radioCreatePbEventPrematch" class="vertMiddle">Prematch</label>
-                        </span>
-
-                        <span class="radioForCreatePb disabledIfCombi">
-                            <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventLive"
-                                class="vertMiddle radioSbTools">
-                            <label for="radioCreatePbEventLive" class="vertMiddle">Live</label>
-                        </span>
-
-                        <span class="disabledIfCombi">
-                            <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventBoth"
-                                class="vertMiddle radioSbTools" checked>
-                            <label for="radioCreatePbEventBoth" class="vertMiddle">All</label>
-                        </span>
-                    </div>
-
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Payout Mode:</span>
-                        <span class="radioForCreatePb">
-                            <input type="radio" name="radioPbPayoutMode" id="radioCreatePbRealMoney"
-                                class="vertMiddle radioSbTools" checked>
-                            <label for="radioCreatePbRealMoney" class="vertMiddle">Real Mon.</label>
-                        </span>
-                        <span>
-                            <input type="radio" name="radioPbPayoutMode" id="radioCreatePbBonusMoney"
-                                class="vertMiddle radioSbTools">
-                            <label for="radioCreatePbBonusMoney">Bonus Money</label>
-                        </span>
-                    </div>
-
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Visibility:</span>
-
-                        <span class="radioForCreatePb">
-                            <input type="radio" name="radioPbVisibility" id="radioPbGlobal"
-                                class="vertMiddle radioSbTools" checked>
-                            <label for="radioPbGlobal">Global</label>
-                        </span>
-
-                        <span>
-                            <input type="radio" name="radioPbVisibility" id="radioPbPersonal"
-                                class="vertMiddle radioSbTools">
-                            <label for="radioPbPersonal">Personal</label>
-                        </span>
-                    </div>
-
-
-
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Type:</span>
-                        <span class="radioForCreatePb">
-                            <input type="radio" name="radioPbType" id="radioCreatePbPercentage"
-                                class="vertMiddle radioSbTools" onclick="selectRadioForPbType('percentage')" checked>
-                            <label for="radioCreatePbPercentage" class="vertMiddle">Percentage</label>
-                        </span>
-                        <span>
-                            <input type="radio" name="radioPbType" id="radioCreatePbFixedOdds"
-                                class="vertMiddle radioSbTools" onclick="selectRadioForPbType('fixedOdds')">
-                            <label for="radioCreatePbFixedOdds">Fixed Odds</label>
-                        </span>
-                    </div>
-
-                    <div id="createPbPercentageValueSecion">
+                    <div class="scaledTo85Percent marginBottomMinus25px">
                         <div class="displayFlex">
-                            <span class="keyForCreatePb">Percentage:</span>
-                            <input class="fdSbTools width23percent" type="number" id="fdCreatePbPercentage" min="1"
-                                value="10" max="1000" step="1" oninput="validity.valid||(value='');">
+                            <span class="keyForCreatePb">Name:</span>
+                            <input class="fdSbTools flex1" id="fdCreatePbName" value="">
                         </div>
-                    </div>
 
-                    <div id="createPbFixedOddsValueSecion" class="hide">
                         <div class="displayFlex">
-                            <span class="keyForCreatePb">Fixed Odds:</span>
-                            <input class="fdSbTools width23percent" type="number" id="fdCreatePbFixed" min="1"
-                                value="500" max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                            <span class="keyForCreatePb">Bet Type:</span>
+
+                            <span class="radioForCreatePb">
+                                <input type="radio" name="radioPbBetType" id="radioPbSingle"
+                                    class="vertMiddle radioSbTools" checked onclick="selectRadioForPbBetType('single')">
+                                <label for="radioPbSingle">Single</label>
+                            </span>
+
+                            <span>
+                                <input type="radio" name="radioPbBetType" id="radioPbCombi"
+                                    class="vertMiddle radioSbTools" onclick="selectRadioForPbBetType('combi')">
+                                <label for="radioPbCombi">Combination</label>
+                            </span>
                         </div>
-                    </div>
 
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Odds Range:</span>
-                        <input class="fdSbTools width23percent" type="number" id="fdCreatePbMinOdds" value="1.01"
-                            min="1.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
-                        <span class="marginLeft5px marginRight5px">-</span>
-                        <input class="fdSbTools width23percent" type="number" id="fdCreatePbMaxOdds" value="1000"
-                            min="1.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
-                    </div>
+                        <div class="displayFlex">
+                            <span class="keyForCreatePb">Event Phase:</span>
 
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Stake Range:</span>
-                        <input class="fdSbTools width23percent" type="number" id="fdCreatePbMinStake" value="0.01"
-                            min="0.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
-                        <span class="marginLeft5px marginRight5px">-</span>
-                        <input class="fdSbTools width23percent" type="number" id="fdCreatePbMaxStake" value="1000"
-                            min="0.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
-                    </div>
+                            <span class="radioForCreatePb">
+                                <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventPrematch"
+                                    class="vertMiddle radioSbTools">
+                                <label for="radioCreatePbEventPrematch" class="vertMiddle">Prematch</label>
+                            </span>
 
-                    <div class="displayFlex">
-                        <span class="keyForCreatePb">Super Boost:</span>
-                        <input type="checkbox" id="chkCreatePbIsSuperBoost" class="chkSbTools">
+                            <span class="radioForCreatePb disabledIfCombi">
+                                <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventLive"
+                                    class="vertMiddle radioSbTools">
+                                <label for="radioCreatePbEventLive" class="vertMiddle">Live</label>
+                            </span>
+
+                            <span class="disabledIfCombi">
+                                <input type="radio" name="radioPbEventPhase" id="radioCreatePbEventBoth"
+                                    class="vertMiddle radioSbTools" checked>
+                                <label for="radioCreatePbEventBoth" class="vertMiddle">All</label>
+                            </span>
+                        </div>
+
+                        <div class="displayFlex">
+                            <span class="keyForCreatePb">Payout Mode:</span>
+                            <span class="radioForCreatePb">
+                                <input type="radio" name="radioPbPayoutMode" id="radioCreatePbRealMoney"
+                                    class="vertMiddle radioSbTools" checked>
+                                <label for="radioCreatePbRealMoney" class="vertMiddle">Real Money</label>
+                            </span>
+                            <span>
+                                <input type="radio" name="radioPbPayoutMode" id="radioCreatePbBonusMoney"
+                                    class="vertMiddle radioSbTools">
+                                <label for="radioCreatePbBonusMoney">Bonus Money</label>
+                            </span>
+                        </div>
+
+                        <div class="displayFlex">
+                            <span class="keyForCreatePb">Visibility:</span>
+
+                            <span class="radioForCreatePb">
+                                <input type="radio" name="radioPbVisibility" id="radioPbGlobal"
+                                    class="vertMiddle radioSbTools" checked>
+                                <label for="radioPbGlobal">Global</label>
+                            </span>
+
+                            <span>
+                                <input type="radio" name="radioPbVisibility" id="radioPbPersonal"
+                                    class="vertMiddle radioSbTools">
+                                <label for="radioPbPersonal">Personal</label>
+                            </span>
+                        </div>
+
+                        <div class="displayFlex">
+                            <span class="keyForCreatePb">Type:</span>
+                            <span class="radioForCreatePb">
+                                <input type="radio" name="radioPbType" id="radioCreatePbPercentage"
+                                    class="vertMiddle radioSbTools" onclick="selectRadioForPbType('percentage')"
+                                    checked>
+                                <label for="radioCreatePbPercentage" class="vertMiddle">Percentage</label>
+                            </span>
+                            <span>
+                                <input type="radio" name="radioPbType" id="radioCreatePbFixedOdds"
+                                    class="vertMiddle radioSbTools" onclick="selectRadioForPbType('fixedOdds')">
+                                <label for="radioCreatePbFixedOdds">Fixed Odds</label>
+                            </span>
+                        </div>
+
+                        <div id="createPbPercentageValueSecion">
+                            <div class="displayFlex">
+                                <span class="keyForCreatePb">Percentage:</span>
+                                <input class="fdSbTools width23percent" type="number" id="fdCreatePbPercentage" min="1"
+                                    value="10" max="1000" step="1" oninput="validity.valid||(value='');">
+                            </div>
+                        </div>
+
+                        <div id="createPbFixedOddsValueSecion" class="hide">
+                            <div class="displayFlex">
+                                <span class="keyForCreatePb">Fixed Odds:</span>
+                                <input class="fdSbTools width23percent" type="number" id="fdCreatePbFixed" min="1"
+                                    value="500" max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                            </div>
+                        </div>
+
+                        <div class="displayFlex">
+                            <span class="keyForCreatePb">Odds Range:</span>
+                            <input class="fdSbTools width23percent" type="number" id="fdCreatePbMinOdds" value="1.01"
+                                min="1.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                            <span class="marginLeft5px marginRight5px">-</span>
+                            <input class="fdSbTools width23percent" type="number" id="fdCreatePbMaxOdds" value="1000"
+                                min="1.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                        </div>
+
+                        <div class="displayFlex">
+                            <span class="keyForCreatePb">Stake Range:</span>
+                            <input class="fdSbTools width23percent" type="number" id="fdCreatePbMinStake" value="0.01"
+                                min="0.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                            <span class="marginLeft5px marginRight5px">-</span>
+                            <input class="fdSbTools width23percent" type="number" id="fdCreatePbMaxStake" value="1000"
+                                min="0.01" max="1000000" step="0.01" oninput="validity.valid||(value='');">
+                        </div>
+
+                        <div class="displayFlex">
+                            <span class="keyForCreatePb">Super Boost:</span>
+                            <input type="checkbox" id="chkCreatePbIsSuperBoost" class="chkSbTools">
+                        </div>
                     </div>
 
                     <div class="displayFlex">
@@ -2574,35 +2575,76 @@
                 <hr class="hRule">
                 <details>
                     <summary class="sbtSummary">Create / Remove</summary>
-                    <div class="marginTop10px">
-                        <button class="btSimple btBonusCreateRemove" onclick="createMockBonusStake('FreeBet')">Create
-                            FB</button>
-                        <span>Create a fake Free Bet</span>
-                    </div>
-                    <div>
-                        <button class="btSimple btBonusCreateRemove"
-                            onclick="createMockBonusStake('RiskFreeBet')">Create
-                            RFB</button>
-                        <span>Create a fake Risk Free Bet</span>
-                    </div>
+                    <div class="detailsExpanded">
+                        <div class="scaledTo85Percent marginLeft5px">
 
-                    <!-- <div class="displayFlex">
-                        <span class="keyForCreatePb">Payout Mode:</span>
-                        <span class="radioForCreatePb">
-                            <input type="radio" name="radioBonusStakePayoutMode" id="radioBonusStakeRealMoney"
-                                class="vertMiddle radioSbTools" checked>
-                            <label for="radioBonusStakePayoutMode" class="vertMiddle">Real Mon.</label>
-                        </span>
-                        <span>
-                            <input type="radio" name="radioBonusStakePayoutMode" id="radioBonusStakeBonusMoney"
-                                class="vertMiddle radioSbTools">
-                            <label for="radioBonusStakePayoutMode">Bonus Money</label>
-                        </span>
-                    </div> -->
+                            <div class="displayFlex">
+                                <span class="keyForCreateBonusStake">Event Phase:</span>
+                                <span class="radioForCreateBonusStake">
+                                    <input type="radio" name="radioBonusStakeEventPhase"
+                                        id="radioCreateBonusStakeEventPrematch" class="vertMiddle radioSbTools">
+                                    <label class="vertMiddle">Prematch</label>
+                                </span>
 
-                    <div id="removeBonusStakeSection" class="marginTop10px">
-                        <button class="btSimple btBonusCreateRemove" onclick="removeBonusStake()">Remove</button>
-                        <span>Remove selected Free/Risk Free Bet</span>
+                                <span class="radioForCreateBonusStake">
+                                    <input type="radio" name="radioBonusStakeEventPhase"
+                                        id="radioCreateBonusStakeEventLive" class="vertMiddle radioSbTools">
+                                    <label class="vertMiddle">Live</label>
+                                </span>
+
+                                <span>
+                                    <input type="radio" name="radioBonusStakeEventPhase" class="vertMiddle radioSbTools"
+                                        checked>
+                                    <label class="vertMiddle">All</label>
+                                </span>
+                            </div>
+
+                            <div class="displayFlex">
+                                <span class="keyForCreateBonusStake">Payout Mode:</span>
+                                <span class="radioForCreateBonusStake">
+                                    <input type="radio" name="radioBonusStakePayoutMode"
+                                        id="radioCreateBonusStakeRealMoney" class="vertMiddle radioSbTools" checked>
+                                    <label class="vertMiddle">Real Money</label>
+                                </span>
+                                <span>
+                                    <input type="radio" name="radioBonusStakePayoutMode"
+                                        class="vertMiddle radioSbTools">
+                                    <label>Bonus Money</label>
+                                </span>
+                            </div>
+
+                            <div class="displayFlex">
+                                <span class="keyForCreateBonusStake">Restricted to:</span>
+                                <span class="radioForCreateBonusStake">
+                                    <input type="radio" name="radioBonusStakeRestriction"
+                                        id="radioCreateBonusStakeNoRestriction" class="vertMiddle radioSbTools" checked>
+                                    <label class="vertMiddle">Nothing</label>
+                                </span>
+                                <span>
+                                    <input type="radio" name="radioBonusStakeRestriction"
+                                        class="vertMiddle radioSbTools">
+                                    <label>Football</label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="marginTop10px">
+                            <button class="btSimple btBonusCreateRemove"
+                                onclick="createMockBonusStake('FreeBet')">Create
+                                FB</button>
+                            <span>Create a fake Free Bet</span>
+                        </div>
+                        <div>
+                            <button class="btSimple btBonusCreateRemove"
+                                onclick="createMockBonusStake('RiskFreeBet')">Create
+                                RFB</button>
+                            <span>Create a fake Risk Free Bet</span>
+                        </div>
+
+                        <div id="removeBonusStakeSection" class="marginTop10px">
+                            <button class="btSimple btBonusCreateRemove" onclick="removeBonusStake()">Remove</button>
+                            <span>Remove selected Free/Risk Free Bet</span>
+                        </div>
                     </div>
                 </details>
 
@@ -2945,9 +2987,11 @@
         gap: 0.5rem;
     } */
 
+
     .scaledTo85Percent {
         transform: scale(0.85);
-        transform-origin: left center;
+        transform-origin: left top;
+        width: 117.65%;
     }
 
     .vertMiddle {
@@ -3012,12 +3056,25 @@
         width: 100px;
     }
 
+    .keyForCreateBonusStake {
+        width: 30%;
+    }
+
+    .radioForCreateBonusStake {
+        width: 29%;
+    }
+
     .keyForCreatePb {
         width: 27%;
     }
 
     .radioForCreatePb {
         width: 29%;
+    }
+
+    .smallerUi {
+        font-size: 11px;
+
     }
 
     #createPriceBoostSection {
@@ -3142,6 +3199,10 @@
 
     .marginBottom10px {
         margin-bottom: 10px;
+    }
+
+    .marginBottomMinus25px {
+        margin-bottom: -25px;
     }
 
     .marginTopBottom10px {
