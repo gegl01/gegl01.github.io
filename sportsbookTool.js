@@ -148,7 +148,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.108";
+    const SB_TOOL_VERSION = "v1.6.109";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -3893,8 +3893,13 @@
     }
 
     function getConfig() {
-        if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) return obgClientEnvironmentConfig.startupContext.config;
-        if (IS_OBGSTARTUP_EXPOSED) return obgStartup.config;
+        return IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED
+            ? obgClientEnvironmentConfig.startupContext.config
+            : IS_OBGSTARTUP_EXPOSED
+                ? obgStartup.config
+                : IS_SBMFESSTARTUPCONTEXT_EXPOSED
+                    ? sbMfeStartupContext.config
+                    : null;
     }
 
     function getCategoryIdByEventId(eventId) {
