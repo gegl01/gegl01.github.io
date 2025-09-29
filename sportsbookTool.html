@@ -632,7 +632,7 @@
                                     <span class="displayInLightGrey fontSizeSmaller  floatRight">not Real Time</span>
                                 </summary>
 
-                                <div class="scoreBoardExtrasDetails detailsExpanded">
+                                <div class="scoreBoardExtrasDetails marginBottomMinus25px detailsExpanded">
                                     <div class="displayInLightGrey marginLeft2px">Click on 'Live' or 'New Live' button
                                         to see the changes</div>
 
@@ -950,7 +950,7 @@
                                     <span class="displayInLightGrey fontSizeSmaller floatRight">messageType: 41</span>
                                 </summary>
                                 <div class="detailsExpanded">
-                                    <div id="separateFootballPenaltiesConfigSection">
+                                    <!-- <div id="separateFootballPenaltiesConfigSection">
                                         <div class="marginTop10px rtFootball hide">
                                             <div class="checkBoxRowToLeft scaledTo85Percent marginLeft5px">
                                                 <input type="checkbox" class="chkInlineRight chkSbTools"
@@ -960,7 +960,7 @@
                                             </div>
                                             <hr class="hRule">
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <div id="scoreBoardRtInnerSection">
 
@@ -1093,7 +1093,19 @@
                                         <div id="penaltyPropertiesMissingMessage"
                                             class="displayInRed fontSizeSmaller marginLeft5px hide">Penalty properties
                                             not
-                                            sent by API, thus created by SB Tool</div>
+                                            sent by API, thus created by SB Tool
+                                        </div>
+
+                                        <div id="penaltiesOutcomesSection hide">
+                                            <hr class="hRule">
+                                            <details>
+                                                <summary class="sbtSummary">
+                                                    Penalty Details
+                                                </summary>
+                                                <div id="shootoutTable">
+                                                </div>
+                                            </details>
+                                        </div>
 
                                         <div class="displayFlex marginTop10px">
                                             <button class="btSimple btEqualWidth" onclick="logScoreBoardToConsole()">
@@ -4267,4 +4279,33 @@
         max-height: 12px;
         margin-right: 5px;
     }
+
+    #shootoutTable {
+        color: #444;
+        display: table;
+        border-collapse: collapse;
+        text-align: center;
+        width: 100%;
+    }
+
+    .shootoutTableRow {
+        display: table-row;
+    }
+
+    .shootoutTableCell {
+        display: table-cell;
+        font-size: inherit;
+        padding-inline: 5px;
+        padding-block: 2px;
+    }
+
+    .shootoutTableCell select {
+        color: rgb(0, 0, 160);
+        width: 100%;
+    }
+
+    /* .shootoutTableLabelCell {
+        font-weight: bold;
+        background: #f0f0f0;
+    } */
 </style>
