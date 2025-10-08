@@ -101,7 +101,6 @@
         return;
     }
 
-
     // ************** REMOTE ****************
     removeExistingSportsbookTool();
     const sportsbookTool = document.createElement("div");
@@ -147,7 +146,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.113";
+    const SB_TOOL_VERSION = "v1.6.114";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -3926,8 +3925,8 @@
         return getState().sportsbook.event.events[eventId] !== undefined;
     }
 
-    function getEventHasScoreBoard(eventId) {
-        return !!getState().sportsbook?.scoreBoard[eventId];
+    function getEventHasValidScoreBoard(eventId) {
+        return !!getState().sportsbook?.scoreboard?.[eventId]?.participants;
     }
 
     window.toggleSection = (section) => {
@@ -3936,10 +3935,6 @@
 
     function isEventTypeOutright(eventId) {
         return getState().sportsbook.event.events[eventId].eventType === "Outright";
-    }
-
-    function getEventHasScoreBoard(eventId) {
-        return !!getState().sportsbook.scoreboard[eventId];
     }
 
     function getCategoryIconURLByCategoryId(categoryId) {
@@ -4276,7 +4271,13 @@
                 // initFootballScoreboard();
                 initCreateMarkets();
                 initParticipantLogoSection();
-                if (getEventHasScoreBoard(eventId) && getIsEventLive(eventId)) {
+                // if (getEventHasScoreBoard(eventId) && getIsEventLive(eventId)) {
+                //     show(scoreBoardRtSection);
+                //     initRealTimeScoreBoardUpdates();
+                // } else {
+                //     hide(scoreBoardRtSection);
+                // }
+                if (getEventHasValidScoreBoard(eventId) && getIsEventLive(eventId)) {
                     show(scoreBoardRtSection);
                     initRealTimeScoreBoardUpdates();
                 } else {
@@ -4732,7 +4733,7 @@
                         1
                     );
                     getState().sportsbook.selection.selections[selectionId].isHomeTeam = isHomeTeam;
-                    log(getState().sportsbook.selection.selections[selectionId].isHomeTeam);
+
                     getState().sportsbook.selection.selections[selectionId].odds = getRandomOdds();
                 }
 
@@ -5210,7 +5211,9 @@
                 return;
             }
             previousScoreBoardAsJSON = scoreBoardAsJSON;
-            if (scoreBoardAsJSON && getIsEventLive(eventId)) initRealTimeScoreBoardUpdates();
+            if (scoreBoardAsJSON && getEventHasValidScoreBoard(eventId) && getIsEventLive(eventId)) {
+                initRealTimeScoreBoardUpdates()
+            };
         }
 
         function initRealTimeScoreBoardUpdates() {
@@ -11568,14 +11571,25 @@
 
     const examplePlayerNames = ["Cristiano Ronaldo", "Lionel Messi", "Robert Lewandowski", "Kevin De Bruyne", "Mohamed Salah", "Kylian Mbappé", "Erling Haaland", "Karim Benzema", "Luka Modrić", "Virgil van Dijk", "Sergio Ramos", "Toni Kroos", "Neymar Jr.", "Harry Kane", "Luis Suárez", "Manuel Neuer", "Thibaut Courtois", "Vinícius Júnior", "Antoine Griezmann", "Bruno Fernandes"];
 
-    function getRandomElementsFromArray(arr, amount) {
+    // function getRandomElementsFromArray(arr, amount) {
 
-        arrCopy = [...arr];
+    //     let arrCopy = [...arr];
+    //     let selectedElements = [];
+    //     while (selectedElements.length < amount && arrCopy.length > 0) {
+    //         let randomIndex = Math.floor(Math.random() * arrCopy.length);
+    //         let randomLabel = arrCopy[randomIndex];
+    //         selectedElements.push(randomLabel);
+    //         arrCopy.splice(randomIndex, 1);
+    //     }
+    //     return selectedElements;
+    // }
+
+    function getRandomElementsFromArray(arr, amount) {
+        let arrCopy = [...arr];
         let selectedElements = [];
         while (selectedElements.length < amount && arrCopy.length > 0) {
-            let randomIndex = Math.floor(Math.random() * arrCopy.length);
-            let randomLabel = arrCopy[randomIndex];
-            selectedElements.push(randomLabel);
+            let randomIndex = getRandomInt(amount);
+            selectedElements.push(arrCopy[randomIndex]);
             arrCopy.splice(randomIndex, 1);
         }
         return selectedElements;
