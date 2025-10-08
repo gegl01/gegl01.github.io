@@ -147,7 +147,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.112";
+    const SB_TOOL_VERSION = "v1.6.113";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4648,6 +4648,9 @@
                 const oneSelectionsPerMarket = getElementById("radioOneSelectionsPerMarket").checked;
                 const singleMarketPlayerName = "Single Market Player";
                 let playerNames = getRandomElementsFromArray(examplePlayerNames, playerPropsPlayerCountRange.value);
+
+
+
                 const playerPropsMarketName = `Player Props by SB Tool ${oneSelectionsPerMarket ? "1 selection" : "2 selections"} per Market`;
                 // const marketTemplateId = "PPROPSTEST" + oneSelectionsPerMarket ? "1SEL" : "2SEL";
                 const marketTemplateId = `PPROPSTEST${oneSelectionsPerMarket ? "1SEL" : "2SEL"}`;
@@ -4658,48 +4661,38 @@
                 let selectionLabel;
 
                 if (marketsPerPlayer == "mixed") playerNames[0] = singleMarketPlayerName;
-                // for (let playerName of playerNames) {
-                //     let isSingle = marketsPerPlayer === "single" || playerName === singleMarketPlayerName;
-                //     if (isSingle) {
-                //         createMarketForPlayer(playerName, 0.5);
-                //     } else {
-                //         let max = getRandomInt(2, 8);
-                //         for (let lv = 0.5; lv <= max; lv++) {
-                //             createMarketForPlayer(playerName, lv);
-                //         }
-                //     }
-                // }
 
                 for (let playerName of playerNames) {
                     let isSingle = marketsPerPlayer === "single" || playerName === singleMarketPlayerName;
+                    const isHomeTeam = getRandomBoolean();
                     if (isSingle) {
-                        createMarketForPlayer(playerName, getRandomInt(8) + 0.5);
+                        createMarketForPlayer(playerName, getRandomInt(8) + 0.5, isHomeTeam);
                     } else {
                         let usedValues = new Set();
 
                         let min = getRandomInt(4) + 0.5;
                         let max = getRandomInt(4) + 1 + min;
-                        
+
                         for (let lineValue = min; lineValue <= max; lineValue++) {
                             let uniqueValue;
                             let attempts = 0;
-                        
+
                             // Try generating a new value that hasn't been used yet
                             do {
                                 uniqueValue = lineValue + getRandomInt(3);
                                 attempts++;
                             } while (usedValues.has(uniqueValue) && attempts < 10);
-                        
+
                             if (!usedValues.has(uniqueValue)) {
                                 usedValues.add(uniqueValue);
-                                createMarketForPlayer(playerName, uniqueValue);
+                                createMarketForPlayer(playerName, uniqueValue, isHomeTeam);
                             }
                         }
                     }
                 }
 
 
-                function createMarketForPlayer(playerName, lineValue) {
+                function createMarketForPlayer(playerName, lineValue, isHomeTeam) {
                     const noWhiteSpacePlayer = replaceWhitespaceWithDash(playerName)
                     marketId = `m-${eventId}-${marketTemplateId}-${noWhiteSpacePlayer}-${lineValue}-${marketIdRandomNumber}`;
                     marketIds.push(marketId);
@@ -4722,11 +4715,13 @@
                         1
                     );
 
-                    createSelection(true, lineValue);
+                    getState().sportsbook.eventMarket.markets[marketId].isHomeTeam = isHomeTeam;
+
+                    createSelection(true, lineValue, isHomeTeam);
                     if (!oneSelectionsPerMarket) createSelection(false, lineValue);
                 }
 
-                function createSelection(isOver, lineValue) {
+                function createSelection(isOver, lineValue, isHomeTeam) {
                     selectionId = `s-${marketId}-${isOver ? "Over" : "Under"}`;
                     selectionLabel = `${isOver ? "Over" : "Under"} ${lineValue}`;
                     obgRt.createSelection(
@@ -4736,6 +4731,8 @@
                         selectionLabel,
                         1
                     );
+                    getState().sportsbook.selection.selections[selectionId].isHomeTeam = isHomeTeam;
+                    log(getState().sportsbook.selection.selections[selectionId].isHomeTeam);
                     getState().sportsbook.selection.selections[selectionId].odds = getRandomOdds();
                 }
 
