@@ -146,7 +146,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.114";
+    const SB_TOOL_VERSION = "v1.6.115";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4066,9 +4066,6 @@
 
         const eventStartingInOneHourSection = getElementById("eventStartingInOneHourSection");
 
-        // const hasBetBuilderSection = getElementById("hasBetBuilderSection");
-        // const chkHasBetBuilder = getElementById("chkHasBetBuilder");
-
         const hasPriceBoostSection = getElementById("hasPriceBoostSection");
         const chkHasPriceBoost = getElementById("chkHasPriceBoost");
 
@@ -4081,9 +4078,6 @@
         const hasLiveStreamingSection = getElementById("hasLiveStreamingSection");
         const chkHasLiveStreaming = getElementById("chkHasLiveStreaming");
 
-        // const hasFastMarketsSection = getElementById("hasFastMarketsSection");
-        // const chkHasFastMarkets = getElementById("chkHasFastMarkets");
-
         const hasScore24StatisticsSection = getElementById("hasScore24StatisticsSection");
         const chkHasScore24Statistics = getElementById("chkHasScore24Statistics");
 
@@ -4092,9 +4086,7 @@
 
         const hasLiveStatisticsSection = getElementById("hasLiveStatisticsSection");
         const chkHasLiveStatistics = getElementById("chkHasLiveStatistics");
-
-        // const hasVarSection = getElementById("hasVarSection");
-        // const chkHasVar = getElementById("chkHasVar");
+        // const chkHasAiMatchInfo = getElementById("chkHasAiMatchInfo");
 
         // rename event
         const fdRenameEventLabel = getElementById("fdRenameEventLabel");
@@ -4644,13 +4636,10 @@
             }
 
             function createPlayerPropsMarket() {
-
                 const marketsPerPlayer = document.querySelector("input[name='radioPlayerPropsGroup']:checked").value;
                 const oneSelectionsPerMarket = getElementById("radioOneSelectionsPerMarket").checked;
                 const singleMarketPlayerName = "Single Market Player";
                 let playerNames = getRandomElementsFromArray(examplePlayerNames, playerPropsPlayerCountRange.value);
-
-
 
                 const playerPropsMarketName = `Player Props by SB Tool ${oneSelectionsPerMarket ? "1 selection" : "2 selections"} per Market`;
                 // const marketTemplateId = "PPROPSTEST" + oneSelectionsPerMarket ? "1SEL" : "2SEL";
@@ -5684,6 +5673,10 @@
                     delay = 500;
                     toggleHasLiveStatistics();
                     break;
+                // case "aiMatchInfo":
+                //     delay = 500;
+                //     toggleHasAiMatchInfo();
+                //     break;
             }
             triggerChangeDetection(eventId, delay);
         }
@@ -5788,11 +5781,7 @@
         }
 
         function toggleHasLiveVisual() {
-            if (chkHasLiveVisual.checked) {
-                getState().sportsbook.event.events[eventId].hasLiveVisual = true;
-            } else {
-                getState().sportsbook.event.events[eventId].hasLiveVisual = false;
-            }
+            getState().sportsbook.event.events[eventId].hasLiveVisual = chkHasLiveVisual.checked;
         }
 
         function toggleHasLiveStreaming() {
@@ -5852,12 +5841,49 @@
 
 
         function toggleHasLiveStatistics() {
-            if (chkHasLiveStatistics.checked) {
-                getState().sportsbook.event.events[eventId].hasLiveStatistics = true;
-            } else {
-                getState().sportsbook.event.events[eventId].hasLiveStatistics = false;
-            }
+            getState().sportsbook.event.events[eventId].hasLiveStatistics = chkHasLiveStatistics.checked;
         }
+
+        // function toggleHasAiMatchInfo() {
+        //     log("AI1");
+        //     if (chkHasAiMatchInfo.checked) {
+        //         log("AI2");
+        //         getState().sportsbook.aiMatchPreview = {
+        //             "preview": {
+        //                 "eventId": eventId,
+        //                 "content": {
+        //                     "sections": [
+        //                         {
+        //                             "key": "summary",
+        //                             "title": "Summary",
+        //                             "description": "The Istanbul derby heats up as <b>Fenerbahçe</b> and <b>Galatasaray</b> clash in the Turkish Super Lig on December 30, 2025. The Yellow Canaries of <b>Fenerbahçe</b> enter with 2 wins and 1 loss in their last 3 matches, while the Lions of <b>Galatasaray</b> boast an identical record of 2 wins and 1 loss. History favors <b>Galatasaray</b> with 2 wins in their previous encounters against <b>Fenerbahçe</b>'s 0, with 1 draw between the fierce rivals. Expect <b>Fenerbahçe</b>'s attacking prowess to be tested against <b>Galatasaray</b>'s solid defensive structure in what promises to be a fiery derby."
+        //                         },
+        //                         {
+        //                             "key": "recentForm",
+        //                             "title": "Recent Form",
+        //                             "description": "<b>Fenerbahçe</b> has shown mixed form recently with 2 wins and 1 loss in their last three matches, scoring 5 goals while conceding 4. <ul><li>Gençlerbirligi - Fenerbahçe: 1-3</li><li>Benfica - Fenerbahçe: 1-0</li><li>Fenerbahçe - Kocaelispor: 3-1</li></ul> <b>Galatasaray</b> has displayed similar form with 2 wins and 1 loss in their recent fixtures, netting 6 goals and allowing 5. <ul><li>Galatasaray - Çaykur Rizespor: 3-1</li><li>Kayserispor - Galatasaray: 0-4</li><li>Galatasaray - Fatih Karagümrük: 3-0</li></ul>"
+        //                         },
+        //                         {
+        //                             "key": "headToHead",
+        //                             "title": "Head-to-Head Stats",
+        //                             "description": "Galatasaray holds the historical advantage in this fierce Istanbul derby with 2 wins from their previous encounters. The rivals have shared the spoils once, while Fenerbahçe is yet to taste victory against their cross-city opponents in recent meetings."
+        //                         },
+        //                         {
+        //                             "key": "keyAttributes",
+        //                             "title": "Key Team Attributes",
+        //                             "description": "Fenerbahçe: <ul><li>Explosive counter-attacking style</li><li>Strong wing play with quick transitions</li><li>Vulnerability when defending set pieces</li></ul> Galatasaray: <ul><li>Disciplined defensive organization</li><li>Clinical finishing in the final third</li><li>Dominant midfield control</li></ul>"
+        //                         },
+        //                         {
+        //                             "key": "tacticalOverview",
+        //                             "title": "Tactical Overview",
+        //                             "description": "Expect <b>Fenerbahçe</b> to employ their high-pressing game to disrupt <b>Galatasaray</b>'s build-up play, while the Lions will likely look to exploit spaces behind their rivals' aggressive defensive line with quick transitions and their superior finishing ability."
+        //                         }
+        //                     ]
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
 
         function initEventPropertyCheckboxes() {
@@ -6100,7 +6126,6 @@
     function hide(...elements) {
         elements.flat().forEach(el => {
             if (el?.classList) {
-                // log("hiding: " + el.id); // Log the element's ID
                 el.classList.add("hide");
             }
         });
@@ -6109,7 +6134,6 @@
     function show(...elements) {
         elements.flat().forEach(el => {
             if (el?.classList) {
-                // log("showing: " + el.id); // Log the element's ID
                 el.classList.remove("hide");
             }
         });
@@ -6409,7 +6433,7 @@
         twitchResultSection.innerHTML = null;
         displayInGreen(twitchResultSection);
 
-        var url = "https://gql.twitch.tv/gql";
+        const url = "https://gql.twitch.tv/gql";
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
 
@@ -10719,7 +10743,7 @@
                 seconds: 0,
                 minutes: 0,
                 gameClockMode: "Stopped",
-                lastDateTimegame
+                lastDateTimeSet
             },
             varState: 0,
             phaseCategoryId: "4-104"
@@ -11571,25 +11595,14 @@
 
     const examplePlayerNames = ["Cristiano Ronaldo", "Lionel Messi", "Robert Lewandowski", "Kevin De Bruyne", "Mohamed Salah", "Kylian Mbappé", "Erling Haaland", "Karim Benzema", "Luka Modrić", "Virgil van Dijk", "Sergio Ramos", "Toni Kroos", "Neymar Jr.", "Harry Kane", "Luis Suárez", "Manuel Neuer", "Thibaut Courtois", "Vinícius Júnior", "Antoine Griezmann", "Bruno Fernandes"];
 
-    // function getRandomElementsFromArray(arr, amount) {
-
-    //     let arrCopy = [...arr];
-    //     let selectedElements = [];
-    //     while (selectedElements.length < amount && arrCopy.length > 0) {
-    //         let randomIndex = Math.floor(Math.random() * arrCopy.length);
-    //         let randomLabel = arrCopy[randomIndex];
-    //         selectedElements.push(randomLabel);
-    //         arrCopy.splice(randomIndex, 1);
-    //     }
-    //     return selectedElements;
-    // }
-
     function getRandomElementsFromArray(arr, amount) {
+
         let arrCopy = [...arr];
         let selectedElements = [];
         while (selectedElements.length < amount && arrCopy.length > 0) {
-            let randomIndex = getRandomInt(amount);
-            selectedElements.push(arrCopy[randomIndex]);
+            let randomIndex = Math.floor(Math.random() * arrCopy.length);
+            let randomLabel = arrCopy[randomIndex];
+            selectedElements.push(randomLabel);
             arrCopy.splice(randomIndex, 1);
         }
         return selectedElements;
