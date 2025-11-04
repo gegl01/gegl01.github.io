@@ -129,7 +129,7 @@
     var userName, previousUserName;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.120";
+    const SB_TOOL_VERSION = "v1.6.121";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -499,7 +499,7 @@
     function getHostPageEnvironment() {
         if (IS_PAGECONTEXTDATA_EXPOSED) {
             let env = pageContextData?.appContext?.environment;
-            if (env == "production") env = "prod";
+            if (env == "production" || env == "staging") env = "prod";
             return env;
         }
         return obgStartup.config.appSettings.environment;
@@ -891,7 +891,8 @@
 
         function handleIfIframeEnvNotMatching() {
             const hostEnv = getHostPageEnvironment();
-            if (SB_ENVIRONMENT != hostEnv && BRAND_NAME != "spino") { //spino uses "staging" as env
+            
+            if (SB_ENVIRONMENT != hostEnv) { //spino & betssonbr use "staging" as env
                 hide(openIframeRow);
                 show(mismatchingSbSection);
                 btOpenMatchingIframe.innerText = hostEnv.toUpperCase() + " iframe";
