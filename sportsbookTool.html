@@ -130,7 +130,7 @@
                     <div class="valueForContext itemsJustified">
                         <div>
                             <span id="sbVersion"></span>
-                            <span id="B2BorB2C" class="displayInLightGrey"></span>
+                            <span id="B2BorB2C" class="displayInLightGrey noWrap"></span>
                         </div>
                         <button class="btCopy btIcon" onclick="copyToClipboard('sbVersion')">
                             <img class="iconCopy">
@@ -1282,14 +1282,14 @@
                                 id="chkHasLiveStatistics" class="chkSbTools">
                         </div>
 
-                        <!-- <div id="hasAiMatchInfoSection" class="iconMocksRow">
+                        <div id="hasAiMatchInfoSection" class="iconMocksRow hide">
                             <span class="width95Percent">
                                 <span class="iconAiMatchInfo iconMockIconColumn vertMiddle iconSvgSmall"></span>
                                 <span class="iconMockLabelColumn">AI Match Info</span>
                             </span>
                             <input type="checkbox" onclick="toggleEventProperty('aiMatchInfo')" id="chkHasAiMatchInfo"
                                 class="chkSbTools">
-                        </div> -->
+                        </div>
 
                         <!-- <div title="Live event with scoreboard required" id="hasVarSection" class="iconMocksRow">
                             <span class="width95Percent">
@@ -1376,15 +1376,48 @@
                                         <span>Single market for one player, multiple for the rest</span>
                                     </div>
                                     <div class="alignItemsCenter marginTop10px">
-                                        <input type="checkbox" id="chkNewPlayerPropsView" class="chkSbTools chkInlineRight">
+                                        <input type="checkbox" checked id="chkNewPlayerPropsView"
+                                            class="chkSbTools chkInlineRight">
                                         <span>New player market view</span>
-                                        <span class="displayInLightGrey fontSizeSmaller alignFlexRight">marketTemplateTag: 164</span>
+                                        <span
+                                            class="displayInLightGrey fontSizeSmaller alignFlexRight">marketTemplateTag:
+                                            164</span>
                                     </div>
                                     <div class="alignItemsCenter">
-                                        <input type="checkbox" id="chkDisplayTeamFilterChips" class="chkSbTools chkInlineRight">
+                                        <input type="checkbox" id="chkDisplayTeamFilterChips"
+                                            class="chkSbTools chkInlineRight">
                                         <span>Home/Away tabs</span>
-                                        <span class="displayInLightGrey fontSizeSmaller alignFlexRight">marketTemplateTag: 165</span>
+                                        <span
+                                            class="displayInLightGrey fontSizeSmaller alignFlexRight">marketTemplateTag:
+                                            165</span>
                                     </div>
+
+                                    <div class="marginTop10px">Main Line market for how many players</div>
+                                    <div class="itemsJustified">
+                                        <div class="flexRadioGroup">
+                                            <span class="alignItemsCenter">
+                                                <input type="radio" name="radioPlayerPropsGroupMl" value="all"
+                                                    class="radioSbTools" checked>
+                                                <span>All</span>
+                                            </span>
+                                            <span class="alignItemsCenter">
+                                                <input type="radio" name="radioPlayerPropsGroupMl" value="some"
+                                                    class="radioSbTools">
+                                                <span>Some</span>
+                                            </span>
+                                            <span class="alignItemsCenter">
+                                                <input type="radio" name="radioPlayerPropsGroupMl" value="no"
+                                                    class="radioSbTools">
+                                                <span>No</span>
+                                            </span>
+                                        </div>
+                                        <div class="alignItemsCenter">
+                                            <input type="checkbox" id="chkVisualizedMainLine"
+                                                class="chkSbTools chkInlineRight">
+                                            <span>ML highlighted with *</span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             <div id="createFastMarketSection" class="hide">
@@ -1492,7 +1525,8 @@
                     </div>
 
                     <div id="playerPropsSpecificSection" class="alignItemsCenter">
-                        <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addAnotherPlayerPropsMarket()">
+                        <button class="btSimple btCarousel" id="btAddToCarousel"
+                            onclick="addAnotherPlayerPropsMarket()">
                             <span class="labelOnBtSimple">Add</span>
                         </button>
                         <span>Add p.props market to this player</span>
@@ -3014,7 +3048,12 @@
         align-items: center;
     }
 
-    .alignFlexRight{
+    .flexRadioGroup {
+        display: flex;
+        gap: 10px;
+    }
+
+    .alignFlexRight {
         margin-left: auto;
     }
 
