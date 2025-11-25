@@ -247,7 +247,7 @@
                                 <img class="iconCopy">
                             </button>
                         </div>
-                        
+
                         <div id="iframeFromMfeRow" class="itemsJustified hide">
                             <div class="width95Percent">
                                 <span class="keyColumnForExtras">Get iframe URL</span>
@@ -257,7 +257,7 @@
                                 onclick="copyToClipboard('iframeUrlFromMfe')">
                                 <img class="iconCopy">
                             </button>
-                        </div>                        
+                        </div>
 
                         <div id="disableSSRRow" class="itemsJustified">
                             <div class="width95Percent">
@@ -1260,7 +1260,6 @@
 
                         <div id="hasLiveStreamingSection" class="iconMocksRow">
                             <span class="width95Percent">
-                                <!-- <span class="ico-live-streaming iconMockIconColumn vertMiddle"></span> -->
                                 <span class="iconLiveStreaming iconMockIconColumn vertMiddle iconSvgSmall"></span>
                                 <span class="iconMockLabelColumn">Live Streaming</span>
                             </span>
@@ -1295,6 +1294,15 @@
                                 id="chkHasLiveStatistics" class="chkSbTools">
                         </div>
 
+                        <div id="hasLivePlayerStatsSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="iconList iconMockIconColumn vertMiddle iconSvgSmall"></span>
+                                <span class="iconMockLabelColumn">Live Player Statistics</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleEventProperty('livePlayerStats')"
+                                id="chkHasLivePlayerStats" class="chkSbTools">
+                        </div>
+
                         <div id="hasAiMatchInfoSection" class="iconMocksRow hide">
                             <span class="width95Percent">
                                 <span class="iconAiMatchInfo iconMockIconColumn vertMiddle iconSvgSmall"></span>
@@ -1303,16 +1311,6 @@
                             <input type="checkbox" onclick="toggleEventProperty('aiMatchInfo')" id="chkHasAiMatchInfo"
                                 class="chkSbTools">
                         </div>
-
-                        <!-- <div title="Live event with scoreboard required" id="hasVarSection" class="iconMocksRow">
-                            <span class="width95Percent">
-                                <span id="varIcon" class="iconVar iconMockIconColumn vertMiddle iconSvgSmall"></span>
-                                <span id="varLabel" class="iconMockLabelColumn">Video Assistant Referee</span>
-                            </span>
-                            <input type="checkbox" onclick="toggleEventProperty('var')" id="chkHasVar"
-                                class="chkSbTools">
-                        </div> -->
-
                     </div>
                 </div>
 
@@ -1482,7 +1480,7 @@
                 <hr class="hRule">
                 <div id="carouselButtonsDiv">
                     <div class="alignItemsCenter">
-                        <button class="btSimple btCarousel" id="btAddToCarousel" onclick="addMarketToCarouselOrCards()">
+                        <button class="btSimple btAddMarket" onclick="addMarketToCarouselOrCards()">
                             <span id="addToCarouselButtonLabel" class="labelOnBtSimple">Add</span>
                         </button>
                         <span>Add market to Carousel or Cards</span>
@@ -1543,8 +1541,7 @@
                     </div>
 
                     <div id="playerPropsSpecificSection" class="alignItemsCenter">
-                        <button class="btSimple btCarousel" id="btAddToCarousel"
-                            onclick="addAnotherPlayerPropsMarket()">
+                        <button class="btSimple btAddMarket" onclick="addAnotherPlayerPropsMarket()">
                             <span class="labelOnBtSimple">Add</span>
                         </button>
                         <span>Add p.props market to this player</span>
@@ -1572,7 +1569,10 @@
                                 <span class="keyForMarketDetails">Groupable:</span>
                                 <span id="groupableValue" class="displayInGreen"></span>
                             </div>
-
+                            <div class="displayFlex">
+                                <span class="keyForMarketDetails">Groupable ID:</span>
+                                <span id="groupableIdValue" class="displayInGreen"></span>
+                            </div>
                         </div>
                     </details>
 
@@ -4076,6 +4076,10 @@
         content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23444"><path d="M1,8 L7,8 L7,24 L1,24 L1,8 Z M9,0 L15,0 L15,24 L9,24 L9,0 Z M17,4 L23,4 L23,24 L17,24 L17,4 Z"></path></svg>');
     }
 
+    .iconList {
+        content: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23444"><path d="M20 3.121h-10c-0.278 0-0.514 0.117-0.709 0.35s-0.292 0.517-0.292 0.851v2.402c0 0.334 0.097 0.617 0.292 0.85s0.431 0.351 0.709 0.351h10c0.278 0 0.514-0.117 0.709-0.351s0.292-0.516 0.292-0.85v-2.402c0-0.334-0.097-0.617-0.292-0.851s-0.43-0.35-0.708-0.35z"></path><path d="M20 10.121h-10c-0.278 0-0.514 0.117-0.709 0.35s-0.292 0.517-0.292 0.851v2.402c0 0.334 0.097 0.617 0.292 0.85s0.431 0.351 0.709 0.351h10c0.278 0 0.514-0.117 0.709-0.351s0.292-0.516 0.292-0.85v-2.402c0-0.334-0.097-0.617-0.292-0.851s-0.43-0.35-0.708-0.35z"></path><path d="M20 17.121h-10c-0.278 0-0.514 0.117-0.709 0.35s-0.292 0.517-0.292 0.851v2.402c0 0.334 0.097 0.617 0.292 0.85s0.431 0.351 0.709 0.351h10c0.278 0 0.514-0.117 0.709-0.351s0.292-0.516 0.292-0.85v-2.402c0-0.334-0.097-0.617-0.292-0.851s-0.43-0.35-0.708-0.35z"></path><path d="M3.111 3c-0.308 0-0.571 0.122-0.787 0.364s-0.324 0.539-0.324 0.886v2.5c0 0.347 0.108 0.642 0.324 0.885s0.479 0.365 0.787 0.365h2.778c0.309 0 0.571-0.122 0.787-0.365s0.324-0.538 0.324-0.885v-2.5c0-0.347-0.108-0.642-0.324-0.886s-0.478-0.364-0.787-0.364h-2.778z"></path><path d="M3.111 10c-0.308 0-0.571 0.122-0.787 0.364s-0.324 0.539-0.324 0.886v2.5c0 0.347 0.108 0.642 0.324 0.885s0.479 0.365 0.787 0.365h2.778c0.309 0 0.571-0.122 0.787-0.365s0.324-0.538 0.324-0.885v-2.5c0-0.347-0.108-0.642-0.324-0.886s-0.478-0.364-0.787-0.364h-2.778z"></path><path d="M3.111 17c-0.308 0-0.571 0.122-0.787 0.364s-0.324 0.539-0.324 0.886v2.5c0 0.347 0.108 0.642 0.324 0.885s0.479 0.365 0.787 0.365h2.778c0.309 0 0.571-0.122 0.787-0.365s0.324-0.538 0.324-0.885v-2.5c0-0.347-0.108-0.642-0.324-0.886s-0.478-0.364-0.787-0.364h-2.778z"></path></svg>');
+    }
+
     /* .iconAiMatchInfo {
         content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="2 2 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0_3579_30062" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="12" height="12"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.33336 3.83329C6.42389 3.83331 6.51196 3.86282 6.58423 3.91735C6.6565 3.97188 6.70905 4.04846 6.73391 4.13551L7.18558 5.71663C7.28283 6.05714 7.46527 6.36724 7.71568 6.61764C7.96608 6.86804 8.27618 7.05049 8.61669 7.14774L10.1978 7.5994C10.2848 7.62433 10.3613 7.67689 10.4158 7.74916C10.4703 7.82143 10.4997 7.90946 10.4997 7.99996C10.4997 8.09046 10.4703 8.17849 10.4158 8.25076C10.3613 8.32302 10.2848 8.37559 10.1978 8.40051L8.61669 8.85218C8.27618 8.94943 7.96608 9.13187 7.71568 9.38228C7.46527 9.63268 7.28283 9.94278 7.18558 10.2833L6.73391 11.8644C6.70899 11.9514 6.65642 12.0279 6.58416 12.0824C6.51189 12.1369 6.42386 12.1663 6.33336 12.1663C6.24286 12.1663 6.15483 12.1369 6.08256 12.0824C6.01029 12.0279 5.95772 11.9514 5.93280 11.8644L5.48114 10.2833C5.38389 9.94278 5.20144 9.63268 4.95104 9.38228C4.70064 9.13187 4.39054 8.94943 4.05003 8.85218L2.46891 8.40051C2.38192 8.37559 2.30540 8.32302 2.25093 8.25076C2.19646 8.17849 2.16699 8.09046 2.16699 7.99996C2.16699 7.90946 2.19646 7.82143 2.25093 7.74916C2.30540 7.67689 2.38192 7.62433 2.46891 7.5994L4.05003 7.14774C4.39054 7.05049 4.70064 6.86804 4.95104 6.61764C5.20144 6.36724 5.38389 6.05714 5.48114 5.71663L5.93280 4.13551C5.95767 4.04846 6.01021 3.97188 6.08249 3.91735C6.15476 3.86282 6.24282 3.83331 6.33336 3.83329ZM11.3334 2.16663C11.4263 2.16657 11.5166 2.19761 11.5899 2.25479C11.6632 2.31196 11.7152 2.39201 11.7378 2.48218L11.8811 3.05774C12.0122 3.57996 12.42 3.98774 12.9422 4.11885L13.5178 4.26218C13.6082 4.28456 13.6884 4.33655 13.7458 4.40985C13.8031 4.48315 13.8343 4.57355 13.8343 4.66663C13.8343 4.75970 13.8031 4.85010 13.7458 4.92340C13.6884 4.99671 13.6082 5.04869 13.5178 5.07107L12.9422 5.21440C12.42 5.34551 12.0122 5.75329 11.8811 6.27551L11.7378 6.85107C11.7154 6.94142 11.6634 7.02167 11.5901 7.07903C11.5168 7.13639 11.4264 7.16756 11.3334 7.16756C11.2403 7.16756 11.1499 7.13639 11.0766 7.07903C11.0033 7.02167 10.9513 6.94142 10.9289 6.85107L10.7856 6.27551C10.7215 6.01909 10.5889 5.78490 10.4020 5.59800C10.2151 5.41110 9.98090 5.27851 9.72447 5.21440L9.14891 5.07107C9.05857 5.04869 8.97831 4.99671 8.92095 4.92340C8.86359 4.85010 8.83243 4.75970 8.83243 4.66663C8.83243 4.57355 8.86359 4.48315 8.92095 4.40985C8.97831 4.33655 9.05857 4.28456 9.14891 4.26218L9.72447 4.11885C9.98090 4.05474 10.2151 3.92215 10.4020 3.73525C10.5889 3.54835 10.7215 3.31416 10.7856 3.05774L10.9289 2.48218C10.9515 2.39201 11.0035 2.31196 11.0768 2.25479C11.1501 2.19761 11.2404 2.16657 11.3334 2.16663ZM10.5 9.66663C10.5875 9.66658 10.6728 9.69408 10.7438 9.74523C10.8148 9.79639 10.8679 9.86860 10.8956 9.95163L11.1145 10.6088C11.1978 10.8572 11.3922 11.0527 11.6411 11.1355L12.2984 11.355C12.3811 11.3827 12.4531 11.4358 12.5040 11.5067C12.5550 11.5776 12.5824 11.6627 12.5824 11.75C12.5824 11.8373 12.5550 11.9223 12.5040 11.9932C12.4531 12.0641 12.3811 12.1172 12.2984 12.145L11.6411 12.3644C11.3928 12.4477 11.1972 12.6422 11.1145 12.8911L10.8950 13.5483C10.8672 13.6311 10.8142 13.7030 10.7433 13.7540C10.6724 13.8049 10.5873 13.8323 10.5000 13.8323C10.4127 13.8323 10.3276 13.8049 10.2568 13.7540C10.1859 13.7030 10.1328 13.6311 10.1050 13.5483L9.88558 12.8911C9.84466 12.7684 9.77577 12.6570 9.68436 12.5656C9.59295 12.4742 9.48154 12.4053 9.35891 12.3644L8.70169 12.145C8.61893 12.1172 8.54699 12.0641 8.49603 11.9932C8.44506 11.9223 8.41764 11.8373 8.41764 11.75C8.41764 11.6627 8.44506 11.5776 8.49603 11.5067C8.54699 11.4358 8.61893 11.3827 8.70169 11.355L9.35891 11.1355C9.60725 11.0522 9.80280 10.8577 9.88558 10.6088L10.1050 9.95163C10.1326 9.86869 10.1857 9.79654 10.2565 9.74540C10.3274 9.69425 10.4126 9.66669 10.5000 9.66663Z" fill="white"/></mask><g mask="url(%23mask0_3579_30062)"><ellipse cx="15.3333" cy="17" rx="12.6667" ry="12.3333" fill="%23444"/><ellipse cx="-1.99999" cy="17" rx="12.6667" ry="12.3333" fill="%23444"/><circle cx="16" cy="-1.33333" r="12.6667" fill="%23444"/><ellipse cx="-1.33333" cy="-8.10623e-05" rx="12.6667" ry="12.6667" fill="%23444"/></g></svg>');
     } */
@@ -4219,7 +4223,7 @@
         margin-right: 5px;
     }
 
-    .btCarousel {
+    .btAddMarket {
         width: 32%;
         margin-bottom: 5px;
         margin-right: 5px;
