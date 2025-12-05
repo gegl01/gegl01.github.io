@@ -35,6 +35,7 @@
     const IS_FABRIC_WITH_IFRAME = getIsFabricWithIframe();
     const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
     const IS_B2B_WITH_HOST_PAGE = IS_SPORTSBOOK_IN_IFRAME && !IS_B2B_IFRAME_ONLY;
+    const IS_B2C = (IS_NODECONTEXT_EXPOSED && !IS_B2B_WITH_HOST_PAGE);
 
     const MARKET_TEMPLATE_TAGS_FOR_PLAYER_PROPS = [14, 35, 41, 47, 53, 101, 104, 106, 135, 143];
     const MARKET_TEMPLATE_TAGS_FOR_FAST_MARKET = [6, 82, 84, 85, 105, 131, 144, 160];
@@ -130,7 +131,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.129";
+    const SB_TOOL_VERSION = "v1.6.130";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -143,7 +144,8 @@
     const BRAND_NAME_WITH_LANGUAGECODE = BRAND_FRIENDLY_NAME + " (" + LANGUAGECODE.toUpperCase() + ")";
     const BROWSER_VERSION = getBrowserVersion();
     const SB_VERSION = getSbVersion();
-    const SB_COMMIT_HASH = getCommitHash(SB_VERSION);
+    const SB_VERSION_STRING = getSbVersionString();
+    const SB_COMMIT_HASH = getCommitHash();
     const NOT_FOUND = "Not found.";
     // const IS_LOCALHOST_WITH_PROD = !(IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED && IS_OBGSTATE_EXPOSED);    
     // const IS_SGP_USED = getIsSGPUsed();
@@ -357,7 +359,7 @@
         if (IS_FABRIC_WITH_MFE) return ` (Fabric + mFE)`;
         if (IS_FABRIC_WITH_IFRAME) return ` (Fabric + iFrame)`;
         if (IS_B2B_IFRAME_ONLY || IS_SPORTSBOOK_IN_IFRAME) return ` (B2B)`;
-        if (IS_NODECONTEXT_EXPOSED) return ` (B2C - ${nodeContext.appHash})`;
+        if (IS_NODECONTEXT_EXPOSED) return ` (B2C - ${SB_COMMIT_HASH})`;
         return null;
     }
 
@@ -371,52 +373,21 @@
         return obgClientEnvironmentConfig.startupContext.contextId.userContextId;
     }
 
-    // function getSbVersion() {
-    //     if (IS_SPORTSBOOK_IN_IFRAME) {
-    //         return "Open SB iframe to get it";
-    //     }
-    //     const versionNumber = getSbVersionNumber();
-    //     if (versionNumber == null) {
-    //         if (IS_MFE_ALONE || IS_FABRIC_WITH_MFE) {
-    //             return "Expose xSbState to get it";
-    //         }
-    //         return "Data not available";
-    //     }
-    //     if (IS_B2B_IFRAME_ONLY) {
-    //         return "SBB2B-FE-" + versionNumber;
-    //     }
-    //     return "OBGA-" + versionNumber;
-    // }
-
-    function getSbVersion() {
+    function getSbVersionString() {
         if (IS_SPORTSBOOK_IN_IFRAME) {
             return "Open SB iframe to get it";
         }
 
-        const versionNumber = getSbVersionNumber();
-        if (versionNumber == null) {
+        if (SB_VERSION == null) {
             return (IS_MFE_ALONE || IS_FABRIC_WITH_MFE)
                 ? "Expose xSbState to get it"
                 : "Data not available";
         }
 
-        return (IS_B2B_IFRAME_ONLY ? "SBB2B-FE-" : "OBGA-") + versionNumber;
+        return (IS_B2B_IFRAME_ONLY ? "SBB2B-FE-" : "OBGA-") + SB_VERSION;
     }
 
-    // function getSbVersionNumber() {
-    //     if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-    //         return getState().appContext.version;
-    //     }
-    //     if (IS_OBGCLIENTENVIRONMENTCONFIG_EXPOSED) {
-    //         return obgClientEnvironmentConfig.startupContext.appContext.version;
-    //     }
-    //     if (!IS_MFE_ALONE && IS_NODECONTEXT_EXPOSED) {
-    //         return nodeContext.version;
-    //     }
-    //     return null;
-    // }
-
-    function getSbVersionNumber() {
+    function getSbVersion() {
         return IS_OBGSTATE_OR_XSBSTATE_EXPOSED
             ? getState().appContext.version
             : IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
@@ -862,14 +833,22 @@
         const gitHubLinksList = getElementById("gitHubLinksList");
         const gitHubCommitHash = getElementById("gitHubCommitHash");
 
-        if (IS_B2B_IFRAME_ONLY || IS_FABRIC_WITH_MFE) {
-            show(gitHubLinksSection, gitHubLinksList);
-            gitHubCommitHash.innerText = SB_COMMIT_HASH;
-        } else if (IS_B2B_WITH_HOST_PAGE) {
+        // if (IS_B2B_IFRAME_ONLY || IS_FABRIC_WITH_MFE) {
+        //     show(gitHubLinksSection, gitHubLinksList);
+        //     gitHubCommitHash.innerText = SB_COMMIT_HASH;
+        // } else if (IS_B2B_WITH_HOST_PAGE) {
+        //     show(gitHubLinksSection, gitHubLinksMessage);
+        //     hide(gitHubLinksList);
+        // } else {
+        //     hide(gitHubLinksSection);
+        // }
+
+        if (IS_B2B_WITH_HOST_PAGE) {
             show(gitHubLinksSection, gitHubLinksMessage);
             hide(gitHubLinksList);
         } else {
-            hide(gitHubLinksSection);
+            show(gitHubLinksSection, gitHubLinksList);
+            gitHubCommitHash.innerText = SB_COMMIT_HASH;
         }
 
         IS_B2B_IFRAME_ONLY
@@ -906,7 +885,7 @@
         getElementById("brandName").innerText = BRAND_NAME_WITH_LANGUAGECODE;
         document.getElementById("B2BorB2C").innerText = getTechnology();
         getElementById("browserVersion").innerText = BROWSER_VERSION;
-        getElementById("sbVersion").innerText = SB_VERSION;
+        getElementById("sbVersion").innerText = SB_VERSION_STRING;
 
         function getUserName() {
             return getState()?.customer?.customer?.loginInformation?.username;
@@ -951,7 +930,7 @@
 
 
         window.openGitHub = (page) => {
-            const repo = "https://github.com/BetssonGroup/sb-b2b-fe-app/";
+            const repo = IS_B2C ? "https://github.com/BetssonGroup/core-obg-fe-adaptive-sites/" : "https://github.com/BetssonGroup/sb-b2b-fe-app/";
             let url;
             switch (page) {
                 case "gitHubCommit":
@@ -964,7 +943,9 @@
                     url = repo + "tree/" + SB_COMMIT_HASH;
                     break;
                 case "gitHubPR":
-                    url = `https://github.com/search?q=${SB_COMMIT_HASH}+type%3Apr+is%3Amerged+repo%3ABetssonGroup%2Fsb-b2b-fe-app+&type=pullrequests`;
+                    url = IS_B2C
+                        ? `https://github.com/search?q=${SB_COMMIT_HASH}+repo%3ABetssonGroup%2Fcore-obg-fe-adaptive-sites+&type=pullrequests`
+                        : `https://github.com/search?q=${SB_COMMIT_HASH}+type%3Apr+is%3Amerged+repo%3ABetssonGroup%2Fsb-b2b-fe-app+&type=pullrequests`;
                     break;
             }
             window.open(url);
@@ -1036,45 +1017,27 @@
 
     }
 
-    // function initGitHubLinks() {
-    // const repo = "https://github.com/BetssonGroup/sb-b2b-fe-app/";
-    // const hash = extractHash(SB_VERSION);
-
-    // const links = [
-    //     { id: "gitHubCommit", path: "commit", text: "View this commit" },
-    //     { id: "gitHubCommits", path: "commits", text: "Browse commit history" },
-    //     { id: "gitHubTree", path: "tree", text: "Browse source at this commit" },
-    //     { id: "gitHubPR", path: null, text: "View associated PRs" }
-    // ];
-
-    // const links = [
-    //     { id: "gitHubCommit", path: "commit", text: "View this commit" },
-    //     { id: "gitHubCommits", path: "commits", text: "Browse commit history" },
-    //     { id: "gitHubTree", path: "tree", text: "Browse source at this commit" },
-    //     { id: "gitHubPR", path: null, text: "View associated PRs" }
-    // ];
-
-    //     links.forEach(({ id, path, text }) => {
-    //         const el = document.getElementById(id);
-    //         if (!el) return;
-
-    //         if (path) {
-    //             el.href = `${repo}${path}/${hash}`;
-    //         } else {
-    //             // construct PR search URL
-    //             el.href = `https://github.com/search?q=${hash}+type%3Apr+is%3Amerged+repo%3ABetssonGroup%2Fsb-b2b-fe-app+&type=pullrequests`;
-    //         }
-
-    //         el.textContent = `${text} (${hash})`;
-    //         el.target = "_blank";
-    //     });
+    // function getCommitHash(version) {
+    //     const suffix = version.split("-").pop();
+    //     if (suffix.length === 7) return suffix;
+    //     if (suffix.length === 8) return suffix.slice(1);
+    //     return null;
     // }
 
-    function getCommitHash(version) {
-        const suffix = version.split("-").pop();
-        if (suffix.length === 7) return suffix;
-        if (suffix.length === 8) return suffix.slice(1);
-        return null;
+    function getCommitHash() {        
+        if (IS_B2C) return nodeContext.appHash;
+
+        const [versionPart, hash] = SB_VERSION.split("-");
+        if (!versionPart || !hash) return null;
+
+        const parts = versionPart.split(".");
+        const major = parseInt(parts[0], 10);
+        const minor = parseInt(parts[1], 10);
+
+        if (major >= 7 && minor >= 29) {
+            return hash.substring(1);
+        }
+        return hash;
     }
 
     let walletAsJson, previousWalletAsJson;
@@ -1443,7 +1406,7 @@
             "|**Env**|" + ENVIRONMENT_TO_DISPLAY + "|" + ENVIRONMENT_TO_DISPLAY + "|\n" +
             "|**Brand(s)**|" + BRAND_NAME_WITH_LANGUAGECODE + "|" + BRAND_NAME_WITH_LANGUAGECODE + "|\n" +
             "|**Browser(s)**|" + BROWSER_VERSION + "|" + BROWSER_VERSION + "|\n" +
-            "|**Version**|" + SB_VERSION + "|" + SB_VERSION + "|\n" +
+            "|**Version**|" + SB_VERSION_STRING + "|" + SB_VERSION_STRING + "|\n" +
             "|**Proof**| | |";
     }
 
@@ -1520,7 +1483,7 @@
                 text = BRAND_NAME_WITH_LANGUAGECODE;
                 break;
             case "sbVersion":
-                text = SB_VERSION;
+                text = SB_VERSION_STRING;
                 break;
             case "browserVersion":
                 text = BROWSER_VERSION;
