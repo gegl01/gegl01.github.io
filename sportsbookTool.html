@@ -222,6 +222,63 @@
                         </details>
                     </div>
 
+                    <div id="gitHubLinksSection" class="hide">
+                        <hr class="hRule">
+                        <details id="gitHubLinksDetails">
+                            <summary class="sbtSummary">GitHub</summary>
+                            <div id="gitHubLinksMessage" class="hide displayInLightGrey marginLeft15px">Open SB iframe
+                                to get these</div>
+                            <div id="gitHubLinksList" class="marginLeft15px hide">
+                                <div class="itemsJustified marginTopBottom5px">
+                                    <div class="width95Percent itemsJustified paddingRight8px">
+                                        <span class="width95Percent">Commit Hash:</span>
+                                        <span id="gitHubCommitHash" class="displayInGreen"></span>
+                                    </div>
+                                    <button class="btCopy btIcon" onclick="copyToClipboard('commitHash')">
+                                        <img class="iconCopy">
+                                    </button>
+                                </div>
+
+                                <div class="itemsJustified">
+                                    <div class="width95Percent itemsJustified paddingRight8px">
+                                        <span class="width95Percent">View this commit</span>
+                                        <span class="displayInLightGrey">.../commit/</span>
+                                    </div>
+                                    <button class="btIcon btOpenInNewWindow" onclick="openGitHub('gitHubCommit')">
+                                        <img class="iconOpenInNewWindow">
+                                    </button>
+                                </div>
+                                <div class="itemsJustified">
+                                    <div class="width95Percent itemsJustified paddingRight8px">
+                                        <span class="width95Percent">Browse commit history</span>
+                                        <span class="displayInLightGrey">.../commits/</span>
+                                    </div>
+                                    <button class="btIcon btOpenInNewWindow" onclick="openGitHub('gitHubCommits')">
+                                        <img class="iconOpenInNewWindow">
+                                    </button>
+                                </div>
+                                <div class="itemsJustified">
+                                    <div class="width95Percent itemsJustified paddingRight8px">
+                                        <span class="width95Percent">Browse source at this commit</span>
+                                        <span class="displayInLightGrey">.../tree/</span>
+                                    </div>
+                                    <button class="btIcon btOpenInNewWindow" onclick="openGitHub('gitHubTree')">
+                                        <img class="iconOpenInNewWindow">
+                                    </button>
+                                </div>
+                                <div class="itemsJustified">
+                                    <div class="width95Percent itemsJustified paddingRight8px">
+                                        <span class="width95Percent">Search for associated PRs</span>
+                                        <span class="displayInLightGrey">.../search</span>
+                                    </div>
+                                    <button class="btIcon btOpenInNewWindow" onclick="openGitHub('gitHubPR')">
+                                        <img class="iconOpenInNewWindow">
+                                    </button>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
 
                     <hr class="hRule">
                     <details>
@@ -250,12 +307,11 @@
 
                         <div id="iframeFromMfeRow" class="itemsJustified hide">
                             <div class="width95Percent">
-                                <span class="keyColumnForExtras">Get iframe URL</span>
-                                <span class="displayInLightGrey">from mFE context</span>
+                                <span class="keyColumnForExtras">Open page as iframe</span>
+                                <span class="displayInLightGrey">converted from mFE</span>
                             </div>
-                            <button class="btCopy btIcon" id="btCreatePostMessage"
-                                onclick="copyToClipboard('iframeUrlFromMfe')">
-                                <img class="iconCopy">
+                            <button class="btIcon btOpenInNewWindow" onclick="openIframeFromMfe()">
+                                <img class="iconOpenInNewWindow">
                             </button>
                         </div>
 
@@ -279,6 +335,7 @@
                         </div>
                     </details>
                 </div>
+
             </div>
         </div>
     </div>
@@ -1405,7 +1462,7 @@
                                     <div class="alignItemsCenter">
                                         <input type="checkbox" id="chkHomeTeamHighlighted"
                                             class="chkSbTools chkInlineRight">
-                                        <span>Home player highlighted with 🛖</span>
+                                        <span>Home players highlighted with 🛖</span>
                                     </div>
 
                                     <div class="marginTop10px">Main Line market for how many players</div>
@@ -3725,7 +3782,6 @@
         overflow: auto
     }
 
-
     #sportsbookToolNameLeft {
         font-weight: 900;
         margin-right: 2px;
@@ -3735,6 +3791,19 @@
 
     #sportsbookToolNameRight {
         color: #f9a133;
+    }
+
+    #gitHubLinksDetails ul {
+        margin-top: 6px;
+        /* reduces gap under the summary */
+        padding-left: 20px;
+        /* reduces left indent (default is ~40px) */
+    }
+
+    #gitHubLinksDetails li {
+        color: var(--sbtColorGreen);
+        text-decoration: underline;
+        margin-bottom: 4px;
     }
 
     .sbManagerSb {
@@ -3750,13 +3819,10 @@
     }
 
     #sportsbookToolHeader {
-        /* font-weight: bold; */
         padding: 3px;
         padding-bottom: 5px;
         cursor: move;
         z-index: 5000;
-        /* background-color: #2196F3; */
-        /* background-color: #2e3541; */
         background: #1c3448;
         color: #ddd;
         user-select: none;
