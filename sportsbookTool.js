@@ -131,7 +131,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.130";
+    const SB_TOOL_VERSION = "v1.6.131";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -462,11 +462,12 @@
         }
 
         if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
-            const sr = findShadowRootContaining("sb-xp-sportsbook", node = document);
-            const baseUrl =
-                sr.querySelector("sb-xp-sportsbook")?.getAttribute('sb-api-base-url')
-                || sbMfeStartupContext.cloudFrontBaseUri;
-            return getEnvByURL(baseUrl);
+            // const sr = findShadowRootContaining("sb-xp-sportsbook", node = document);
+            // const baseUrl =
+            //     sr.querySelector("sb-xp-sportsbook")?.getAttribute('sb-api-base-url')
+            //     || sbMfeStartupContext.cloudFrontBaseUri;
+            // return getEnvByURL(baseUrl);
+            return sbMfeStartupContext?.appContext?.environment;
         }
 
         if (IS_B2B_IFRAME_ONLY) {
@@ -843,7 +844,8 @@
         //     hide(gitHubLinksSection);
         // }
 
-        if (IS_B2B_WITH_HOST_PAGE) {
+
+        if (IS_B2B_WITH_HOST_PAGE || SB_COMMIT_HASH == null) {
             show(gitHubLinksSection, gitHubLinksMessage);
             hide(gitHubLinksList);
         } else {
@@ -930,26 +932,19 @@
 
 
         window.openGitHub = (page) => {
-            const repo = IS_B2C ? "https://github.com/BetssonGroup/core-obg-fe-adaptive-sites/" : "https://github.com/BetssonGroup/sb-b2b-fe-app/";
-            let url;
-            switch (page) {
-                case "gitHubCommit":
-                    url = repo + "commit/" + SB_COMMIT_HASH;
-                    break;
-                case "gitHubCommits":
-                    url = repo + "commits/" + SB_COMMIT_HASH;
-                    break;
-                case "gitHubTree":
-                    url = repo + "tree/" + SB_COMMIT_HASH;
-                    break;
-                case "gitHubPR":
-                    url = IS_B2C
-                        ? `https://github.com/search?q=${SB_COMMIT_HASH}+repo%3ABetssonGroup%2Fcore-obg-fe-adaptive-sites+&type=pullrequests`
-                        : `https://github.com/search?q=${SB_COMMIT_HASH}+type%3Apr+is%3Amerged+repo%3ABetssonGroup%2Fsb-b2b-fe-app+&type=pullrequests`;
-                    break;
-            }
-            window.open(url);
-        }
+            const repo = IS_B2C
+                ? "https://github.com/BetssonGroup/core-obg-fe-adaptive-sites/"
+                : "https://github.com/BetssonGroup/sb-b2b-fe-app/";
+
+            const routes = {
+                gitHubCommit: `commit/${SB_COMMIT_HASH}`,
+                gitHubCommits: `commits/${SB_COMMIT_HASH}`,
+                gitHubTree: `tree/${SB_COMMIT_HASH}`,
+                gitHubPR: `pulls?q=${SB_COMMIT_HASH}`
+            };
+
+            window.open(repo + routes[page]);
+        };
 
         const loginState = getElementById("loginState");
         startPolling(listenerForLoginState, listenerForUserName);
@@ -971,12 +966,6 @@
             }
             previousIsUserLoggedIn = isUserLoggedIn;
             loginState.innerText = isUserLoggedIn ? " / Logged In" : " / Logged Out";
-
-            // if (isUserLoggedIn) {
-            //     loginState.innerText = " / Logged In";
-            // } else {
-            //     loginState.innerText = " / Logged Out";
-            // }
         }
 
         function listenerForUserName() {
@@ -1017,15 +1006,9 @@
 
     }
 
-    // function getCommitHash(version) {
-    //     const suffix = version.split("-").pop();
-    //     if (suffix.length === 7) return suffix;
-    //     if (suffix.length === 8) return suffix.slice(1);
-    //     return null;
-    // }
-
-    function getCommitHash() {        
+    function getCommitHash() {
         if (IS_B2C) return nodeContext.appHash;
+        if (SB_VERSION == null) return null;
 
         const [versionPart, hash] = SB_VERSION.split("-");
         if (!versionPart || !hash) return null;
@@ -1050,16 +1033,6 @@
         previousWalletAsJson = walletAsJson;
         initWalletFunctions();
     }
-
-    // window.toggleInfo = (infoDiv) => {
-    //     var info = getElementById(infoDiv);
-    //     if (info.classList.contains("hide")) {
-    //         show(info);
-    //     } else {
-    //         hide(info);
-    //     };
-    // }
-
 
     window.reloadPageWithFeature = (feature) => {
         reloadPageWithFeature(feature);
@@ -1244,17 +1217,6 @@
         }
     }
 
-    // to remove
-    // function getFriendlyDateFromIsoDate(isoDate) {
-    //     let dateObj = new Date(isoDate);
-    //     let day = dateObj.getDate();
-    //     let month = (dateObj.toLocaleString('default', { month: 'short' })).toUpperCase();
-    //     let year = dateObj.getFullYear();
-    //     let hours = ("0" + dateObj.getHours()).slice(-2);
-    //     let minutes = ("0" + dateObj.getMinutes()).slice(-2);
-    //     return day + " " + month + " " + year + ", " + hours + ":" + minutes;
-    // }
-
     function getFriendlyDateFromIsoDate(isoDateString) {
         const dateObj = new Date(isoDateString);
         if (isNaN(dateObj)) return 'Invalid date';
@@ -1347,19 +1309,6 @@
                 // call a function whenever the cursor moves:
                 document.onmousemove = elementDrag;
             }
-
-            // function elementDrag(e) {
-            //     e = e || window.event;
-            //     e.preventDefault();
-            //     // calculate the new cursor position:
-            //     pos1 = pos3 - e.clientX;
-            //     pos2 = pos4 - e.clientY;
-            //     pos3 = e.clientX;
-            //     pos4 = e.clientY;
-            //     // set the element's new position:
-            //     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-            //     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-            // }
 
             function elementDrag(e) {
                 e = e || window.event;
@@ -6095,7 +6044,6 @@
                 createLivePlayerStats(eventId);
                 event.subParticipants = exampleSubParticipants;
             } else {
-                log("else");
                 getState().sportsbook.scoreboard[eventId].playerStatistics = {};
                 event.subParticipants = [];
             }
