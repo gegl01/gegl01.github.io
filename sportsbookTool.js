@@ -47,6 +47,50 @@
 
     const POLLING_INTERVAL = 100;
 
+    const BRANDS = {
+        arcticbet: { fname: "Arcticbet", pg: "arcticbetplayground" },
+        b10: { fname: "B10", pg: "bets10playground" },
+        bethard: { fname: "Bethard", pg: "bethardplayground" },
+        bets10: { fname: "Bets10", pg: "bets10playground" },
+        betsafe: { fname: "Betsafe COM", pg: "bsfplayground" },
+        betsafeestonia: { fname: "Betsafe EE", pg: "bsfplayground" },
+        betsafelatvia: { fname: "Betsafe LV", pg: "bsfplayground" },
+        betsafeon: { fname: "Betsafe ON", pg: "bsfonplayground" },
+        betsafepe: { fname: "Betsafe PE", pg: "bsfplayground" },
+        betsson: { fname: "Betsson COM", pg: "btsplayground" },
+        btsarbacity: { fname: "Betsson ArBaCity", pg: "btsarbacityplayground" },
+        betssonarbacity: { fname: "Betsson ArBaCity", pg: "btsarbacityplayground" },
+        btsarba: { fname: "Betsson ArBa (Province)", pg: "" },
+        betsmith: { fname: "Betsmith", pg: "betsmithplayground" },
+        betsolid: { fname: "Betsolid", pg: "betsolidplayground" },
+        betssonarba: { fname: "Betsson ArBa (Province)", pg: "btsarbaplayground" },
+        betssonarcb: { fname: "Betsson ArCb", pg: "btsarcbplayground" },
+        betssonbr: { fname: "Betsson BR", pg: "btsbrplayground" },
+        betssonco: { fname: "Betsson CO", pg: "btsplayground" },
+        betssondk: { fname: "Betsson DK", pg: "btsdkplayground" },
+        betssones: { fname: "Betsson ES", pg: "btsesplayground" },
+        betssongr: { fname: "Betsson GR", pg: "btsgrplayground" },
+        betssonmx: { fname: "Betsson MX", pg: "btsmxplayground" },
+        betssonpe: { fname: "Betsson PE", pg: "btsplayground" },
+        cherry: { fname: "Cherry", pg: "cherryplayground" },
+        firestorm: { fname: "Firestorm", pg: "sbplayground1" },
+        guts: { fname: "Guts", pg: "gutsplayground" },
+        hovarda: { fname: "Hovarda", pg: "hovardaplayground" },
+        ibet: { fname: "Ibet", pg: "ibetplayground" },
+        inkabet: { fname: "Inkabet", pg: "inkabetplayground" },
+        jetbahis: { fname: "Jetbahis", pg: "jetbahisplayground" },
+        localhost: { fname: "Localhost", pg: "" },
+        mobilbahis: { fname: "Mobilbahis", pg: "mbaplayground" },
+        nordicbet: { fname: "Nordicbet", pg: "ndbplayground" },
+        nordicbetdk: { fname: "Nordicbet DK", pg: "ndbdkplayground" },
+        rexbet: { fname: "Rexbet", pg: "rexbetplayground" },
+        rizk: { fname: "Rizk", pg: "rizkplayground" },
+        sandbox: { fname: "Sandbox", pg: "sandboxplayground" },
+        spelklubben: { fname: "Spelklubben", pg: "spelklubbenplayground" },
+        spino: { fname: "Spino", pg: "spinoplayground2" }
+    };
+
+
     function getState() {
         return IS_XSBSTATE_EXPOSED ? window["xSbState"] : window["obgState"];
     }
@@ -131,7 +175,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.131";
+    const SB_TOOL_VERSION = "v1.6.132";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -313,6 +357,10 @@
         const sr = findShadowRootContaining('iframe[src*="playground.net/"]');
         if (sr) shadowRoot = sr;
         return !!sr;
+    }
+
+    function getIframeBaseUrl() {
+
     }
 
     function findShadowRootContaining(selector, node = document) {
@@ -563,65 +611,12 @@
         return true;
     }
 
-    function isBonusSystemUs() {
-        return (BRAND_NAME == "firestormus" || BRAND_NAME == "betsafeco");
-    }
+    // function isBonusSystemUs() {
+    //     return (BRAND_NAME == "firestormus" || BRAND_NAME == "betsafeco");
+    // }
 
     function getBrandFriendlyName(brandName) {
-        const brands = {
-            arcticbet: "Arcticbet",
-            b10: "B10",
-            bets10: "Bets10",
-            betsafe: "Betsafe COM",
-            betsafeco: "Betsafe CO",
-            betsafeestonia: "Betsafe EE",
-            betsafelatvia: "Betsafe LV",
-            betsafeon: "Betsafe ON",
-            betsafepe: "Betsafe PE",
-            betsson: "Betsson COM",
-            btsarbacity: "Betsson ArBaCity",
-            betssonarbacity: "Betsson ArBaCity",
-            btsarba: "Betsson ArBa (Province)",
-            betssonarba: "Betsson ArBa (Province)",
-            betssonarcb: "Betsson ArCb",
-            betssonbr: "Betsson BR",
-            betssonco: "Betsson CO",
-            // betssoncz: "Betsson CZ",
-            betssondk: "Betsson DK",
-            betssones: "Betsson ES",
-            betssongr: "Betsson GR",
-            betssonmx: "Betsson MX",
-            // betssonnl: "Betsson NL",
-            // betssonnlb2b: "Betsson NL",
-            betssonpe: "Betsson PE",
-            bethard: "Bethard",
-            betsmith: "Betsmith",
-            betsolid: "Betsolid",
-            cherry: "Cherry",
-            firestorm: "Firestorm",
-            firestormus: "Firestorm US",
-            guts: "Guts",
-            // hommerson: "Hommerson",
-            hovarda: "Hovarda",
-            ibet: "Ibet",
-            inkabet: "Inkabet",
-            jetbahis: "Jetbahis",
-            // krooncasino: "KroonCasino",
-            localhost: "Localhost",
-            mobilbahis: "Mobilbahis",
-            nordicbet: "Nordicbet",
-            nordicbetdk: "Nordicbet DK",
-            // oranjecasino: "OranjeCasino",
-            rexbet: "Rexbet",
-            rizk: "Rizk",
-            sandbox: "Sandbox",
-            spelklubben: "Spelklubben",
-            spino: "Spino"
-        }
-        if (brands[brandName] == undefined) {
-            return brandName;
-        }
-        return brands[brandName];
+        return BRANDS[brandName].fname ?? brandName;
     }
 
     function getBrandName() {
@@ -1511,6 +1506,25 @@
     }
 
     window.openIframeFromMfe = () => {
+        const playground = BRANDS[BRAND_NAME].pg;
+        const devicePrefix = DEVICE_TYPE == "Desktop" ? "d" : "m";
+        const envPrefix = SB_ENVIRONMENT == "prod" ? "" : SB_ENVIRONMENT + ".";
+        const baseUri = `https://${devicePrefix}-cf.${envPrefix}${playground}.net`;
+
+        const staticContextId = sbMfeStartupContext?.contextId?.staticContextId;
+        const userContextId = sbMfeStartupContext?.contextId?.userContextId;
+        window.open(`${baseUri}/${staticContextId}/${userContextId}${substringFromFifthSlash(window.location.href)}`);
+
+        function substringFromFifthSlash(url) {
+            const parts = url.split("/");
+            if (parts.length < 6) {
+                return "";
+            }
+            return "/" + parts.slice(5).join("/");
+        }
+    }
+
+    window.openIframeFromMfe2 = () => {
         const baseUri = sbMfeStartupContext?.cloudFrontBaseUri;
         const staticContextId = sbMfeStartupContext?.contextId?.staticContextId;
         const userContextId = sbMfeStartupContext?.contextId?.userContextId;
@@ -9131,42 +9145,20 @@
         }
     }
 
-
-
     window.openInTradingTools = (entity) => {
-        const serviceInstanceId = isBonusSystemUs()
-            ? "3f31b226-2fcc-4497-a40a-2f958c205a13"
-            : "a541c52d-f9c9-429e-80ac-79019ec525e6";
-        const ttBaseUrl = IS_BLE
-            ? "https://tradingtools.ble.local/"
-            : "https://tradingtools.qa.bde.local/";
+        const baseUrl = `https://tradingtools.${IS_BLE ? "ble" : "qa.bde"}.local/`;
+        const paths = {
+            acca: `bonus/${accaInsId}`,
+            accaBoost: `bonus/${accaBoostId}`,
+            priceBoost: `bonus/${priceBoostId}`,
+            profitBoost: `bonus/${profitBoostId}`,
+            bonusStake: `bonus/${bonusStakeId}`,
+            event: `fixture-management/fixture-v2/${eventId}`,
+            market: `fixture-management/fixture-v2/${eventId}/market/${marketId}`,
+        };
 
-        let ttPath;
-        switch (entity) {
-            case "acca":
-                ttPath = "bonus/" + accaInsId + "?serviceInstanceId=" + serviceInstanceId;
-                break;
-            case "accaBoost":
-                ttPath = "bonus/" + accaBoostId + "?serviceInstanceId=" + serviceInstanceId;
-                break;
-            case "priceBoost":
-                ttPath = "bonus/" + priceBoostId + "?serviceInstanceId=" + serviceInstanceId;
-                break;
-            case "profitBoost":
-                ttPath = "bonus/" + profitBoostId + "?serviceInstanceId=" + serviceInstanceId;
-                break;
-            case "bonusStake":
-                ttPath = "bonus/" + bonusStakeId + "?serviceInstanceId=" + serviceInstanceId;
-                break;
-            case "event":
-                ttPath = "fixture-management/fixture-v2/" + eventId;
-                break;
-            case "market":
-                ttPath = "fixture-management/fixture-v2/" + eventId + "/market/" + marketId;
-                break;
-        }
-        window.open(ttBaseUrl + ttPath);
-    }
+        paths[entity] && window.open(baseUrl + paths[entity]);
+    };
 
     window.openInNewWindow = (url) => {
         switch (url) {
