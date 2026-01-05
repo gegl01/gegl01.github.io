@@ -1597,21 +1597,30 @@
                         </button>
                     </div>
 
-                    <div class="alignItemsCenter marginBottom5px">
+                    <div class="alignItemsCenter">
                         <span class="keyForMarketDetails">Update T. Tags:</span>
-                        <button class="btPlusMinus btIcon btMinus marginRight2px"
-                            onclick="updateMarketTemplateTags('remove')"><img class="iconMinus"></button>
-                        <input id="fdAddMarketTemplateTag" type="number" class="fdSbTools width17percent noSpinners"
-                            min="1" oninput="validity.valid||(value='');">
-                        <button class="btPlusMinus btIcon btPlus marginLeft2px"
-                            onclick="updateMarketTemplateTags('add')"><img class="iconPlus"></button>
+                        <div class="fieldPlus2Buttons">
+                            <input id="fdAddMarketTemplateTag" type="number" class="fdSbTools width40px noSpinners"
+                                min="1" oninput="validity.valid||(value='');">
+                            <button class="btSimple flex1" onclick="updateMarketTemplateTags('add')">Add</button>
+                            <button class="btSimple flex1" onclick="updateMarketTemplateTags('remove')">Remove</button>
+                        </div>
                     </div>
 
-                    <div id="playerPropsSpecificSection" class="alignItemsCenter">
-                        <button class="btSimple btAddMarket" onclick="addAnotherPlayerPropsMarket()">
-                            <span class="labelOnBtSimple">Add</span>
-                        </button>
-                        <span>Add p.props market to this player</span>
+                    <div id="playerPropsSpecificSection" class="marginTop10px">
+                        <div>Add an extra Player Props/Stats market to this player</div>
+                        <div class="alignItemsCenter itemsJustified">
+                            <span class="keyForMarketDetails">with Line Value:</span>
+                            <div class="fieldPlus2Buttons">
+                                <input id="fdLineValue" type="number" class="fdSbTools width40px noSpinners" min="0" step="any"
+                                    oninput="validity.valid||(value='');">
+                                <button class="btSimple flex1" onclick="addAnotherPlayerPropsMarket()">
+                                    <span class="labelOnBtSimple">Add</span>
+                                </button>
+                                <div class="flex1"></div>
+                            </div>
+                        </div>
+                        <!-- <span>Add p.props market to this player</span> -->
                     </div>
 
                     <hr class="hRule">
@@ -3107,6 +3116,10 @@
         width: 90px;
     }
 
+    .width40px {
+        width: 40px;
+    }
+
     .width85px {
         width: 85px;
     }
@@ -3136,6 +3149,13 @@
     .flexRadioGroup {
         display: flex;
         gap: 10px;
+    }
+
+    .fieldPlus2Buttons {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 2px;
     }
 
     .alignFlexRight {
