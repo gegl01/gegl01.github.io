@@ -175,7 +175,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.134";
+    const SB_TOOL_VERSION = "v1.6.135";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -5216,8 +5216,9 @@
 
             function createFastMarket() {
                 const marketTemplateId = "FASTMARKET";
-                const marketId = "m-" + eventId + "-" + marketTemplateId;
-                const marketLabel = "Fast Market by SB Tool";
+                const marketIdRandomNumber = getRandomInt(1000, 9999);
+                const marketId = "m-" + eventId + "-" + marketTemplateId + "-" + marketIdRandomNumber;
+                const marketLabel = "Fast Market by SB Tool - " + marketIdRandomNumber;
 
                 obgRt.createMarket(
                     eventId,
