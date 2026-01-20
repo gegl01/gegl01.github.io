@@ -175,7 +175,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.135";
+    const SB_TOOL_VERSION = "v1.6.136";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -2950,7 +2950,7 @@
 
         window.createPbFromSelections = () => {
             initCreatePbVariables();
-            let isCombi = radioPbCombi.checked;
+            const isCombi = radioPbCombi.checked;
             addSelectionToPriceBoost(isCombi);
 
             let priceBoostObj = {
@@ -6481,18 +6481,13 @@
     }
 
     function getIsUserLoggedIn() {
-        const { authReducer, authSession } = localStorage;
-
-        if (authReducer) {
-            return !!JSON.parse(authReducer).token;
-        }
-
-        if (authSession) {
-            return !!JSON.parse(authSession).sessionToken;
-        }
 
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             return getState().auth.isAuthenticated;
+        }
+
+        if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
+            return sbMfeStartupContext?.contextId?.userContextId.includes("ctx");
         }
 
         if (IS_B2B_IFRAME_ONLY) {
@@ -6504,6 +6499,15 @@
             }
             return window.location.href.includes("/ctx");
         }
+
+        const { authReducer, authSession } = localStorage;
+        if (authReducer) {
+            return !!JSON.parse(authReducer).token;
+        }
+        if (authSession) {
+            return !!JSON.parse(authSession).sessionToken;
+        }
+
         return false;
     }
 
