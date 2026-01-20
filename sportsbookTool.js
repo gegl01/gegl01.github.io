@@ -23,6 +23,7 @@
     const IS_OBGRT_EXPOSED = isDefined("obgRt");
     const IS_PAGECONTEXTDATA_EXPOSED = isDefined("pageContextData");
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
+    const IS_SBB2B_SPORTSBOOK_EXPOSED = isDefined("SBB2B_SPORTSBOOK");
 
     // if (IS_SPORTSBOOK_IN_IFRAME) {
     //     isSportsbookInIframeWithoutObgTools
@@ -6484,6 +6485,10 @@
 
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
             return getState().auth.isAuthenticated;
+        }
+
+        if (IS_SBB2B_SPORTSBOOK_EXPOSED){
+            return SBB2B_SPORTSBOOK?.userContextId.includes("ctx");
         }
 
         if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
