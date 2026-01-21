@@ -73,6 +73,7 @@
         betssongr: { fname: "Betsson GR", pg: "btsgrplayground" },
         betssonmx: { fname: "Betsson MX", pg: "btsmxplayground" },
         betssonpe: { fname: "Betsson PE", pg: "btsplayground" },
+        casinodk: { fname: "Betsson DK", pg: "btsdkplayground" },
         cherry: { fname: "Cherry", pg: "cherryplayground" },
         firestorm: { fname: "Firestorm", pg: "sbplayground1" },
         guts: { fname: "Guts", pg: "gutsplayground" },
@@ -176,7 +177,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.136";
+    const SB_TOOL_VERSION = "v1.6.137";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -666,7 +667,7 @@
     // }
 
     function getBrandFriendlyName(brandName) {
-        return BRANDS[brandName].fname ?? brandName;
+        return BRANDS[brandName]?.fname ?? brandName;
     }
 
     function getBrandName() {
@@ -6481,40 +6482,85 @@
         return getState().sportsbook.eventMarket.markets[marketId].columnLayout;
     }
 
+    // function getIsUserLoggedIn() {
+
+    //     if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
+    //         return getState().auth.isAuthenticated;
+    //     }
+
+    //     if (IS_SBB2B_SPORTSBOOK_EXPOSED){
+    //         return SBB2B_SPORTSBOOK?.userContextId.includes("ctx");
+    //     }
+
+    //     if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
+    //         return sbMfeStartupContext?.contextId?.userContextId.includes("ctx");
+    //     }
+
+    //     if (IS_B2B_IFRAME_ONLY) {
+    //         if (IS_SPORTSBOOK_IN_IFRAME) {
+    //             return iframeURL.includes("/ctx");
+    //         }
+    //         if (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED) {
+    //             return obgClientEnvironmentConfig.startupContext.contextId.userContextId.includes("ctx");
+    //         }
+    //         return window.location.href.includes("/ctx");
+    //     }
+
+    //     const { authReducer, authSession } = localStorage;
+    //     if (authReducer) {
+    //         return !!JSON.parse(authReducer).token;
+    //     }
+    //     if (authSession) {
+    //         return !!JSON.parse(authSession).sessionToken;
+    //     }
+
+    //     return false;
+    // }
+
     function getIsUserLoggedIn() {
+        let isLoggedIn = false;
 
         if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            return getState().auth.isAuthenticated;
+            isLoggedIn ||= !!getState().auth.isAuthenticated;
         }
 
-        if (IS_SBB2B_SPORTSBOOK_EXPOSED){
-            return SBB2B_SPORTSBOOK?.userContextId.includes("ctx");
+        if (IS_SBB2B_SPORTSBOOK_EXPOSED) {
+            isLoggedIn ||= !!SBB2B_SPORTSBOOK?.userContextId?.includes("ctx");
         }
 
         if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
-            return sbMfeStartupContext?.contextId?.userContextId.includes("ctx");
+            isLoggedIn ||= !!sbMfeStartupContext?.contextId?.userContextId?.includes("ctx");
         }
 
         if (IS_B2B_IFRAME_ONLY) {
             if (IS_SPORTSBOOK_IN_IFRAME) {
-                return iframeURL.includes("/ctx");
+                isLoggedIn ||= iframeURL.includes("/ctx");
             }
+
             if (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED) {
-                return obgClientEnvironmentConfig.startupContext.contextId.userContextId.includes("ctx");
+                isLoggedIn ||= obgClientEnvironmentConfig
+                    ?.startupContext
+                    ?.contextId
+                    ?.userContextId
+                    ?.includes("ctx");
             }
-            return window.location.href.includes("/ctx");
+
+            isLoggedIn ||= window.location.href.includes("/ctx");
         }
 
         const { authReducer, authSession } = localStorage;
+
         if (authReducer) {
-            return !!JSON.parse(authReducer).token;
-        }
-        if (authSession) {
-            return !!JSON.parse(authSession).sessionToken;
+            isLoggedIn ||= !!JSON.parse(authReducer)?.token;
         }
 
-        return false;
+        if (authSession) {
+            isLoggedIn ||= !!JSON.parse(authSession)?.sessionToken;
+        }
+
+        return isLoggedIn;
     }
+
 
     function getLastMarketIdFromBetslip() {
         try {
