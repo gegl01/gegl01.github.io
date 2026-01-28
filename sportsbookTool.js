@@ -145,7 +145,7 @@
     const accCollection = getElementsByClassName("accordion");
     const accHeadCollection = getElementsByClassName("accHeading");
     var eventId, lockedEventId;
-    var participants, selectedParticipantId;
+    var subParticipants, selectedParticipantId;
     var participants = [];
     var previousEventAsJson, previousSelectionId;
     var marketAsJson, previousMarketAsJson;
@@ -177,7 +177,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.137";
+    const SB_TOOL_VERSION = "v1.6.139";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4840,7 +4840,11 @@
 
                 const singleMarketPlayer = { label: "Single Market Player", id: "000021", side: 1 };
 
-                let players = getRandomElementsFromArray(exampleSubParticipants, playerPropsPlayerCountRange.value);
+                // subParticipants = getSubparticipants(eventId);
+                // if (subParticipants.length === 0) {
+                //     subParticipants = getExampleSubParticipants();
+                // }
+                let players = getRandomElementsFromArray(subParticipants, playerPropsPlayerCountRange.value);
 
                 const templateMap = {
                     playerShots: { mti: "PLYPROPTESTPLAYERSHOTS", label: "Player Shots" },
@@ -5317,6 +5321,7 @@
         }
 
         function initCreatePlayerPropsMarketSection() {
+            log("initCreatePlayerPropsMarketSection");
             show(createPlayerPropsSection);
             hide(createFastMarketSection, createPreBuiltMarketSection);
 
@@ -5333,12 +5338,17 @@
                 inactivate(btCreateMarket, createPlayerPropsSection);
             }
 
+            initSubparticipants(eventId);
+
+            playerPropsPlayerCountRange.setAttribute("max", subParticipants.length);
+
             playerPropsPlayerCount.textContent = playerPropsPlayerCountRange.value;
 
             playerPropsPlayerCountRange.addEventListener('input', () => {
                 playerPropsPlayerCount.textContent = playerPropsPlayerCountRange.value;
             });
         }
+
 
         function initCreateFastMarketSection() {
             show(createFastMarketSection);
@@ -6126,19 +6136,31 @@
 
         function toggleHasLivePlayerStats() {
             const event = getState().sportsbook.event.events[eventId];
+            // subParticipants = getSubparticipants(eventId);
+            // if (subParticipants.length === 0 && chkHasLivePlayerStats.checked) {
+
+            // }
             if (chkHasLivePlayerStats.checked) {
+                // if (subParticipants.length === 0) {
+                //     subParticipants = exampleSubParticipants;
+                // }
+                initSubparticipants(eventId);
                 createLivePlayerStats(eventId);
-                event.subParticipants = exampleSubParticipants;
+                event.subParticipants = subParticipants;
+                // event.subParticipants = exampleSubParticipants;
             } else {
                 getState().sportsbook.scoreboard[eventId].playerStatistics = {};
-                event.subParticipants = [];
+                // event.subParticipants = [];
             }
             event.hasLivePlayerStats = chkHasLivePlayerStats.checked;
         }
 
         function createLivePlayerStats(eventId) {
+            // getState().sportsbook.scoreboard[eventId].playerStatistics =
+            //     getStats(exampleSubParticipants);
+
             getState().sportsbook.scoreboard[eventId].playerStatistics =
-                getStats(exampleSubParticipants);
+                getStats(subParticipants);
 
             function getStats(list) {
                 return list.reduce((acc, p) => {
@@ -6152,6 +6174,17 @@
                     return acc;
                 }, {});
             }
+        }
+
+        function initSubparticipants(eventId) {
+            subParticipants = getSubparticipants(eventId);
+            if (subParticipants.length === 0) {
+                subParticipants = exampleSubParticipants;
+            }
+        }
+
+        function getSubparticipants(eventId) {
+            return getState().sportsbook.event.events[eventId].subParticipants || [];
         }
 
         // function toggleHasAiMatchInfo() {
@@ -6518,49 +6551,34 @@
     // }
 
     function getIsUserLoggedIn() {
-        let isLoggedIn = false;
 
-        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            isLoggedIn ||= !!getState().auth.isAuthenticated;
-        }
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED && getState().auth.isAuthenticated) return true;
 
-        if (IS_SBB2B_SPORTSBOOK_EXPOSED) {
-            isLoggedIn ||= !!SBB2B_SPORTSBOOK?.userContextId?.includes("ctx");
-        }
+        if (IS_SBB2B_SPORTSBOOK_EXPOSED &&
+            SBB2B_SPORTSBOOK?.userContextId?.includes("ctx")) return true;
 
-        if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
-            isLoggedIn ||= !!sbMfeStartupContext?.contextId?.userContextId?.includes("ctx");
-        }
+        if (IS_SBMFESSTARTUPCONTEXT_EXPOSED &&
+            sbMfeStartupContext?.contextId?.userContextId?.includes("ctx")) return true;
 
         if (IS_B2B_IFRAME_ONLY) {
-            if (IS_SPORTSBOOK_IN_IFRAME) {
-                isLoggedIn ||= iframeURL.includes("/ctx");
-            }
+            if (IS_SPORTSBOOK_IN_IFRAME && iframeURL.includes("/ctx")) return true;
 
-            if (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED) {
-                isLoggedIn ||= obgClientEnvironmentConfig
-                    ?.startupContext
-                    ?.contextId
-                    ?.userContextId
-                    ?.includes("ctx");
-            }
+            if (
+                IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED &&
+                obgClientEnvironmentConfig?.startupContext?.contextId?.userContextId?.includes("ctx")
+            ) return true;
 
-            isLoggedIn ||= window.location.href.includes("/ctx");
+            if (window.location.href.includes("/ctx")) return true;
         }
 
-        const { authReducer, authSession } = localStorage;
+        if (localStorage.authReducer &&
+            JSON.parse(localStorage.authReducer)?.token) return true;
 
-        if (authReducer) {
-            isLoggedIn ||= !!JSON.parse(authReducer)?.token;
-        }
+        if (localStorage.authSession &&
+            JSON.parse(localStorage.authSession)?.sessionToken) return true;
 
-        if (authSession) {
-            isLoggedIn ||= !!JSON.parse(authSession)?.sessionToken;
-        }
-
-        return isLoggedIn;
+        return false;
     }
-
 
     function getLastMarketIdFromBetslip() {
         try {
@@ -8497,7 +8515,6 @@
                 show(bonusStakeLogin);
                 hide(bonusStakeNotFound, bonusStakeDetailsLayout);
             }
-            // hasBonusStake ? activate(removeBonusStakeSection) : inactivate(removeBonusStakeSection);
 
             if (hasBonusStake) {
                 activate(removeBonusStakeSection);
@@ -8519,14 +8536,6 @@
                 previousStringBonusStakes = stringBonusStakes;
             }
 
-            // if (bonusStakes.length == 0) {
-            //     show(bonusStakeNotFound);
-            //     hide(bonusStakeDetailsLayout);
-            //     return;
-            // } else {
-            //     show(bonusStakeDetailsLayout);
-            //     hide(bonusStakeNotFound);
-            // }
             populateBonusStakeSelector();
         }
 
@@ -8555,7 +8564,6 @@
                 bonusStakeSelector.value = selectedBonusStake.id;
             } else {
                 selectBonusStake(bonusStakes[0].id);
-                // bonusStakeSelector.value = bonusStakes[0].id;
             }
 
         }
@@ -9045,15 +9053,19 @@
     }
 
     window.changeSegmentGuid = () => {
-        var fdSegmentGuid = getElementById("fdSegmentGuid");
-        var newSegmentGuid = fdSegmentGuid.value;
-        getState().sportsbook.segment.segmentGuid = newSegmentGuid;
+        const fdSegmentGuid = getElementById("fdSegmentGuid");
+        setSegmentGuid(fdSegmentGuid.value);
         fdSegmentGuid.value = "";
     }
 
     window.setSegmentGuid = (guid) => {
-        getState().sportsbook.segment.segmentGuid = guid;
-        log("Segment in obgState changed to: " + guid);
+        setSegmentGuid(guid);
+    }
+    function setSegmentGuid(guid) {
+        if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) sbMfeStartupContext.userContext.contextInformation.segmentId = guid;
+        if (IS_B2B_IFRAME_ONLY) getState().b2b.userContext.contextInformation.segmentId = guid;
+        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) getState().sportsbook.segment.segmentGuid = guid;
+        log("Segment changed to: " + guid);
     }
 
     function isPageCardCapable() {
