@@ -636,7 +636,6 @@
                         </div>
 
                         <div id="participantLogoSection">
-
                             <span class="alignItemsCenter minWidth40Percent">
                                 <input id="chkParticipantLogoForAll" type="checkbox" class="chkSbTools marginRight5px"
                                     checked>
@@ -668,6 +667,10 @@
                                     <span class="marginRight5px">Nothing</span>
                                 </span>
                             </span>
+                        </div>
+                        <div id="jerseyNumberSection" class="alignItemsCenter hide">
+                            <input id="chkJerseyNumbers" type="checkbox" class="chkSbTools marginRight5px">
+                            <span>Jersey with number (experiment for future usage)</span>
                         </div>
 
                         <hr class="hRule">
@@ -3177,6 +3180,11 @@
         transform-origin: left center;
         display: flex;
         justify-content: space-between;
+    }
+
+    #jerseyNumberSection {
+        transform: scale(0.85);
+        transform-origin: left center;
     }
 
     /* #participantLogoSection {
