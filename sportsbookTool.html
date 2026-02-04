@@ -1239,12 +1239,6 @@
                                                     onclick="submitGamePhase()">Submit</button>
                                             </span>
                                         </div>
-
-                                        <!-- <div class="alignItemsCenter fontSizeSmaller displayInGray">
-                                            <span class="ico-info marginRight3px"></span>
-                                            <span>Entered label showing if backend doesn't have the translation</span>
-                                        </div> -->
-
                                     </div>
                                 </details>
                             </div>
@@ -1399,6 +1393,7 @@
                                 class="comboSbTools height20px marginBottom10px width100percent">
                                 <option value="preBuilt">Pre-Built</option>
                                 <option value="playerProps">Player Props</option>
+                                <option value="playerSpecials">Player Specials</option>
                                 <option value="fastMarket">Fast Market</option>
                             </select>
 
@@ -1465,7 +1460,7 @@
                                             164</span>
                                     </div>
                                     <div class="alignItemsCenter">
-                                        <input type="checkbox" id="chkDisplayTeamFilterChips"
+                                        <input type="checkbox" id="chkDisplayTeamFilterChipsPProps"
                                             class="chkSbTools chkInlineRight" checked>
                                         <span>Home/Away tabs</span>
                                         <span
@@ -1473,7 +1468,7 @@
                                             165</span>
                                     </div>
                                     <div class="alignItemsCenter">
-                                        <input type="checkbox" id="chkHomeTeamHighlighted"
+                                        <input type="checkbox" id="chkHomeTeamHighlightedPProps"
                                             class="chkSbTools chkInlineRight">
                                         <span>Home players highlighted with 🛖</span>
                                     </div>
@@ -1516,6 +1511,37 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div id="createPlayerSpecialsSection" class="hide">
+                                <div id="playerSpecialsCategories" class="infoMessage">
+                                </div>
+                                <div class="itemsJustified marginTop10px">
+                                    <span>Number of players</span>
+                                    <input type="range" id="playerSpecialsPlayerCountRange" min="1" max="20"
+                                        class="rangeSbTools" value="4">
+                                    <span id="playerSpecialsPlayerCount" class="displayInGreen width16px"></span>
+                                </div>
+                                <div class="alignItemsCenter">
+                                    <input type="checkbox" id="chkHomeTeamHighlightedPSpecials"
+                                        class="chkSbTools chkInlineRight">
+                                    <span>Home players highlighted with 🛖</span>
+                                </div>
+                                <div class="alignItemsCenter">
+                                    <input type="checkbox" id="chkDisplayTeamFilterChipsPSpecials"
+                                        class="chkSbTools chkInlineRight" checked>
+                                    <span>Home/Away tabs</span>
+                                    <span class="displayInLightGrey fontSizeSmaller alignFlexRight">marketTemplateTag:
+                                        165</span>
+                                </div>
+                                <div class="marginTop10px"> Market to create:
+                                    <select id="playerSpecialsSelector"
+                                        class="comboSbTools height20px marginBottom10px width100percent">
+                                        <option value="playerFirstAttemptOnGoal">⚽ Player First Attempt On Goal</option>
+                                        <option value="playerShotLocation">⚽ Player Shot Location</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div id="createFastMarketSection" class="hide">
                                 <div id="fastMarketCategories" class="infoMessage"></div>
                             </div>
