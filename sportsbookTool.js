@@ -5066,10 +5066,13 @@
                 let selectionId;
                 let selectionLabel;
                 let columnLayout;
+                let postFix = "";
                 if (marketKey == "playerFirstAttemptOnGoal") {
                     columnLayout = 3;
+
                 } else if (marketKey == "playerShotLocation") {
                     columnLayout = 2;
+                    postFix = " ~ After 00:00 (Half 1)";
                 }
 
                 for (let player of players) {
@@ -5082,7 +5085,6 @@
                     const marketTemplateTags2 = [...marketTemplateTags];
                     marketId = `m-${eventId}-${marketTemplateId}-${noWhiteSpacePlayer}-${marketIdRandomNumber}`;
                     marketIds.push(marketId);
-                    const postFix = " ~ After 00:00 (Half 1)";
 
                     obgRt.createMarket(
                         eventId,
@@ -5118,7 +5120,7 @@
                         [playerSpecialsMarketName,
                             isHomeTeam && homeTeamHighlighted
                                 ? player.label + " 🛖" + postFix
-                                : player.label  + postFix
+                                : player.label + postFix
                         ],
                         1
                     );
@@ -5128,7 +5130,7 @@
                     market.isGroupableByMarketTemplate = true;
                     market.betBuilderAvailability = { state: 0 };
 
-                    if (marketKey == "playerFirstAttemptOnGoal") {                        
+                    if (marketKey == "playerFirstAttemptOnGoal") {
                         createSelection(isHomeTeam, player, "Shot On Target", "SHOTONTARGET", 1);
                         createSelection(isHomeTeam, player, "Shot Off Target", "SHOTOFFTARGET", 2);
                         createSelection(isHomeTeam, player, "Blocked Shot", "BLOCKEDSHOT", 3);
