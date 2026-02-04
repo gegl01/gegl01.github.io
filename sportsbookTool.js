@@ -178,7 +178,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.141";
+    const SB_TOOL_VERSION = "v1.6.142";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -5082,13 +5082,14 @@
                     const marketTemplateTags2 = [...marketTemplateTags];
                     marketId = `m-${eventId}-${marketTemplateId}-${noWhiteSpacePlayer}-${marketIdRandomNumber}`;
                     marketIds.push(marketId);
+                    const postFix = " ~ After 00:00 (Half 1)";
 
                     obgRt.createMarket(
                         eventId,
                         marketId,
                         marketTemplateId,
                         marketTemplateTags2,
-                        playerSpecialsMarketName + " | " + player.label + " ~ After 00:00 (Half 1)",
+                        playerSpecialsMarketName + " | " + player.label + postFix,
                         "", // lineValue
                         columnLayout,
                         50, // sortOrder
@@ -5116,8 +5117,8 @@
                         ],
                         [playerSpecialsMarketName,
                             isHomeTeam && homeTeamHighlighted
-                                ? player.label + " 🛖"
-                                : player.label
+                                ? player.label + " 🛖" + postFix
+                                : player.label  + postFix
                         ],
                         1
                     );
