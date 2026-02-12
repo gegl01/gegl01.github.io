@@ -49,49 +49,57 @@
 
     const POLLING_INTERVAL = 100;
 
-    const BRANDS = {
-        arcticbet: { friendlyName: "Arcticbet", playground: "arcticbetplayground" },
-        b10: { friendlyName: "B10", playground: "bets10playground" },
-        bethard: { friendlyName: "Bethard", playground: "bethardplayground" },
-        bets10: { friendlyName: "Bets10", playground: "bets10playground" },
-        betsafe: { friendlyName: "Betsafe COM", playground: "bsfplayground" },
-        betsafeestonia: { friendlyName: "Betsafe EE", playground: "bsfplayground" },
-        betsafelatvia: { friendlyName: "Betsafe LV", playground: "bsfplayground" },
-        betsafeon: { friendlyName: "Betsafe ON", playground: "bsfonplayground" },
-        betsafepe: { friendlyName: "Betsafe PE", playground: "bsfplayground" },
-        betsson: { friendlyName: "Betsson COM", playground: "btsplayground" },
-        btsarbacity: { friendlyName: "Betsson ArBaCity", playground: "btsarbacityplayground" },
-        betssonarbacity: { friendlyName: "Betsson ArBaCity", playground: "btsarbacityplayground" },
-        btsarba: { friendlyName: "Betsson ArBa (Province)", playground: "" },
-        betsmith: { friendlyName: "Betsmith", playground: "betsmithplayground" },
-        betsolid: { friendlyName: "Betsolid", playground: "betsolidplayground" },
-        betssonarba: { friendlyName: "Betsson ArBa (Province)", playground: "btsarbaplayground" },
-        betssonarcb: { friendlyName: "Betsson ArCb", playground: "btsarcbplayground" },
-        betssonbr: { friendlyName: "Betsson BR", playground: "btsbrplayground" },
-        betssonco: { friendlyName: "Betsson CO", playground: "btsplayground" },
-        betssondk: { friendlyName: "Betsson DK", playground: "btsdkplayground" },
-        betssones: { friendlyName: "Betsson ES", playground: "btsesplayground" },
-        betssongr: { friendlyName: "Betsson GR", playground: "btsgrplayground" },
-        betssonmx: { friendlyName: "Betsson MX", playground: "btsmxplayground" },
-        betssonpe: { friendlyName: "Betsson PE", playground: "btsplayground" },
-        casinodk: { friendlyName: "Betsson DK", playground: "btsdkplayground" },
-        cherry: { friendlyName: "Cherry", playground: "cherryplayground" },
-        firestorm: { friendlyName: "Firestorm", playground: "sbplayground1" },
-        guts: { friendlyName: "Guts", playground: "gutsplayground" },
-        hovarda: { friendlyName: "Hovarda", playground: "hovardaplayground" },
-        ibet: { friendlyName: "Ibet", playground: "ibetplayground" },
-        inkabet: { friendlyName: "Inkabet", playground: "inkabetplayground" },
-        jetbahis: { friendlyName: "Jetbahis", playground: "jetbahisplayground" },
-        localhost: { friendlyName: "Localhost", playground: "" },
-        mobilbahis: { friendlyName: "Mobilbahis", playground: "mbaplayground" },
-        nordicbet: { friendlyName: "Nordicbet", playground: "ndbplayground" },
-        nordicbetdk: { friendlyName: "Nordicbet DK", playground: "ndbdkplayground" },
-        rexbet: { friendlyName: "Rexbet", playground: "rexbetplayground" },
-        rizk: { friendlyName: "Rizk", playground: "rizkplayground" },
-        sandbox: { friendlyName: "Sandbox", playground: "sandboxplayground" },
-        spelklubben: { friendlyName: "Spelklubben", playground: "spelklubbenplayground" },
-        spino: { friendlyName: "Spino", playground: "spinoplayground2" }
-    };
+    const RAW_BRANDS = [
+        ["arcticbet", "Arcticbet", "arcticbetplayground"],
+        ["b10", "B10", "bets10playground"],
+        ["bethard", "Bethard", "bethardplayground"],
+        ["bets10", "Bets10", "bets10playground"],
+        ["betsafe", "Betsafe COM", "bsfplayground"],
+        ["betsafeestonia", "Betsafe EE", "bsfplayground"],
+        ["betsafelatvia", "Betsafe LV", "bsfplayground"],
+        ["betsafeon", "Betsafe ON", "bsfonplayground"],
+        ["betsafepe", "Betsafe PE", "bsfplayground"],
+        ["betsson", "Betsson COM", "btsplayground"],
+        ["btsarbacity", "Betsson ArBaCity", "btsarbacityplayground"],
+        ["betssonarbacity", "Betsson ArBaCity", "btsarbacityplayground"],
+        ["btsarba", "Betsson ArBa (Province)", ""],
+        ["betsmith", "Betsmith", "betsmithplayground"],
+        ["betsolid", "Betsolid", "betsolidplayground"],
+        ["betssonarba", "Betsson ArBa (Province)", "btsarbaplayground"],
+        ["betssonarcb", "Betsson ArCb", "btsarcbplayground"],
+        ["betssonbr", "Betsson BR", "btsbrplayground"],
+        ["betssonco", "Betsson CO", "btsplayground"],
+        ["betssondk", "Betsson DK", "btsdkplayground"],
+        ["betssones", "Betsson ES", "btsesplayground"],
+        ["betssongr", "Betsson GR", "btsgrplayground"],
+        ["betssonmx", "Betsson MX", "btsmxplayground"],
+        ["betssonpe", "Betsson PE", "btsplayground"],
+        ["casinodk", "Betsson DK", "btsdkplayground"],
+        ["cherry", "Cherry", "cherryplayground"],
+        ["firestorm", "Firestorm", "sbplayground1"],
+        ["guts", "Guts", "gutsplayground"],
+        ["hovarda", "Hovarda", "hovardaplayground"],
+        ["ibet", "Ibet", "ibetplayground"],
+        ["inkabet", "Inkabet", "inkabetplayground"],
+        ["jetbahis", "Jetbahis", "jetbahisplayground"],
+        ["localhost", "Localhost", ""],
+        ["mobilbahis", "Mobilbahis", "mbaplayground"],
+        ["nordicbet", "Nordicbet", "ndbplayground"],
+        ["nordicbetdk", "Nordicbet DK", "ndbdkplayground"],
+        ["rexbet", "Rexbet", "rexbetplayground"],
+        ["rizk", "Rizk", "rizkplayground"],
+        ["sandbox", "Sandbox", "sandboxplayground"],
+        ["spelklubben", "Spelklubben", "spelklubbenplayground"],
+        ["spino", "Spino", "spinoplayground2"],
+    ];
+
+    const BRANDS = Object.fromEntries(
+        RAW_BRANDS.map(([key, friendlyName, playground]) => [
+            key,
+            { friendlyName, playground }
+        ])
+    );
+
 
 
     function getState() {
@@ -133,14 +141,14 @@
     }
 
     // ************** REMOTE ****************
-    removeExistingSportsbookTool();
-    const sportsbookTool = document.createElement("div");
-    sportsbookTool.id = "sportsbookTool";
-    createWindow();
+    // removeExistingSportsbookTool();
+    // const sportsbookTool = document.createElement("div");
+    // sportsbookTool.id = "sportsbookTool";
+    // createWindow();
     // ************* /REMOTE ****************
 
     // ************** LOCAL ****************
-    // const sportsbookTool = getElementById("sportsbookTool");
+    const sportsbookTool = getElementById("sportsbookTool");
     // ************* /LOCAL ****************
 
     const accCollection = getElementsByClassName("accordion");
@@ -166,7 +174,6 @@
     var previousIframeURL;
     var brands;
     var routes;
-    // var betBuilderEvents, previousBetBuilderEvents = [];
     var labelRow;
     var threeColumnLayouts;
     var carouselOrCardsDefined;
@@ -563,11 +570,6 @@
         }
 
         if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
-            // const sr = findShadowRootContaining("sb-xp-sportsbook", node = document);
-            // const baseUrl =
-            //     sr.querySelector("sb-xp-sportsbook")?.getAttribute('sb-api-base-url')
-            //     || sbMfeStartupContext.cloudFrontBaseUri;
-            // return getEnvByURL(baseUrl);
             return sbMfeStartupContext?.appContext?.environment;
         }
 
@@ -5144,12 +5146,11 @@
 
                 function createSelection(isHomeTeam, player, label, selectionTemplateId, sortOrder) {
                     selectionId = `s-${marketId}-${selectionTemplateId}`;
-                    selectionLabel = label;
                     obgRt.createSelection(
                         eventId,
                         marketId,
                         selectionId,
-                        selectionLabel,
+                        label,
                         1
                     );
                     const selection = getState().sportsbook.selection.selections[selectionId];
@@ -11771,7 +11772,6 @@
     function createScore24Statistics(eventId) {
         const participants = getParticipants(eventId);
         const competitionName = getCompetitionNameByEventId(eventId);
-        // let labels = getRandomParticipantLabels(10);
         const labels = getRandomElementsFromArray(exampleParticipantNames, 10);
 
         let lastMeetingResults = [];
@@ -12190,28 +12190,56 @@
 
     const exampleParticipantNames = ["Mighty Muffin Men", "Turbo Turtles", "Quirky Quokkas", "Wacky Walruses", "Funky Ferrets", "Jolly Jellybeans", "Sneaky Sloths", "Zany Zebras", "Silly Squirrels", "Laughing Llamas", "Goofy Gophers", "Crazy Crickets", "Cheeky Chinchillas", "Bouncing Bananas", "Hilarious Hedgehogs", "Bonkers Badgers", "Whimsical Wombats", "Chuckling Chipmunks", "Riotous Rhinos", "Outrageous Ostriches", "Happy Hippos", "Daring Donkeys", "Giggling Giraffes", "Playful Pandas", "Sassy Salamanders", "Marvelous Meerkats", "Bubbly Buffaloes", "Adventurous Anteaters", "Dynamic Dolphins", "Sparkling Sparrows", "Clever Cranes", "Merry Monkeys", "Dizzy Ducks", "Radiant Rabbits", "Joyful Jaguars", "Cunning Coyotes", "Sizzling Snakes", "Vivacious Vultures", "Rowdy Raccoons", "Eccentric Elephants", "Peculiar Penguins", "Zesty Zeppelins", "Gleeful Gazelles", "Wondrous Whales", "Fierce Falcons", "Elegant Eagles", "Swift Seals", "Majestic Moose", "Proud Pumas"];
 
-    const exampleSubParticipants = [
-        { label: "Antoine Griezmann", id: "000001", side: 2 },
-        { label: "Bruno Fernandes", id: "000002", side: 2 },
-        { label: "Cristiano Ronaldo", id: "000003", side: 1 },
-        { label: "Erling Haaland", id: "000004", side: 2 },
-        { label: "Harry Kane", id: "000005", side: 1 },
-        { label: "Karim Benzema", id: "000006", side: 2 },
-        { label: "Kevin De Bruyne", id: "000007", side: 1 },
-        { label: "Kylian Mbappé", id: "000008", side: 2 },
-        { label: "Lionel Messi", id: "000009", side: 1 },
-        { label: "Luis Suárez", id: "000010", side: 2 },
-        { label: "Luka Modrić", id: "000011", side: 1 },
-        { label: "Manuel Neuer", id: "000012", side: 2 },
-        { label: "Mohamed Salah", id: "000013", side: 2 },
-        { label: "Neymar Jr.", id: "000014", side: 2 },
-        { label: "Robert Lewandowski", id: "000015", side: 1 },
-        { label: "Sergio Ramos", id: "000016", side: 1 },
-        { label: "Thibaut Courtois", id: "000017", side: 1 },
-        { label: "Toni Kroos", id: "000018", side: 1 },
-        { label: "Vinícius Júnior", id: "000019", side: 1 },
-        { label: "Virgil van Dijk", id: "000020", side: 1 },
+    // const exampleSubParticipants = [
+    //     { label: "Antoine Griezmann", id: "000001", side: 2 },
+    //     { label: "Bruno Fernandes", id: "000002", side: 2 },
+    //     { label: "Cristiano Ronaldo", id: "000003", side: 1 },
+    //     { label: "Erling Haaland", id: "000004", side: 2 },
+    //     { label: "Harry Kane", id: "000005", side: 1 },
+    //     { label: "Karim Benzema", id: "000006", side: 2 },
+    //     { label: "Kevin De Bruyne", id: "000007", side: 1 },
+    //     { label: "Kylian Mbappé", id: "000008", side: 2 },
+    //     { label: "Lionel Messi", id: "000009", side: 1 },
+    //     { label: "Luis Suárez", id: "000010", side: 2 },
+    //     { label: "Luka Modrić", id: "000011", side: 1 },
+    //     { label: "Manuel Neuer", id: "000012", side: 2 },
+    //     { label: "Mohamed Salah", id: "000013", side: 2 },
+    //     { label: "Neymar Jr.", id: "000014", side: 2 },
+    //     { label: "Robert Lewandowski", id: "000015", side: 1 },
+    //     { label: "Sergio Ramos", id: "000016", side: 1 },
+    //     { label: "Thibaut Courtois", id: "000017", side: 1 },
+    //     { label: "Toni Kroos", id: "000018", side: 1 },
+    //     { label: "Vinícius Júnior", id: "000019", side: 1 },
+    //     { label: "Virgil van Dijk", id: "000020", side: 1 }
+    // ];
+
+    const rawSubParticipants = [
+        ["Antoine Griezmann", "000001", 2],
+        ["Bruno Fernandes", "000002", 2],
+        ["Cristiano Ronaldo", "000003", 1],
+        ["Erling Haaland", "000004", 2],
+        ["Harry Kane", "000005", 1],
+        ["Karim Benzema", "000006", 2],
+        ["Kevin De Bruyne", "000007", 1],
+        ["Kylian Mbappé", "000008", 2],
+        ["Lionel Messi", "000009", 1],
+        ["Luis Suárez", "000010", 2],
+        ["Luka Modrić", "000011", 1],
+        ["Manuel Neuer", "000012", 2],
+        ["Mohamed Salah", "000013", 2],
+        ["Neymar Jr.", "000014", 2],
+        ["Robert Lewandowski", "000015", 1],
+        ["Sergio Ramos", "000016", 1],
+        ["Thibaut Courtois", "000017", 1],
+        ["Toni Kroos", "000018", 1],
+        ["Vinícius Júnior", "000019", 1],
+        ["Virgil van Dijk", "000020", 1],
     ];
+
+    const exampleSubParticipants = rawSubParticipants.map(
+        ([label, id, side]) => ({ label, id, side })
+    );
+
 
     function getRandomElementsFromArray(arr, amount) {
 
