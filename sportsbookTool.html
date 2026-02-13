@@ -1380,7 +1380,7 @@
 
                 <div class="">
                     <button onclick="toggleSection('createMarketSection')" class="moreLess">
-                        Create Pre-Built / Fast / Player Props Market
+                        Create Special Markets
                     </button>
 
                     <div id="createMarketSection" class="hide marginTopBottom10px">
@@ -1395,6 +1395,7 @@
                                 <option value="playerProps">Player Props</option>
                                 <option value="playerSpecials">Player Specials</option>
                                 <option value="fastMarket">Fast Market</option>
+                                <option value="upsideJackpot">Upside Jackpot</option>
                             </select>
 
                             <div id="createPreBuiltMarketSection">
@@ -1542,9 +1543,20 @@
                                 </div>
                             </div>
 
+                            <div id="createUpsideJackpotSection" class="hide">
+                                <div class="itemsJustified">
+                                    <span>Number of selections</span>
+                                    <input type="range" id="upsideJackpotSelectionRange" min="0" max="20"
+                                        class="rangeSbTools" value="6">
+                                    <span id="upsideJackpotSelectionCount" class="displayInGreen width16px"></span>
+                                </div>
+                            </div>
+
                             <div id="createFastMarketSection" class="hide">
                                 <div id="fastMarketCategories" class="infoMessage"></div>
                             </div>
+
+
                             <hr class="hRule">
 
                             <div>
