@@ -186,7 +186,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.143";
+    const SB_TOOL_VERSION = "v1.6.144";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4851,7 +4851,7 @@
             function getMarketTabLabel(categoryId, tagsArray) {
                 const marketTemplateGroupingsRaw = getState().sportsbook?.eventPageSchema?.categoryTabs[categoryId]?.marketTemplateGroupings;
                 if (!marketTemplateGroupingsRaw) return undefined;
-                
+
                 const marketTemplateGroupings = Object.values(marketTemplateGroupingsRaw);
                 for (const g of marketTemplateGroupings) {
                     if (tagsArray.includes(g.marketTemplateTag)) {
@@ -6351,9 +6351,17 @@
                 state.sportsbook.stream.streams[eventId].video = {
                     type: "Video",
                     source: "https://player.twitch.tv/?channel=lordkevun",
+                    source: "",
                     requiresClientCall: false,
                     provider: "OddinGG"
                 };
+
+                // state.sportsbook.stream.streams[eventId].video = {
+                //     type: "Video",
+                //     errorCode: "E_SPORTSBOOK_STREAMING",
+                //     requiresClientCall: false,
+                //     provider: "OddinGG"
+                // };
 
                 // Helper function to ensure nested objects exist
                 function ensureNestedObject(obj, keys) {
@@ -6931,7 +6939,7 @@
     }
 
     function setSelectionOdds(selectionId, odds) {
-        odds = odds.toFixed(2);
+        odds = Number(odds).toFixed(2);
         const marketId = getMarketIdBySelectionId(selectionId);
         const eventId = getEventIdBySelectionId(selectionId);
         const marketTemplateId = getMarketTemplateId(marketId);
