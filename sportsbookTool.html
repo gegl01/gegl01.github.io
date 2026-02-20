@@ -352,7 +352,7 @@
 
     <div id="sbToolsSegments" class="accordion closed">
         <button id="segmentsAccordion" class="accHeading" onclick="initSegments()">
-            <span class="accordionTitle">Segment</span>
+            <span class="accordionTitle">Segment / Brand / Facade</span>
             <span class="accordionHint">Get/Set SegmentGuid</span>
         </button>
         <div class="accContent">
@@ -384,44 +384,46 @@
                 </div>
                 <div>
                     <div class="displayFlex">
-                        <span class="marginRight5px">Jurisdiction:</span>
+                        <span class="minWidth60px marginRight5px">Jurisdiction:</span>
                         <span id="jurisdisctionSpan" class="displayInGreen"></span>
                     </div>
                 </div>
                 <div class="itemsJustified">
                     <div class="displayFlex">
-                        <span class="noWrap marginRight5px">Brand ID:</span>
-                        <span id="brandIdSpan" class="displayInGreen"></span>
+                        <span class="minWidth60px noWrap marginRight5px">Brand ID:</span>
+                        <span id="brandIdSpan" class="extraCondensed displayInGreen"></span>
                     </div>
                 </div>
                 <div class="itemsJustified">
                     <div class="displayFlex">
-                        <span class="noWrap marginRight5px">Facade ID:</span>
-                        <span id="facadeIdSpan" class="displayInGreen"></span>
+                        <span class="minWidth60px noWrap marginRight5px">Facade ID:</span>
+                        <span id="facadeIdSpan" class="extraCondensed displayInGreen"></span>
                     </div>
                 </div>
             </div>
 
-            <button onclick="toggleSection('segmentChangers')" class="moreLess">Set Segment</button>
-            <div id="segmentChangers" class="hide">
-                <div class="segmentChangeSectionHint">Partially useful features, no data refresh triggered on change
-                </div>
+            <div id="setSegmentSection">
+                <button onclick="toggleSection('segmentChangers')" class="moreLess">Set Segment</button>
+                <div id="segmentChangers" class="hide">
+                    <div class="segmentChangeSectionHint">Partially useful features, no data refresh triggered on change
+                    </div>
 
-                <div>New Segment</div>
-                <select id="segmentSelector" onchange="setSegmentGuid(value)"
-                    class="comboSbTools height20px marginBottom10px width100percent">
-                </select>
-                <div>Enter Segment Guid manually</div>
-                <div class="itemsJustified">
-                    <input id="fdSegmentGuid" class="fdSbTools width100percent height20px">
-                    <button class="btSimple btSubmit" onclick="changeSegmentGuid()">Set</button>
-                </div>
+                    <div>New Segment</div>
+                    <select id="segmentSelector" onchange="setSegmentGuid(value)"
+                        class="comboSbTools height20px marginBottom10px width100percent">
+                    </select>
+                    <div>Enter Segment Guid manually</div>
+                    <div class="itemsJustified">
+                        <input id="fdSegmentGuid" class="fdSbTools width100percent height20px">
+                        <button class="btSimple btSubmit" onclick="changeSegmentGuid()">Set</button>
+                    </div>
 
-                <div class="checkBoxRowToRight marginTop5px">
-                    <span>Segment data known to this tool</span>
-                    <button class="btOpenInNewWindow btIcon chkInline" onclick="openInNewWindow('brandsJson')">
-                        <img class="iconOpenInNewWindow">
-                    </button>
+                    <div class="checkBoxRowToRight marginTop5px">
+                        <span>Segment data known to this tool</span>
+                        <button class="btOpenInNewWindow btIcon chkInline" onclick="openInNewWindow('brandsJson')">
+                            <img class="iconOpenInNewWindow">
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1606,7 +1608,7 @@
                 </div>
             </div>
 
-            <div id="addToCarouselSection">
+            <!-- <div id="addToCarouselSection">
                 <hr class="hRule">
                 <div id="carouselButtonsDiv">
                     <div class="alignItemsCenter">
@@ -1622,11 +1624,12 @@
                 </div>
                 <div id="addToCarouselErrorMessage" class="marginBottom10px displayInRed">
                 </div>
-            </div>
+            </div> -->
 
             <div id="marketFeatures" class="hide">
                 <button onclick="toggleSection('marketDetailsSection')" class="moreLess">Market Details</button>
-                <div id="marketDetailsSection" class="marginTopBottom10px hide">
+                <!-- <div id="marketDetailsSection" class="marginTopBottom10px hide"> -->
+                <div id="marketDetailsSection" class="marginTopBottom10px">
 
                     <div class="itemsJustified">
                         <span class="width95Percent displayFlex">
@@ -2263,7 +2266,7 @@
                                 </a>
                             </div>
 
-                            <div title="Enabled on SB Home and A-Z pages to which the related event belongs"
+                            <!-- <div title="Enabled on SB Home and A-Z pages to which the related event belongs"
                                 id="addPbToCarouselRow" class="itemsJustified">
                                 <span id="addPbToCarouselLabel" class="width95Percent">
                                     Add to carousel or cards
@@ -2271,7 +2274,7 @@
                                 <button class="btIcon" onclick="addPbToCarouselOrCards()">
                                     <img class="iconPlus">
                                 </button>
-                            </div>
+                            </div> -->
 
                         </div>
 
@@ -3057,7 +3060,7 @@
         </div>
     </div>
 
-    <div id="sbToolsStreamMappingHelper" class="accordion closed">
+    <!-- <div id="sbToolsStreamMappingHelper" class="accordion closed">
         <button id="streamMappingHelperAccordion" class="accHeading" onclick="initStreamMappingHelper()">IDs for stream
             mapping (probably YAGNI)</button>
         <div class="accContent">
@@ -3069,7 +3072,7 @@
                 <div id="performResults" class="extraCondensed"></div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <style>
@@ -3262,6 +3265,10 @@
 
     .minWidth40Percent {
         min-width: 40%;
+    }
+
+    .minWidth60px {
+        min-width: 60px;
     }
 
     .keyColumnForBanners {
@@ -3566,12 +3573,12 @@
         margin-bottom: 10px;
     }
 
-    .streamIdsLayout {
+    /*.streamIdsLayout {
         margin-top: 10px;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto;
-    }
+    }*/
 
     .alignCenter {
         text-align: center;
