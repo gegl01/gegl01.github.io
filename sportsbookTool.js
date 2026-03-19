@@ -186,7 +186,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.148";
+    const SB_TOOL_VERSION = "v1.6.149";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -553,11 +553,12 @@
             }
         }
 
+        return getIsBleSource() ? environmentToDisplay + ", using ALPHA API" : environmentToDisplay;
 
-        if (getIsBleSource()) {
-            return environmentToDisplay + ", using ALPHA API";
-        }
-        return environmentToDisplay;
+        // if (getIsBleSource()) {
+        //     return environmentToDisplay + ", using ALPHA API";
+        // }
+        // return environmentToDisplay;
     }
 
     function getSbEnvironment() {
@@ -4525,10 +4526,7 @@
                 id: fdGamePhaseId.value,
                 label: fdGamePhaseLabel.value
             }
-            log(fdGamePhaseId.value);
-            log(fdGamePhaseLabel.value);
             obgRt.setGamePhase(eventId, gamePhase);
-            log(fdGamePhaseLabel.value);
         }
 
         window.submitRtScoreBoardUpdate = () => {
@@ -4843,6 +4841,7 @@
             setTimeout(function () {
                 const categoryId = getCategoryIdByEventId(eventId);
                 const tabLabel = getMarketTabLabel(categoryId, tagsArray);
+                log("Looking for market tab with label: " + tabLabel);
                 if (tabLabel) { clickOnMarketTab(tabLabel); }
             }, 500);
 
@@ -5021,12 +5020,13 @@
                     );
 
                     const market = getState().sportsbook.eventMarket.markets[marketId];
+
                     market.isHomeTeam = isHomeTeam;
                     market.isGroupableByMarketTemplate = true;
                     market.betBuilderAvailability = { state: 0 };
 
                     createSelection(true, lineValue, isHomeTeam, isMainLine, player);
-                    if (!oneSelectionsPerMarket) createSelection(false, lineValue, isHomeTeam, isMainLine);
+                    if (!oneSelectionsPerMarket) createSelection(false, lineValue, isHomeTeam, isMainLine, player);
                 }
 
                 function createSelection(isOver, lineValue, isHomeTeam, isMainLine, player) {
@@ -6001,7 +6001,6 @@
                         type: config.type,
                         url,
                         colours: config.colours()
-                        // shirtNumber: "34"
                     };
                     if (chkJerseyNumbers.checked && logo.type === 2) {
                         logo.shirtNumber = getRandomInt(1, 99).toString();
@@ -6016,7 +6015,12 @@
         window.setEventPhase = (phase) => { setEventPhase(phase); }
 
         function setEventPhase(phase) {
-            const needsMoreParams = getSetEventPhaseNeedsMoreParam();
+            const fixtureSegmentAvailabilities = {
+                m: "AvailableFor",
+                s: {
+                    [getSegmentGuid()]: 1
+                }
+            }
 
             mockedEventPhase = phase;
             if (lockedEventId !== undefined) {
@@ -6025,9 +6029,7 @@
             switch (phase) {
                 case "Prematch":
                     deleteScoreBoardIfExists(eventId);
-                    needsMoreParams ?
-                        obgRt.setEventPhasePrematch(eventId, competitionId, categoryId) :
-                        obgRt.setEventPhasePrematch(eventId);
+                    obgRt.setEventPhasePrematch(eventId, competitionId, categoryId, suspendMarkets = false, fixtureSegmentAvailabilities);
                     break;
                 case "Live":
                     if (getEventPhase(eventId) == "Live") {
@@ -6039,23 +6041,17 @@
                         }
                     }
                     setTimeout(function () {
-                        needsMoreParams ?
-                            obgRt.setEventPhaseLive(eventId, competitionId, categoryId) :
-                            obgRt.setEventPhaseLive(eventId);
+                        obgRt.setEventPhaseLive(eventId, competitionId, categoryId, suspendMarkets = false, fixtureSegmentAvailabilities)
                     }, 200);
+
                     logScoreBoardToConsole();
                     break;
                 case "Over":
-                    needsMoreParams ?
-                        obgRt.setEventPhaseOver(eventId, competitionId, categoryId) :
-                        obgRt.setEventPhaseOver(eventId);
+                    obgRt.setEventPhaseOver(eventId, competitionId, categoryId, suspendMarkets = false, fixtureSegmentAvailabilities);
                     break;
             }
 
 
-            // setTimeout(function () {
-            //     initSbToolsEvent();
-            // }, 500);
 
             function deleteScoreBoardIfExists() {
                 const scoreboard = getState().sportsbook.scoreboard;
@@ -6527,7 +6523,7 @@
                 return;
             }
 
-            isSbVersionAtLeast(7, 32) ? show(jerseyNumberSection) : hide(jerseyNumberSection);
+            // isSbVersionAtLeast(7, 32) ? show(jerseyNumberSection) : hide(jerseyNumberSection);
 
             previousEventPhase = eventPhase;
             previousCategoryId = categoryId;
@@ -7022,15 +7018,18 @@
             "Over": "setEventPhasePrematch"
         };
 
-        if (getSetEventPhaseNeedsMoreParam()) {
-            const categoryId = getCategoryIdByEventId(eventId);
-            const competitionId = getCompetitionIdByEventId(eventId);
-            obgRt[setPhaseMap[currentEventPhase]](eventId, competitionId, categoryId);
-            setTimeout(() => obgRt["setEventPhase" + currentEventPhase](eventId, competitionId, categoryId), delay);
-        } else {
-            obgRt[setPhaseMap[currentEventPhase]](eventId);
-            setTimeout(() => obgRt["setEventPhase" + currentEventPhase](eventId), delay);
+        const fixtureSegmentAvailabilities = {
+            m: "AvailableFor",
+            s: {
+                [getSegmentGuid()]: 1
+            }
         }
+
+        const categoryId = getCategoryIdByEventId(eventId);
+        const competitionId = getCompetitionIdByEventId(eventId);
+        obgRt[setPhaseMap[currentEventPhase]](eventId, competitionId, categoryId, suspendMarkets = false, fixtureSegmentAvailabilities);
+        setTimeout(() => obgRt["setEventPhase" + currentEventPhase](eventId, competitionId, categoryId, suspendMarkets = false, fixtureSegmentAvailabilities), delay);
+
     }
 
     // let lastPrematchStatisticsProviders = [];
@@ -7060,9 +7059,9 @@
     //     obgRt.setFixtureUpserted(eventId);
     // }
 
-    function getSetEventPhaseNeedsMoreParam() {
-        return obgRt.setEventPhaseLive.length > 1;
-    }
+    // function getSetEventPhaseNeedsMoreParam() {
+    //     return obgRt.setEventPhaseLive.length > 1;
+    // }
 
     function addUniqueToArray(obj, key, value) {
         obj[key] ??= []; // Ensure the array exists
@@ -9643,12 +9642,13 @@
 
     // function getRandomFootballJerseyUrl(wantJerseyNumbers) {
     function getRandomFootballJerseyUrl() {
-        const isNewJerseySupported = isSbVersionAtLeast(7, 31);
+        // const isNewJerseySupported = isSbVersionAtLeast(7, 31);
         if (IS_MFE_ALONE || IS_B2B_IFRAME_ONLY || IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
 
-            const jerseyNumberPattern = isNewJerseySupported ?
-                `<g id="t"><text id="n" x="24" y="24" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" alignment-baseline="middle" fill="#fff" stroke="#00000099" stroke-width="5" paint-order="stroke fill markers">++</text></g>` : ``;
-            const hreft = isNewJerseySupported ? `<use href="#t" />` : ``;
+            // const jerseyNumberPattern = isNewJerseySupported
+            //     ? `<g id="t"><text id="n" x="24" y="24" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" alignment-baseline="middle" fill="#fff" stroke="#00000099" stroke-width="5" paint-order="stroke fill markers">++</text></g>`
+            //     : ``;
+            // const hreft = isNewJerseySupported ? `<use href="#t" />` : ``;
 
             const designs = [
                 {
@@ -9708,15 +9708,16 @@
             // const svg = `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><g id="b1"><path d="M24,47l-13.9-2.63,1.3-21.54-9.32-5.36c1.58-7.05,7.29-12.99,7.29-12.99l8.8-3.47,5.83,5.1,5.83-5.1,8.8,3.47s5.71,5.93,7.29,12.99l-9.32,5.36,1.3,21.54-13.9,2.63Z" fill="#0000004d" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66c.21.36,1.1,1.94,1.11,1.95l7.54-4.49c-2.34-7.67-6.48-11.16-6.48-11.16l-7.52-3.34-6.16,6.06-6.16-6.06-7.52,3.34s-4.14,3.48-6.48,11.16l7.54,4.49s.9-1.59,1.11-1.95l.18,1.66-1.06,22.27s12.38,2.07,12.38,2.07Z" fill="var(--jersey-colour-1,#888)" /></g><g id="b2" fill="#00000033"><path d="M11.39,21.26s.55-.79,1.11-1.95l-1.74-10.97.63,12.92Z" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66,1.74-10.97-10.4,29.04-2.84,7.93Z"/></g>${randomDesign.pathDiff}</g></defs><g id="${randomDesign.id}"><use href="#b1" /><use href="#${randomDesign.href}" /><use href="#b2" /></g></svg>`
             // return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
 
-            const svg = `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><g id="b1"><path d="M24,47l-13.9-2.63,1.3-21.54-9.32-5.36c1.58-7.05,7.29-12.99,7.29-12.99l8.8-3.47,5.83,5.1,5.83-5.1,8.8,3.47s5.71,5.93,7.29,12.99l-9.32,5.36,1.3,21.54-13.9,2.63Z" fill="#0000004d" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66c.21.36,1.1,1.94,1.11,1.95l7.54-4.49c-2.34-7.67-6.48-11.16-6.48-11.16l-7.52-3.34-6.16,6.06-6.16-6.06-7.52,3.34s-4.14,3.48-6.48,11.16l7.54,4.49s.9-1.59,1.11-1.95l.18,1.66-1.06,22.27s12.38,2.07,12.38,2.07Z" fill="var(--jersey-colour-1,#888)" /></g><g id="b2" fill="#00000033"><path d="M11.39,21.26s.55-.79,1.11-1.95l-1.74-10.97.63,12.92Z" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66,1.74-10.97-10.4,29.04-2.84,7.93Z"/></g>${randomDesign.pathDiff}</g>${jerseyNumberPattern}</defs><g id="${randomDesign.id}"><use href="#b1" /><use href="#${randomDesign.href}" /><use href="#b2" />${hreft}</g></svg>`
+            const jerseySvg = `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><g id="b1"><path d="M24,47l-13.9-2.63,1.3-21.54-9.32-5.36c1.58-7.05,7.29-12.99,7.29-12.99l8.8-3.47,5.83,5.1,5.83-5.1,8.8,3.47s5.71,5.93,7.29,12.99l-9.32,5.36,1.3,21.54-13.9,2.63Z" fill="#0000004d" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66c.21.36,1.1,1.94,1.11,1.95l7.54-4.49c-2.34-7.67-6.48-11.16-6.48-11.16l-7.52-3.34-6.16,6.06-6.16-6.06-7.52,3.34s-4.14,3.48-6.48,11.16l7.54,4.49s.9-1.59,1.11-1.95l.18,1.66-1.06,22.27s12.38,2.07,12.38,2.07Z" fill="var(--jersey-colour-1,#888)" /></g><g id="b2" fill="#00000033"><path d="M11.39,21.26s.55-.79,1.11-1.95l-1.74-10.97.63,12.92Z" /><path d="M24,45.31s12.35-2.04,12.38-2.07l-1.06-22.27.18-1.66,1.74-10.97-10.4,29.04-2.84,7.93Z"/></g>${randomDesign.pathDiff}</g><g id="t"><text id="n" x="24" y="24" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" alignment-baseline="middle" fill="#fff" stroke="#00000099" stroke-width="5" paint-order="stroke fill markers">++</text></g></defs><g id="${randomDesign.id}"><use href="#b1" /><use href="#${randomDesign.href}" /><use href="#b2" /><use href="#t" /></g></svg>`
 
-            return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
+            return `data:image/svg+xml;utf8,${encodeURIComponent(jerseySvg)}`
         }
 
         const patterns = ["chequered", "collar", "line-d", "line-h", "line-v", "sleeve", "split", "split-sleeve", "stripes-h", "stripes-v"];
         const index = getRandomInt(patterns.length - 1);
         const selectedPattern = patterns[index];
-        return `https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/participantlogos/colouredjerseys/participants-jerseys.football-${isNewJerseySupported ? "n-" : ""}${selectedPattern}.svg`;
+        // return `https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/participantlogos/colouredjerseys/participants-jerseys.football-${isNewJerseySupported ? "n-" : ""}${selectedPattern}.svg`;
+        return `https://betssongroup.github.io/sportsbook/qa/sportsbook-tool/participantlogos/colouredjerseys/participants-jerseys.football-n-${selectedPattern}.svg`;
 
     }
 
@@ -12412,5 +12413,17 @@
         ) || getCookie("OBG-SB-THEME");
     }
 
+    document.dispatchEvent(new CustomEvent("obgNavigate", {
+        detail: {
+            routeName: "sportsbook.event",
+            params: {
+                version: "1",
+                category: "1",
+                region: "11",
+                competition: "3",
+                event: "f-GuM1u96UkkCYJUq4Proohg"
+            }
+        }
+    }));
 
 })();
