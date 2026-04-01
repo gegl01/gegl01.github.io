@@ -25,9 +25,6 @@
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
     const IS_SBB2B_SPORTSBOOK_EXPOSED = isDefined("SBB2B_SPORTSBOOK");
 
-    // if (IS_SPORTSBOOK_IN_IFRAME) {
-    //     isSportsbookInIframeWithoutObgTools
-    // }
     let shadowRoot;
     const IS_B2B_IFRAME_ONLY = getIsB2BIframeOnly();
 
@@ -181,12 +178,13 @@
     // var isPageValidForCarousel, previousIsPageValidForCarousel;
     var lastDateTimeSet;
     var eventIdArray = [];
+    var savedEvent;
     var orderedCategories, orderedRegions, orderedCompetitions;
     var userName, previousUserName;
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.150";
+    const SB_TOOL_VERSION = "v1.6.151";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -4378,6 +4376,14 @@
 
         scope === "eventLocked" ? startPolling(listenerForEventIfEventLocked) : startPolling(listenerForEvent);
         startPolling(listenerForProviders, listenerForScoreBoard, listenerForPreBuiltCreation);
+
+
+        // if (scope === "eventLocked") {
+        //     startPolling(listenerForEventIfEventLocked);
+        // } else {
+        //     startPolling(listenerForEvent, listenerForProviders, listenerForScoreBoard, listenerForPreBuiltCreation);
+        // }
+
         initUSRelatedUIChanges();
 
         BRAND_NAME == "localhost" ? show(separateFootballPenaltiesConfigSection) : hide(separateFootballPenaltiesConfigSection);
@@ -4386,6 +4392,7 @@
 
             if (chkLockEventForSbToolsEvent.checked) {
                 lockedEventId = eventId;
+                savedEvent = getDeepCopyOfObject(getState().sportsbook.event.events[eventId]);
                 detectedOrLockedRow.innerHTML = "&#128274; Locked event:"
                 labelRow.classList.add("displayInGreenGlow");
                 stopPolling();
@@ -4393,6 +4400,7 @@
                 inactivateAllAccordions();
             } else {
                 lockedEventId = undefined;
+                savedEvent = undefined;
                 detectedOrLockedRow.innerText = "Detected event:";
                 labelRow.classList.remove("displayInGreenGlow");
                 initSbToolsEvent();
@@ -6519,6 +6527,12 @@
         let previousEventPhase = null;
         let previousCategoryId = null;
         function listenerForEventIfEventLocked() {
+
+            if (!xSbState.sportsbook.event.events[eventId]) {
+                log("Event not found in state, retrieving saved one");
+                xSbState.sportsbook.event.events[eventId] = savedEvent;
+            }
+
             eventPhase = getEventPhase(eventId);
             categoryId = getCategoryIdByEventId(eventId);
             if (eventPhase === previousEventPhase && categoryId === previousCategoryId) {
