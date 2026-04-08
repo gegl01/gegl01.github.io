@@ -53,7 +53,7 @@
                         onclick="reloadPageWithFeature('openIframe')">SB iframe</button>
                 </div>
                 <div id="mismatchingSbSection" class="hide">
-                    <div id="iframeNotMatchingWarningMessage">
+                    <div id="envNotMatchingWarningMessage">
                         Mismatch between host page and Sportsbook environments, meaning you are testing <span
                             id="notMatchingIframeEnvSpan"></span> Sportsbook
                     </div>
@@ -77,6 +77,20 @@
                 </div>
                 <hr class="hRule">
             </div>
+
+            <div id="mfeEnvMismatchSection" class="hide">
+                <div id="envNotMatchingWarningMessage">
+                    Mismatch between host page and Sportsbook environments, meaning you are testing <span
+                        id="notMatchingMfeEnvSpan"></span> Sportsbook
+                </div>
+                <div id="overrideMfeSbEnvRow" class="resolveLimitationRow">
+                    <div>Override SB mFE env to match</div>
+                    <button id="btOpenMatchingMfeEnv" class="btSimple btGreen"
+                        onclick="reloadPageWithFeature('overrideSbMfeEnv')"></button>
+                </div>
+                <hr class="hRule">
+            </div>
+
 
             <div id="contextSection">
 
@@ -3694,7 +3708,7 @@
     }
 
     #obgStateFrozenMessage,
-    #iframeNotMatchingWarningMessage {
+    #envNotMatchingWarningMessage {
         margin-bottom: 8px;
         color: rgb(160, 0, 0);
         font-weight: 700;
