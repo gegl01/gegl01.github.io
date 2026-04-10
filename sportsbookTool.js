@@ -187,7 +187,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.152";
+    const SB_TOOL_VERSION = "v1.6.153";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -1028,9 +1028,6 @@
         };
 
         function checForkMfeEnvMismatch() {
-            // const hostEnv = getHostPageEnvironment();
-            // log("hostEnv: " + HOST_PAGE_ENVIRONMENT);
-            // log("SB_ENVIRONMENT: " + SB_ENVIRONMENT);
             if (SB_ENVIRONMENT != HOST_PAGE_ENVIRONMENT) {
                 show(mfeEnvMismatchSection);
                 hide(obgStateAndRtSection);
@@ -1039,18 +1036,7 @@
             } else {
                 hide(mfeEnvMismatchSection);
             }
-
         }
-
-        // window.replaceIframeSrc = () => {
-        //     url = new URL(replaceEnvInIframeURL(iframeURL));
-        //     // params.push(ENABLE_OBGSTATE, ENABLE_OBGRT);
-        //     getIframe().src = url;
-        // }
-
-        // window.replaceIframeSrc = () => {
-        //     IS_BLE ? reloadPageWithSearchParams([new URLParam("sbIframeAlpha", 1)]) : reloadPageWithSearchParams([new URLParam("sbIframeTest", 1)]);
-        // }
 
         window.toggleTheme = () => {
             getCurrentTheme() === "dark" ? swithThemeTo("light") : swithThemeTo("dark");
@@ -6418,7 +6404,7 @@
                 state.sportsbook.stream.streams[eventId].video = {
                     type: "Video",
                     source: "https://player.twitch.tv/?channel=lordkevun",
-                    source: "",
+                    // source: "https://www.youtube.com/embed/MiJIODpKngw",
                     requiresClientCall: false,
                     provider: "OddinGG"
                 };
