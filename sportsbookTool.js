@@ -188,7 +188,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.154";
+    const SB_TOOL_VERSION = "v1.6.155";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -5446,10 +5446,10 @@
                 } else {
                     selectionTemplateId = "PS" + (i - 1);
                 }
-                createSelection(selectionTemplateId, selectionCounter, );
+                createSelection(selectionTemplateId, selectionCounter,);
             }
 
-            function createSelection(selectionTemplateId, selectionCounter, ) {
+            function createSelection(selectionTemplateId, selectionCounter,) {
                 const goal = getState()?.translation?.translations["event-page.upside.goal-fiesta.paytable-goal"] || "Goal";
                 const goals = getState()?.translation?.translations["event-page.upside.goal-fiesta.paytable-goals"] || "Goals";
 
@@ -10477,22 +10477,18 @@
             isBallPossessionInactive,
         } = scoreBoardExtras;
 
-        let currentPhase = {
-            id: 1,
-            label: "1st Quarter",
-            minutes: getRandomInt(1, 11),
-            seconds: getRandomInt(59),
-            clockMode: "RunningDown"
-        };
 
+        let currentPhase;
         if (is3rdQuarterActive) {
-            currentPhase = { id: 3, label: "3rd Quarter", minutes: getRandomInt(1, 11), seconds: getRandomInt(59), clockMode: "RunningDown" };
+            currentPhase = { id: 3, label: "3rd Quarter", minutes: getRandomInt(1, 11), seconds: getRandomInt(59), clockMode: "RunningDown", precision: "Seconds" };
         } else if (isHalfTimeActive) {
             currentPhase = { id: 17, label: "Halftime", minutes: 0, seconds: 0, clockMode: "Stopped" };
         } else if (isFullTimeActive) {
             currentPhase = { id: 11, label: "Fulltime", minutes: 0, seconds: 0, clockMode: "Stopped" };
         } else if (isOverTimeActive) {
-            currentPhase = { id: 12, label: "Overtime", minutes: getRandomInt(1, 4), seconds: getRandomInt(59), clockMode: "RunningDown" };
+            currentPhase = { id: 12, label: "Overtime", minutes: getRandomInt(1, 4), seconds: getRandomInt(59), clockMode: "RunningDown", precision: "Seconds" };
+        } else {
+            currentPhase = { id: 1, label: "1st Quarter", minutes: getRandomInt(1, 11), seconds: getRandomInt(59), clockMode: "RunningDown", precision: "Seconds" };
         }
 
         const {
@@ -10500,7 +10496,8 @@
             label: currentPhaseLabel,
             minutes: matchClockMinutes,
             seconds: matchClockSeconds,
-            clockMode: gameClockMode
+            clockMode: gameClockMode,
+            precision: gameClockPrecision
         } = currentPhase;
 
         const phaseCategoryId = `${currentPhaseId}-4`;
@@ -10667,7 +10664,8 @@
             matchClock: {
                 seconds: matchClockSeconds,
                 minutes: matchClockMinutes,
-                gameClockMode: gameClockMode,
+                gameClockMode,
+                gameClockPrecision,
                 lastDateTimeSet
             },
             varState: 0,
