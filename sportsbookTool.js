@@ -85,7 +85,7 @@
         ["jetbahis", "Jetbahis", "jetbahisplayground"],
         ["localhost", "Localhost", ""],
         ["mobilbahis", "Mobilbahis", "mbaplayground"],
-        ["nordicbet", "Nordicbet", "ndbplayground"],
+        ["nordicbet", "Nordicbet COM", "ndbplayground"],
         ["nordicbetdk", "Nordicbet DK", "ndbdkplayground"],
         ["rexbet", "Rexbet", "rexbetplayground"],
         ["playgurus", "Playgurus", "pgplayground"],
@@ -93,6 +93,7 @@
         ["sandbox", "Sandbox", "sandboxplayground"],
         ["spelklubben", "Spelklubben", "spelklubbenplayground"],
         ["spino", "Spino", "spinoplayground2"],
+        ["triobet", "Triobet", "triobetplayground"],
     ];
 
     const BRANDS = Object.fromEntries(
@@ -188,7 +189,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.155";
+    const SB_TOOL_VERSION = "v1.6.156";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -783,7 +784,7 @@
         if (IS_SPORTSBOOK_IN_IFRAME) {
             limitFeatures("iframe");
         } else if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            if (IS_MFE_ALONE || IS_B2B_IFRAME_ONLY) {
+            if (IS_MFE_ALONE || IS_B2B_IFRAME_ONLY || IS_FABRIC_WITH_MFE) {
                 limitFeatures("xSbState");
             } else {
                 limitFeatures("obgState");
