@@ -189,7 +189,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.156";
+    const SB_TOOL_VERSION = "v1.6.157";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -583,12 +583,12 @@
             return getState().appContext.environment;
         }
 
-        if (IS_MFE_ALONE) {
-            return getEnvByURL(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
-        }
-
         if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
             return sbMfeStartupContext?.appContext?.environment;
+        }
+
+        if (IS_MFE_ALONE) {
+            return getEnvByURL(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
         }
 
         if (IS_B2B_IFRAME_ONLY) {
@@ -3977,13 +3977,12 @@
             if (!extUrl.startsWith("/")) {
                 extUrl = "/" + extUrl;
             }
-            postMessage(
-                {
-                    type: "routeChangeIn",
-                    payload: {
-                        externalUrl: extUrl
-                    }
-                });
+            postMessage({
+                type: "routeChangeIn",
+                payload: {
+                    externalUrl: extUrl
+                }
+            });
         }
 
         function getCurrentRouteObject() {
