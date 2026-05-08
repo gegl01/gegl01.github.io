@@ -43,7 +43,7 @@
     // const MARKET_TEMPLATE_TAGS_FOR_PREBUILT = [152, 110, 111, 112, 113, 114, 115, 116, 117];
     const MARKET_TEMPLATE_TAGS_FOR_PREBUILT = [152];
     const MARKET_TEMPLATE_TAGS_FOR_PLAYER_SPECIALS = [100];
-    const MARKET_TEMPLATE_TAGS_FOR_UPSIDE_JACKPOT = [171, 175];
+    const MARKET_TEMPLATE_TAGS_FOR_UPSIDE_JACKPOT = [7, 171, 175];
 
 
     if (IS_MFE_ALONE) shadowRoot = document.querySelector("sb-xp-sportsbook-app").shadowRoot;
@@ -189,7 +189,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.157";
+    const SB_TOOL_VERSION = "v1.6.158";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -5446,10 +5446,10 @@
                 } else {
                     selectionTemplateId = "PS" + (i - 1);
                 }
-                createSelection(selectionTemplateId, selectionCounter,);
+                createSelection(selectionTemplateId, selectionCounter);
             }
 
-            function createSelection(selectionTemplateId, selectionCounter,) {
+            function createSelection(selectionTemplateId, selectionCounter) {
                 const goal = getState()?.translation?.translations["event-page.upside.goal-fiesta.paytable-goal"] || "Goal";
                 const goals = getState()?.translation?.translations["event-page.upside.goal-fiesta.paytable-goals"] || "Goals";
 
@@ -5470,7 +5470,13 @@
                     selectionCounter == 1 ? "Open" : "Suspended"
                 );
 
-                setSelectionOdds(selectionId, Math.pow(selectionCounter, 3));
+                if (selectionCounter == 1) {
+                    setSelectionOdds(selectionId, 50);
+                } else if (selectionCounter == 2) {
+                    setSelectionOdds(selectionId, 0)
+                }
+                else setSelectionOdds(selectionId, Math.pow(selectionCounter, 2));
+
                 const selection = getState().sportsbook.selection.selections[selectionId];
                 let selectionSpecifics;
                 if (selectionCounter == 1) {
