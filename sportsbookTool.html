@@ -1282,12 +1282,25 @@
                         <div id="eventStartingInOneHourSection">
                             <hr class="hRule">
                             <div class="itemsJustifiedVertCenter">
-                                <span>
-                                    <span class="iconStartingSoon iconSvgSmall marginRight5px"></span>
-                                    <span>Starting in 1 Hour</span>
+                                <span class="alignItemsCenter">
+                                    <span class="width80px">
+                                        <span class="iconStartingSoon iconSvgSmall marginRight5px"></span>
+                                        <span>Starting in</span>
+                                    </span>
+
+                                    <input class="fdSbTools width60px" type="number" id="timeAmount" min="1" value="1"
+                                        required oninput="validity.valid||(value='1');">
+
+                                    <select class="comboSbTools marginLeft5px" id="timeUnit">
+                                        <option value="seconds">Seconds</option>
+                                        <option value="minutes" selected>Minutes</option>
+                                        <option value="hours">Hours</option>
+                                        <option value="days">Days</option>
+                                    </select>
                                 </span>
+
                                 <button class="btSimple btSubmit" id="btSetStartingTimeInOneHour"
-                                    onclick="setStartingTimeInOneHour()">
+                                    onclick="setStartingTime()">
                                     Set
                                 </button>
                             </div>
@@ -3200,6 +3213,10 @@
         width: 40px;
     }
 
+    .width60px {
+        width: 60px;
+    }
+
     .width85px {
         width: 85px;
     }
@@ -3866,6 +3883,7 @@
         border: 1px solid #444;
         font-size: inherit;
         color: #444;
+        height: fit-content;
     }
 
     .fdScoreBoardNumeric {
