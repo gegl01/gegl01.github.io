@@ -85,8 +85,7 @@
                 </div>
                 <div id="overrideMfeSbEnvRow" class="resolveLimitationRow">
                     <div>Override SB mFE env to match</div>
-                     <button id="btOpenMatchingMfeEnv" class="btSimple btGreen"
-                        onclick="overrideSportsbookMfe()">
+                    <button id="btOpenMatchingMfeEnv" class="btSimple btGreen" onclick="overrideSportsbookMfe()">
                     </button>
                 </div>
                 <hr class="hRule">
@@ -1840,6 +1839,25 @@
                             <input type="checkbox" onclick="toggleMarketProperty('betDistributionAvailable')"
                                 id="chkIsBetDistributionAvailable" class="chkSbTools">
                         </div>
+
+                        <div id="isEarlyPayoutAvailableSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="iconEarlyPayout iconMockIconColumn vertMiddle iconSvgSmall"></span>
+                                <span class="iconMockLabelColumn">Early Payout</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleMarketProperty('earlyPayoutAvailable')"
+                                id="chkIsEarlyPayoutAvailable" class="chkSbTools">
+                        </div>
+
+                        <div id="isSuperSubAvailableSection" class="iconMocksRow">
+                            <span class="width95Percent">
+                                <span class="iconSuperSub iconMockIconColumn vertMiddle iconSvgSmall"></span>
+                                <span class="iconMockLabelColumn">Super Sub</span>
+                            </span>
+                            <input type="checkbox" onclick="toggleMarketProperty('superSubAvailable')"
+                                id="chkIsSuperSubAvailable" class="chkSbTools">
+                        </div>
+
                     </div>
 
 
@@ -4311,6 +4329,14 @@
 
     .iconFastMarket {
         content: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="%23444" xmlns="http://www.w3.org/2000/svg"><path d="M11.0267 24V14.61H6L13.2222 0V9.39H18.0611L11.0267 24Z"/></svg>');
+    }
+
+    .iconSuperSub {
+        content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.73893 8.63156C4.45688 8.63156 7.96271 8.63156 4.68065 8.63156H3.338C2.96504 8.28696 2.59207 7.94236 2.29371 7.66669C3.56177 6.49506 4.82984 5.32343 6.0979 4.1518C6.91842 3.39369 5.65035 2.15314 4.75525 2.91125C3.2634 4.28964 1.77156 5.66802 0.27972 7.04641C-0.0932401 7.39101 -0.0932401 7.94236 0.27972 8.28696C1.77156 9.66535 3.2634 11.0437 4.75525 12.4221C5.57576 13.1802 6.91842 12.0086 6.0979 11.1816C5.79953 10.9059 5.50117 10.6302 5.2028 10.3545C7.81352 10.3545 3.71096 10.3545 6.32168 10.3545H7.73893C8.9324 10.3545 8.9324 8.63156 7.73893 8.63156Z" fill="%23777A88"/><path d="M15.7203 7.04641C14.2284 5.66803 12.7366 4.28964 11.2448 2.91125C10.4242 2.15314 9.08159 3.32477 9.9021 4.1518C10.2005 4.42748 10.4988 4.70316 10.7972 4.97883C8.18648 4.97883 11.5431 4.97883 8.9324 4.97883H8.26107C7.0676 4.97883 7.0676 6.70182 8.26107 6.70182C11.5431 6.70182 8.0373 6.70182 11.3193 6.70182H12.662C13.035 7.04641 13.4079 7.39101 13.7063 7.66669C12.4382 8.83832 11.1702 10.0099 9.9021 11.1816C9.08159 11.9397 10.3496 13.1802 11.2448 12.4221C12.7366 11.0437 14.2284 9.66535 15.7203 8.28696C16.0932 7.94236 16.0932 7.39101 15.7203 7.04641Z" fill="%23FF9F00"/></svg>');
+    }
+
+    .iconEarlyPayout {
+        content: url('data:image/svg+xml;utf8,<svg width="26" height="13" viewBox="0 0 26 13" xmlns="http://www.w3.org/2000/svg"><rect x="3.9" y="0.5" width="18.2" height="12" rx="6" fill="%23FF9f00"/><g transform="translate(13 6.5)"><path d="M-5 -3H-1V-1.8H-3.8V-0.2H-1.4V1H-3.8V2.8H-1V4H-5V-3Z" fill="white"/><path d="M0.5 -3H3.5C5 -3 6 -2.2 6 -0.6C6 1 5 1.8 3.5 1.8H1.7V4H0.5V-3ZM1.7 -1.8V0.6H3.2C4 0.6 4.8 0.4 4.8 -0.6C4.8 -1.6 4 -1.8 3.2 -1.8H1.7Z" fill="white"/></g></svg>');
     }
 
     .iconBetTrends {
