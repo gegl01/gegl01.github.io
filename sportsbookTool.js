@@ -189,7 +189,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.162";
+    const SB_TOOL_VERSION = "v1.6.163";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -6646,9 +6646,9 @@
         let previousCategoryId = null;
         function listenerForEventIfEventLocked() {
 
-            if (!xSbState.sportsbook.event.events[eventId]) {
+            if (!getState().sportsbook.event.events[eventId]) {
                 log("Event not found in state, retrieving saved one");
-                xSbState.sportsbook.event.events[eventId] = savedEvent;
+                getState().sportsbook.event.events[eventId] = savedEvent;
             }
 
             eventPhase = getEventPhase(eventId);
