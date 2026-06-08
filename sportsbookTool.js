@@ -189,7 +189,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.163";
+    const SB_TOOL_VERSION = "v1.6.164";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -2667,12 +2667,13 @@
     // }
 
     function isCategoryInUsFormat(categoryId) {
-        if (getCategories()[categoryId]?.tags?.categoryStyle === "2") {
-            return true;
-        }
-        const usCategoryIds = ["2", "4", "10", "19"];
-        const usCultures = ["en-US", "es-MX", "en-CA"];
-        return usCultures.includes(CULTURE) && usCategoryIds.includes(categoryId);
+        // if (getCategories()[categoryId]?.tags?.categoryStyle === "2") {
+        //     return true;
+        // }
+        // const usCategoryIds = ["2", "4", "10", "19"];
+        // const usCultures = ["en-US", "es-MX", "en-CA"];
+        // return usCultures.includes(CULTURE) && usCategoryIds.includes(categoryId);
+        return getCategories()[categoryId]?.tags?.categoryStyle === "2";
     }
 
 
