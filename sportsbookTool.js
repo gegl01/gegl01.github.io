@@ -189,7 +189,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.165";
+    const SB_TOOL_VERSION = "v1.6.166";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -501,30 +501,58 @@
         return (IS_B2B_IFRAME_ONLY || IS_FABRIC_WITH_MFE || IS_SBMFESSTARTUPCONTEXT_EXPOSED ? "SBB2B-FE-" : "OBGA-") + SB_VERSION;
     }
 
+    // function getSbVersion() {
+    //     return IS_SBXPSPORTSBOOKAPPVERSION_EXPOSED
+    //         ? sbXpSportsbookAppVersion
+    //         : IS_OBGSTATE_OR_XSBSTATE_EXPOSED
+    //             ? getState().appContext.version
+    //             : IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
+    //                 ? obgClientEnvironmentConfig.startupContext.appContext.version
+    //                 : !IS_MFE_ALONE && IS_NODECONTEXT_EXPOSED
+    //                     ? nodeContext.version
+    //                     : null;
+    // }
+
+
+
     function getSbVersion() {
-        return IS_SBXPSPORTSBOOKAPPVERSION_EXPOSED
-            ? sbXpSportsbookAppVersion
-            : IS_OBGSTATE_OR_XSBSTATE_EXPOSED
-                ? getState().appContext.version
-                : IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
-                    ? obgClientEnvironmentConfig.startupContext.appContext.version
-                    : !IS_MFE_ALONE && IS_NODECONTEXT_EXPOSED
-                        ? nodeContext.version
-                        : null;
+
+        const val =
+            (IS_SBXPSPORTSBOOKAPPVERSION_EXPOSED ? sbXpSportsbookAppVersion : undefined) ??
+            (IS_OBGSTATE_OR_XSBSTATE_EXPOSED ? getState()?.appContext?.version : undefined) ??
+            (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED ? obgClientEnvironmentConfig?.startupContext?.appContext?.version : undefined) ??
+            (!IS_MFE_ALONE && IS_NODECONTEXT_EXPOSED ? nodeContext?.version : undefined);
+
+        return typeof val === "string" || typeof val === "number"
+            ? val
+            : null;
     }
 
+    // function getDeviceType() {
+    //     return IS_SBMFESSTARTUPCONTEXT_EXPOSED
+    //         ? sbMfeStartupContext?.device?.deviceType
+    //         : IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
+    //             ? obgClientEnvironmentConfig?.startupContext?.device?.deviceType
+    //             : IS_OBGSTATE_OR_XSBSTATE_EXPOSED
+    //                 ? getState().appContext.device.deviceType
+    //                 : IS_NODECONTEXT_EXPOSED
+    //                     ? nodeContext.deviceType
+    //                     : IS_PAGECONTEXTDATA_EXPOSED
+    //                         ? pageContextData?.userContext?.device
+    //                         : "couldn't get";
+    // }
+
     function getDeviceType() {
-        return IS_SBMFESSTARTUPCONTEXT_EXPOSED
-            ? sbMfeStartupContext?.device?.deviceType
-            : IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
-                ? obgClientEnvironmentConfig?.startupContext?.device?.deviceType
-                : IS_OBGSTATE_OR_XSBSTATE_EXPOSED
-                    ? getState().appContext.device.deviceType
-                    : IS_NODECONTEXT_EXPOSED
-                        ? nodeContext.deviceType
-                        : IS_PAGECONTEXTDATA_EXPOSED
-                            ? pageContextData?.userContext?.device
-                            : "couldn't get";
+
+        const val =
+            (IS_SBMFESSTARTUPCONTEXT_EXPOSED ? sbMfeStartupContext?.appContext?.deviceType : undefined) ??
+            (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED ? obgClientEnvironmentConfig?.startupContext?.appContext?.deviceType : undefined) ??
+            (IS_OBGSTATE_OR_XSBSTATE_EXPOSED ? getState()?.appContext?.device?.deviceType : undefined) ??
+            (IS_OBGSTATE_OR_XSBSTATE_EXPOSED ? getState()?.appContext?.deviceType : undefined) ??
+            (IS_NODECONTEXT_EXPOSED ? nodeContext?.deviceType : undefined) ??
+            (IS_PAGECONTEXTDATA_EXPOSED ? pageContextData?.userContext?.device : undefined);
+
+        return typeof val === "string" ? val : "couldn't get";
     }
 
     function getIsAnyEssentialObjectExposed() {
@@ -535,16 +563,27 @@
             || IS_PAGECONTEXTDATA_EXPOSED;
     }
 
+    // function getDeviceExperience() {
+    //     return IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
+    //         ? obgClientEnvironmentConfig?.startupContext?.device?.deviceExperience
+    //         : IS_OBGSTATE_OR_XSBSTATE_EXPOSED
+    //             ? getState()?.appContext?.device?.deviceExperience
+    //             : IS_NODECONTEXT_EXPOSED
+    //                 ? nodeContext?.deviceExperience
+    //                 : IS_SBMFESSTARTUPCONTEXT_EXPOSED
+    //                     ? sbMfeStartupContext?.appContext?.deviceExperience
+    //                     : null;
+    // }
+
     function getDeviceExperience() {
-        return IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
-            ? obgClientEnvironmentConfig?.startupContext?.device?.deviceExperience
-            : IS_OBGSTATE_OR_XSBSTATE_EXPOSED
-                ? getState()?.appContext?.device?.deviceExperience
-                : IS_NODECONTEXT_EXPOSED
-                    ? nodeContext?.deviceExperience
-                    : IS_SBMFESSTARTUPCONTEXT_EXPOSED
-                        ? sbMfeStartupContext?.device?.deviceExperience
-                        : null;
+
+        const val =
+            (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED ? obgClientEnvironmentConfig?.startupContext?.appContext?.deviceExperience : undefined) ??
+            (IS_OBGSTATE_OR_XSBSTATE_EXPOSED ? getState()?.appContext?.device?.deviceExperience : undefined) ??
+            (IS_NODECONTEXT_EXPOSED ? nodeContext?.deviceExperience : undefined) ??
+            (IS_SBMFESSTARTUPCONTEXT_EXPOSED ? sbMfeStartupContext?.appContext?.deviceExperience : undefined);
+
+        return typeof val === "string" ? val : null;
     }
 
     function getEnvironmentToDisplay() {
@@ -568,42 +607,90 @@
         // return environmentToDisplay;
     }
 
+    // function getSbEnvironment() {
+
+    //     if (IS_XSISMFEOVERRIDEAPPLIED_EXPOSED) {
+    //         const env = sbMfeStartupContext?.appContext?.environment;
+    //         if (xSbIsMfeOverrideApplied) {
+    //             if (env == "prod") return "alpha";
+    //             if (env == "qa") return "test";
+    //         }
+    //         return env;
+    //     }
+
+    //     if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
+    //         return getState()?.appContext?.environment;
+    //     }
+
+    //     if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
+    //         return sbMfeStartupContext?.appContext?.environment;
+    //     }
+
+    //     if (IS_MFE_ALONE) {
+    //         return getEnvByURL(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
+    //     }
+
+    //     if (IS_B2B_IFRAME_ONLY) {
+    //         return obgClientEnvironmentConfig?.startupContext?.appContext?.environment;
+    //     }
+
+    //     if (IS_B2B_WITH_HOST_PAGE) {
+    //         return getEnvByURL(iframeURL);
+    //     }
+
+    //     //B2C
+    //     if (IS_OBGSTARTUP_EXPOSED) {
+    //         return obgStartup?.config?.appSettings?.environment;
+    //     }
+    //     return undefined;
+    // }
+
+    // function getSbEnvironment() {
+
+    //     if (IS_XSISMFEOVERRIDEAPPLIED_EXPOSED) {
+    //         const env = sbMfeStartupContext?.appContext?.environment;
+
+    //         if (xSbIsMfeOverrideApplied) {
+    //             if (env === "prod") return "alpha";
+    //             if (env === "qa") return "test";
+    //         }
+
+    //         if (env != null) return env;
+    //     }
+
+    //     return (
+    //         (IS_OBGSTATE_OR_XSBSTATE_EXPOSED && getState()?.appContext?.environment) ??
+    //         (IS_SBMFESSTARTUPCONTEXT_EXPOSED && sbMfeStartupContext?.appContext?.environment) ??
+    //         (IS_MFE_ALONE && getEnvByURL(document.querySelector("sb-xp-sportsbook")?.["sb-api-base-url"])) ??
+    //         (IS_B2B_IFRAME_ONLY && obgClientEnvironmentConfig?.startupContext?.appContext?.environment) ??
+    //         (IS_B2B_WITH_HOST_PAGE && getEnvByURL(iframeURL)) ??
+    //         (IS_OBGSTARTUP_EXPOSED && obgStartup?.config?.appSettings?.environment) ??
+    //         undefined
+    //     );
+    // }
+
     function getSbEnvironment() {
 
         if (IS_XSISMFEOVERRIDEAPPLIED_EXPOSED) {
             const env = sbMfeStartupContext?.appContext?.environment;
+
             if (xSbIsMfeOverrideApplied) {
-                if (env == "prod") return "alpha";
-                if (env == "qa") return "test";
+                if (env === "prod") return "alpha";
+                if (env === "qa") return "test";
             }
-            return env;
+
+            if (env != null) return env;
         }
 
-        if (IS_OBGSTATE_OR_XSBSTATE_EXPOSED) {
-            return getState().appContext.environment;
-        }
+        const val =
+            (IS_OBGSTATE_OR_XSBSTATE_EXPOSED ? getState()?.appContext?.environment : undefined) ??
+            (IS_SBMFESSTARTUPCONTEXT_EXPOSED ? sbMfeStartupContext?.appContext?.environment : undefined) ??
+            (IS_MFE_ALONE ? getEnvByURL(document.querySelector("sb-xp-sportsbook")?.["sb-api-base-url"]) : undefined) ??
+            (IS_B2B_IFRAME_ONLY ? obgClientEnvironmentConfig?.startupContext?.appContext?.environment : undefined) ??
+            (IS_B2B_WITH_HOST_PAGE ? getEnvByURL(iframeURL) : undefined) ??
+            (IS_OBGSTARTUP_EXPOSED ? obgStartup?.config?.appSettings?.environment : undefined);
 
-        if (IS_SBMFESSTARTUPCONTEXT_EXPOSED) {
-            return sbMfeStartupContext?.appContext?.environment;
-        }
-
-        if (IS_MFE_ALONE) {
-            return getEnvByURL(document.getElementsByTagName("sb-xp-sportsbook")[0]["sb-api-base-url"]);
-        }
-
-        if (IS_B2B_IFRAME_ONLY) {
-            return obgClientEnvironmentConfig.startupContext.appContext.environment;
-        }
-
-        if (IS_B2B_WITH_HOST_PAGE) {
-            return getEnvByURL(iframeURL);
-        }
-
-        //B2C
-        if (IS_OBGSTARTUP_EXPOSED) {
-            return obgStartup.config.appSettings.environment;
-        }
-        return undefined;
+        return val ?? undefined;
     }
 
     // function getHostPageEnvironment() {
@@ -663,22 +750,41 @@
                         : null;
     }
 
+    // function getLanguageCode() {
+    //     return IS_OBGSTATE_OR_XSBSTATE_EXPOSED
+    //         ? getState().market?.currentMarket?.languageCode
+    //         : IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
+    //             ? obgClientEnvironmentConfig.startupContext?.config?.core?.market?.languageCode
+    //             || obgClientEnvironmentConfig.startupContext?.userContext?.contextInformation?.languageCode
+    //             || obgClientEnvironmentConfig.startupContext?.market?.languageCode
+    //             : IS_NODECONTEXT_EXPOSED
+    //                 ? nodeContext?.detectedMarket?.code
+    //                 : IS_OBGSTARTUP_EXPOSED
+    //                     ? obgStartup?.config?.core?.market?.languageCode
+    //                     : IS_SBMFESSTARTUPCONTEXT_EXPOSED
+    //                         ? sbMfeStartupContext?.config?.core?.market?.languageCode
+    //                         : IS_PAGECONTEXTDATA_EXPOSED
+    //                             ? pageContextData?.appContext?.locale
+    //                             : "unknown";
+    // }
+
+
     function getLanguageCode() {
-        return IS_OBGSTATE_OR_XSBSTATE_EXPOSED
-            ? getState().market?.currentMarket?.languageCode
-            : IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
-                ? obgClientEnvironmentConfig.startupContext?.config?.core?.market?.languageCode
-                || obgClientEnvironmentConfig.startupContext?.userContext?.contextInformation?.languageCode
-                || obgClientEnvironmentConfig.startupContext?.market?.languageCode
-                : IS_NODECONTEXT_EXPOSED
-                    ? nodeContext?.detectedMarket?.code
-                    : IS_OBGSTARTUP_EXPOSED
-                        ? obgStartup?.config?.core?.market?.languageCode
-                        : IS_SBMFESSTARTUPCONTEXT_EXPOSED
-                            ? sbMfeStartupContext?.config?.core?.market?.languageCode
-                            : IS_PAGECONTEXTDATA_EXPOSED
-                                ? pageContextData?.appContext?.locale
-                                : "unknown";
+
+        const obgClientLang =
+            obgClientEnvironmentConfig?.startupContext?.config?.core?.market?.languageCode ||
+            obgClientEnvironmentConfig?.startupContext?.userContext?.contextInformation?.languageCode ||
+            obgClientEnvironmentConfig?.startupContext?.market?.languageCode;
+
+        const val =
+            (IS_OBGSTATE_OR_XSBSTATE_EXPOSED ? getState()?.market?.currentMarket?.languageCode : undefined) ??
+            (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED ? obgClientLang : undefined) ??
+            (IS_NODECONTEXT_EXPOSED ? nodeContext?.detectedMarket?.code : undefined) ??
+            (IS_OBGSTARTUP_EXPOSED ? obgStartup?.config?.core?.market?.languageCode : undefined) ??
+            (IS_SBMFESSTARTUPCONTEXT_EXPOSED ? sbMfeStartupContext?.config?.core?.market?.languageCode : undefined) ??
+            (IS_PAGECONTEXTDATA_EXPOSED ? pageContextData?.appContext?.locale : undefined);
+
+        return typeof val === "string" ? val : "unknown";
     }
 
     function getAreAllSelectionsInObgState(marketSelectionIds) {
@@ -698,21 +804,45 @@
         return BRANDS[brandName]?.friendlyName ?? brandName;
     }
 
-    function getBrandName() {
-        const brandName =
-            IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
-                ? obgClientEnvironmentConfig?.startupContext?.brandName.toLowerCase()
-                : IS_OBGSTARTUP_EXPOSED
-                    ? obgStartup.config?.appSettings?.brandName.toLowerCase()
-                    : IS_PAGECONTEXTDATA_EXPOSED
-                        ? pageContextData?.appContext?.brandName.toLowerCase()
-                        : IS_SBMFESSTARTUPCONTEXT_EXPOSED
-                            ? sbMfeStartupContext?.brandName.toLowerCase()
-                            : "localhost";
+    // function getBrandName() {
+    //     const brandName =
+    //         IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED
+    //             ? obgClientEnvironmentConfig?.startupContext?.brandName.toLowerCase()
+    //             : IS_OBGSTARTUP_EXPOSED
+    //                 ? obgStartup.config?.appSettings?.brandName.toLowerCase()
+    //                 : IS_PAGECONTEXTDATA_EXPOSED
+    //                     ? pageContextData?.appContext?.brandName.toLowerCase()
+    //                     : IS_SBMFESSTARTUPCONTEXT_EXPOSED
+    //                         ? sbMfeStartupContext?.brandName.toLowerCase()
+    //                         : "localhost";
 
-        return (brandName === "nordicbet" && IS_OBGSTATE_OR_XSBSTATE_EXPOSED && getState()?.sportsbook?.features?.arcticbet)
-            ? "arcticbet"
-            : brandName;
+    //     return (brandName === "nordicbet" && IS_OBGSTATE_OR_XSBSTATE_EXPOSED && getState()?.sportsbook?.features?.arcticbet)
+    //         ? "arcticbet"
+    //         : brandName;
+    // }
+
+    function getBrandName() {
+
+        const rawBrand =
+            (IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED ? obgClientEnvironmentConfig?.startupContext?.brandName : undefined) ??
+            (IS_OBGSTARTUP_EXPOSED ? obgStartup?.config?.appSettings?.brandName : undefined) ??
+            (IS_PAGECONTEXTDATA_EXPOSED ? pageContextData?.appContext?.brandName : undefined) ??
+            (IS_SBMFESSTARTUPCONTEXT_EXPOSED ? sbMfeStartupContext?.brandName : undefined) ??
+            "localhost";
+
+        const brandName = typeof rawBrand === "string"
+            ? rawBrand.toLowerCase()
+            : "localhost";
+
+        if (
+            brandName === "nordicbet" &&
+            IS_OBGSTATE_OR_XSBSTATE_EXPOSED &&
+            getState()?.sportsbook?.features?.arcticbet
+        ) {
+            return "arcticbet";
+        }
+
+        return brandName;
     }
 
     function log(data) {
