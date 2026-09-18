@@ -27,6 +27,7 @@
     const IS_OBGNAVIGATIONSUPPORTED_EXPOSED = isDefined("obgNavigationSupported");
     const IS_SBB2B_SPORTSBOOK_EXPOSED = isDefined("SBB2B_SPORTSBOOK");
     const HOST_PAGE_ENVIRONMENT = getHostPageEnvironment();
+ 
 
     let shadowRoot;
     const IS_B2B_IFRAME_ONLY = getIsB2BIframeOnly();
@@ -37,6 +38,7 @@
     const IS_SPORTSBOOK_IN_IFRAME = getIsSportsbookInIframe();
     const IS_B2B_WITH_HOST_PAGE = IS_SPORTSBOOK_IN_IFRAME && !IS_B2B_IFRAME_ONLY;
     const IS_B2C = (IS_NODECONTEXT_EXPOSED && !IS_B2B_WITH_HOST_PAGE);
+    // const IS_SPORTSBOOK_IN_IFRAME_WITHOUT_OBG_TOOLS = IS_SPORTSBOOK_IN_IFRAME && !IS_OBGSTATE_OR_XSBSTATE_EXPOSED;
 
     const MARKET_TEMPLATE_TAGS_FOR_PLAYER_PROPS = [14, 35, 41, 47, 53, 101, 104, 106, 135, 143];
     const MARKET_TEMPLATE_TAGS_FOR_FAST_MARKET = [6, 82, 84, 85, 105, 131, 144, 160];
@@ -110,14 +112,14 @@
     }
 
 
-    if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && !IS_SBMFESSTARTUPCONTEXT_EXPOSED && !IS_PAGECONTEXTDATA_EXPOSED && !IS_B2B_WITH_HOST_PAGE && !IS_OBGSTARTUP_EXPOSED && !IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED) {
-        const message = "Tool doesn't work as obgState is not available.\nWant to enable it?";
-        if (confirm(message)) {
-            if (IS_FABRIC_WITH_IFRAME) url = new URL(iframeURL);
-            reloadPageWithURLParams([EXPOSE_OBGSTATE, EXPOSE_OBGRT]);
-        }
-        return;
-    }
+    // if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && !IS_SBMFESSTARTUPCONTEXT_EXPOSED && !IS_PAGECONTEXTDATA_EXPOSED && !IS_B2B_WITH_HOST_PAGE && !IS_OBGSTARTUP_EXPOSED && !IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED) {
+    //     const message = "Tool doesn't work as obgState is not available.\nWant to enable it?";
+    //     if (confirm(message)) {
+    //         if (IS_FABRIC_WITH_IFRAME) url = new URL(iframeURL);
+    //         reloadPageWithURLParams([EXPOSE_OBGSTATE, EXPOSE_OBGRT]);
+    //     }
+    //     return;
+    // }
 
 
     function getIsMfeAlone() {
@@ -137,6 +139,17 @@
         }
         return;
     }
+
+        if (!IS_OBGSTATE_OR_XSBSTATE_EXPOSED && !IS_SBMFESSTARTUPCONTEXT_EXPOSED && !IS_PAGECONTEXTDATA_EXPOSED && !IS_B2B_WITH_HOST_PAGE && !IS_OBGSTARTUP_EXPOSED && !IS_OBGCLIENTENVIRONMENTCONFIG_STARTUPCONTEXT_EXPOSED) {
+        const message = "Tool doesn't work as obgState is not available.\nWant to enable it?";
+        if (confirm(message)) {
+            if (IS_FABRIC_WITH_IFRAME) url = new URL(iframeURL);
+            reloadPageWithURLParams([EXPOSE_OBGSTATE, EXPOSE_OBGRT]);
+        }
+        return;
+    }
+
+
 
     if (!getIsAnyEssentialObjectExposed()) {
         alert("Make obgState exposed in order to use this tool");
@@ -189,7 +202,7 @@
     var groupableId;
 
     // const IS_UNSECURE_HTTP = isUnsecureHTTP();
-    const SB_TOOL_VERSION = "v1.6.166";
+    const SB_TOOL_VERSION = "v1.6.167";
     const DEVICE_TYPE = getDeviceType();
     const DEVICE_EXPERIENCE = getDeviceExperience();
     const SB_ENVIRONMENT = getSbEnvironment();
@@ -381,7 +394,8 @@
     }
 
     function getIframe() {
-        let iframes = document.body.getElementsByTagName("iframe");
+        // let iframes = document.body.getElementsByTagName("iframe");
+        let iframes = document.querySelectorAll("iframe");
         for (let iframe of iframes) {
             if (iframeContainsValidSrc(iframe)) {
                 return iframe;
@@ -391,7 +405,7 @@
     }
 
     function iframeContainsValidSrc(iframe) {
-        return iframe.src.includes("playground") && iframe.src.includes("/stc-");
+        return iframe.src.includes("/stc-");
     }
 
     function findIframeContainingUrl(node) {
